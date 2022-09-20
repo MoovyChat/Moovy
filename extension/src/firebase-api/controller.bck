@@ -1,0 +1,69 @@
+import { Request, Response } from 'express';
+import { createUser, getUser } from '../firebase-api/user';
+import {
+  addMovie,
+  getCommentsForMovie,
+  getMovie,
+  updateMovieInFirebase,
+} from '../firebase-api/movie';
+import {
+  addComment,
+  updateMovieCommentsInFirebase,
+} from '../firebase-api/comment';
+import { Movie, Comment } from '../schema/schema';
+
+export const setUser = (req: Request, res: Response) => {
+  createUser(req.body)
+    .then((result) => res.send(result))
+    .catch((err) => res.send(err));
+};
+
+export const getUserDetails = (req: Request, res: Response) => {
+  getUser(req.body)
+    .then((result) => res.send(result))
+    .catch((err) => res.send(err));
+};
+
+export const getComments = (req: Request, res: Response) => {
+  getCommentsForMovie(req.body)
+    .then((result) => res.send(result))
+    .catch((err) => res.send(err));
+};
+
+export const setMovie = (req: Request, resp: Response) => {
+  // tslint:disable-next-line:no-console
+  // console.log(req.body);
+  addMovie(req.body as Movie)
+    .then((res) => resp.send(res))
+    .catch((err) => resp.send(err));
+};
+
+export const updateMovieDetails = (req: Request, resp: Response) => {
+  // tslint:disable-next-line:no-console
+
+  const { id, data } = req.body;
+  updateMovieInFirebase(id, data)
+    .then((res) => resp.send(res))
+    .catch((err) => resp.send(err));
+};
+
+export const getMovieDetails = (req: Request, res: Response) => {
+  // tslint:disable-next-line:no-console
+  console.log(req.body);
+  getMovie(req.body as string)
+    .then((response) => res.send(response))
+    .catch((err) => res.send(err));
+};
+
+export const setComment = (req: Request, res: Response) => {
+  addComment(req.body as Comment)
+    .then((response: any) => res.send(response))
+    .catch((err) => res.send(err));
+};
+
+export const updateMovieComments = (req: Request, res: Response) => {
+  const { movieId, newComemnt } = req.body;
+  updateMovieCommentsInFirebase(movieId, newComemnt)
+    .then((response: any) => res.send(response))
+    .catch((err) => res.send(err));
+};

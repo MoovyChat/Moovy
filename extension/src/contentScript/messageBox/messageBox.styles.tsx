@@ -1,0 +1,139 @@
+import { globalUIStyles } from '../../Utils/interfaces';
+import styled from 'styled-components';
+
+type mBoxProps = {
+  isReply: boolean;
+  styles: globalUIStyles;
+};
+type styleProps = {
+  styles: globalUIStyles;
+};
+export const ChatTextBox = styled.div<mBoxProps>`
+  display: flex;
+  position: relative;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 5px;
+  z-index: 8;
+  width: 90%;
+  height: 100%;
+  transition: all 0.5s;
+  border-color: ${(p) => (p.isReply ? '#ca0d00' : 'white')};
+  box-shadow: 0 0 10px ${(p) => (p.isReply ? '#ca0d00' : 'white')};
+`;
+
+export const MessageBoxParent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  outline: none;
+`;
+
+export const Spoiler = styled.div<styleProps>`
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  .spoiler-tag {
+    padding: 3px 0px;
+    width: 60px;
+    margin: 0px 5px;
+    font-weight: bolder;
+    background-color: inherit;
+    color: inherit;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: inset 0 2px 4px 1px white;
+    /* border: 1px solid ${(p) => (p.styles ? p.styles.textColor : 'white')}; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    :hover {
+      background-color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
+      color: ${(p) => (p.styles ? p.styles.backgroundColor : 'white')};
+      /* border: 1px solid
+        ${(p) => (p.styles ? p.styles.backgroundColor : 'black')}; */
+      cursor: pointer;
+    }
+    :active {
+      background-color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
+      color: ${(p) => (p.styles ? p.styles.backgroundColor : 'white')};
+      /* border: 1px solid
+        ${(p) => (p.styles ? p.styles.backgroundColor : 'black')}; */
+      cursor: pointer;
+      transform: scale(0.9);
+    }
+  }
+`;
+
+type props = {
+  count: number;
+  styles?: globalUIStyles;
+};
+
+export const TextAreaCount = styled.div<props>`
+  position: relative;
+  color: ${(p) => (p.styles ? p.styles.backgroundColor : 'black')};
+  background-color: ${(p) =>
+    p.count < 10 ? '#ff7474 ' : p.styles ? p.styles.textColor : 'white'};
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.9rem;
+  height: 7px;
+  width: 7px;
+  padding: 9px;
+  box-shadow: inset 0px 0px 4px black;
+`;
+
+export const TextAreaIcon = styled.div`
+  position: relative;
+  flex-basis: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+  margin: 10px 5px;
+`;
+
+export const TextAreaPost = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 10px;
+  font-weight: bold;
+  flex-basis: 10%;
+  font-size: 13px;
+  color: inherit;
+  border-radius: 10px;
+  :hover {
+    cursor: pointer;
+    filter: drop-shadow(0 0 15px white);
+  }
+`;
+
+export const ReplyTo = styled.div`
+  padding: 1px 5px;
+  background-color: inherit;
+  display: flex;
+  width: 90%;
+  background-blend-mode: screen;
+  margin: 0 5px;
+  font-size: 1.2rem;
+  justify-content: space-between;
+  font-weight: 700;
+  .close-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    margin: 0px 5px;
+    font-weight: 700;
+    :hover {
+      cursor: pointer;
+    }
+  }
+`;

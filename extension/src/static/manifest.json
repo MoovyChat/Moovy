@@ -1,0 +1,51 @@
+{
+  "short_name": "Quiet Chat",
+  "name": "Quiet Chat",
+  "description": "Enjoy the Netflix now with the Comments",
+  "version": "1.0.5",
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAokvPCfupK0jKcWnO5HXobk4g92gWiyyIvK9gkdbZ/w2ikGZLHL5tmDDIBbsjPK+NSC842+b+N73oFyXspGpwIASv5vsNuYc0TwIrdaE4LrokM8XOy6QvuYKzvjkYBwW6hSfcjWtYWaW7tILLsotdA3Bj2w12DhIjkCq/fMrMCXrAwSg4eUwWl3sb2bq4DAF9KkZcMFOFEaSCke3FW6uJYen4rIAfSapKgObFKPNmVldnAVYnhgdodb0B/HpgYMa+PgStrj6+Gm/hAVhJqaBOiKb3wMwgClAaWQ6MzM8qgteeXT+fxINmfcYgwJk8AQd6IfHJSEJ/s4kUpfnj4v6EJQIDAQAB",
+  "permissions": ["identity", "storage", "tabs", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "js": ["index.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["netflix.js"],
+      "matches": ["https://www.netflix.com/*"]
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["https://www.netflix.com/*"]
+  },
+  "host_permissions": ["https://www.netflix.com/*"],
+  "icons": {
+    "16": "qc_16.png",
+    "48": "qc_48.png",
+    "128": "qc_128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Quiet Chat",
+    "default_icons": {
+      "16": "qc_16.png",
+      "48": "qc_48.png",
+      "128": "qc_128.png"
+    }
+  },
+  "options_page": "options.html",
+  "oauth2": {
+    "client_id": "596322814794-o62innt0hvn2ua8mmiksiis0gl4k3279.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

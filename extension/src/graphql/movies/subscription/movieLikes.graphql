@@ -1,0 +1,12 @@
+subscription movieStatusSubscribe {
+  movieStatusUpdate {
+    likes {
+      uid
+      name
+      nickname
+      email
+      photoUrl
+    }
+    likesCount
+  }
+}

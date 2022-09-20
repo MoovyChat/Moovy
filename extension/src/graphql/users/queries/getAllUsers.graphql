@@ -1,0 +1,12 @@
+query GetAllUsers {
+  users {
+    uid
+    email
+    nickname
+    name
+    photoUrl
+    watchedMovies
+    joinedAt
+    updatedAt
+  }
+}

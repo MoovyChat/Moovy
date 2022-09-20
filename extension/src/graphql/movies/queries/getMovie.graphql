@@ -1,0 +1,10 @@
+query getMovie($mid: String!) {
+  getMovie(mid: $mid) {
+    mid
+    name
+    likes
+    platformId
+    createdAt
+    updatedAt
+  }
+}

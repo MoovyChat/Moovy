@@ -1,0 +1,24 @@
+query getUserComments($uid: String!) {
+  getCommentsOfTheUser(uid: $uid) {
+    user {
+      uid
+      name
+      email
+      photoUrl
+      watchedMovies
+      nickname
+      updatedAt
+      joinedAt
+    }
+    comments {
+      cid
+      commentedUserUid
+      message
+      likes
+      movieMid
+      platformId
+      createdAt
+      updatedAt
+    }
+  }
+}

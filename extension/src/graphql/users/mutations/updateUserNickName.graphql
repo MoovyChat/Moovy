@@ -1,0 +1,18 @@
+mutation UpdateUserNickName($uid: String!, $nickname: String) {
+  updateUserNickName(uid: $uid, nickname: $nickname) {
+    errors {
+      field
+      message
+    }
+    user {
+      uid
+      name
+      nickname
+      email
+      photoUrl
+      watchedMovies
+      joinedAt
+      updatedAt
+    }
+  }
+}

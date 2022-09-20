@@ -1,0 +1,29 @@
+query getCommentsOfTheMovie(
+  $limit: Int!
+  $cursor: String!
+  $pid: String!
+  $mid: String!
+) {
+  getCommentsOfTheMovie(limit: $limit, cursor: $cursor, pid: $pid, mid: $mid) {
+    movie {
+      mid
+      name
+      platformId
+      likes
+      createdAt
+      updatedAt
+    }
+    hasMoreComments
+    totalCommentCount
+    comments {
+      cid
+      commentedUserUid
+      movieMid
+      platformId
+      message
+      createdAt
+      updatedAt
+      likes
+    }
+  }
+}

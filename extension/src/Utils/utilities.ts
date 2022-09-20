@@ -1,0 +1,88 @@
+import { textMap, timeMessage } from './interfaces';
+
+import { Dispatch } from 'redux';
+import { msgPlace } from './enums';
+import { textMapTypes } from '../constants';
+
+// Calculates the time between current time and the user's comment
+export const getTimeFrame = (postTime: string) => {
+  let currentTime = Date.now();
+  let diff = currentTime - Date.parse(postTime);
+
+  // Conversion to minutes/hour/day/year
+  const minute = 1000 * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+  const year = day * 365;
+
+  const noOfYears = Math.round(diff / year);
+  const noOfHours = Math.round(diff / hour);
+  const noOfDays = Math.round(diff / day);
+  const noOfminutes = Math.round(diff / minute);
+
+  let finalString = '';
+  if (noOfYears === 0) {
+    if (noOfDays === 0) {
+      if (noOfHours === 0) {
+        if (noOfminutes === 0) {
+          finalString = 'Just now';
+        } else finalString = `${noOfminutes}m`;
+      } else {
+        finalString = `${noOfHours}h`;
+      }
+    } else {
+      finalString = `${noOfDays}d`;
+    }
+  } else {
+    finalString = `${noOfYears}y`;
+  }
+  return finalString;
+};
+
+export const isNumber = (c: string) => {
+  let parsedInt = parseInt(c);
+  if (isNaN(parsedInt)) return false;
+  else return true;
+};
+
+export const getFormattedWordsArray = (
+  text: string,
+  place: string,
+  dispatch: Dispatch<any>,
+  userId: string,
+  commentTimeStamp: number
+): textMap[] => {
+  return text
+    .trim()
+    .split(' ')
+    .map((word) => {
+      if (word.startsWith('@')) {
+        return { message: word, type: textMapTypes.USER };
+      } else if (word.includes(':')) {
+        let words = word.split(':');
+        let hours = words.length === 3 ? words[0] : '0';
+        let minutes = hours !== '0' ? words[1] : words[0];
+        let seconds = hours !== '0' ? words[2] : words[1];
+        if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
+          if (place === msgPlace.COMMENT_CARD) {
+            // let timeMsgObj: timeMessage = {
+            //   madeBy: userId,
+            //   message: text,
+            //   time: word,
+            //   timeStamp: commentTimeStamp,
+            // };
+            // dispatch(sliceAddTimeMessages(timeMsgObj));
+          }
+          return { message: word, type: textMapTypes.TIME };
+        } else {
+          return { message: word, type: textMapTypes.BASIC };
+        }
+      } else {
+        return { message: word, type: textMapTypes.BASIC };
+      }
+    });
+};
+
+export const colorLog = (...args: any) => {
+  console.log(`%c[qchat]`, 'color: #00d9ff', ...args);
+};

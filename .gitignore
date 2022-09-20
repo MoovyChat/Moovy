@@ -3,3 +3,10 @@ server/dist
 server/.vscode
 server/.yarn.lock
 server/yarn-error.log
+
+extension/node_modules
+extension/dist
+extension/.vscode
+extension/dist.*
+extension/yarn.lock
+extension/yarn-error.log

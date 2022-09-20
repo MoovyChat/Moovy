@@ -1,0 +1,12 @@
+mutation insertComment($options: CommentInput!) {
+  insertComment(options: $options) {
+    cid
+    commentedUserUid
+    createdAt
+    likes
+    message
+    movieMid
+    platformId
+    updatedAt
+  }
+}
