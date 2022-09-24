@@ -3,11 +3,17 @@ import styled from 'styled-components';
 export const ChatBoxContainer = styled.div`
   position: relative;
   height: 100%;
+  width: 100%;
   font-size: 10px;
   color: inherit;
-  scrollbar-face-color: aliceblue;
-  &::-webkit-scrollbar {
-    visibility: hidden;
+  .comment-section {
+    overflow: auto;
+    height: 74%;
+    width: 100%;
+    scrollbar-face-color: aliceblue;
+    &::-webkit-scrollbar {
+      visibility: hidden;
+    }
   }
 `;
 
@@ -52,6 +58,11 @@ export const LoadMoreComments = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   p {
     border-radius: 30px;
     font-weight: 700;

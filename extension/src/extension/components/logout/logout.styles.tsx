@@ -1,6 +1,6 @@
-import styled from 'styled-components';
 import constants from '../../../constants';
 import { motion } from 'framer-motion';
+import styled from 'styled-components';
 
 interface prop {
   photoURL: string | null | undefined;
@@ -35,7 +35,14 @@ export const Pic = styled.div<prop>`
   position: relative;
   align-self: center;
   box-shadow: 0 0 5px white, inset 0 0 5px 2px black;
-  /* left: 40px;  */
+  transition: all 0.1s linear;
+  :hover,
+  :active {
+    cursor: pointer;
+  }
+  :active {
+    box-shadow: 0 0 5px 1px white, inset 0 0 5px 3px black;
+  }
 `;
 
 export const WelcomeInLogin = styled.div`

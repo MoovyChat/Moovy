@@ -34,6 +34,7 @@ type props = {
   type: string;
   subjectLike: (e: any) => void;
   responseFromReplyWindow: (comment: CommentInfo) => void;
+  className: any;
 };
 
 const CommentInterface: React.FC<props> = ({
@@ -45,6 +46,7 @@ const CommentInterface: React.FC<props> = ({
   responseFromReplyWindow,
   subjectLike,
   like,
+  className,
 }) => {
   // Redux: App Selector Hook.
   const allReplies = useAppSelector((state) => state.replies.replies);
@@ -146,7 +148,7 @@ const CommentInterface: React.FC<props> = ({
   };
 
   return (
-    <CommentCardContainer styles={globalStyles!}>
+    <CommentCardContainer styles={globalStyles!} className={className}>
       <div className='card-parent'>
         {commentedUser?.uid === userId && (
           <Delete
@@ -194,9 +196,9 @@ const CommentInterface: React.FC<props> = ({
                             {msg.message}
                           </SpoilerTag>
                         ) : (
-                          <>
+                          <React.Fragment key={index}>
                             {showToolTip && msg.type === textMapTypes.USER && (
-                              <UserToolTip className='user-tooltip' key={index}>
+                              <UserToolTip className='user-tooltip'>
                                 {msg.message}
                               </UserToolTip>
                             )}
@@ -218,7 +220,7 @@ const CommentInterface: React.FC<props> = ({
                               }}>
                               {msg.message + ' '}
                             </span>
-                          </>
+                          </React.Fragment>
                         )
                       )
                     ) : (

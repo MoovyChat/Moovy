@@ -38,7 +38,6 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
     pointer-events: none;
   }
   .chat-box-container {
-    overflow: auto;
     height: 100%;
     margin: 5px auto;
     margin-left: 5px;

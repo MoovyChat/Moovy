@@ -120,7 +120,6 @@ export class UserResolver {
     const movieStats = await MovieStats.findOne({
       where: { userUid: uid, movieMid: mid },
     });
-    console.log(movieStats);
     if (!movieStats) throw new Error('Stats not found');
     return { user, movie, movieStats };
   }

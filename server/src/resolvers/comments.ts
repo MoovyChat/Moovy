@@ -9,6 +9,8 @@ import {
   Resolver,
   PubSub,
   PubSubEngine,
+  Subscription,
+  Root,
 } from 'type-graphql';
 
 import { Comment } from '../entities/Comment';
@@ -55,7 +57,6 @@ export class CommentResolver {
       )
       .where('comment.cid = :cid', { cid })
       .getOne();
-    console.log(user);
     return user;
   }
 
@@ -90,5 +91,14 @@ export class CommentResolver {
       throw new Error(err);
     }
     return comment;
+  }
+
+  // Whenever user comments, this subscriber gets called.
+  @Subscription(() => Int, { topics: 'COMMENT_COUNT_UPDATE' })
+  async movieCommentsUpdate(@Root() mid: string): Promise<number> {
+    const commentsCount = await Comment.count({
+      where: { movieMid: mid },
+    });
+    return commentsCount;
   }
 }

@@ -33,19 +33,20 @@ interface props {
   comment: CommentInfo;
   responseFromReplyWindow: (comment: any) => void;
   type: string;
+  className: any;
 }
 
 const CommentCard: React.FC<props> = ({
   comment,
   responseFromReplyWindow,
   type,
+  className,
 }) => {
   const { cid, message, createdAt } = comment;
   const [commentedUser, _q] = useGetCommentedUserQuery({
     variables: { cid: cid! },
   });
   let allReplies = useAppSelector((state) => state.replies.replies);
-  const userId = useAppSelector((state) => state.user.uid!);
   const [time, setTime] = useState<string>('');
   const [like, setLike] = useState<boolean>(false);
   const addedReply = useAppSelector((state) => state.replies.added);
@@ -224,9 +225,9 @@ const CommentCard: React.FC<props> = ({
       }
     }
   };
-
   return (
     <CommentInterface
+      className={className}
       subjectLike={subjectLike}
       type={type}
       commentedUser={loadedCommentedUser!}

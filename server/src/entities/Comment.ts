@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
+import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
@@ -44,6 +45,9 @@ export class Comment extends BaseEntity {
 
   @OneToMany(() => Reply, (reply) => reply.parentComment)
   replies: Reply[];
+
+  // @OneToMany(() => CommentStats, (stats) => stats.comment)
+  // commentStats: CommentStats[];
 
   @ManyToOne(() => User, (user) => user.comments)
   commentedUser: User;

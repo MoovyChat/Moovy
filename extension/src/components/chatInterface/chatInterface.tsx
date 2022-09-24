@@ -218,12 +218,10 @@ const ChatInterface: React.FC<props> = ({
                 setReplyClickResponse={setReplyClickResponse}
               />
             </TextAreaContainer>
-            <div className='chat-box-container'>
-              <ChatBox
-                responseFromReplyWindow={responseFromReplyWindow}
-                type='comment'
-              />
-            </div>
+            <ChatBox
+              responseFromReplyWindow={responseFromReplyWindow}
+              type='comment'
+            />
             {viewStyles ? (
               <SettingsScreen className='settings-screen'>
                 <VideoStyles setViewStyles={setViewStyles} />

@@ -1,7 +1,9 @@
 import {
   Provider,
   createClient,
+  dedupExchange,
   defaultExchanges,
+  fetchExchange,
   subscriptionExchange,
 } from 'urql';
 import { Provider as ReduxProvider, batch } from 'react-redux';
@@ -9,31 +11,22 @@ import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
-import {
-  sliceAddMovieName,
-  sliceSetCommentsLoadedCount,
-  sliceSetFetchingComments,
-  sliceSetLastCommentTimeStamp,
-  sliceSetTotalCommentsOfTheMovie,
-} from '../../redux/slices/movie/movieSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect, useState } from 'react';
-import {
-  useGetCommentsOfTheMovieQuery,
-  useUpdateMovieTitleMutation,
-} from '../../generated/graphql';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
-import { colorLog } from '../../Utils/utilities';
+import _ from 'lodash';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';
 import { getStoredCheckedStatus } from '../../Utils/storage';
-import { sliceAddAllComments } from '../../redux/slices/comment/commentSlice';
+import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
+import { useIsMount } from '../hooks/useIsMount';
+import { useUpdateMovieTitleMutation } from '../../generated/graphql';
 
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
@@ -52,6 +45,7 @@ const Loader = (chatElement: HTMLDivElement, video_id: string) => {
         }),
       }),
     ],
+    requestPolicy: 'cache-and-network',
   });
   if (playerElement !== null) {
     playerElement.appendChild(chatElement);
@@ -89,32 +83,18 @@ const CommentButton = () => {
   const chatWindowSize = useAppSelector(
     (state) => state.settings.chatWindowSize
   );
-  const cursor = useAppSelector(
-    (state) => state.movie.lastCommentLoadedTimeStamp
-  );
-  const loadMore = useAppSelector((state) => state.movie.loadMore);
+  const currentPage = useAppSelector((state) => state.movie.currentPage);
+  const lastPage = useAppSelector((state) => state.movie.lastPage);
+
   // GraphQL: updateMovie and movieComments hooks.
   const [updateMovieStatus, updateMovieTitle] = useUpdateMovieTitleMutation();
-  const [commentStatus, refetch] = useGetCommentsOfTheMovieQuery({
-    variables: {
-      limit: 25,
-      cursor: cursor,
-      mid: movieId,
-      pid: '1',
-    },
-    pause: true,
-  });
-
-  // React: useState React hook.
-  // isVisible is used to toggle chat icon visibility.
-  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    refetch();
-  }, [loadMore]);
+  // React: useState React hook.
+  // isVisible is used to toggle chat icon visibility.
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   useEffect(() => {
     // Listen for the activation of comment icon when user is logged in for the
@@ -136,48 +116,13 @@ const CommentButton = () => {
   }, [setIsVisible]);
 
   useEffect(() => {
-    // Get comments from database and set it to redux.
-    const { data, fetching, error } = commentStatus;
-    if (error) colorLog(error);
-    dispatch(sliceSetFetchingComments(fetching));
-    if (!fetching && data) {
-      const commentsFromData = data?.getCommentsOfTheMovie?.comments;
-      const totalCommentCount = data?.getCommentsOfTheMovie?.totalCommentCount;
-      if (data?.getCommentsOfTheMovie?.movie.mid !== movieId) {
-        colorLog('Movie ids do not match.');
-      }
-      if (commentsFromData!.length === 0) colorLog('No comments found');
-      else {
-        const lastCommentTimeStamp: string =
-          commentsFromData &&
-          commentsFromData[commentsFromData!.length - 1].createdAt!;
-        batch(() => {
-          // Redux: Add total comment count of the movie.
-          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
-          // Redux: Add last comment time stamp.
-          dispatch(sliceSetLastCommentTimeStamp(lastCommentTimeStamp));
-          // Redux: Add the initial 25 comments of the movie.
-          dispatch(sliceAddAllComments(commentsFromData));
-          // Redux: Add total loaded comments.
-          dispatch(
-            sliceSetCommentsLoadedCount(
-              commentsFromData ? commentsFromData!.length : 0
-            )
-          );
-        });
-      }
-    }
-    return () => {};
-  }, [movieId, dispatch, commentStatus]);
-
-  useEffect(() => {
     // Adding the Interval to grab the video title from DOM
     let interval = setInterval(() => {
       let title = getVideoTitleFromNetflixWatch();
       if (title) {
         // Update movie name in the database only if the name is not available.
         if (!movieName && !updateMovieStatus.fetching) {
-          updateMovieTitle({ mid: movieId, name: title }).then((res) => {
+          updateMovieTitle({ mid: movieId, name: title }).then((res: any) => {
             dispatch(sliceAddMovieName({ movieId, title }));
             clearInterval(interval);
           });

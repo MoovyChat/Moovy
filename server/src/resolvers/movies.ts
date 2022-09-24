@@ -17,6 +17,8 @@ import {
 import { Comment } from '../entities/Comment';
 import { Movie } from '../entities/Movie';
 import { User } from '../entities/User';
+import { LessThan, MoreThan } from 'typeorm';
+import { ifError } from 'assert';
 
 @InputType()
 class MovieInput {
@@ -40,6 +42,10 @@ class PaginatedMovieComments {
   totalCommentCount: number;
   @Field(() => [Comment])
   comments: Comment[];
+  @Field(() => Int)
+  lastPage: number;
+  @Field(() => Int)
+  pastLoadedCount: number;
 }
 
 @ObjectType()
@@ -52,6 +58,15 @@ export class LikesObject {
   likesCount: number;
 }
 
+@ObjectType()
+export class LikesAndComment {
+  @Field(() => Int)
+  likesCount: number;
+
+  @Field(() => Int)
+  commentsCount: number;
+}
+
 @Resolver()
 export class MovieResolver {
   @Query(() => [Movie])
@@ -59,42 +74,52 @@ export class MovieResolver {
     return Movie.find();
   }
 
-  @Query(() => PaginatedMovieComments, { nullable: true })
+  @Mutation(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
     @Arg('mid') mid: string,
-    @Arg('pid') pid: string,
     @Arg('limit', () => Int) limit: number,
-    @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+    @Arg('time', () => String, { nullable: true }) time: string | null,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
-    const commentsLimit = Math.min(limit, 25);
-    const commentsLimitPlusOne = limit + 1;
-    const movie = await Movie.findOne({ where: { mid } });
-    if (!movie) throw new Error('Movie not found');
-    const queryBuilder = await conn
+    const totalCommentCount = await Comment.count({ where: { movieMid: mid } });
+    const query = await conn
       .getRepository(Comment)
-      .createQueryBuilder('c')
-      .innerJoinAndSelect('c.movie', 'movie', 'movie.mid = c.movieMid')
-      .innerJoinAndSelect(
-        'c.platform',
-        'platform',
-        'platform.id = c.platformId'
-      )
-      .where('c.platformId=:pid', { pid })
-      .andWhere('c.movieMid = :mid', { mid })
-      .orderBy('c.createdAt', 'DESC');
-    const totalCommentCount = await queryBuilder.getCount();
-    if (cursor) {
-      queryBuilder.andWhere('c.createdAt < :cursor', {
-        cursor: new Date(parseInt(cursor)),
+      .createQueryBuilder('comment')
+      .where('comment.movieMid = :mid', { mid });
+    if (time && time !== '') {
+      query.andWhere('comment.createdAt < :time', {
+        time: new Date(parseInt(time)),
       });
     }
-    const comments = await queryBuilder.take(commentsLimitPlusOne).getMany();
+    const pastCount = await query.getCount();
+    const comments = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .orderBy('comment.createdAt', 'ASC')
+      .getMany();
+    // const commentsLimit = Math.min(limit, 25);
+    // const commentsLimitPlusOne = limit + 1;
+    const movie = await Movie.findOne({ where: { mid } });
+    if (!movie) throw new Error('Movie not found');
     return {
       movie,
-      comments: comments.slice(0, commentsLimit),
+      comments: comments.slice(0, limit),
       totalCommentCount,
-      hasMoreComments: comments.length === commentsLimitPlusOne,
+      pastLoadedCount: pastCount,
+      hasMoreComments: comments.length === totalCommentCount + 1,
+      lastPage: Math.ceil(totalCommentCount / limit),
     };
+  }
+
+  @Mutation(() => [Comment])
+  async fetchNewComments(
+    @Arg('mid') mid: string,
+    @Arg('time') time: string
+  ): Promise<Comment[]> {
+    const comments = await Comment.find({
+      where: { movieMid: mid, createdAt: MoreThan(new Date(parseInt(time))) },
+    });
+    return comments;
   }
 
   @Query(() => Movie)
@@ -102,11 +127,29 @@ export class MovieResolver {
     return Movie.findOne({ where: { mid } });
   }
 
-  @Query(() => LikesObject, { nullable: true })
-  async getMovieLikes(
+  @Query(() => LikesAndComment, { nullable: true })
+  async getMovieLikesAndCommentsCount(
     @Arg('mid') mid: string,
     @PubSub() pubSub: PubSubEngine
-  ): Promise<LikesObject> {
+  ): Promise<LikesAndComment> {
+    const likesCount = await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+        mid,
+      })
+      .where('stats.like = :like', { like: true })
+      .getCount();
+    const commentsCount = await Comment.count({
+      where: { movieMid: mid },
+    });
+    const payload: LikesAndComment = { likesCount, commentsCount };
+    await pubSub.publish('LIKES_AND_COMMENT', payload);
+    return payload;
+  }
+
+  @Query(() => LikesObject, { nullable: true })
+  async getMovieLikes(@Arg('mid') mid: string): Promise<LikesObject> {
     const userLikes = await conn
       .getRepository(User)
       .createQueryBuilder('user')
@@ -120,8 +163,6 @@ export class MovieResolver {
       likes: userLikes,
       likesCount: userLikes.length,
     };
-    const payload: LikesObject = result;
-    await pubSub.publish('LIKES_UPDATE', payload);
     return result;
   }
 
@@ -170,12 +211,10 @@ export class MovieResolver {
     }
   }
 
-  @Subscription(() => Int, { topics: 'COMMENT_COUNT_UPDATE' })
-  async movieCommentsUpdate(@Root() mid: string): Promise<number> {
-    const [comments, commentsCount] = await Comment.findAndCount({
-      where: { movieMid: mid },
-    });
-    console.log(comments, commentsCount);
-    return commentsCount;
+  @Subscription(() => LikesAndComment, { topics: 'LIKES_AND_COMMENT' })
+  async likesAndCommentCount(
+    @Root() root: LikesAndComment
+  ): Promise<LikesAndComment> {
+    return root;
   }
 }

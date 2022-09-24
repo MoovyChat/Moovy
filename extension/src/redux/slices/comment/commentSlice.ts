@@ -27,14 +27,11 @@ const CommentSlice = createSlice({
       };
     },
     sliceAddAllComments: (state, action) => {
-      // const merged = _.merge(
-      //   _.keyBy(state.comments, 'cid'),
-      //   _.keyBy(action.payload, 'cid')
-      // );
-      // const values = _.values(merged);
       return { ...state, comments: _.concat(state.comments, action.payload) };
     },
-
+    sliceAddCommentsAtFirst: (state, action) => {
+      return { ...state, comments: _.concat(action.payload, state.comments) };
+    },
     sliceUpdateRepliesInComments: (state, action) => {
       const { parent, rid } = action.payload;
       state.comments = state.comments.map((comment) => {
@@ -100,6 +97,7 @@ const CommentSlice = createSlice({
 
 export const {
   sliceAddComment,
+  sliceAddCommentsAtFirst,
   sliceDeleteComment,
   sliceAddAllComments,
   sliceAddToLikes,

@@ -1,0 +1,6 @@
+query getMovieLikesAndCommentsCount($mid: String!) {
+  getMovieLikesAndCommentsCount(mid: $mid) {
+    likesCount
+    commentsCount
+  }
+}
