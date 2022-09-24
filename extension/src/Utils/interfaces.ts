@@ -30,12 +30,16 @@ export interface Movie {
   totalCommentsCountOfMovie: number;
   commentsLoadedCount: number;
   totalRepliesCountOfMovie: number;
-  lastCommentLoadedTimeStamp: string;
+  newlyLoadedCommentTimeStamp?: string;
+  lastPage?: number;
+  currentPage?: number;
   likesCount: number;
   createdAt?: any;
   updatedAt?: any;
-  loadMore: number;
   fetchingComments?: boolean;
+  initialLoadedTimeStamp?: string;
+  pastLoadedCount?: number;
+  loadNew?: number;
 }
 
 export interface CommentInfo {

@@ -9,13 +9,21 @@ import {
   Root,
   PubSubEngine,
   Subscription,
+  Int,
 } from 'type-graphql';
 
 import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { conn } from '../dataSource';
 import { User } from '../entities/User';
-import { LikesObject } from './movies';
+
+@ObjectType()
+class LikesAndFavObj {
+  @Field(() => Int, { defaultValue: 0 })
+  userLikesCount: number;
+  @Field(() => Int, { defaultValue: 0 })
+  userFavoriteCount: number;
+}
 
 @InputType()
 class UserMovieOptions {
@@ -79,16 +87,24 @@ export class MovieStatsResolver {
     return detail;
   }
 
-  @Subscription(() => LikesObject, { topics: 'STATUS_UPDATE' })
-  async movieStatusUpdate(@Root() root: string): Promise<LikesObject> {
-    const userLikes = await conn
+  @Subscription(() => LikesAndFavObj, { topics: 'STATUS_UPDATE' })
+  async movieStatusUpdate(@Root() root: string): Promise<LikesAndFavObj> {
+    const userLikesCount = await conn
       .getRepository(User)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
         mid: root,
       })
       .where('stats.like = :like', { like: true })
-      .getMany();
-    return { movieId: root, likes: userLikes, likesCount: userLikes.length };
+      .getCount();
+    const userFavoriteCount = await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+        mid: root,
+      })
+      .where('stats.favorite = :fav', { fav: true })
+      .getCount();
+    return { userLikesCount, userFavoriteCount };
   }
 }

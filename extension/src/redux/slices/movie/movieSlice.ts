@@ -12,9 +12,12 @@ export const movieState: Movie = {
   commentsLoadedCount: 0,
   likesCount: 0,
   totalRepliesCountOfMovie: 0,
-  lastCommentLoadedTimeStamp: '',
-  loadMore: 0,
   fetchingComments: false,
+  lastPage: 0,
+  currentPage: 1,
+  pastLoadedCount: 0,
+  newlyLoadedCommentTimeStamp: '', // For loading new comments...'
+  loadNew: 0,
 };
 
 const MovieSlice = createSlice({
@@ -54,14 +57,29 @@ const MovieSlice = createSlice({
     sliceSetTotalRepliesOfTheMovie: (state, action) => {
       return { ...state, totalCommentsCountOfMovie: action.payload };
     },
-    sliceSetLastCommentTimeStamp: (state, action) => {
-      return { ...state, lastCommentLoadedTimeStamp: action.payload };
+    sliceSetLastPage: (state, action) => {
+      return { ...state, lastPage: action.payload };
     },
-    sliceLoadMore: (state, action) => {
-      return { ...state, loadMore: state.loadMore + 1 };
+    sliceSetCurrentPage: (state, action) => {
+      return { ...state, currentPage: action.payload };
+    },
+    sliceSetNewlyLoadedTimeStamp: (state, action) => {
+      return { ...state, newlyLoadedCommentTimeStamp: action.payload };
     },
     sliceSetFetchingComments: (state, action) => {
       return { ...state, fetchingComments: action.payload };
+    },
+    sliceSetPastLoadedCount: (state, action) => {
+      return {
+        ...state,
+        pastLoadedCount: state.pastLoadedCount + action.payload,
+      };
+    },
+    sliceSetLoadNew: (state, action) => {
+      return { ...state, loadNew: state.loadNew! + 1 };
+    },
+    sliceResetMovie: () => {
+      return movieState;
     },
     // sliceAddTimeMessages: (state, action) => {
     //   let initialStateTimeChats = state.timeChats!;
@@ -84,23 +102,23 @@ const MovieSlice = createSlice({
     //     return { ...state, timeChats: newStateTimeChats };
     //   }
     // },
-    sliceResetMovie: () => {
-      return movieState;
-    },
   },
 });
 
 export const {
   sliceAddMovie,
-  sliceLoadMore,
   sliceAddMovieId,
   sliceSetFetchingComments,
+  sliceSetPastLoadedCount,
   sliceAddMovieName,
+  sliceSetLoadNew,
   sliceSetTotalCommentsOfTheMovie,
   sliceSetCommentsLoadedCount,
   sliceSetLikesCount,
   sliceSetTotalRepliesOfTheMovie,
-  sliceSetLastCommentTimeStamp,
+  sliceSetNewlyLoadedTimeStamp,
+  sliceSetLastPage,
+  sliceSetCurrentPage,
   sliceResetMovie,
 } = MovieSlice.actions;
 export default MovieSlice.reducer;

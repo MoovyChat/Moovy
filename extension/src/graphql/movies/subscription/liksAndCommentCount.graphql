@@ -1,0 +1,6 @@
+subscription movieStatusSubscribe {
+  movieStatusUpdate {
+    userFavoriteCount
+    userLikesCount
+  }
+}

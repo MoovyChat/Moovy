@@ -7,7 +7,7 @@ import { textMapTypes } from '../constants';
 // Calculates the time between current time and the user's comment
 export const getTimeFrame = (postTime: string) => {
   let currentTime = Date.now();
-  let diff = currentTime - Date.parse(postTime);
+  let diff = currentTime - parseInt(postTime);
 
   // Conversion to minutes/hour/day/year
   const minute = 1000 * 60;
@@ -18,15 +18,15 @@ export const getTimeFrame = (postTime: string) => {
   const noOfYears = Math.round(diff / year);
   const noOfHours = Math.round(diff / hour);
   const noOfDays = Math.round(diff / day);
-  const noOfminutes = Math.round(diff / minute);
+  const noOfMinutes = Math.round(diff / minute);
 
   let finalString = '';
   if (noOfYears === 0) {
     if (noOfDays === 0) {
       if (noOfHours === 0) {
-        if (noOfminutes === 0) {
+        if (noOfMinutes === 0) {
           finalString = 'Just now';
-        } else finalString = `${noOfminutes}m`;
+        } else finalString = `${noOfMinutes}m`;
       } else {
         finalString = `${noOfHours}h`;
       }

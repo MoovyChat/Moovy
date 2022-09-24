@@ -14,6 +14,7 @@ const ReplyBox: React.FC<props> = ({
     <div>
       {userComments.map((reply, index) => (
         <CommentCard
+          className='reply-card'
           key={index}
           type='reply'
           responseFromReplyWindow={responseFromReplyWindow}

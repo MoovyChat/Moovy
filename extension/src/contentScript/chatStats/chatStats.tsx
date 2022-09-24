@@ -4,7 +4,6 @@ import React, { Dispatch, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieLikesQuery,
-  useGetUserMovieStatusQuery,
   useMovieCommentsUpdateSubscription,
   useMovieStatusSubscribeSubscription,
   useUpdateUserMovieStatusMutation,
@@ -58,7 +57,6 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
       options: {},
     }).then((response) => {
       const { data, error } = response;
-      colorLog('chatStats: ', data);
       if (error) colorLog(error);
       const { like, favorite } = data?.updateUserMovieStats!;
       if (like) setLike(like);
@@ -78,12 +76,12 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   // Checks the likes of the movie to determine if the movie is liked or not.
   useEffect(() => {
     if (!movieLikesSub.fetching && movieLikesSub.data) {
-      const likesCount = movieLikesSub.data.movieStatusUpdate.likesCount;
-      const likes = movieLikesSub.data.movieStatusUpdate.likes;
-      setLikesCount(likesCount);
+      const { userLikesCount } = movieLikesSub.data.movieStatusUpdate;
+      setLikesCount(userLikesCount!);
     }
   }, [movieLikesSub]);
 
+  // TODO: Discuss with team about subscriptions.
   // GraphQL Subscription: Get real time comment count.
   useEffect(() => {
     const { data, error, fetching } = commentsUpdateStatus;
