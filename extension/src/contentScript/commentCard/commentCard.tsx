@@ -225,7 +225,6 @@ const CommentCard: React.FC<props> = ({
       }
     }
   };
-
   return (
     <CommentInterface
       className={className}
