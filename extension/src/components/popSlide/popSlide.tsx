@@ -1,5 +1,5 @@
 import { LikesUserView, PopSlideParent } from './popSlide.styles';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { IoMdCloseCircle } from 'react-icons/io';
@@ -8,6 +8,7 @@ import { sliceSetPopSlide } from '../../redux/slices/settings/settingsSlice';
 
 const PopSlide = () => {
   const dispatch = useAppDispatch();
+  const [inputs, setInputs] = useState<any>({});
   const PopSlideContentType = useAppSelector(
     (state) => state.settings.popSlideContentType
   );
@@ -18,18 +19,23 @@ const PopSlide = () => {
     e.stopPropagation();
     dispatch(sliceSetPopSlide(false));
   };
+
+  useEffect(() => {
+    let ex = {
+      title: PopSlideContentType === 'likes' ? 'Likes' : 'Title',
+      subTitle:
+        PopSlideContentType === 'likes'
+          ? `${popSlideContentLikes && popSlideContentLikes.length} likes`
+          : 'SubTitle',
+    };
+    setInputs(ex);
+  }, []);
   return (
     <PopSlideParent>
       <div className='header'>
         <div className='section'>
-          <div className='title'>
-            {PopSlideContentType === 'likes' ? 'Likes' : 'Title'}
-          </div>
-          <div className='sub'>
-            {PopSlideContentType === 'likes'
-              ? `${popSlideContentLikes && popSlideContentLikes.length} likes`
-              : 'SubTitle'}
-          </div>
+          <div className='title'>{inputs.title}</div>
+          <div className='sub'>{inputs.subTitle}</div>
         </div>
         <div className='close' onClick={closePopSlide}>
           <IoMdCloseCircle className='close-icon' size={20} color='white' />
