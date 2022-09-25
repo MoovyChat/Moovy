@@ -21,8 +21,10 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { AnyAction } from 'redux';
 import ChatArea from '../../components/chatArea/chatArea';
 import { Pic } from '../../extension/components/logout/logout.styles';
+import { batch } from 'react-redux';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
+import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { useInsertCommentMutation } from '../../generated/graphql';
 
 const setSpoiler = (text: string, setText: Dispatch<any>) => {
@@ -128,7 +130,10 @@ const MessageBox: React.FC<props> = ({
           const data = response.data;
           const insertedComment = data?.insertComment;
           // Adds the new comment to redux store.
-          dispatch(sliceAddComment(insertedComment));
+          batch(() => {
+            dispatch(sliceAddComment(insertedComment));
+            dispatch(sliceSetPastLoadedCount(1));
+          });
         });
         setText('');
       }

@@ -11,6 +11,17 @@ export const bottomToTop = keyframes`
   }
 `;
 
+export const bottomToTop1 = keyframes`
+  0% {
+    opacity: 0;
+    height: 0%
+  }
+  100% {
+    opacity: 1;
+    height: 80%
+  }
+`;
+
 export const rightToLeft = keyframes`
   0% {
       opacity: 0;

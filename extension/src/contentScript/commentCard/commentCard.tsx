@@ -2,16 +2,11 @@ import { CommentInfo, User, textMap } from '../../Utils/interfaces';
 import React, {
   Dispatch,
   MouseEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import {
-  Unsubscribe,
-  arrayRemove,
-  arrayUnion,
-  increment,
-} from 'firebase/firestore';
 import {
   colorLog,
   getFormattedWordsArray,
@@ -22,12 +17,18 @@ import {
   sliceRemoveFromLikes,
 } from '../../redux/slices/comment/commentSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useCommentLikesSubscription,
+  useGetCommentLikesQuery,
+  useGetCommentedUserQuery,
+  useGetIsUserLikedCommentQuery,
+  useSetCommentLikeMutation,
+} from '../../generated/graphql';
 
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
-import { useGetCommentedUserQuery } from '../../generated/graphql';
 
 interface props {
   comment: CommentInfo;
@@ -46,51 +47,69 @@ const CommentCard: React.FC<props> = ({
   const [commentedUser, _q] = useGetCommentedUserQuery({
     variables: { cid: cid! },
   });
-  let allReplies = useAppSelector((state) => state.replies.replies);
+  const uid = useAppSelector((state) => state.user.uid);
+  const mid = useAppSelector((state) => state.movie.mid);
   const [time, setTime] = useState<string>('');
+  const [likedUsers, setLikedUser] = useState<any>([]);
   const [like, setLike] = useState<boolean>(false);
-  const addedReply = useAppSelector((state) => state.replies.added);
-  const modifiedReply = useAppSelector((state) => state.replies.modifed);
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
-  const loggedUserId = useAppSelector((state) => state.user.uid);
+  const [likesCount, setLikesCount] = useState<number>(0);
   const dispatch = useAppDispatch();
-  const ref = useRef<any>();
+  const [_likeRes, setCommentLike] = useSetCommentLikeMutation();
+  const [userLikeInfo, _isUserLiked] = useGetIsUserLikedCommentQuery({
+    variables: {
+      cid: cid!,
+      uid,
+    },
+  });
 
-  //TODO: Get only the logged in user replies initially.
-  //allReplies array will have only the replies made by the logged in user.
+  const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
+    variables: {
+      cid: cid!,
+    },
+  });
+
+  const [commentLikesSub] = useCommentLikesSubscription({
+    variables: {
+      cid: cid!,
+    },
+  });
+
   useEffect(() => {
-    let unSub: Unsubscribe;
-    if (comment.cid) {
-      // getUserRepliesForComment(
-      //   comment,
-      //   userId,
-      //   dispatch,
-      //   allReplies,
-      //   true
-      // ).then((res) => {
-      //   //Update replies count to redux
-      //   unSub = res;
-      // });
+    const { data, fetching, error } = commentLikeCountQuery;
+    if (error) colorLog(error);
+    if (!fetching && data) {
+      const _count = data.getCommentLikes?.likesCount!;
+      const _users = data.getCommentLikes?.likes;
+      dispatch(sliceAddToLikes({ _users, cid }));
+      setLikedUser(_users);
+      setLikesCount(_count);
     }
-    return () => {
-      if (unSub) unSub();
-    };
-  }, [addedReply, modifiedReply]);
-
-  ref.current = () => {
-    setLike(false);
-    comment.likes?.forEach((like: string) => {
-      console.log(comment.message, like, loggedUserId, comment.likes);
-      if (like === loggedUserId) {
-        setLike(true);
-      }
-    });
-  };
+  }, [commentLikeCountQuery.fetching]);
 
   useEffect(() => {
-    ref.current();
-  }, [comment.likes?.length]);
+    const { fetching, error, data } = userLikeInfo;
+    if (error) colorLog(error);
+    if (!fetching && data) {
+      const isLike = data.getIsUserLikedComment;
+      setLike(isLike);
+    }
+  }, [userLikeInfo.fetching]);
+
+  //Set Comment likes count
+  useEffect(() => {
+    const { data, fetching, error } = commentLikesSub;
+    if (error) colorLog(error);
+    if (!fetching && data) {
+      const commentLikesCount = data.commentLikesUpdate?.likesCount;
+      setLikesCount(commentLikesCount!);
+      const commentLikes = data.commentLikesUpdate?.likes;
+      colorLog('sub', commentLikes);
+      dispatch(sliceAddToLikes({ commentLikes, cid }));
+      setLikedUser(commentLikes);
+    }
+  }, [commentLikesSub]);
 
   useEffect(() => {
     let interval: any;
@@ -176,53 +195,19 @@ const CommentCard: React.FC<props> = ({
   // Update likes
   const subjectLike = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    setLike(!like);
-    if (!like) {
-      if (type === 'comment') {
-        // TODO: Update the comment in database.
-        // updateComment(
-        //   comment?.cid!,
-        //   { likes: arrayUnion(userId), likesCount: increment(1) },
-        //   comment?.movieId!
-        // ).then(() => {
-        //   // Update the comment in redux
-        //   dispatch(
-        //     sliceAddToLikes({
-        //       commentId: comment.cid,
-        //       userId: userId,
-        //     })
-        //   );
-        // });
-        // Update the user's profile with the comments.
-      } else if (type === 'reply') {
-        // TODO: Update the reply in database.
-        // updateReply(comment?.rid!, comment?.parentComment!, comment?.movieId!, {
-        //   likes: arrayUnion(userId),
-        //   likesCount: increment(1),
-        // });
-      }
-    } else {
-      // TODO: Remove comment from redux and firebase.
-      if (type === 'comment') {
-        // updateComment(
-        //   comment?.cid!,
-        //   { likes: arrayRemove(userId), likesCount: increment(-1) },
-        //   comment?.movieId!
-        // ).then(() => {
-        //   dispatch(
-        //     sliceRemoveFromLikes({
-        //       commentId: comment.cid,
-        //       userId: userId,
-        //     })
-        //   );
-        // });
-        // TODO: Remove the comment from user's profile..
-      } else if (type === 'reply') {
-        // updateReply(comment?.rid!, comment?.parentComment!, comment?.movieId!, {
-        //   likes: arrayRemove(userId),
-        //   likesCount: increment(-1),
-        // });
-      }
+    if (type === 'comment') {
+      setCommentLike({
+        cid: cid!,
+        uid,
+        mid,
+        like: !like,
+      }).then((res) => {
+        const { error, data } = res;
+        if (error) colorLog(error);
+        setLike(data?.getCommentStats?.like!);
+      });
+    } else if (type === 'reply') {
+      // TODO: Update the reply in database.
     }
   };
   return (
@@ -233,8 +218,10 @@ const CommentCard: React.FC<props> = ({
       commentedUser={loadedCommentedUser!}
       messageArray={mArray}
       time={time}
+      likedUsers={likedUsers}
       commentOrReply={comment}
       like={like}
+      likesCount={likesCount}
       responseFromReplyWindow={responseFromReplyWindow}
     />
   );

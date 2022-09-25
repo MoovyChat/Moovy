@@ -1,4 +1,5 @@
 import { CommentResolver } from './resolvers/comments';
+import { CommentStats } from './entities/CommentStat';
 import { HelloResolver } from './resolvers/hello';
 import { MovieResolver } from './resolvers/movies';
 import { MovieStatsResolver } from './resolvers/movieStats';
@@ -12,4 +13,5 @@ export const resolvers = {
   MovieResolver,
   PlatformResolver,
   MovieStatsResolver,
+  CommentStats,
 };

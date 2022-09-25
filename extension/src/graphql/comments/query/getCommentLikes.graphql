@@ -1,0 +1,11 @@
+query getCommentLikes($cid: String!) {
+  getCommentLikes(cid: $cid) {
+    likes {
+      uid
+      name
+      nickname
+      photoUrl
+    }
+    likesCount
+  }
+}

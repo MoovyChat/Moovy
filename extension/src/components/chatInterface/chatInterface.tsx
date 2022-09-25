@@ -15,6 +15,7 @@ import ChatStats from '../../contentScript/chatStats/chatStats';
 import EditUserName from '../editUserName/editUserName';
 import Loading from '../loading/loading';
 import MessageBox from '../../contentScript/messageBox/messageBox';
+import PopSlide from '../popSlide/popSlide';
 import VideoStyles from '../../contentScript/videoStyles/videoStyles';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
@@ -49,7 +50,9 @@ const ChatInterface: React.FC<props> = ({
     (state) => state.loading.isEditNameBoxOpen
   );
   const movie = useAppSelector((state) => state.movie);
-
+  const isPopSlideOpen = useAppSelector(
+    (state) => state.settings.isPopSlideOpen
+  );
   // Redux: App dispatch.
   const dispatch = useAppDispatch();
 
@@ -233,6 +236,7 @@ const ChatInterface: React.FC<props> = ({
         ) : (
           <Loading />
         )}
+        {isPopSlideOpen && <PopSlide />}
       </ChatWindowParent>
     </React.Fragment>
   );

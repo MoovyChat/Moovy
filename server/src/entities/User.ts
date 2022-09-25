@@ -10,6 +10,7 @@ import {
 import { Field, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
+import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
 import { Reply } from './Reply';
@@ -43,6 +44,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => MovieStats, (stats) => stats.user)
   movieStats: MovieStats[];
+
+  @OneToMany(() => CommentStats, (stats) => stats.user)
+  commentStats: CommentStats[];
 
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];

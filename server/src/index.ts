@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { ApolloServer } from 'apollo-server-express';
 import { CommentResolver } from './resolvers/comments';
+import { CommentStatsResolver } from './resolvers/commentStats';
 import { HelloResolver } from './resolvers/hello';
 import { MovieResolver } from './resolvers/movies';
 import { MovieStatsResolver } from './resolvers/movieStats';
@@ -44,6 +45,7 @@ const main = async () => {
       MovieResolver,
       PlatformResolver,
       MovieStatsResolver,
+      CommentStatsResolver,
     ],
     pubSub: getConfiguredRedisPubSub,
     validate: false,

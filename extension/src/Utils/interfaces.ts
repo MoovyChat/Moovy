@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 export interface User {
   uid: string;
   name: string;
@@ -81,6 +83,16 @@ export interface videoFilterSettings {
   saturate?: string;
   hue?: string;
   none?: string;
+}
+
+export interface SettingsInterface {
+  chatWindowSize: string;
+  videoParentSize: string;
+  videoSize: string;
+  openChatWindow: boolean;
+  smoothWidth: number;
+  isPopSlideOpen: boolean;
+  popSlideContent: () => JSX.Element;
 }
 
 export interface videoBorderSettings {

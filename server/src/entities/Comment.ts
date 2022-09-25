@@ -46,8 +46,8 @@ export class Comment extends BaseEntity {
   @OneToMany(() => Reply, (reply) => reply.parentComment)
   replies: Reply[];
 
-  // @OneToMany(() => CommentStats, (stats) => stats.comment)
-  // commentStats: CommentStats[];
+  @OneToMany(() => CommentStats, (stats) => stats.comment)
+  commentStats: CommentStats[];
 
   @ManyToOne(() => User, (user) => user.comments)
   commentedUser: User;

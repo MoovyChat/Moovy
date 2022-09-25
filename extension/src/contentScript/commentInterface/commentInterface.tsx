@@ -19,9 +19,17 @@ import {
   textMap,
 } from '../../Utils/interfaces';
 import React, { useEffect, useState } from 'react';
+import {
+  slicePopSlideContentType,
+  sliceSetPopSlide,
+  sliceSetPopSlideLikes,
+} from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { MdDeleteForever } from 'react-icons/md';
+import { Pic } from '../../extension/components/logout/logout.styles';
+import { batch } from 'react-redux';
+import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { textMapTypes } from '../../constants';
 
@@ -31,7 +39,9 @@ type props = {
   time: string;
   commentOrReply: CommentInfo;
   like: boolean;
+  likesCount: number;
   type: string;
+  likedUsers: any[];
   subjectLike: (e: any) => void;
   responseFromReplyWindow: (comment: CommentInfo) => void;
   className: any;
@@ -42,10 +52,12 @@ const CommentInterface: React.FC<props> = ({
   messageArray,
   time,
   type,
+  likesCount,
   commentOrReply,
   responseFromReplyWindow,
   subjectLike,
   like,
+  likedUsers,
   className,
 }) => {
   // Redux: App Selector Hook.
@@ -105,7 +117,14 @@ const CommentInterface: React.FC<props> = ({
   };
 
   // TODO: Opens likes View window when the likes count is clicked on.
-  const likeWindowHandler: any = () => {};
+  const likeWindowHandler: any = () => {
+    colorLog(likedUsers);
+    batch(() => {
+      dispatch(sliceSetPopSlide(true));
+      dispatch(slicePopSlideContentType('likes'));
+      dispatch(sliceSetPopSlideLikes(likedUsers));
+    });
+  };
 
   // TODO: Delete comment or reply.
   const deleteCommentOrReply = () => {
@@ -242,7 +261,7 @@ const CommentInterface: React.FC<props> = ({
                       e.stopPropagation();
                       likeWindowHandler();
                     }}>
-                    {0} likes
+                    {likesCount} likes
                   </div>
                   <div
                     className='replies'

@@ -1,3 +1,4 @@
+import { SettingsInterface } from '../../../Utils/interfaces';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -7,6 +8,9 @@ export const settingsState = {
   videoSize: '70',
   openChatWindow: false,
   smoothWidth: 0,
+  isPopSlideOpen: false,
+  popSlideContentType: '',
+  popSlideLikes: [],
 };
 
 const SettingsSlice = createSlice({
@@ -28,6 +32,15 @@ const SettingsSlice = createSlice({
     sliceSetSmoothWidth: (state, action) => {
       return { ...state, smoothWidth: action.payload };
     },
+    sliceSetPopSlide: (state, action) => {
+      return { ...state, isPopSlideOpen: action.payload };
+    },
+    slicePopSlideContentType: (state, action) => {
+      return { ...state, popSlideContentType: action.payload };
+    },
+    sliceSetPopSlideLikes: (state, action) => {
+      return { ...state, popSlideLikes: action.payload };
+    },
     sliceResetSettings: () => {
       return settingsState;
     },
@@ -41,5 +54,8 @@ export const {
   sliceSetIsOpenChatWindow,
   sliceSetSmoothWidth,
   sliceResetSettings,
+  sliceSetPopSlide,
+  slicePopSlideContentType,
+  sliceSetPopSlideLikes,
 } = SettingsSlice.actions;
 export default SettingsSlice.reducer;

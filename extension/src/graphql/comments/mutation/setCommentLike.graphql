@@ -1,0 +1,13 @@
+mutation setCommentLike(
+  $like: Boolean!
+  $cid: String!
+  $uid: String!
+  $mid: String!
+) {
+  getCommentStats(like: $like, cid: $cid, uid: $uid, mid: $mid) {
+    id
+    like
+    movieMid
+    commentCid
+  }
+}

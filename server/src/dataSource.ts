@@ -1,4 +1,5 @@
 import { Comment } from './entities/Comment';
+import { CommentStats } from './entities/CommentStat';
 import { DataSource } from 'typeorm';
 import { Movie } from './entities/Movie';
 import { MovieStats } from './entities/MovieStats';
@@ -17,7 +18,7 @@ export const conn = new DataSource({
   password: '1234',
   logging: true,
   synchronize: true,
-  entities: [User, Comment, Movie, Reply, Platform, MovieStats],
+  entities: [User, Comment, Movie, Reply, Platform, MovieStats, CommentStats],
   subscribers: [userSubscriber, MovieStatsSubscriber],
   migrations: [],
 });

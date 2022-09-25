@@ -11,10 +11,12 @@ import {
   PubSubEngine,
   Subscription,
   Root,
+  ObjectType,
 } from 'type-graphql';
 
 import { Comment } from '../entities/Comment';
 import { User } from '../entities/User';
+import { CommentStats } from '../entities/CommentStat';
 
 @InputType()
 class CommentInput {
@@ -32,6 +34,14 @@ class CommentInput {
   platformId: number;
 }
 
+@ObjectType()
+class commentLikesObject {
+  @Field(() => [User])
+  likes: User[];
+  @Field(() => Int)
+  likesCount: number;
+}
+
 @Resolver()
 export class CommentResolver {
   @Query(() => [Comment])
@@ -42,6 +52,17 @@ export class CommentResolver {
   @Query(() => Comment)
   getComment(@Arg('cid') cid: string): Promise<Comment | null> {
     return Comment.findOne({ where: { cid } });
+  }
+
+  @Query(() => Boolean)
+  async getIsUserLikedComment(
+    @Arg('cid') cid: string,
+    @Arg('uid') uid: string
+  ) {
+    const commentStat = await CommentStats.findOne({
+      where: { commentCid: cid, userUid: uid },
+    });
+    return commentStat?.like;
   }
 
   @Query(() => User, { nullable: true })
@@ -58,6 +79,25 @@ export class CommentResolver {
       .where('comment.cid = :cid', { cid })
       .getOne();
     return user;
+  }
+
+  @Query(() => commentLikesObject, { defaultValue: 0 })
+  async getCommentLikes(@Arg('cid') cid: string): Promise<commentLikesObject> {
+    const likesCount = await CommentStats.count({
+      where: { commentCid: cid, like: true },
+    });
+    const users = await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoinAndSelect(
+        'user.commentStats',
+        'stats',
+        'stats.userUid = user.uid'
+      )
+      .where('stats.like = :like', { like: true })
+      .andWhere('stats.commentCid = :cid', { cid })
+      .getMany();
+    return { likes: users, likesCount };
   }
 
   @Mutation(() => Comment, { nullable: true })
@@ -100,5 +140,26 @@ export class CommentResolver {
       where: { movieMid: mid },
     });
     return commentsCount;
+  }
+
+  @Subscription(() => commentLikesObject, { topics: 'COMMENT_LIKES_SUB' })
+  async commentLikesUpdate(
+    @Arg('cid') cid: string
+  ): Promise<commentLikesObject> {
+    const likesCount = await CommentStats.count({
+      where: { commentCid: cid, like: true },
+    });
+    const users = await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoinAndSelect(
+        'user.commentStats',
+        'stats',
+        'stats.userUid = user.uid'
+      )
+      .where('stats.like = :like', { like: true })
+      .andWhere('stats.commentCid = :cid', { cid })
+      .getMany();
+    return { likes: users, likesCount };
   }
 }

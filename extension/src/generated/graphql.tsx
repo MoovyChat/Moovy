@@ -36,6 +36,17 @@ export type CommentInput = {
   platformId: Scalars['Int'];
 };
 
+export type CommentStats = {
+  __typename?: 'CommentStats';
+  commentCid: Scalars['String'];
+  createdAt: Scalars['String'];
+  id: Scalars['Int'];
+  like?: Maybe<Scalars['Boolean']>;
+  movieMid: Scalars['String'];
+  updatedAt: Scalars['String'];
+  userUid: Scalars['String'];
+};
+
 export type ErrorField = {
   __typename?: 'ErrorField';
   field: Scalars['String'];
@@ -103,6 +114,7 @@ export type Mutation = {
   createUser?: Maybe<User>;
   deleteUser: Scalars['Boolean'];
   fetchNewComments: Array<Comment>;
+  getCommentStats?: Maybe<CommentStats>;
   getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
   insertComment?: Maybe<Comment>;
   insertMovie?: Maybe<Movie>;
@@ -136,6 +148,14 @@ export type MutationDeleteUserArgs = {
 export type MutationFetchNewCommentsArgs = {
   mid: Scalars['String'];
   time: Scalars['String'];
+};
+
+
+export type MutationGetCommentStatsArgs = {
+  cid: Scalars['String'];
+  like: Scalars['Boolean'];
+  mid: Scalars['String'];
+  uid: Scalars['String'];
 };
 
 
@@ -218,8 +238,10 @@ export type Query = {
   getAllMovies: Array<Movie>;
   getAllPlatforms: Array<Platform>;
   getComment: Comment;
+  getCommentLikes?: Maybe<CommentLikesObject>;
   getCommentedUser?: Maybe<User>;
   getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
+  getIsUserLikedComment: Scalars['Boolean'];
   getMovie: Movie;
   getMovieById: Platform;
   getMovieLikes?: Maybe<LikesObject>;
@@ -241,12 +263,23 @@ export type QueryGetCommentArgs = {
 };
 
 
+export type QueryGetCommentLikesArgs = {
+  cid: Scalars['String'];
+};
+
+
 export type QueryGetCommentedUserArgs = {
   cid: Scalars['String'];
 };
 
 
 export type QueryGetCommentsOfTheUserArgs = {
+  uid: Scalars['String'];
+};
+
+
+export type QueryGetIsUserLikedCommentArgs = {
+  cid: Scalars['String'];
   uid: Scalars['String'];
 };
 
@@ -283,9 +316,15 @@ export type QueryGetUserMovieStatusArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  commentLikesUpdate: CommentLikesObject;
   likesAndCommentCount: LikesAndComment;
   movieCommentsUpdate: Scalars['Int'];
   movieStatusUpdate: LikesAndFavObj;
+};
+
+
+export type SubscriptionCommentLikesUpdateArgs = {
+  cid: Scalars['String'];
 };
 
 export type User = {
@@ -313,6 +352,12 @@ export type UserMovieOptions = {
   like?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CommentLikesObject = {
+  __typename?: 'commentLikesObject';
+  likes: Array<User>;
+  likesCount: Scalars['Int'];
+};
+
 export type InsertCommentMutationVariables = Exact<{
   options: CommentInput;
 }>;
@@ -320,12 +365,44 @@ export type InsertCommentMutationVariables = Exact<{
 
 export type InsertCommentMutation = { __typename?: 'Mutation', insertComment?: { __typename?: 'Comment', cid: string, commentedUserUid: string, createdAt: string, likes: Array<string>, message: string, movieMid: string, platformId: number, updatedAt: string } | null };
 
+export type SetCommentLikeMutationVariables = Exact<{
+  like: Scalars['Boolean'];
+  cid: Scalars['String'];
+  uid: Scalars['String'];
+  mid: Scalars['String'];
+}>;
+
+
+export type SetCommentLikeMutation = { __typename?: 'Mutation', getCommentStats?: { __typename?: 'CommentStats', id: number, like?: boolean | null, movieMid: string, commentCid: string } | null };
+
+export type GetCommentLikesQueryVariables = Exact<{
+  cid: Scalars['String'];
+}>;
+
+
+export type GetCommentLikesQuery = { __typename?: 'Query', getCommentLikes?: { __typename?: 'commentLikesObject', likesCount: number, likes: Array<{ __typename?: 'User', uid: string, name: string, nickname: string, photoUrl: string }> } | null };
+
 export type GetCommentedUserQueryVariables = Exact<{
   cid: Scalars['String'];
 }>;
 
 
 export type GetCommentedUserQuery = { __typename?: 'Query', getCommentedUser?: { __typename?: 'User', uid: string, name: string, photoUrl: string, email: string, updatedAt: string, watchedMovies?: Array<string> | null, nickname: string, joinedAt: string } | null };
+
+export type GetIsUserLikedCommentQueryVariables = Exact<{
+  uid: Scalars['String'];
+  cid: Scalars['String'];
+}>;
+
+
+export type GetIsUserLikedCommentQuery = { __typename?: 'Query', getIsUserLikedComment: boolean };
+
+export type CommentLikesSubscriptionVariables = Exact<{
+  cid: Scalars['String'];
+}>;
+
+
+export type CommentLikesSubscription = { __typename?: 'Subscription', commentLikesUpdate: { __typename?: 'commentLikesObject', likesCount: number, likes: Array<{ __typename?: 'User', uid: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null }> } };
 
 export type MovieCommentsUpdateSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -476,6 +553,37 @@ export const InsertCommentDocument = gql`
 export function useInsertCommentMutation() {
   return Urql.useMutation<InsertCommentMutation, InsertCommentMutationVariables>(InsertCommentDocument);
 };
+export const SetCommentLikeDocument = gql`
+    mutation setCommentLike($like: Boolean!, $cid: String!, $uid: String!, $mid: String!) {
+  getCommentStats(like: $like, cid: $cid, uid: $uid, mid: $mid) {
+    id
+    like
+    movieMid
+    commentCid
+  }
+}
+    `;
+
+export function useSetCommentLikeMutation() {
+  return Urql.useMutation<SetCommentLikeMutation, SetCommentLikeMutationVariables>(SetCommentLikeDocument);
+};
+export const GetCommentLikesDocument = gql`
+    query getCommentLikes($cid: String!) {
+  getCommentLikes(cid: $cid) {
+    likes {
+      uid
+      name
+      nickname
+      photoUrl
+    }
+    likesCount
+  }
+}
+    `;
+
+export function useGetCommentLikesQuery(options: Omit<Urql.UseQueryArgs<GetCommentLikesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetCommentLikesQuery, GetCommentLikesQueryVariables>({ query: GetCommentLikesDocument, ...options });
+};
 export const GetCommentedUserDocument = gql`
     query getCommentedUser($cid: String!) {
   getCommentedUser(cid: $cid) {
@@ -494,6 +602,33 @@ export const GetCommentedUserDocument = gql`
 
 export function useGetCommentedUserQuery(options: Omit<Urql.UseQueryArgs<GetCommentedUserQueryVariables>, 'query'>) {
   return Urql.useQuery<GetCommentedUserQuery, GetCommentedUserQueryVariables>({ query: GetCommentedUserDocument, ...options });
+};
+export const GetIsUserLikedCommentDocument = gql`
+    query getIsUserLikedComment($uid: String!, $cid: String!) {
+  getIsUserLikedComment(uid: $uid, cid: $cid)
+}
+    `;
+
+export function useGetIsUserLikedCommentQuery(options: Omit<Urql.UseQueryArgs<GetIsUserLikedCommentQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetIsUserLikedCommentQuery, GetIsUserLikedCommentQueryVariables>({ query: GetIsUserLikedCommentDocument, ...options });
+};
+export const CommentLikesDocument = gql`
+    subscription commentLikes($cid: String!) {
+  commentLikesUpdate(cid: $cid) {
+    likes {
+      uid
+      name
+      nickname
+      photoUrl
+      watchedMovies
+    }
+    likesCount
+  }
+}
+    `;
+
+export function useCommentLikesSubscription<TData = CommentLikesSubscription>(options: Omit<Urql.UseSubscriptionArgs<CommentLikesSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<CommentLikesSubscription, TData>) {
+  return Urql.useSubscription<CommentLikesSubscription, TData, CommentLikesSubscriptionVariables>({ query: CommentLikesDocument, ...options }, handler);
 };
 export const MovieCommentsUpdateDocument = gql`
     subscription movieCommentsUpdate {

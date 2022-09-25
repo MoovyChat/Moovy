@@ -27,10 +27,14 @@ const CommentSlice = createSlice({
       };
     },
     sliceAddAllComments: (state, action) => {
-      return { ...state, comments: _.concat(state.comments, action.payload) };
+      let newComments = _.concat(state.comments, action.payload);
+      let removeDuplicates = _.uniqBy(newComments, 'cid');
+      return { ...state, comments: removeDuplicates };
     },
     sliceAddCommentsAtFirst: (state, action) => {
-      return { ...state, comments: _.concat(action.payload, state.comments) };
+      let newComments = _.concat(action.payload, state.comments);
+      let removeDuplicates = _.uniqBy(newComments, 'cid');
+      return { ...state, comments: removeDuplicates };
     },
     sliceUpdateRepliesInComments: (state, action) => {
       const { parent, rid } = action.payload;
@@ -44,36 +48,11 @@ const CommentSlice = createSlice({
         } else return comment as CommentInfo;
       }) as CommentInfo[];
     },
-    sliceRemoveReplyFromComments: (state, action) => {
-      const { parent, rid } = action.payload;
-      let newComments = state.comments.filter((comment) => {
-        if (comment.cid === parent) {
-          let UpdatedReplyArray = comment?.replies!.filter(
-            (id: string) => id !== rid
-          );
-          return {
-            ...comment,
-            replies: UpdatedReplyArray,
-          } as CommentInfo;
-        } else return comment as CommentInfo;
-      }) as CommentInfo[];
-      console.log(newComments);
-      return { ...state, comments: newComments };
-    },
     sliceAddToLikes: (state, action) => {
-      const { commentId, userId } = action.payload;
-      state.comments = state.comments.map((comment) => {
-        if (comment.cid === commentId) {
-          let findLike = comment.likes!.find((like) => like === userId);
-          if (findLike === undefined) {
-            let updatedLikes = [...comment?.likes!, userId];
-            return {
-              ...comment,
-              likes: updatedLikes,
-            } as CommentInfo;
-          }
-        } else return comment as CommentInfo;
-      }) as CommentInfo[];
+      const { commentLikes, cid } = action.payload;
+      state.comments = state.comments.map((comment) =>
+        comment.cid === cid ? { ...comment, likes: commentLikes } : comment
+      );
     },
     sliceRemoveFromLikes: (state, action) => {
       const { commentId, userId } = action.payload;
@@ -103,7 +82,6 @@ export const {
   sliceAddToLikes,
   sliceRemoveFromLikes,
   sliceUpdateRepliesInComments,
-  sliceRemoveReplyFromComments,
   sliceResetComments,
 } = CommentSlice.actions;
 export default CommentSlice.reducer;

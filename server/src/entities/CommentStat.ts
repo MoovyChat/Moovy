@@ -36,10 +36,10 @@ export class CommentStats extends BaseEntity {
   @Column()
   userUid!: string;
 
-  //   @ManyToOne(() => Comment, (comment) => comment.commentStats)
-  //   comment: Comment;
+  @ManyToOne(() => Comment, (comment) => comment.commentStats)
+  comment: Comment;
 
-  @ManyToOne(() => User, (user) => user.movieStats)
+  @ManyToOne(() => User, (user) => user.movieStats || user.commentStats)
   user: User;
 
   @ManyToOne(() => Movie, (movie) => movie.movieStats)
