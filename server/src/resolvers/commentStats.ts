@@ -2,6 +2,7 @@ import { CommentStats } from '../entities/CommentStat';
 import { Arg, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Comment } from '../entities/Comment';
 import { conn } from '../dataSource';
+import { COMMENT_LIKES_SUB } from '../constants';
 
 @Resolver()
 export class CommentStatsResolver {
@@ -47,7 +48,7 @@ export class CommentStatsResolver {
         .execute();
       detail = updateStatus.raw[0];
     }
-    await pubSub.publish('COMMENT_LIKES_SUB', cid);
+    await pubSub.publish(COMMENT_LIKES_SUB, cid);
     return detail;
   }
 }

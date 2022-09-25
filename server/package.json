@@ -39,6 +39,7 @@
     "lodash": "^4.17.21",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
+    "tsc": "^2.0.4",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.3.9",
     "ws": "^8.8.1"

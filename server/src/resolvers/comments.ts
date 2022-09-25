@@ -17,6 +17,7 @@ import {
 import { Comment } from '../entities/Comment';
 import { User } from '../entities/User';
 import { CommentStats } from '../entities/CommentStat';
+import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../constants';
 
 @InputType()
 class CommentInput {
@@ -125,7 +126,7 @@ export class CommentResolver {
         ])
         .returning('*')
         .execute();
-      await pubSub.publish('COMMENT_COUNT_UPDATE', options.movieId);
+      await pubSub.publish(COMMENT_COUNT_UPDATE, options.movieId);
       comment = result.raw[0];
     } catch (err) {
       throw new Error(err);
@@ -134,7 +135,7 @@ export class CommentResolver {
   }
 
   // Whenever user comments, this subscriber gets called.
-  @Subscription(() => Int, { topics: 'COMMENT_COUNT_UPDATE' })
+  @Subscription(() => Int, { topics: COMMENT_COUNT_UPDATE })
   async movieCommentsUpdate(@Root() mid: string): Promise<number> {
     const commentsCount = await Comment.count({
       where: { movieMid: mid },
@@ -142,7 +143,7 @@ export class CommentResolver {
     return commentsCount;
   }
 
-  @Subscription(() => commentLikesObject, { topics: 'COMMENT_LIKES_SUB' })
+  @Subscription(() => commentLikesObject, { topics: COMMENT_LIKES_SUB })
   async commentLikesUpdate(
     @Arg('cid') cid: string
   ): Promise<commentLikesObject> {

@@ -9,6 +9,8 @@ import { MovieStatsResolver } from './resolvers/movieStats';
 import { PlatformResolver } from './resolvers/platforms';
 import Redis from 'ioredis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { ReplyResolver } from './resolvers/replies';
+import { ReplyStatsResolver } from './resolvers/replyStats';
 import { UserResolver } from './resolvers/users';
 import { __prod__ } from './constants';
 import { buildSchema } from 'type-graphql';
@@ -46,6 +48,8 @@ const main = async () => {
       PlatformResolver,
       MovieStatsResolver,
       CommentStatsResolver,
+      ReplyResolver,
+      ReplyStatsResolver,
     ],
     pubSub: getConfiguredRedisPubSub,
     validate: false,

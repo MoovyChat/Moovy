@@ -16,6 +16,7 @@ import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { conn } from '../dataSource';
 import { User } from '../entities/User';
+import { STATUS_UPDATE } from '../constants';
 
 @ObjectType()
 class LikesAndFavObj {
@@ -30,14 +31,6 @@ class UserMovieOptions {
   @Field(() => Boolean, { nullable: true })
   like: boolean;
   @Field(() => Boolean, { nullable: true })
-  favorite: boolean;
-}
-
-@ObjectType()
-class UserMovieSub {
-  @Field(() => Boolean, { nullable: true, defaultValue: false })
-  like: boolean;
-  @Field(() => Boolean, { nullable: true, defaultValue: false })
   favorite: boolean;
 }
 
@@ -83,11 +76,11 @@ export class MovieStatsResolver {
         .execute();
       detail = updateStatus.raw[0];
     }
-    await pubSub.publish('STATUS_UPDATE', mid);
+    await pubSub.publish(STATUS_UPDATE, mid);
     return detail;
   }
 
-  @Subscription(() => LikesAndFavObj, { topics: 'STATUS_UPDATE' })
+  @Subscription(() => LikesAndFavObj, { topics: STATUS_UPDATE })
   async movieStatusUpdate(@Root() root: string): Promise<LikesAndFavObj> {
     const userLikesCount = await conn
       .getRepository(User)

@@ -17,8 +17,8 @@ import {
 import { Comment } from '../entities/Comment';
 import { Movie } from '../entities/Movie';
 import { User } from '../entities/User';
-import { LessThan, MoreThan } from 'typeorm';
-import { ifError } from 'assert';
+import { MoreThan } from 'typeorm';
+import { LIKES_AND_COMMENT } from '../constants';
 
 @InputType()
 class MovieInput {
@@ -144,7 +144,7 @@ export class MovieResolver {
       where: { movieMid: mid },
     });
     const payload: LikesAndComment = { likesCount, commentsCount };
-    await pubSub.publish('LIKES_AND_COMMENT', payload);
+    await pubSub.publish(LIKES_AND_COMMENT, payload);
     return payload;
   }
 
@@ -211,7 +211,7 @@ export class MovieResolver {
     }
   }
 
-  @Subscription(() => LikesAndComment, { topics: 'LIKES_AND_COMMENT' })
+  @Subscription(() => LikesAndComment, { topics: LIKES_AND_COMMENT })
   async likesAndCommentCount(
     @Root() root: LikesAndComment
   ): Promise<LikesAndComment> {

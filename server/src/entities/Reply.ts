@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,6 +13,7 @@ import { Field, Int, ObjectType } from 'type-graphql';
 import { Comment } from './Comment';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
+import { ReplyStats } from './ReplyStats';
 import { User } from './User';
 
 @ObjectType()
@@ -36,6 +38,9 @@ export class Reply extends BaseEntity {
   @Field(() => String)
   @Column()
   repliedUserUid!: string;
+
+  @OneToMany(() => ReplyStats, (stats) => stats.reply)
+  replyStats: ReplyStats[];
 
   @Field(() => String)
   @Column({ type: 'text', array: true })
