@@ -8,7 +8,12 @@ import {
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
-import { CommentInfo, User, globalUIStyles } from '../../Utils/interfaces';
+import {
+  CommentInfo,
+  ReplyInfo,
+  User,
+  globalUIStyles,
+} from '../../Utils/interfaces';
 import React, {
   Dispatch,
   MouseEvent,
@@ -17,15 +22,19 @@ import React, {
   useState,
 } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useGetUserMutMutation,
+  useInsertCommentMutation,
+} from '../../generated/graphql';
 
 import { AnyAction } from 'redux';
 import ChatArea from '../../components/chatArea/chatArea';
 import { Pic } from '../../extension/components/logout/logout.styles';
 import { batch } from 'react-redux';
+import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
-import { useInsertCommentMutation } from '../../generated/graphql';
 
 const setSpoiler = (text: string, setText: Dispatch<any>) => {
   let newText = text + ' <s></s>';
@@ -42,7 +51,7 @@ const MessageBox: React.FC<props> = ({
 }) => {
   // GraphQL: Mutations
   const [_ic, insertComment] = useInsertCommentMutation();
-
+  const [_gu, getUser] = useGetUserMutMutation();
   // Redux: App selectors.
   const movieId = useAppSelector((state) => state.movie.mid);
   const user = useAppSelector((state) => state.user);
@@ -70,20 +79,36 @@ const MessageBox: React.FC<props> = ({
     setReplyClickResponse: (e: any) => void
   ) => {
     if (replyWindowResponse) {
-      // let newReply: CommentInfo = {
-      //   rid: ulid(),
-      //   madeBy: user?.uid,
-      //   replies: [],
-      //   likes: [],
-      //   parentComment: replyWindowResponse.cid
-      //     ? replyWindowResponse.cid
-      //     : replyWindowResponse.parentComment,
-      //   parent: replyWindowResponse.rid
-      //     ? replyWindowResponse?.rid!
-      //     : replyWindowResponse?.cid!,
-      //   message: text,
-      //   movieId: movieId,
-      // };
+      let newReply: ReplyInfo | any = {
+        repliedUserUid: user?.uid!,
+        replies: [],
+        likes: [],
+        parentCommentCid: replyWindowResponse.cid
+          ? replyWindowResponse.cid
+          : replyWindowResponse.parentComment,
+        parentReplyRid: replyWindowResponse.rid
+          ? replyWindowResponse?.rid!
+          : replyWindowResponse?.cid!,
+        message: text,
+        movieMid: movieId,
+        platformId: 1,
+        likesCount: 0,
+      };
+      if (text) {
+        // Adding replies to 'reply' collection in database.
+        insertComment({
+          options: newReply,
+        }).then((response) => {
+          const data = response.data;
+          const insertedComment = data?.insertComment;
+          // Adds the new comment to redux store.
+          batch(() => {
+            dispatch(sliceAddComment(insertedComment));
+            dispatch(sliceSetPastLoadedCount(1));
+          });
+        });
+        setText('');
+      }
       // if (text) {
       //   // Add the reply to the redux
       //   dispatch(sliceAddReply(newReply));
@@ -123,7 +148,7 @@ const MessageBox: React.FC<props> = ({
         platformId: 1,
       };
       if (text) {
-        // Adding comments to 'comment' collection in firebase.
+        // Adding comments to 'comment' collection in database.
         insertComment({
           options: newComment,
         }).then((response) => {
@@ -145,12 +170,14 @@ const MessageBox: React.FC<props> = ({
     if (replyWindowResponse) {
       const parentComment = replyWindowResponse;
       // TODO: GraphQL: Handle reply user data.
-      // getUser(parentComment?.commentedUserId!).then((res) => {
-      //   const commentedUserInfo = res[0] as User;
-      //   setText(`@${commentedUserInfo.nickname} `);
-      //   setRepliedUser(commentedUserInfo.nickname);
-      //   unSub = res[1] as Unsubscribe;
-      // });
+      const referredUser = parentComment.commentedUserId;
+      getUser({ uid: referredUser! }).then((res) => {
+        const { data, error } = res;
+        if (error) colorLog(error);
+        const nickName = data?.getUserMut?.nickname;
+        setText(`@${nickName!} `);
+        setRepliedUser(nickName!);
+      });
       setIsReply(true);
     }
   }, [replyWindowResponse]);

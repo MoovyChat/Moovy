@@ -12,7 +12,6 @@ import { getFormattedWordsArray, isNumber } from '../../Utils/utilities';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
-import { GiSpanner } from 'react-icons/gi';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
 

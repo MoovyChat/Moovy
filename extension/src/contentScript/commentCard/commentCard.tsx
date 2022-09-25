@@ -92,7 +92,7 @@ const CommentCard: React.FC<props> = ({
     const { fetching, error, data } = userLikeInfo;
     if (error) colorLog(error);
     if (!fetching && data) {
-      const isLike = data.getIsUserLikedComment;
+      const isLike = data.getIsUserLikedComment!;
       setLike(isLike);
     }
   }, [userLikeInfo.fetching]);

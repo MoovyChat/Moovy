@@ -62,7 +62,6 @@ const CommentInterface: React.FC<props> = ({
 }) => {
   // Redux: App Selector Hook.
   const allReplies = useAppSelector((state) => state.replies.replies);
-  const modifiedReply = useAppSelector((state) => state.replies.modifed);
   const userId = useAppSelector((state) => state.user.uid);
 
   // Redux: App Dispatch hook.
@@ -87,18 +86,18 @@ const CommentInterface: React.FC<props> = ({
 
   // Filtering replies by parent Id.
   useEffect(() => {
-    const getRepliesByParentId = () => {
-      let commentId = '';
-      if (commentOrReply.cid) commentId = commentOrReply.cid!;
-      else commentId = commentOrReply.rid!;
-      if (commentId === '') return;
-      const filteredReplies = allReplies.filter(
-        (reply: CommentInfo) => reply.parentComment === commentId
-      );
-      setFilteredReplies(filteredReplies);
-    };
-    getRepliesByParentId();
-  }, [allReplies.length, modifiedReply]);
+    // const getRepliesByParentId = () => {
+    //   let commentId = '';
+    //   if (commentOrReply.cid) commentId = commentOrReply.cid!;
+    //   else commentId = commentOrReply.rid!;
+    //   if (commentId === '') return;
+    //   const filteredReplies = allReplies.filter(
+    //     (reply: CommentInfo) => reply.parentComment === commentId
+    //   );
+    //   setFilteredReplies(filteredReplies);
+    // };
+    // getRepliesByParentId();
+  }, [allReplies.length]);
 
   // Conditional update.
   // typeOfMessage: TIME -> Seek the video to respective time.
@@ -116,7 +115,7 @@ const CommentInterface: React.FC<props> = ({
     }
   };
 
-  // TODO: Opens likes View window when the likes count is clicked on.
+  // Opens likes View window when the likes count is clicked on.
   const likeWindowHandler: any = () => {
     colorLog(likedUsers);
     batch(() => {

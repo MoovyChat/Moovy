@@ -1,0 +1,9 @@
+mutation getUserMut($uid: String!) {
+  getUserMut(uid: $uid) {
+    uid
+    name
+    nickname
+    photoUrl
+    watchedMovies
+  }
+}
