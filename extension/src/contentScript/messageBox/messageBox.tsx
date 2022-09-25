@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetUserMutMutation,
   useInsertCommentMutation,
+  useInsertReplyMutation,
 } from '../../generated/graphql';
 
 import { AnyAction } from 'redux';
@@ -34,6 +35,7 @@ import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
+import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 
 const setSpoiler = (text: string, setText: Dispatch<any>) => {
@@ -52,6 +54,7 @@ const MessageBox: React.FC<props> = ({
   // GraphQL: Mutations
   const [_ic, insertComment] = useInsertCommentMutation();
   const [_gu, getUser] = useGetUserMutMutation();
+  const [_ir, insertReply] = useInsertReplyMutation();
   // Redux: App selectors.
   const movieId = useAppSelector((state) => state.movie.mid);
   const user = useAppSelector((state) => state.user);
@@ -79,65 +82,39 @@ const MessageBox: React.FC<props> = ({
     setReplyClickResponse: (e: any) => void
   ) => {
     if (replyWindowResponse) {
-      let newReply: ReplyInfo | any = {
+      let newReply: any = {
         repliedUserUid: user?.uid!,
-        replies: [],
         likes: [],
-        parentCommentCid: replyWindowResponse.cid
+        commentId: replyWindowResponse.cid
           ? replyWindowResponse.cid
           : replyWindowResponse.parentComment,
         parentReplyRid: replyWindowResponse.rid
           ? replyWindowResponse?.rid!
           : replyWindowResponse?.cid!,
         message: text,
-        movieMid: movieId,
+        movieId: movieId,
         platformId: 1,
         likesCount: 0,
       };
       if (text) {
         // Adding replies to 'reply' collection in database.
-        insertComment({
+        insertReply({
           options: newReply,
-        }).then((response) => {
-          const data = response.data;
-          const insertedComment = data?.insertComment;
-          // Adds the new comment to redux store.
-          batch(() => {
-            dispatch(sliceAddComment(insertedComment));
-            dispatch(sliceSetPastLoadedCount(1));
-          });
-        });
+        })
+          .then((response) => {
+            const data = response.data;
+            const insertedReply = data?.insertReply;
+            // Adds the new comment to redux store.
+            batch(() => {
+              dispatch(sliceAddReply(insertedReply));
+              // dispatch(sliceSetPastLoadedCount(1));
+            });
+            setIsReply(false);
+            setReplyClickResponse(undefined);
+          })
+          .catch((err) => colorLog(err));
         setText('');
       }
-      // if (text) {
-      //   // Add the reply to the redux
-      //   dispatch(sliceAddReply(newReply));
-      //   // Add the reply ulid to the reply array.
-      //   if (replyWindowResponse.rid) {
-      //     // Add the reply to firebase reply collection.
-      //     addReplyToFirebaseReplyCollection(
-      //       newReply,
-      //       movieId,
-      //       'reply',
-      //       user?.uid!
-      //     );
-      //   } else {
-      //     // Add the reply to firebase reply collection.
-      //     addReplyToFirebaseReplyCollection(
-      //       newReply,
-      //       movieId,
-      //       'comment',
-      //       user?.uid!
-      //     ).then(() => {
-      //       dispatch(sliceUpdateRepliesInComments(newReply));
-      //     });
-      //   }
-      //   // Clears state value.
-      //   setText('');
-      //   setReplyClickResponse(undefined);
-      //   setIsReply(false);
-      //   setRepliedUser('');
-      // }
     } else {
       let newComment: CommentInfo | any = {
         commentedUserId: user?.uid,
@@ -159,6 +136,8 @@ const MessageBox: React.FC<props> = ({
             dispatch(sliceAddComment(insertedComment));
             dispatch(sliceSetPastLoadedCount(1));
           });
+          setIsReply(false);
+          setReplyClickResponse(undefined);
         });
         setText('');
       }
@@ -168,17 +147,18 @@ const MessageBox: React.FC<props> = ({
   // Handles reply window response action.
   useEffect(() => {
     if (replyWindowResponse) {
-      const parentComment = replyWindowResponse;
-      // TODO: GraphQL: Handle reply user data.
-      const referredUser = parentComment.commentedUserId;
-      getUser({ uid: referredUser! }).then((res) => {
+      setIsReply(true);
+      const parentComment = replyWindowResponse as any;
+      // GraphQL: Handle reply user data.
+      const referredUser = parentComment.commentedUserUid;
+      getUser({ uid: referredUser }).then((res) => {
         const { data, error } = res;
+        colorLog(data);
         if (error) colorLog(error);
         const nickName = data?.getUserMut?.nickname;
         setText(`@${nickName!} `);
         setRepliedUser(nickName!);
       });
-      setIsReply(true);
     }
   }, [replyWindowResponse]);
 

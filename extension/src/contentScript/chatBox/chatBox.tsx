@@ -1,23 +1,11 @@
-import {
-  ChatBoxContainer,
-  LoadMoreComments,
-  NoCommentBox,
-  ShowMoreComments,
-} from './chatBox.styles';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ChatBoxContainer, LoadMoreComments } from './chatBox.styles';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   sliceAddAllComments,
   sliceAddCommentsAtFirst,
 } from '../../redux/slices/comment/commentSlice';
 import {
   sliceSetCommentsLoadedCount,
-  sliceSetCurrentPage,
   sliceSetFetchingComments,
   sliceSetLastPage,
   sliceSetLoadNew,
@@ -31,10 +19,8 @@ import {
   useGetCommentsOfTheMovieMutation,
 } from '../../generated/graphql';
 
-import CommentCard from '../commentCard/commentCard';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
-import Loading from '../../components/loading/loading';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { useIsMount } from '../hooks/useIsMount';

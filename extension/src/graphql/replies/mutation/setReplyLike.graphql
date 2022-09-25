@@ -1,0 +1,7 @@
+mutation setReplyLike($like: Boolean!, $rid: String!, $uid: String!) {
+  getReplyStats(like: $like, rid: $rid, uid: $uid) {
+    id
+    like
+    userUid
+  }
+}

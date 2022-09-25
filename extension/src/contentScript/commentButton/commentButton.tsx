@@ -1,7 +1,6 @@
 import {
   Provider,
   createClient,
-  dedupExchange,
   defaultExchanges,
   fetchExchange,
   subscriptionExchange,
@@ -22,10 +21,11 @@ import _ from 'lodash';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';
 import { getStoredCheckedStatus } from '../../Utils/storage';
+import { persistedFetchExchange } from '@urql/exchange-persisted-fetch';
+import { retryExchange } from '@urql/exchange-retry';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
-import { useIsMount } from '../hooks/useIsMount';
 import { useUpdateMovieTitleMutation } from '../../generated/graphql';
 
 const wsClient = createWSClient({
@@ -44,6 +44,15 @@ const Loader = (chatElement: HTMLDivElement, video_id: string) => {
           }),
         }),
       }),
+      persistedFetchExchange({
+        preferGetForPersistedQueries: true,
+      }),
+      retryExchange({
+        retryIf: (error) => {
+          return !!(error.graphQLErrors.length > 0 || error.networkError);
+        },
+      }),
+      fetchExchange,
     ],
     requestPolicy: 'cache-and-network',
   });

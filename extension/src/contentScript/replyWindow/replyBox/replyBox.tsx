@@ -1,6 +1,7 @@
+import React, { useRef } from 'react';
+
 import CommentCard from '../../commentCard/commentCard';
 import { CommentInfo } from '../../../Utils/interfaces';
-import React from 'react';
 
 type props = {
   userComments: CommentInfo[];

@@ -1,0 +1,15 @@
+query getReplies($cid: String!) {
+  getRepliesOfComment(cid: $cid) {
+    replies {
+      rid
+      message
+      commentedUserUid
+      movieMid
+      parentCommentCid
+      parentReplyRid
+      platformId
+      createdAt
+    }
+    repliesCount
+  }
+}

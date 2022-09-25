@@ -27,11 +27,14 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { MdDeleteForever } from 'react-icons/md';
-import { Pic } from '../../extension/components/logout/logout.styles';
+import ReplyWindow from '../replyWindow/replyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
+import { sliceAddAllReplies } from '../../redux/slices/reply/replySlice';
+import { sliceSetRepliesCount } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
+import { useGetRepliesQuery } from '../../generated/graphql';
 
 type props = {
   commentedUser: User;
@@ -60,10 +63,17 @@ const CommentInterface: React.FC<props> = ({
   likedUsers,
   className,
 }) => {
-  // Redux: App Selector Hook.
-  const allReplies = useAppSelector((state) => state.replies.replies);
-  const userId = useAppSelector((state) => state.user.uid);
+  //GraphQL: QueriesAndMutation.
+  const [repliesOfComment, _gr] = useGetRepliesQuery({
+    variables: {
+      cid: commentOrReply.cid!,
+    },
+    requestPolicy: 'cache-and-network',
+  });
 
+  // Redux: App Selector Hook.
+  const userId = useAppSelector((state) => state.user.uid);
+  const allReplies = useAppSelector((state) => state.replies.replies);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -71,11 +81,10 @@ const CommentInterface: React.FC<props> = ({
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   // State to check if the "like" is hovered, to style the parent component accordingly.
   const [deleteFlag, setDeleteFlag] = useState<boolean>(false);
-  const [filReplies, setFilteredReplies] = useState<CommentInfo[]>([]);
+  const [repliesCount, setRepliesCount] = useState<number>(0);
   const [hovered, setHovered] = useState<boolean>(false);
   const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
   const [replySection, setReplySection] = useState<boolean>(false);
-  const [showReplies, setShowReplies] = useState<boolean>(false);
   const [showSpoiler, setShowSpoiler] = useState<boolean>(false);
   const [showToolTip, setShowToolTip] = useState<boolean>(false);
 
@@ -84,19 +93,26 @@ const CommentInterface: React.FC<props> = ({
     getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
   }, []);
 
-  // Filtering replies by parent Id.
   useEffect(() => {
-    // const getRepliesByParentId = () => {
-    //   let commentId = '';
-    //   if (commentOrReply.cid) commentId = commentOrReply.cid!;
-    //   else commentId = commentOrReply.rid!;
-    //   if (commentId === '') return;
-    //   const filteredReplies = allReplies.filter(
-    //     (reply: CommentInfo) => reply.parentComment === commentId
-    //   );
-    //   setFilteredReplies(filteredReplies);
-    // };
-    // getRepliesByParentId();
+    if (type === 'comment') {
+      const { data, error, fetching } = repliesOfComment;
+      if (error) colorLog(error);
+      if (!fetching && data) {
+        const { replies, repliesCount } = data.getRepliesOfComment;
+        setRepliesCount(repliesCount);
+        batch(() => {
+          dispatch(sliceAddAllReplies(replies));
+          dispatch(sliceSetRepliesCount(repliesCount));
+        });
+      }
+    }
+  }, [repliesOfComment.fetching]);
+
+  useEffect(() => {
+    const replyCount = allReplies.filter(
+      (reply) => reply.parentCommentCid === commentOrReply.cid!
+    ).length;
+    setRepliesCount(replyCount);
   }, [allReplies.length]);
 
   // Conditional update.
@@ -126,44 +142,7 @@ const CommentInterface: React.FC<props> = ({
   };
 
   // TODO: Delete comment or reply.
-  const deleteCommentOrReply = () => {
-    let c = commentOrReply as CommentInfo;
-    if (type === 'comment') {
-      // deleteCommentBatch(c, userId).then((res) => {
-      //   setIsCommentDeleted(true);
-      //   setDeleteFlag(false);
-      //   //Get the replies array from the comment.
-      //   let replies = c.replies as CommentInfo[];
-      //   // Delete the comment from redux.
-      //   dispatch(sliceDeleteComment(c));
-      //   // Loop the replies array and delete the replies from redux.
-      //   if (replies && replies.length > 0) {
-      //     replies.forEach((reply) => {
-      //       dispatch(sliceDeleteReply(reply));
-      //     });
-      //   }
-      // });
-    } else if (type === 'reply') {
-      // deleteReplyBatch(c, userId).then((res) => {
-      //   setIsCommentDeleted(true);
-      //   setDeleteFlag(false);
-      //   let parentCommentId = c.parentComment!;
-      //   let parentId = c.parent!;
-      //   if (parentCommentId === parentId) {
-      //     // Delete the id from parent comment replies
-      //     dispatch(
-      //       sliceRemoveReplyFromComments({ parent: parentId, rid: c.rid! })
-      //     );
-      //   } else {
-      //     // Delete the id from parent reply replies.
-      //     dispatch(
-      //       sliceRemoveReplyFromParentReplies({ parent: parentId, rid: c.rid! })
-      //     );
-      //   }
-      //   dispatch(sliceDeleteReply(c));
-      // });
-    }
-  };
+  const deleteCommentOrReply = () => {};
 
   return (
     <CommentCardContainer styles={globalStyles!} className={className}>
@@ -204,75 +183,65 @@ const CommentInterface: React.FC<props> = ({
                       : 'Author'}
                   </span>{' '}
                   <MessageParent>
-                    {!isCommentDeleted ? (
-                      messageArray.map((msg, index) =>
-                        msg.type === textMapTypes.SPOILER ? (
-                          <SpoilerTag
-                            showSpoiler={showSpoiler}
+                    {messageArray.map((msg, index) =>
+                      msg.type === textMapTypes.SPOILER ? (
+                        <SpoilerTag
+                          showSpoiler={showSpoiler}
+                          key={index}
+                          onClick={() => setShowSpoiler(!showSpoiler)}>
+                          {msg.message}
+                        </SpoilerTag>
+                      ) : (
+                        <React.Fragment key={index}>
+                          {showToolTip && msg.type === textMapTypes.USER && (
+                            <UserToolTip className='user-tooltip'>
+                              {msg.message}
+                            </UserToolTip>
+                          )}
+                          <span
+                            onMouseEnter={(e) => {
+                              e.stopPropagation();
+                              if (msg.type === textMapTypes.USER)
+                                setShowToolTip(true);
+                            }}
+                            onMouseLeave={(e) => {
+                              e.stopPropagation();
+                              setShowToolTip(false);
+                            }}
                             key={index}
-                            onClick={() => setShowSpoiler(!showSpoiler)}>
-                            {msg.message}
-                          </SpoilerTag>
-                        ) : (
-                          <React.Fragment key={index}>
-                            {showToolTip && msg.type === textMapTypes.USER && (
-                              <UserToolTip className='user-tooltip'>
-                                {msg.message}
-                              </UserToolTip>
-                            )}
-                            <span
-                              onMouseEnter={(e) => {
-                                e.stopPropagation();
-                                if (msg.type === textMapTypes.USER)
-                                  setShowToolTip(true);
-                              }}
-                              onMouseLeave={(e) => {
-                                e.stopPropagation();
-                                setShowToolTip(false);
-                              }}
-                              key={index}
-                              className={msg.type}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onLinkHandlerInMessage(msg);
-                              }}>
-                              {msg.message + ' '}
-                            </span>
-                          </React.Fragment>
-                        )
+                            className={msg.type}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onLinkHandlerInMessage(msg);
+                            }}>
+                            {msg.message + ' '}
+                          </span>
+                        </React.Fragment>
                       )
-                    ) : (
-                      <span style={{ color: '#6a6a6a', fontStyle: 'italic' }}>
-                        [Message is deleted]
-                      </span>
                     )}
                   </MessageParent>
                 </div>
               </Comment>
             </div>
             <Stats>
-              {!isCommentDeleted && (
-                <>
-                  <div className='timestamp'>{time}</div>
-                  <div
-                    className='likes'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      likeWindowHandler();
-                    }}>
-                    {likesCount} likes
-                  </div>
-                  <div
-                    className='replies'
-                    onClick={(e) => {
-                      setReplySection(!replySection);
-                      responseFromReplyWindow(commentOrReply);
-                    }}>
-                    reply
-                  </div>
-                </>
-              )}
-              {!isCommentDeleted && commentedUser?.uid === userId && (
+              <div className='timestamp'>{time}</div>
+              <div
+                className='likes'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  likeWindowHandler();
+                }}>
+                {likesCount} likes
+              </div>
+              <div
+                className='replies'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  responseFromReplyWindow(commentOrReply);
+                }}>
+                reply
+              </div>
+              {commentedUser?.uid === userId && (
                 <div
                   className='delete'
                   onClick={(e) => {
@@ -284,41 +253,39 @@ const CommentInterface: React.FC<props> = ({
               )}
             </Stats>
           </div>
-          {!isCommentDeleted && (
-            <Like
-              className='like'
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={(e) => {
-                subjectLike(e);
-              }}>
-              {like ? (
-                <AiFillLike className='fill' size={20} />
-              ) : (
-                <AiOutlineLike size={20} />
-              )}
-            </Like>
-          )}
+          <Like
+            className='like'
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={(e) => {
+              subjectLike(e);
+            }}>
+            {like ? (
+              <AiFillLike className='fill' size={20} />
+            ) : (
+              <AiOutlineLike size={20} />
+            )}
+          </Like>
         </Card>
       </div>
       <ReplyParent>
-        {/* {filteredRepliesState?.length! ? (
+        {repliesCount !== 0 && (
           <div
             className='reply-status'
             onClick={(e) => {
               e.stopPropagation();
-              setShowReplies(!showReplies);
-            }}></div>
-        ) : (
-          <React.Fragment></React.Fragment>
-        )} */}
+              setReplySection(!replySection);
+            }}>
+            Show {repliesCount} replies
+          </div>
+        )}
         <div>
-          {/* <ReplyWindow
-            parentComment={commentOrReply}
-            repliesState={filteredRepliesState}
-            repliesCount={repliesCount!}
-            responseFromReplyWindow={responseFromReplyWindow}
-          /> */}
+          {replySection && (
+            <ReplyWindow
+              parentComment={commentOrReply}
+              responseFromReplyWindow={responseFromReplyWindow}
+            />
+          )}
         </div>
       </ReplyParent>
     </CommentCardContainer>

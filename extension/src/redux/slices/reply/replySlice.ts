@@ -11,12 +11,10 @@ const ReplySlice = createSlice({
   initialState: replyState,
   reducers: {
     sliceAddReply: (state, action) => {
-      const { payload } = action;
-      const reply: ReplyInfo = payload;
-      const findReply = state.replies.find((r) => r.rid === reply.rid!);
-      if (!findReply)
-        return Object.assign({}, state, { replies: [...state.replies, reply] });
-      return state;
+      const reply: ReplyInfo = action.payload;
+      const newReplies = [reply, ...state.replies];
+      const removeDup = _.uniqBy(newReplies, 'rid');
+      return { ...state, replies: removeDup };
     },
     sliceDeleteReply: (state, action) => {
       const { payload } = action;
@@ -27,7 +25,9 @@ const ReplySlice = createSlice({
       return { ...state, replies: newReplies };
     },
     sliceAddAllReplies: (state, action) => {
-      return { ...state, replies: action.payload };
+      const replies = _.concat(state.replies, action.payload);
+      const removeDuplicates = _.uniqBy(replies, 'rid');
+      return { ...state, replies: removeDuplicates };
     },
     sliceResetReply: () => {
       return replyState;
@@ -41,4 +41,5 @@ export const {
   sliceDeleteReply,
   sliceResetReply,
 } = ReplySlice.actions;
+
 export default ReplySlice.reducer;
