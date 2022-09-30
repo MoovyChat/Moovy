@@ -1,75 +1,81 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { CommentInfo, ReplyInfo } from '../../Utils/interfaces';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  ReplyParent,
+  ReplyWindowParent,
+  ShowReplyText,
+} from './replyWindow.styles';
 
-import { CommentInfo } from '../../Utils/interfaces';
-import { ReplyWindowParent } from './replyWindow.styles';
+import Loading from '../../components/loading/loading';
+import ReplyCard from '../replyCard/replyCard';
+import { useAppSelector } from '../../redux/hooks';
 
 type props = {
-  parentComment: CommentInfo;
   repliesCount: number;
-  repliesState: CommentInfo[];
+  parentComment: CommentInfo;
   responseFromReplyWindow: (e: any) => void;
 };
 const ReplyWindow: React.FC<props> = ({
-  repliesState,
   responseFromReplyWindow,
   parentComment,
+  repliesCount,
 }) => {
-  const userId = useAppSelector((state) => state.user.uid);
-  const [userComments, setUserComments] = useState<CommentInfo[]>([]);
-  const [otherComments, setOtherComments] = useState<CommentInfo[]>([]);
-  /**
-   * HashMap
-   * [LoggedUser: [...replies]]
-   * Remaining replies
-   * [Parent: [Children]] - Sort by number of comments and replies.
-   *  */
+  const allReplies = useAppSelector((state) => state.replies.replies);
+  const [replies, setReplies] = useState<ReplyInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [replySection, setReplySection] = useState<boolean>(false);
+  const onBeforeGetContentResolve = useRef<any>();
+
+  const handleOnBeforeGetContent = () => {
+    return new Promise((resolve) => {
+      const filtered = allReplies.filter(
+        (reply) => reply.parentCommentCid === parentComment.cid
+      );
+      setReplies(filtered);
+      resolve(true);
+    });
+  };
+
   useEffect(() => {
-    if (repliesState && repliesState.length > 0) {
-      let loggedInComments: CommentInfo[] = repliesState.filter(
-        (reply) => reply.commentedUserId === userId
-      );
-      setUserComments(loggedInComments);
-      let otherUserComments: CommentInfo[] = repliesState.filter(
-        (reply) => reply.commentedUserId !== userId
-      );
-      setOtherComments(otherUserComments);
-    }
-  }, [repliesState]);
+    let timeout: NodeJS.Timeout;
+    handleOnBeforeGetContent().then(() => {
+      timeout = setTimeout(() => {
+        setLoading(false);
+        clearTimeout(timeout);
+      }, 300);
+    });
+    return () => clearTimeout(timeout);
+  }, [allReplies.length, loading]);
 
   const loadMoreReplies = () => {
     console.log('Loading more replies...');
   };
-
+  const replyText = `${replySection ? 'Hide' : 'Show'} ${repliesCount} replies`;
   return (
     <ReplyWindowParent>
-      {/* <ReplyBox
-        responseFromReplyWindow={responseFromReplyWindow}
-        userComments={repliesState}
-      />
-      {parentComment.repliesCount! -
-        (userComments.length + otherComments.length) >
-      0 ? (
-        <React.Fragment>
-          <ReplyMessage className='reply-message'>
-            <div className='line'></div>
-            <div
-              className='replies-count'
-              onClick={(e) => {
-                e.stopPropagation();
-                loadMoreReplies();
-              }}>
-              Show{' '}
-              {parentComment.repliesCount! -
-                (userComments.length + otherComments.length)}{' '}
-              more replies
-            </div>
-          </ReplyMessage>
-        </React.Fragment>
-      ) : (
-        <React.Fragment></React.Fragment>
-      )} */}
+      {repliesCount !== 0 && (
+        <ShowReplyText
+          className='reply-status'
+          onClick={(e) => {
+            e.stopPropagation();
+            setReplySection(!replySection);
+          }}>
+          {replyText}
+        </ShowReplyText>
+      )}
+      {!loading && (
+        <ReplyParent replySection={replySection}>
+          {replies.map((reply) => (
+            <ReplyCard
+              key={reply.rid}
+              type='reply'
+              responseFromReplyWindow={responseFromReplyWindow}
+              className='reply-card'
+              reply={reply}
+            />
+          ))}
+        </ReplyParent>
+      )}
     </ReplyWindowParent>
   );
 };

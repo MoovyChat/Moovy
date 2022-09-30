@@ -55,7 +55,7 @@ export class CommentResolver {
     return Comment.findOne({ where: { cid } });
   }
 
-  @Query(() => Boolean)
+  @Query(() => Boolean, { nullable: true })
   async getIsUserLikedComment(
     @Arg('cid') cid: string,
     @Arg('uid') uid: string

@@ -10,10 +10,13 @@ import {
 } from '../../generated/graphql';
 
 import { ChatStatContainer } from './chatStats.styles';
+import { IoMdMoon } from 'react-icons/io';
+import { MdOutlineWbSunny } from 'react-icons/md';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
+import { sliceSetTheme } from '../../redux/slices/settings/settingsSlice';
 import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
 
 type props = {
@@ -49,6 +52,8 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [uiStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [pageError, setPageError] = useState<string>('');
+  const [themeToggled, setThemeToggled] = useState<number>(0);
+  const theme = useAppSelector((state) => state.settings.theme);
   // Set the like and favorite on Initial load.
   useEffect(() => {
     updateUserLikeFavorite({
@@ -148,30 +153,56 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   };
 
   return (
-    <ChatStatContainer styles={uiStyles}>
-      <div
-        className='likes'
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleLike();
-        }}>
-        {like ? (
-          <AiFillLike size={icon_Size} />
-        ) : (
-          <AiOutlineLike size={icon_Size} />
-        )}
-        <h4>{likesCount} Likes</h4>
-      </div>
-      <div className='comment'>
-        <BiComment size={icon_Size} />
-        <h4>{commentsCount} Comments</h4>
+    <ChatStatContainer styles={uiStyles} like={like} themeToggled={theme}>
+      <div className='capsule'>
+        <div
+          className='likes'
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleLike();
+          }}>
+          <span>{likesCount}</span>
+          {like ? (
+            <AiFillLike className='icon' size={icon_Size} />
+          ) : (
+            <AiOutlineLike size={icon_Size} />
+          )}
+        </div>
+        <div className='comment'>
+          <span>{commentsCount}</span>
+          <BiComment size={icon_Size} />
+        </div>
+        <div
+          className='theme-mode'
+          onClick={(e) => {
+            e.stopPropagation();
+            theme === 'light'
+              ? dispatch(sliceSetTheme('dark'))
+              : dispatch(sliceSetTheme('light'));
+            setThemeToggled(themeToggled + 1);
+          }}>
+          <div className='toggle-anim'>
+            <div>
+              <MdOutlineWbSunny size={icon_Size} />
+            </div>
+            <div style={{ transform: `rotateX(180deg) rotateY(180deg)` }}>
+              <IoMdMoon size={icon_Size} />
+            </div>
+          </div>
+
+          {/* {theme === 'light' ? (
+            <MdOutlineWbSunny size={icon_Size} />
+          ) : (
+            <IoMdMoon size={icon_Size} />
+          )} */}
+        </div>
       </div>
       <div className='user' onClick={changeNickName}>
         <h4>{user.nickname}</h4>
         <BiEdit size={icon_Size} />
       </div>
       <div
-        className='comment'
+        className='user'
         onClick={() => {
           setViewStyles(!viewStyles);
         }}>

@@ -1,6 +1,7 @@
 import { ChatAreaParent, Parent } from './chatArea.styles';
 import React, {
   Dispatch,
+  FocusEventHandler,
   KeyboardEventHandler,
   SetStateAction,
   useEffect,
@@ -9,20 +10,20 @@ import React, {
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
 import { getFormattedWordsArray, isNumber } from '../../Utils/utilities';
+import {
+  sliceSetIsTextAreaClicked,
+  sliceSetIsTextAreaFocused,
+  sliceSetTextAreaMessage,
+} from '../../redux/slices/textArea/textAreaSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
-import { GiSpanner } from 'react-icons/gi';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
 
 type props = {
   user: User | undefined;
-  text: string;
-  setText: Dispatch<SetStateAction<string>>;
   postComment: (
-    text: string,
-    setText: Dispatch<SetStateAction<string>>,
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
     movieId: string,
@@ -34,21 +35,32 @@ type props = {
 };
 const ChatArea: React.FC<props> = ({
   user,
-  text,
-  setText,
   postComment,
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
+  const text = useAppSelector((state) => state.textArea.text);
+  const textAreaFocussed = useAppSelector(
+    (state) => state.textArea.isTextAreaFocused
+  );
+  const isTextAreaClicked = useAppSelector(
+    (state) => state.textArea.isTextAreaClicked
+  );
   const movieId = useAppSelector((state) => state.movie.mid);
   const dispatch = useAppDispatch();
-  const ref = useRef<HTMLTextAreaElement>(null);
-  const [clickedTA, setClickedTA] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [textAreaHeight, setTextAreaHeight] = useState<number>(17);
   const [formattedTextMap, setFormattedTextMap] = useState<textMap[]>([]);
   useEffect(() => {
     getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
   }, [globalStyles]);
+
+  useEffect(() => {
+    if (textAreaFocussed) textAreaRef.current?.focus();
+    else textAreaRef.current?.blur();
+  }, [textAreaFocussed]);
 
   useEffect(() => {
     document.addEventListener('keydown', cancelEvent.bind(this), !0);
@@ -58,7 +70,7 @@ const ChatArea: React.FC<props> = ({
       if (target.id === 'comment') {
         e.stopImmediatePropagation();
         e.stopPropagation();
-        ref.current?.focus();
+        textAreaRef.current?.focus();
       }
     }
     return () => {
@@ -67,7 +79,12 @@ const ChatArea: React.FC<props> = ({
   }, []);
 
   const handleTextAreaBlur = () => {
-    if (clickedTA) ref.current?.focus();
+    if (isTextAreaClicked) {
+      textAreaRef.current?.focus();
+      dispatch(sliceSetIsTextAreaFocused(true));
+    } else {
+      dispatch(sliceSetIsTextAreaFocused(false));
+    }
   };
 
   const placeholder = `Comment as ${
@@ -77,15 +94,24 @@ const ChatArea: React.FC<props> = ({
   useEffect(() => {
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
-      let target = e.target as HTMLTextAreaElement;
-      if (target.id === 'comment') {
-        setClickedTA(true);
-      } else setClickedTA(false);
+      let target = e.target as any;
+      if (target && target.id === 'comment') {
+        dispatch(sliceSetIsTextAreaClicked(true));
+        dispatch(sliceSetIsTextAreaFocused(true));
+      } else {
+        dispatch(sliceSetIsTextAreaFocused(false));
+        dispatch(sliceSetIsTextAreaClicked(false));
+      }
     }
     return () => {
       document.removeEventListener('click', textAreaClicked);
     };
   }, []);
+
+  const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetIsTextAreaFocused(true));
+  };
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
@@ -94,8 +120,6 @@ const ChatArea: React.FC<props> = ({
     } else if (e.key === 'Enter') {
       e.preventDefault();
       postComment(
-        text,
-        setText,
         user,
         dispatch,
         movieId,
@@ -111,9 +135,13 @@ const ChatArea: React.FC<props> = ({
   };
 
   useEffect(() => {
+    const scrollHeight = ref.current?.offsetHeight!;
+    setTextAreaHeight(scrollHeight);
+    if (!text) setTextAreaHeight(17);
     var objDiv = document.getElementById('text-area-background');
-    if (ref.current && objDiv) objDiv.scrollTop = ref.current.scrollTop!;
-  }, [ref.current?.scrollTop]);
+    if (textAreaRef.current && objDiv && ref.current)
+      ref.current.scrollTop = textAreaRef.current.scrollTop!;
+  }, [text]);
 
   useEffect(() => {
     let res = getFormattedWordsArray(
@@ -127,17 +155,19 @@ const ChatArea: React.FC<props> = ({
   }, [text]);
 
   return (
-    <Parent styles={globalStyles!}>
+    <Parent styles={globalStyles!} textAreaHeight={textAreaHeight}>
       <ChatAreaParent
+        ref={textAreaRef}
         styles={globalStyles!}
-        ref={ref}
-        autoFocus
+        textAreaHeight={textAreaHeight}
+        autoFocus={false}
         key='editor'
         id='comment'
         name='comment'
         autoComplete='off'
         autoCorrect='off'
         maxLength={150}
+        onFocus={onFocusHandler}
         onBlur={handleTextAreaBlur}
         placeholder={placeholder}
         value={text}
@@ -145,10 +175,10 @@ const ChatArea: React.FC<props> = ({
         onChange={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          setText(e.target.value);
+          dispatch(sliceSetTextAreaMessage(e.target.value));
         }}
       />
-      <div id='text-area-background' className='text-area-background'>
+      <div id='text-area-background' className='text-area-background' ref={ref}>
         {formattedTextMap.map((value, index) => (
           <span key={index} className={value.type}>
             {value.message + ' '}

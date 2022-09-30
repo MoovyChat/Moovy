@@ -25,13 +25,14 @@ import {
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
+import { AnyAction } from 'redux';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
 
 interface props {
-  comment: CommentInfo;
+  comment: any;
   responseFromReplyWindow: (comment: any) => void;
   type: string;
   className: any;
@@ -92,7 +93,7 @@ const CommentCard: React.FC<props> = ({
     const { fetching, error, data } = userLikeInfo;
     if (error) colorLog(error);
     if (!fetching && data) {
-      const isLike = data.getIsUserLikedComment;
+      const isLike = data.getIsUserLikedComment!;
       setLike(isLike);
     }
   }, [userLikeInfo.fetching]);

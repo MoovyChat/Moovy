@@ -10,7 +10,6 @@ import { EditNickNameParent } from './editNickName.styles';
 import { setStoredUserLoginDetails } from '../../Utils/storage';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
-import { updateUser } from '../../firebase-api/user';
 
 const EditUserName = () => {
   const [err, setError] = useState<string>('');
@@ -29,11 +28,12 @@ const EditUserName = () => {
     else setError('');
   };
   const confirmUserName = () => {
-    updateUser(user.uid, { nickname: text }).then((res) => {
-      dispatch(sliceAddUserNickName(text));
-      setStoredUserLoginDetails(user);
-      dispatch(sliceCheckEditBoxOpen(false));
-    });
+    //TODO: Update user
+    // updateUser(user.uid, { nickname: text }).then((res) => {
+    //   dispatch(sliceAddUserNickName(text));
+    //   setStoredUserLoginDetails(user);
+    //   dispatch(sliceCheckEditBoxOpen(false));
+    // });
   };
 
   useEffect(() => {

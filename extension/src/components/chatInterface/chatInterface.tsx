@@ -171,18 +171,6 @@ const ChatInterface: React.FC<props> = ({
         styles={globalStyles!}
         onClick={(e) => e.stopPropagation()}
         width={chatWindowSize}>
-        {isEditNameBoxOpen && (
-          <React.Fragment>
-            {' '}
-            <div
-              className='overlay'
-              onClick={(e) => {
-                e.stopPropagation();
-                dispatch(sliceCheckEditBoxOpen(false));
-              }}></div>
-            <EditUserName></EditUserName>
-          </React.Fragment>
-        )}
         {delayed ? (
           <React.Fragment>
             <ChatTitle className='chat-title'>

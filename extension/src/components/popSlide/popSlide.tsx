@@ -1,7 +1,8 @@
 import { LikesUserView, PopSlideParent } from './popSlide.styles';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import EmojiPicker from '../emojiPicker/emojiPicker';
 import { IoMdCloseCircle } from 'react-icons/io';
 import { Pic } from '../../extension/components/logout/logout.styles';
 import { sliceSetPopSlide } from '../../redux/slices/settings/settingsSlice';
@@ -21,28 +22,36 @@ const PopSlide = () => {
   };
 
   useEffect(() => {
-    let ex = {
-      title: PopSlideContentType === 'likes' ? 'Likes' : 'Title',
-      subTitle:
-        PopSlideContentType === 'likes'
-          ? `${popSlideContentLikes && popSlideContentLikes.length} likes`
-          : 'SubTitle',
-    };
-    setInputs(ex);
+    switch (PopSlideContentType) {
+      case 'likes':
+        let ex = {
+          title: 'Likes',
+          subTitle: `${
+            popSlideContentLikes && popSlideContentLikes.length
+          } likes`,
+        };
+        setInputs(ex);
+        break;
+      case 'smiley':
+        let smiles = {
+          title: 'Smiley',
+          subTitle: 'Quick Chat',
+        };
+        setInputs(smiles);
+        break;
+      default:
+        let defaults = {
+          title: 'Title',
+          subTitle: 'SubTitle',
+        };
+        setInputs(defaults);
+    }
   }, []);
-  return (
-    <PopSlideParent>
-      <div className='header'>
-        <div className='section'>
-          <div className='title'>{inputs.title}</div>
-          <div className='sub'>{inputs.subTitle}</div>
-        </div>
-        <div className='close' onClick={closePopSlide}>
-          <IoMdCloseCircle className='close-icon' size={20} color='white' />
-        </div>
-      </div>
-      <div className='content'>
-        {PopSlideContentType === 'likes' && (
+
+  const SelectedElement = useCallback(() => {
+    switch (PopSlideContentType) {
+      case 'likes':
+        return (
           <div
             style={{
               display: 'flex',
@@ -60,7 +69,32 @@ const PopSlide = () => {
                 </LikesUserView>
               ))}
           </div>
-        )}
+        );
+      case 'smiley':
+        return <EmojiPicker />;
+      default:
+        return (
+          <div>
+            <div>Unrecognized selection</div>
+            <div>Please report this bug to us</div>
+          </div>
+        );
+    }
+  }, []);
+
+  return (
+    <PopSlideParent>
+      <div className='header'>
+        <div className='section'>
+          <div className='title'>{inputs.title}</div>
+          <div className='sub'>{inputs.subTitle}</div>
+        </div>
+        <div className='close' onClick={closePopSlide}>
+          <IoMdCloseCircle className='close-icon' size={20} color='white' />
+        </div>
+      </div>
+      <div className='content'>
+        <SelectedElement />
       </div>
     </PopSlideParent>
   );

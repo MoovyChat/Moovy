@@ -46,9 +46,6 @@ export interface Movie {
 
 export interface CommentInfo {
   cid?: string;
-  rid?: string;
-  parentComment?: string;
-  parent?: string;
   commentedUserId?: string;
   message?: string;
   likesCount?: any;
@@ -61,6 +58,21 @@ export interface CommentInfo {
   __typename?: any;
 }
 
+export interface ReplyInfo {
+  rid?: string;
+  repliedUserUid: string;
+  parentCommentCid: string;
+  parentReplyRid?: string;
+  movieMid: string;
+  platformId: number;
+  message: string;
+  likesCount: number;
+  likes?: [];
+  replies?: any[];
+  createdAt?: any;
+  updatedAt?: any;
+  __typename?: any;
+}
 export interface filterType {
   title: string;
   filter?: string;

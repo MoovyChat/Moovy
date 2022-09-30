@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import CommentCard from '../commentCard/commentCard';
@@ -14,7 +14,6 @@ const Comments: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const commentsList = useAppSelector((state) => state.comments.comments);
   const { currentPage, lastPage } = useAppSelector((state) => state.movie!);
   const dispatch = useAppDispatch();
-
   return (
     <React.Fragment>
       {commentsList.map((comment) => (

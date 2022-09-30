@@ -13,13 +13,25 @@ export const ChatTextBox = styled.div<mBoxProps>`
   position: relative;
   justify-content: flex-start;
   align-items: center;
-  border-radius: 5px;
   z-index: 8;
-  width: 90%;
+  width: 98%;
   height: 100%;
   transition: all 0.5s;
-  border-color: ${(p) => (p.isReply ? '#ca0d00' : 'white')};
-  box-shadow: 0 0 10px ${(p) => (p.isReply ? '#ca0d00' : 'white')};
+  border: 1px solid;
+  border-radius: 40px;
+  border-color: ${(p) => p.isReply && '#ca0d00'};
+  box-shadow: 0 0 10px ${(p) => p.isReply && '#ca0d00'};
+  .smiley {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto 2px;
+    .icon {
+      :hover {
+        cursor: pointer;
+      }
+    }
+  }
 `;
 
 export const MessageBoxParent = styled.div`

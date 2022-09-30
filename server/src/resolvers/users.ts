@@ -74,6 +74,11 @@ export class UserResolver {
     return User.findOne({ where: { uid } });
   }
 
+  @Mutation(() => User, { nullable: true })
+  getUserMut(@Arg('uid') uid: string): Promise<User | null> {
+    return User.findOne({ where: { uid } });
+  }
+
   @Query(() => [Comment], { nullable: true })
   getAllCommentsMadeByUser(@Arg('uid') uid: string): Promise<Comment[] | null> {
     let allComments;

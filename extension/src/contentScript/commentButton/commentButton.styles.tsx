@@ -15,7 +15,7 @@ export const CommentHeader = styled.div<props>`
   justify-content: center;
   z-index: 99999;
   align-items: center;
-
+  color: white;
   /* transition: all 0.1s ease-in-out; */
   animation: ${(p) =>
     p.openChatWindow
@@ -29,13 +29,12 @@ export const CommentHeader = styled.div<props>`
     0% {
       height: 70px;
       width: 70px;
-      background-color: none;
     }
 
     100% {
       height: 25px;
       width: 25px;
-      background-color: black;
+      border-left: 1px solid white;
       padding: 5px;
       border-radius: 0%;
     }
@@ -45,7 +44,6 @@ export const CommentHeader = styled.div<props>`
     0% {
       height: 25px;
       width: 25px;
-      background-color: black;
       padding: 5px;
       border-radius: 0%;
     }

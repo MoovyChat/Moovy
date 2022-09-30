@@ -14,7 +14,6 @@ type chatWindowProps = {
   openChatWindow: boolean;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
-  background-color: ${(p) => p.styles?.backgroundColor};
   height: 100%;
   width: ${(p) => (p.openChatWindow === true ? p.width : '0')}%;
   position: fixed;
@@ -24,24 +23,10 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
   bottom: 0;
   top: 0;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
-  color: ${(p) => (p.styles?.textColor ? p.styles?.textColor : 'white')};
-  /* animation: ${(p) =>
-    p.openChatWindow ? 'openToLeft' : 'closeToRight'} 1s; */
-  .overlay {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    filter: blur(10px);
-    z-index: 10;
-    border: 2px solid white;
-    background: #ffffff36;
-    pointer-events: none;
-  }
+
   .chat-box-container {
     height: 100%;
     margin: 5px auto;
-    margin-left: 5px;
-    margin-right: 20px;
   }
 
   @keyframes openToLeft {
@@ -72,7 +57,6 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
 
 export const ChatTitle = styled.div`
   opacity: 1;
-  color: inherit;
   text-align: center;
   font-size: 1.3em;
   word-wrap: break-word;

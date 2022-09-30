@@ -14,6 +14,7 @@ import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
 import { Reply } from './Reply';
+import { ReplyStats } from './ReplyStats';
 
 @ObjectType()
 @Entity()
@@ -48,13 +49,16 @@ export class User extends BaseEntity {
   @OneToMany(() => CommentStats, (stats) => stats.user)
   commentStats: CommentStats[];
 
+  @OneToMany(() => ReplyStats, (stats) => stats.user)
+  replyStats: ReplyStats[];
+
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];
 
-  @OneToMany(() => Reply, (reply) => reply.repliedUser)
+  @OneToMany(() => Reply, (reply) => reply.commentedUser)
   replies: Reply[];
 
   @Field(() => String)

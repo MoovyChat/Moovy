@@ -26,6 +26,20 @@ const CommentSlice = createSlice({
         comments: refreshedComments,
       };
     },
+    sliceSetRepliesCount: (state, action) => {
+      const { cid, count } = action.payload;
+      const newComments = state.comments.map((cmt) =>
+        cmt.cid === cid ? { ...cmt, likesCount: count } : cmt
+      );
+      return { ...state, comments: newComments };
+    },
+    sliceIncrementReplyCount: (state, action) => {
+      const cid = action.payload;
+      const newComments = state.comments.map((cmt) =>
+        cmt.cid === cid ? { ...cmt, likesCount: cmt.likesCount + 1 } : cmt
+      );
+      return { ...state, comments: newComments };
+    },
     sliceAddAllComments: (state, action) => {
       let newComments = _.concat(state.comments, action.payload);
       let removeDuplicates = _.uniqBy(newComments, 'cid');
@@ -77,6 +91,8 @@ const CommentSlice = createSlice({
 export const {
   sliceAddComment,
   sliceAddCommentsAtFirst,
+  sliceIncrementReplyCount,
+  sliceSetRepliesCount,
   sliceDeleteComment,
   sliceAddAllComments,
   sliceAddToLikes,

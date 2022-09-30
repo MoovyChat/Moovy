@@ -5,7 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
@@ -19,7 +19,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class Reply extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   @Field(() => String)
   rid!: string;
 
@@ -35,18 +35,22 @@ export class Reply extends BaseEntity {
   @Column()
   parentCommentCid!: string;
 
+  @Field(() => String, { nullable: true })
+  @Column()
+  parentReplyRid!: string;
+
   @Field(() => String)
   @Column()
-  repliedUserUid!: string;
+  commentedUserUid!: string;
 
   @OneToMany(() => ReplyStats, (stats) => stats.reply)
   replyStats: ReplyStats[];
 
-  @Field(() => String)
+  @Field(() => [String])
   @Column({ type: 'text', array: true })
   likes: string[];
 
-  @Field(() => String)
+  @Field(() => [String], { nullable: true })
   @Column({ type: 'text', array: true })
   replies: string[];
 
@@ -61,7 +65,7 @@ export class Reply extends BaseEntity {
   parentComment!: Comment;
 
   @ManyToOne(() => User, (user) => user.replies)
-  repliedUser!: User;
+  commentedUser!: User;
 
   @ManyToOne(() => Platform, (platform) => platform.replies)
   platform: Platform;

@@ -31,27 +31,16 @@ export class ReplyStats extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  commentCid!: string;
-
-  @Field(() => String)
-  @Column()
-  movieMid!: string;
-
-  @Field(() => String)
-  @Column()
   userUid!: string;
 
   @ManyToOne(() => Reply, (reply) => reply.replyStats)
   reply: Reply;
 
-  @ManyToOne(() => Comment, (comment) => comment.commentStats)
-  comment: Comment;
-
-  @ManyToOne(() => User, (user) => user.movieStats || user.commentStats)
+  @ManyToOne(
+    () => User,
+    (user) => user.movieStats || user.commentStats || user.replyStats
+  )
   user: User;
-
-  @ManyToOne(() => Movie, (movie) => movie.movieStats)
-  movie: Movie;
 
   @Field(() => String)
   @CreateDateColumn()

@@ -14,6 +14,7 @@ import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
+import { ReplyStats } from './ReplyStats';
 import { User } from './User';
 
 @ObjectType()

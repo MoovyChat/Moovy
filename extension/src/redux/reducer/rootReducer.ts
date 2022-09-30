@@ -6,6 +6,7 @@ import movieReducer from '../slices/movie/movieSlice';
 import replyReducer from '../slices/reply/replySlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import storage from 'redux-persist/lib/storage';
+import textAreaReducer from '../slices/textArea/textAreaSlice';
 import userReducer from '../slices/user/userSlice';
 
 const persistConfig = {
@@ -22,6 +23,7 @@ const rootReducer = {
   replies: replyReducer,
   settings: settingsReducer,
   loading: loadingReducer,
+  textArea: textAreaReducer,
 };
 
 export default rootReducer;

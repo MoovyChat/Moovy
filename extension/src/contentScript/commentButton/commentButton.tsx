@@ -1,37 +1,41 @@
 import {
   Provider,
   createClient,
-  dedupExchange,
   defaultExchanges,
   fetchExchange,
   subscriptionExchange,
 } from 'urql';
+import React, { useEffect, useState } from 'react';
 import { Provider as ReduxProvider, batch } from 'react-redux';
+import { darkTheme, lightTheme } from '../../theme/theme';
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
+import { GlobalStyles } from '../../theme/globalStyles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
+import { ThemeProvider } from 'styled-components';
 import _ from 'lodash';
+import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';
 import { getStoredCheckedStatus } from '../../Utils/storage';
+import { persistedFetchExchange } from '@urql/exchange-persisted-fetch';
+import { retryExchange } from '@urql/exchange-retry';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
-import { useIsMount } from '../hooks/useIsMount';
 import { useUpdateMovieTitleMutation } from '../../generated/graphql';
 
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
 });
-const Loader = (chatElement: HTMLDivElement, video_id: string) => {
+const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
   const client = createClient({
     url: 'http://localhost:4000/graphql',
@@ -44,6 +48,15 @@ const Loader = (chatElement: HTMLDivElement, video_id: string) => {
           }),
         }),
       }),
+      persistedFetchExchange({
+        preferGetForPersistedQueries: true,
+      }),
+      retryExchange({
+        retryIf: (error) => {
+          return !!(error.graphQLErrors.length > 0 || error.networkError);
+        },
+      }),
+      fetchExchange,
     ],
     requestPolicy: 'cache-and-network',
   });
@@ -59,7 +72,7 @@ const Loader = (chatElement: HTMLDivElement, video_id: string) => {
   }
 };
 
-export const createChatWindow = (_chatWindowSize: string, video_id: string) => {
+export const createChatWindow = (_chatWindowSize: string) => {
   let chatElement = document.createElement('div');
   let chatElementId = 'NComments';
   chatElement.id = chatElementId;
@@ -67,7 +80,7 @@ export const createChatWindow = (_chatWindowSize: string, video_id: string) => {
   chatElement.style.cssText = `
       background-color: transparent !important;
     `;
-  Loader(chatElement, video_id);
+  Loader(chatElement);
 };
 
 const CommentButton = () => {
@@ -141,7 +154,7 @@ const CommentButton = () => {
         setTimeout(() => {
           let nComments = document.getElementById('NComments');
           if (nComments === null) {
-            createChatWindow(chatWindowSize, movieId);
+            createChatWindow(chatWindowSize);
             dispatch(sliceSetIsOpenChatWindow(true));
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);

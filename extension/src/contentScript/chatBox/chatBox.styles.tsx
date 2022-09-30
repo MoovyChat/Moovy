@@ -1,19 +1,20 @@
 import styled from 'styled-components';
 
-export const ChatBoxContainer = styled.div`
+type props = {
+  isTextAreaClicked: boolean;
+};
+export const ChatBoxContainer = styled.div<props>`
   position: relative;
   height: 100%;
   width: 100%;
   font-size: 10px;
   color: inherit;
+  overflow: hidden;
   .comment-section {
     overflow: auto;
-    height: 74%;
+    height: 100%;
     width: 100%;
-    scrollbar-face-color: aliceblue;
-    &::-webkit-scrollbar {
-      visibility: hidden;
-    }
+    filter: ${(p) => p.isTextAreaClicked && 'blur(10px)'};
   }
 `;
 

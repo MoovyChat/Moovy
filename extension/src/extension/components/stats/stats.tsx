@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { StatsWindow } from './stats.styles';
-import { Unsubscribe } from 'firebase/firestore';
-import { User } from '../../../Utils/interfaces';
-import { getUser } from '../../../firebase-api/user';
+import { useGetUserMutMutation } from '../../../generated/graphql';
 
 type props = {
   className: string;
@@ -12,18 +10,15 @@ type props = {
 const Stats: React.FC<props> = ({ className, uid }) => {
   const [count, setCount] = useState<number>(0);
   const [watched, setWatched] = useState<number>(0);
+  const [_gu, getUser] = useGetUserMutMutation();
 
   useEffect(() => {
-    let unSub: Unsubscribe;
-    getUser(uid).then((res) => {
-      let data = res[0] as User;
-      let watchedData = data.watched;
+    getUser({ uid }).then((res) => {
+      let { data, error } = res;
+      if (error) console.log(error);
+      let watchedData = data?.getUserMut?.watchedMovies!;
       setWatched(watchedData?.length || 0);
-      unSub = res[1] as Unsubscribe;
     });
-    return () => {
-      if (unSub) unSub();
-    };
   }, [uid]);
 
   useEffect(() => {

@@ -5,19 +5,20 @@ import { globalUIStyles } from '../../Utils/interfaces';
 
 type props = {
   styles: globalUIStyles;
+  textAreaHeight: number;
 };
 
-export const textAreaMixin = () => css`
-  overflow: auto;
+export const textAreaMixin = () => css<props>`
+  overflow-x: hidden;
+  overflow-y: auto;
   border: none;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  height: 50px !important;
-  font-size: 12px;
+  font-size: 14px;
   width: 100%;
   padding: 5px 0px;
+  max-height: 50px;
   word-spacing: 0.25em;
-  overflow: auto;
   outline: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -27,18 +28,15 @@ export const textAreaMixin = () => css`
 
 export const ChatAreaParent = styled.textarea<props>`
   ${textAreaMixin()}
-  background-color: ${(p) =>
-    p.styles ? p.styles.backgroundColor : 'transparent'};
   position: relative;
   background: transparent;
+  height: ${(p) => p.textAreaHeight}px !important;
   z-index: 9;
-  color: #000; /* Fallback for older browsers */
   color: rgba(0, 0, 0, 0.001);
-  caret-color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
+  caret-color: ${(p) => p.theme.text};
 
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
     opacity: 0.6; /* Firefox */
   }
 `;
@@ -51,8 +49,6 @@ export const Parent = styled.div<props>`
     position: absolute;
     top: 0;
     left: 0;
-    background-color: ${(p) =>
-      p.styles ? p.styles.backgroundColor : 'transparent'};
     ${textAreaMixin()}
     .time, .user {
       ${commentStyleMixin()}

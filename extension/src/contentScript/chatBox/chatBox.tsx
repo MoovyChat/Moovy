@@ -1,23 +1,11 @@
-import {
-  ChatBoxContainer,
-  LoadMoreComments,
-  NoCommentBox,
-  ShowMoreComments,
-} from './chatBox.styles';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ChatBoxContainer, LoadMoreComments } from './chatBox.styles';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   sliceAddAllComments,
   sliceAddCommentsAtFirst,
 } from '../../redux/slices/comment/commentSlice';
 import {
   sliceSetCommentsLoadedCount,
-  sliceSetCurrentPage,
   sliceSetFetchingComments,
   sliceSetLastPage,
   sliceSetLoadNew,
@@ -31,10 +19,9 @@ import {
   useGetCommentsOfTheMovieMutation,
 } from '../../generated/graphql';
 
-import CommentCard from '../commentCard/commentCard';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
-import Loading from '../../components/loading/loading';
+import SmileyWindow from '../../components/smileyWindow/smileyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { useIsMount } from '../hooks/useIsMount';
@@ -51,6 +38,12 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const currentPage = useAppSelector((state) => state.movie.currentPage);
   const newlyLoadedTimeSTamp = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
+  );
+  const isTextAreaFocussed = useAppSelector(
+    (state) => state.textArea.isTextAreaFocused
+  );
+  const isTextAreaClicked = useAppSelector(
+    (state) => state.textArea.isTextAreaClicked
   );
   const [_result, fetchNewComments] = useFetchNewCommentsMutation();
 
@@ -169,7 +162,9 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   };
 
   return (
-    <ChatBoxContainer className='chat-box-container'>
+    <ChatBoxContainer
+      className='chat-box-container'
+      isTextAreaClicked={isTextAreaFocussed}>
       {totalCommentsCount > pastLoadedCommentCount! && (
         <LoadMoreComments
           className='load-new'
@@ -196,6 +191,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
           type={type}
         />
       </div>
+      <SmileyWindow />
     </ChatBoxContainer>
   );
 };
