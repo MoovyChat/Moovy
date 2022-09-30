@@ -9,6 +9,10 @@ import { CommentInfo, User, globalUIStyles } from '../../Utils/interfaces';
 import { MdStar, MdStarOutline } from 'react-icons/md';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useGetMovieFavCountQuery,
+  useUpdateUserMovieStatusMutation,
+} from '../../generated/graphql';
 
 import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
@@ -22,7 +26,6 @@ import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
-import { useUpdateUserMovieStatusMutation } from '../../generated/graphql';
 
 type props = {
   user: User;
@@ -42,9 +45,6 @@ const ChatInterface: React.FC<props> = ({
   chatWindowSize,
   openChatWindow,
 }) => {
-  // GraphQL: Custom Hooks.
-  const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
-
   // Redux: App selectors.
   const isEditNameBoxOpen = useAppSelector(
     (state) => state.loading.isEditNameBoxOpen
@@ -53,16 +53,23 @@ const ChatInterface: React.FC<props> = ({
   const isPopSlideOpen = useAppSelector(
     (state) => state.settings.isPopSlideOpen
   );
+  // GraphQL: Custom Hooks.
+  const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
+  const [{ error, fetching, data }, _query] = useGetMovieFavCountQuery({
+    variables: {
+      mid: movie.mid,
+    },
+  });
+
   // Redux: App dispatch.
   const dispatch = useAppDispatch();
 
   // React:useState hooks.
   const [delayed, setDelayed] = useState<boolean>(false);
   const [fav, setFav] = useState<boolean>(false);
-  const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [viewStyles, setViewStyles] = useState<boolean>(false);
-
+  const [favCount, SetFavCount] = useState<number>(0);
   // React: useRef hook.
   const callbackKeyRef = useRef<any>();
 
@@ -75,16 +82,21 @@ const ChatInterface: React.FC<props> = ({
     }).then((response) => {
       const { data, error } = response;
       if (error) colorLog(error);
-      colorLog(data);
       const { favorite } = data?.updateUserMovieStats!;
       if (favorite) setFav(favorite);
     });
   }, []);
 
-  // Get global styles.
+  // Get Movie Fav count.
   useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [globalStyles]);
+    if (error) {
+      colorLog(error);
+      return;
+    }
+    if (!fetching && data) {
+      SetFavCount(data.getMovieFavoriteCount ? data.getMovieFavoriteCount : 0);
+    }
+  }, [fetching]);
 
   // Set the response to the global text area.
   const responseFromReplyWindow = (comment: CommentInfo) => {
@@ -168,7 +180,6 @@ const ChatInterface: React.FC<props> = ({
         className='chat-interface'
         ref={divRef}
         openChatWindow={openChatWindow!}
-        styles={globalStyles!}
         onClick={(e) => e.stopPropagation()}
         width={chatWindowSize}>
         {delayed ? (
@@ -193,10 +204,13 @@ const ChatInterface: React.FC<props> = ({
                     setFav(favorite!);
                   });
                 }}>
+                <div className='fav-count'>
+                  <div className='box'>{favCount}</div>
+                </div>
                 {!fav ? (
-                  <MdStarOutline size={20} />
+                  <MdStarOutline className='star' size={20} />
                 ) : (
-                  <MdStar size={20} color='gold' />
+                  <MdStar className='star' size={20} color='gold' />
                 )}
               </div>
             </ChatTitle>

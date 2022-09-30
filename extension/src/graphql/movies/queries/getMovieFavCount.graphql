@@ -1,0 +1,3 @@
+query getMovieFavCount($mid: String!) {
+  getMovieFavoriteCount(mid: $mid)
+}

@@ -11,6 +11,7 @@ export const movieState: Movie = {
   totalCommentsCountOfMovie: 0,
   commentsLoadedCount: 0,
   likesCount: 0,
+  favCount: 0,
   totalRepliesCountOfMovie: 0,
   fetchingComments: false,
   lastPage: 0,
@@ -78,6 +79,9 @@ const MovieSlice = createSlice({
     sliceSetLoadNew: (state, action) => {
       return { ...state, loadNew: state.loadNew! + 1 };
     },
+    sliceSetFavCount: (state, action) => {
+      return { ...state, favCount: action.payload };
+    },
     sliceResetMovie: () => {
       return movieState;
     },
@@ -118,6 +122,7 @@ export const {
   sliceSetTotalRepliesOfTheMovie,
   sliceSetNewlyLoadedTimeStamp,
   sliceSetLastPage,
+  sliceSetFavCount,
   sliceSetCurrentPage,
   sliceResetMovie,
 } = MovieSlice.actions;

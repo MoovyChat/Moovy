@@ -266,6 +266,7 @@ export type Query = {
   getIsUserLikedReply?: Maybe<Scalars['Boolean']>;
   getMovie: Movie;
   getMovieById: Platform;
+  getMovieFavoriteCount?: Maybe<Scalars['Int']>;
   getMovieLikes?: Maybe<LikesObject>;
   getMovieLikesAndCommentsCount?: Maybe<LikesAndComment>;
   getRepliedUser?: Maybe<User>;
@@ -323,6 +324,11 @@ export type QueryGetMovieArgs = {
 
 export type QueryGetMovieByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetMovieFavoriteCountArgs = {
+  mid: Scalars['String'];
 };
 
 
@@ -561,6 +567,13 @@ export type GetMovieQueryVariables = Exact<{
 
 
 export type GetMovieQuery = { __typename?: 'Query', getMovie: { __typename?: 'Movie', mid: string, name: string, likes: Array<string>, platformId: number, createdAt: string, updatedAt: string } };
+
+export type GetMovieFavCountQueryVariables = Exact<{
+  mid: Scalars['String'];
+}>;
+
+
+export type GetMovieFavCountQuery = { __typename?: 'Query', getMovieFavoriteCount?: number | null };
 
 export type GetMovieLikesQueryVariables = Exact<{
   mid: Scalars['String'];
@@ -886,6 +899,15 @@ export const GetMovieDocument = gql`
 
 export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
+};
+export const GetMovieFavCountDocument = gql`
+    query getMovieFavCount($mid: String!) {
+  getMovieFavoriteCount(mid: $mid)
+}
+    `;
+
+export function useGetMovieFavCountQuery(options: Omit<Urql.UseQueryArgs<GetMovieFavCountQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetMovieFavCountQuery, GetMovieFavCountQueryVariables>({ query: GetMovieFavCountDocument, ...options });
 };
 export const GetMovieLikesDocument = gql`
     query getMovieLikes($mid: String!) {

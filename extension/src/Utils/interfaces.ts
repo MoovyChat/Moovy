@@ -37,6 +37,7 @@ export interface Movie {
   currentPage?: number;
   likesCount: number;
   createdAt?: any;
+  favCount?: number;
   updatedAt?: any;
   fetchingComments?: boolean;
   initialLoadedTimeStamp?: string;

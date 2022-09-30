@@ -1,4 +1,5 @@
 import { globalUIStyles } from '../../Utils/interfaces';
+import { rotate } from '../../styles/keyframes';
 import styled from 'styled-components';
 
 export const TextAreaContainer = styled.div`
@@ -10,7 +11,6 @@ export const TextAreaContainer = styled.div`
 
 type chatWindowProps = {
   width: string;
-  styles: globalUIStyles;
   openChatWindow: boolean;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
@@ -63,25 +63,56 @@ export const ChatTitle = styled.div`
   font-weight: bold;
   font-family: 'Lexend', sans-serif;
   padding: 20px 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
+  display: grid;
+  grid-template-columns: 8fr 2fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
   .title {
-    width: 80%;
+    grid-area: 1 / 1 / 2 / 2;
   }
   .icon {
+    grid-area: 1 / 2 / 2 / 3;
     margin-left: 5px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    display: -webkit-inline-box;
+
+    .fav-count {
+      max-width: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      .box {
+        position: relative;
+        width: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .star {
+      :hover {
+        animation: ${rotate} 1s ease-in-out reverse;
+        transform: scale(1.05);
+      }
+      :active {
+        transform: scale(0.95);
+      }
+    }
     :hover {
       cursor: pointer;
-      color: gold;
-      filter: drop-shadow(0 0 5px white);
-      box-shadow: inset 0 0 5px white;
-      border-radius: 50%;
-      transform: scale(1.05);
-    }
-    :active {
-      transform: scale(0.95);
+      filter: drop-shadow(0 0 1px ${(p) => p.theme.text});
+      box-shadow: inset 0 0 1px ${(p) => p.theme.text};
+      border-radius: 10px;
+      .fav-count {
+        max-width: 30px;
+        color: ${(p) => p.theme.text};
+        transition: all 1s linear;
+      }
     }
   }
 `;
