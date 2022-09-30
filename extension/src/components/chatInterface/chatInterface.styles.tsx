@@ -71,6 +71,9 @@ export const ChatTitle = styled.div`
   grid-row-gap: 0px;
   .title {
     grid-area: 1 / 1 / 2 / 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
   .icon {
     grid-area: 1 / 2 / 2 / 3;
