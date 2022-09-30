@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 export const PopSlideParent = styled.div`
   position: absolute;
-  height: 70%;
+  height: 75%;
   width: 100%;
-  bottom: -5px;
-  border-radius: 10% 10% 0 0;
+  bottom: -25px;
+  /* border-radius: 10% 10% 0 0; */
   background-color: #353535;
-  z-index: 12;
+  z-index: 15;
   box-shadow: 0 0 10px black inset;
   animation: ${bottomToTop1} 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
   display: flex;
@@ -53,7 +53,7 @@ export const PopSlideParent = styled.div`
 
 export const LikesUserView = styled.div`
   display: flex;
-  width: 90%;
+  width: 50%;
   align-items: center;
   margin: 6px 0;
   .pic {

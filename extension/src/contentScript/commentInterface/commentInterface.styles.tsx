@@ -7,7 +7,6 @@ type commentCardProps = {
   styles: globalUIStyles;
 };
 export const CommentCardContainer = styled.div<commentCardProps>`
-  min-height: 50px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -16,15 +15,14 @@ export const CommentCardContainer = styled.div<commentCardProps>`
   margin: 2px 0px;
   border-radius: 15px;
   position: relative;
+  padding: 5px 0;
+  padding-left: 2%;
   .card-parent {
     position: relative;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: row;
-    box-shadow: inset 4px 0 0 gold;
-    background-color: ${(p) =>
-      p.styles ? p.styles.backgroundColor : 'inherit'};
   }
 `;
 
@@ -32,24 +30,27 @@ type cardProps = {
   deleteFlag: boolean;
   hovered: boolean;
   styles: globalUIStyles;
+  like: boolean;
 };
 export const Card = styled.div<cardProps>`
   position: relative;
-  display: flex;
   width: 100%;
   min-height: 50px;
   z-index: 1;
-  align-items: center;
-  justify-content: flex-end;
-  box-shadow: ${(p) => (p.hovered ? 'inset 2px 0px 0px gold' : 'none')};
-  background-color: ${(p) => (p.styles ? p.styles.backgroundColor : 'inherit')};
-  animation: ${(p) =>
-    p.deleteFlag ? 'slideCard 0.5s linear forwards' : 'none'};
+  display: flex;
+  align-items: flex-start;
+  /* justify-content: flex-end; */
+  /* box-shadow: ${(p) => (p.like ? 'inset 0 0 10px #ff005d' : 'none')}; */
+  /* box-shadow: ${(p) => (p.hovered ? 'inset 2px 0px 0px gold' : 'none')}; */
+  /* animation: ${(p) =>
+    p.deleteFlag ? 'slideCard 0.5s linear forwards' : 'none'}; */
   .profile {
     display: flex;
     width: 40px;
+    height: 100%;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding-top: 5px;
   }
   .container {
     flex-basis: 80%;
@@ -60,25 +61,9 @@ export const Card = styled.div<cardProps>`
   .like {
     flex-basis: 10%;
     display: flex;
-    justify-content: flex-end;
-  }
-  @keyframes slideCard {
-    0% {
-      right: 0;
-      animation-timing-function: ease-out;
-    }
-    80% {
-      right: 40px;
-      animation-timing-function: ease-out;
-    }
-    90% {
-      right: 35px;
-      animation-timing-function: ease-in;
-    }
-    100% {
-      right: 30px;
-      animation-timing-function: ease-in;
-    }
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-top: 10px;
   }
 `;
 
@@ -119,11 +104,11 @@ export const Like = styled.div`
   :focus,
   :hover {
     cursor: pointer;
-    transform: scale(1.1);
     color: #ff005d;
   }
   :active {
-    transform: scale(1);
+    transform: rotate(0.1deg) scale(1);
+    transition: transform 0.25s cubic-bezier(0.5, 400, 0.5, -400);
   }
   .fill {
     color: #ff005d;
@@ -158,7 +143,6 @@ type spoilerProps = {
   showSpoiler: boolean;
 };
 export const SpoilerTag = styled.span<spoilerProps>`
-  background-color: #5c5c5c;
   color: ${(p) => (p.showSpoiler ? 'inherit' : '#5c5c5c')};
   margin: 0 5px;
   border-radius: 5px;
@@ -178,20 +162,6 @@ export const MessageParent = styled.span`
   }
 `;
 
-export const ReplyParent = styled(motion.div)`
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  align-self: flex-end;
-  .reply-status {
-    align-self: left;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    cursor: pointer;
-  }
-`;
-
 export const Delete = styled.div<cardProps>`
   position: absolute;
   top: 0;
@@ -204,7 +174,7 @@ export const Delete = styled.div<cardProps>`
   justify-content: flex-end;
   padding-right: 5px;
   align-items: center;
-  visibility: ${(p) => (p.deleteFlag ? 'visible' : 'hidden')};
+  /* visibility: ${(p) => (p.deleteFlag ? 'visible' : 'hidden')}; */
   :hover {
     cursor: pointer;
   }

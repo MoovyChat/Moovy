@@ -21,6 +21,15 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import {
+  slicePopSlideContentType,
+  sliceSetPopSlide,
+} from '../../redux/slices/settings/settingsSlice';
+import {
+  sliceSetIsTextAreaClicked,
+  sliceSetIsTextAreaFocused,
+  sliceSetTextAreaMessage,
+} from '../../redux/slices/textArea/textAreaSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetUserMutMutation,
@@ -30,7 +39,10 @@ import {
 
 import { AnyAction } from 'redux';
 import ChatArea from '../../components/chatArea/chatArea';
+import { IoArrowForwardCircle } from 'react-icons/io5';
+import { MdTagFaces } from 'react-icons/md';
 import { Pic } from '../../extension/components/logout/logout.styles';
+import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
@@ -38,9 +50,9 @@ import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 
-const setSpoiler = (text: string, setText: Dispatch<any>) => {
+const setSpoiler = (text: string, dispatch: any) => {
   let newText = text + ' <s></s>';
-  setText(newText);
+  dispatch(sliceSetTextAreaMessage(newText));
 };
 
 type props = {
@@ -58,6 +70,7 @@ const MessageBox: React.FC<props> = ({
   // Redux: App selectors.
   const movieId = useAppSelector((state) => state.movie.mid);
   const user = useAppSelector((state) => state.user);
+  const text = useAppSelector((state) => state.textArea.text);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -65,16 +78,19 @@ const MessageBox: React.FC<props> = ({
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
-  const [text, setText] = useState<string>('');
 
   // Chrome storage: Gets the global ui styles.
   useEffect(() => {
     getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
   }, [globalStyles]);
 
+  const smileyHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetPopSlide(true));
+    dispatch(slicePopSlideContentType('smiley'));
+  };
+
   const postComment = async (
-    text: string,
-    setText: Dispatch<SetStateAction<string>>,
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
     movieId: string,
@@ -113,7 +129,7 @@ const MessageBox: React.FC<props> = ({
             setReplyClickResponse(undefined);
           })
           .catch((err) => colorLog(err));
-        setText('');
+        dispatch(sliceSetTextAreaMessage(''));
       }
     } else {
       let newComment: CommentInfo | any = {
@@ -139,9 +155,11 @@ const MessageBox: React.FC<props> = ({
           setIsReply(false);
           setReplyClickResponse(undefined);
         });
-        setText('');
+        dispatch(sliceSetTextAreaMessage(''));
       }
     }
+    dispatch(sliceSetIsTextAreaFocused(false));
+    dispatch(sliceSetIsTextAreaClicked(false));
   };
 
   // Handles reply window response action.
@@ -156,7 +174,7 @@ const MessageBox: React.FC<props> = ({
         colorLog(data);
         if (error) colorLog(error);
         const nickName = data?.getUserMut?.nickname;
-        setText(`@${nickName!} `);
+        dispatch(sliceSetTextAreaMessage(`@${nickName!} `));
         setRepliedUser(nickName!);
       });
     }
@@ -168,13 +186,11 @@ const MessageBox: React.FC<props> = ({
       isReply={isReply}
       styles={globalStyles!}>
       <TextAreaIcon className='text-area-icon'>
-        <Pic photoURL={user?.photoUrl}></Pic>
+        <Profile profilePic={user?.photoUrl!}></Profile>
       </TextAreaIcon>
       <MessageBoxParent>
         <ChatArea
           user={user}
-          text={text}
-          setText={setText}
           postComment={postComment}
           replyWindowResponse={replyWindowResponse}
           setReplyClickResponse={setReplyClickResponse}
@@ -188,7 +204,7 @@ const MessageBox: React.FC<props> = ({
                 setReplyClickResponse(undefined);
                 setIsReply(false);
                 setRepliedUser('');
-                setText('');
+                dispatch(sliceSetTextAreaMessage(''));
               }}>
               <AiOutlineCloseCircle size={20} />
             </div>
@@ -196,12 +212,12 @@ const MessageBox: React.FC<props> = ({
         ) : (
           <React.Fragment></React.Fragment>
         )}
-        <Spoiler styles={globalStyles!}>
+        {/* <Spoiler styles={globalStyles!}>
           <div
             className='spoiler-tag'
             onClick={(e) => {
               e.stopPropagation();
-              setSpoiler(text, setText);
+              setSpoiler(text, dispatch);
             }}>
             <span>Spoiler</span>
           </div>
@@ -210,16 +226,17 @@ const MessageBox: React.FC<props> = ({
               <span className='count'>{150 - text.length}</span>
             </TextAreaCount>
           </div>
-        </Spoiler>
+        </Spoiler> */}
       </MessageBoxParent>
+      <div className='smiley' onClick={smileyHandler}>
+        <MdTagFaces className='icon' size={25} />
+      </div>
       <TextAreaPost>
         <div
           onClick={(e: MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.stopPropagation();
             postComment(
-              text,
-              setText,
               user,
               dispatch,
               movieId,
@@ -227,7 +244,7 @@ const MessageBox: React.FC<props> = ({
               setReplyClickResponse
             );
           }}>
-          <AiOutlineSend size={25} />
+          <IoArrowForwardCircle fill='cyan' size={25} />
         </div>
       </TextAreaPost>
     </ChatTextBox>

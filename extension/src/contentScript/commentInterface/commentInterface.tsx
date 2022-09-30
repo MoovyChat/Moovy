@@ -7,7 +7,6 @@ import {
   Like,
   MessageParent,
   Profile,
-  ReplyParent,
   SpoilerTag,
   Stats,
   UserToolTip,
@@ -18,7 +17,12 @@ import {
   globalUIStyles,
   textMap,
 } from '../../Utils/interfaces';
-import React, { useEffect, useState } from 'react';
+import {
+  Exact,
+  GetRepliesQuery,
+  useGetRepliesQuery,
+} from '../../generated/graphql';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -28,13 +32,13 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { MdDeleteForever } from 'react-icons/md';
 import ReplyWindow from '../replyWindow/replyWindow';
+import { UseQueryState } from 'urql';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddAllReplies } from '../../redux/slices/reply/replySlice';
 import { sliceSetRepliesCount } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
-import { useGetRepliesQuery } from '../../generated/graphql';
 
 type props = {
   commentedUser: User;
@@ -63,14 +67,6 @@ const CommentInterface: React.FC<props> = ({
   likedUsers,
   className,
 }) => {
-  //GraphQL: QueriesAndMutation.
-  const [repliesOfComment, _gr] = useGetRepliesQuery({
-    variables: {
-      cid: commentOrReply.cid!,
-    },
-    requestPolicy: 'cache-and-network',
-  });
-
   // Redux: App Selector Hook.
   const userId = useAppSelector((state) => state.user.uid);
   const allReplies = useAppSelector((state) => state.replies.replies);
@@ -84,11 +80,16 @@ const CommentInterface: React.FC<props> = ({
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [hovered, setHovered] = useState<boolean>(false);
   const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
-  const [replySection, setReplySection] = useState<boolean>(false);
   const [showSpoiler, setShowSpoiler] = useState<boolean>(false);
   const [showToolTip, setShowToolTip] = useState<boolean>(false);
-
   // Chrome Storage: Get global styles.
+
+  const [repliesOfComment, _gr] = useGetRepliesQuery({
+    variables: {
+      cid: commentOrReply.cid!,
+    },
+    requestPolicy: 'cache-and-network',
+  });
   useEffect(() => {
     getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
   }, []);
@@ -105,15 +106,15 @@ const CommentInterface: React.FC<props> = ({
           dispatch(sliceSetRepliesCount(repliesCount));
         });
       }
-    }
-  }, [repliesOfComment.fetching]);
+    } else return;
+  }, [repliesOfComment.fetching, type]);
 
   useEffect(() => {
     const replyCount = allReplies.filter(
       (reply) => reply.parentCommentCid === commentOrReply.cid!
     ).length;
     setRepliesCount(replyCount);
-  }, [allReplies.length]);
+  }, [allReplies.length, allReplies, setRepliesCount]);
 
   // Conditional update.
   // typeOfMessage: TIME -> Seek the video to respective time.
@@ -133,7 +134,6 @@ const CommentInterface: React.FC<props> = ({
 
   // Opens likes View window when the likes count is clicked on.
   const likeWindowHandler: any = () => {
-    colorLog(likedUsers);
     batch(() => {
       dispatch(sliceSetPopSlide(true));
       dispatch(slicePopSlideContentType('likes'));
@@ -147,20 +147,21 @@ const CommentInterface: React.FC<props> = ({
   return (
     <CommentCardContainer styles={globalStyles!} className={className}>
       <div className='card-parent'>
-        {commentedUser?.uid === userId && (
-          <Delete
-            hovered={hovered}
-            deleteFlag={deleteFlag}
-            styles={globalStyles!}
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteCommentOrReply();
-            }}>
-            <MdDeleteForever size={20} />
-          </Delete>
-        )}
+        {/* {commentedUser?.uid === userId && (
+          // <Delete
+          //   hovered={hovered}
+          //   deleteFlag={deleteFlag}
+          //   styles={globalStyles!}
+          //   onClick={(e) => {
+          //     e.stopPropagation();
+          //     deleteCommentOrReply();
+          //   }}>
+          //   <MdDeleteForever size={20} />
+          // </Delete>
+        )} */}
         <Card
           hovered={hovered}
+          like={like}
           className='comment-card'
           deleteFlag={deleteFlag}
           styles={globalStyles!}>
@@ -223,6 +224,7 @@ const CommentInterface: React.FC<props> = ({
                 </div>
               </Comment>
             </div>
+
             <Stats>
               <div className='timestamp'>{time}</div>
               <div
@@ -231,7 +233,7 @@ const CommentInterface: React.FC<props> = ({
                   e.stopPropagation();
                   likeWindowHandler();
                 }}>
-                {likesCount} likes
+                {likesCount} Likes
               </div>
               <div
                 className='replies'
@@ -239,7 +241,7 @@ const CommentInterface: React.FC<props> = ({
                   e.stopPropagation();
                   responseFromReplyWindow(commentOrReply);
                 }}>
-                reply
+                Reply
               </div>
               {commentedUser?.uid === userId && (
                 <div
@@ -248,7 +250,7 @@ const CommentInterface: React.FC<props> = ({
                     e.stopPropagation();
                     setDeleteFlag(!deleteFlag);
                   }}>
-                  {deleteFlag ? 'cancel' : 'delete'}
+                  {deleteFlag ? 'Cancel' : 'Delete'}
                 </div>
               )}
             </Stats>
@@ -268,26 +270,12 @@ const CommentInterface: React.FC<props> = ({
           </Like>
         </Card>
       </div>
-      <ReplyParent>
-        {repliesCount !== 0 && (
-          <div
-            className='reply-status'
-            onClick={(e) => {
-              e.stopPropagation();
-              setReplySection(!replySection);
-            }}>
-            Show {repliesCount} replies
-          </div>
-        )}
-        <div>
-          {replySection && (
-            <ReplyWindow
-              parentComment={commentOrReply}
-              responseFromReplyWindow={responseFromReplyWindow}
-            />
-          )}
-        </div>
-      </ReplyParent>
+
+      <ReplyWindow
+        repliesCount={repliesCount}
+        parentComment={commentOrReply}
+        responseFromReplyWindow={responseFromReplyWindow}
+      />
     </CommentCardContainer>
   );
 };

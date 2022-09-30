@@ -1,8 +1,11 @@
 import { Movie, globalUIStyles } from '../../Utils/interfaces';
 import React, { useEffect, useRef, useState } from 'react';
+import { darkTheme, lightTheme } from '../../theme/theme';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChatInterface from '../../components/chatInterface/chatInterface';
+import { GlobalStyles } from '../../theme/globalStyles';
+import { ThemeProvider } from 'styled-components';
 import { getPlayerViewElement } from '../contentScript.utils';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
@@ -26,6 +29,7 @@ const ChatWindow = () => {
   const position = useMousePosition();
   // React: useState hook.
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
+  const theme = useAppSelector((state) => state.settings.theme);
   // React: useRef hook.
   const divRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -87,15 +91,20 @@ const ChatWindow = () => {
 
   return (
     <React.Fragment>
-      <ChatInterface
-        divRef={divRef}
-        dragRef={dragRef}
-        widthRef={widthRef}
-        videoWidthRef={videoWidthRef}
-        openChatWindow={openChatWindow}
-        user={user}
-        chatWindowSize={chatWindowSize}
-      />
+      <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+        <React.Fragment>
+          <GlobalStyles />
+          <ChatInterface
+            divRef={divRef}
+            dragRef={dragRef}
+            widthRef={widthRef}
+            videoWidthRef={videoWidthRef}
+            openChatWindow={openChatWindow}
+            user={user}
+            chatWindowSize={chatWindowSize}
+          />
+        </React.Fragment>
+      </ThemeProvider>
     </React.Fragment>
   );
 };
