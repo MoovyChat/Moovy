@@ -166,6 +166,18 @@ export class MovieResolver {
     return result;
   }
 
+  @Query(() => Int, { nullable: true })
+  async getMovieFavoriteCount(@Arg('mid') mid: string): Promise<number> {
+    return await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+        mid,
+      })
+      .where('stats.favorite = :favorite', { favorite: true })
+      .getCount();
+  }
+
   @Mutation(() => Boolean, { nullable: true })
   async updateMovieTitle(
     @Arg('mid') mid: string,
