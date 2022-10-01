@@ -1,16 +1,18 @@
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RecentEmoji, db, freqEmoji } from '../../indexedDB/db';
-import { SmileyWindowParent, Spoiler } from './smileyWindow.styles';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { Emoji } from 'emojibase';
 import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
+import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
 import { colorLog } from '../../Utils/utilities';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 const SmileyWindow = () => {
+  const iconSize = 30;
   const [frequentEmojis, setFrequent] = useState<freqEmoji[]>([]);
   const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
@@ -99,29 +101,40 @@ const SmileyWindow = () => {
             )}
             <div className='section'>
               <div className='title'>Comment options</div>
-              <Spoiler>
-                <div
-                  className='spoiler-tag'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSpoiler();
-                  }}>
-                  <span id='text-focus'>Spoiler</span>
+              <div
+                className='spoiler'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSpoiler();
+                }}>
+                <div className='tag' id='text-focus'>
+                  Spoiler
                 </div>
-              </Spoiler>
+              </div>
             </div>
-            <div className='promote'>
-              <div className='logo'>Logo</div>
+            <div className='section'>
+              <div className='title'>Socials</div>
               <div className='socials'>
-                <div className='discord'>D</div>
-                <div className='twitter'>T</div>
-                <div className='tik-tok'>TT</div>
-                <div className='instagram'>I</div>
+                <div className='discord'>
+                  <FaDiscord color='cornflowerblue' size={iconSize} />
+                </div>
+                <div className='twitter'>
+                  <FaTwitter color='deepskyblue' size={iconSize} />
+                </div>
+                <div className='tiktok'>
+                  <FaTiktok className='icon' size={iconSize} />
+                </div>
+                <div className='instagram'>
+                  <FaInstagram color='hotpink' size={iconSize} />
+                </div>
               </div>
-              <div className='donate'>
-                <div className='patreon'>P</div>
-                <div className='stripe'>S</div>
-              </div>
+              {/* <div className='section'>
+                <div className='title'>Donate & Support</div>
+                <div className='donate'>
+                  <div className='patreon'>Patreon</div>
+                  <div className='stripe'>Stripe</div>
+                </div>
+              </div> */}
             </div>
           </div>
         </SmileyWindowParent>

@@ -13,6 +13,7 @@ export const SmileyWindowParent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  overflow: auto;
   .child {
     padding: 10px;
     height: 100%;
@@ -42,11 +43,51 @@ export const SmileyWindowParent = styled.div`
           }
         }
       }
-      .emojis {
+      .emojis,
+      .donate,
+      .socials {
         display: flex;
         width: 100%;
         flex-wrap: wrap;
         justify-content: space-evenly;
+      }
+      .socials {
+        .tiktok,
+        .discord,
+        .twitter,
+        .instagram {
+          :hover {
+            cursor: pointer;
+            transform: scale(1.5);
+            transition: transform 0.5s linear;
+          }
+        }
+        .tiktok {
+          .icon {
+            filter: drop-shadow(1px 1px 0px red);
+          }
+        }
+      }
+      .spoiler {
+        .tag {
+          font-weight: 700;
+          font-size: 1.2em;
+          margin: 10px;
+          padding: 5px;
+          border: 1px solid;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          /* box-shadow: 0px 3px 5px 0px ${(p) => p.theme.text}; */
+          :hover {
+            cursor: pointer;
+            transform: scale(1.05);
+            transition: transform 0.5s;
+          }
+          :active {
+            box-shadow: inset 0px 3px 5px 0px ${(p) => p.theme.text};
+          }
+        }
       }
     }
   }
@@ -57,30 +98,6 @@ export const SmileyWindowParent = styled.div`
     }
     to {
       opacity: 1;
-    }
-  }
-`;
-
-export const Spoiler = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  .spoiler-tag {
-    padding: 3px 0px;
-    width: 60px;
-    margin: 0px 5px;
-    font-weight: bolder;
-    text-align: center;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    :hover {
-      cursor: pointer;
-    }
-    :active {
-      cursor: pointer;
-      transform: scale(0.9);
     }
   }
 `;
