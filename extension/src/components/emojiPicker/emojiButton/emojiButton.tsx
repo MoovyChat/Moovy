@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 
 import { Emoji } from 'emojibase';
 import { EmojiButtonParent } from './emojiButton.styles';
-import IndexedDb from '../indexedDB';
 import { colorLog } from '../../../Utils/utilities';
 import { db } from '../../../indexedDB/db';
 
@@ -23,11 +22,28 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
     dispatch(sliceSetTextAreaMessage(`${text}${emoji.emoji}`));
     dispatch(sliceSetIsTextAreaFocused(true));
 
+    const addToRecentIndexedDB = async () => {
+      try {
+        const id = await db.recent.add({
+          emoji,
+        });
+        const deleteEmoji = await db.recent
+          .filter((r) => r.emoji.emoji === emoji.emoji)
+          .keys();
+        await db.recent.bulkDelete(deleteEmoji);
+        const insertEmoji = await db.recent.add({
+          emoji,
+        });
+        colorLog(`Successfully added to recent: ${insertEmoji}`);
+      } catch (error) {
+        colorLog('Error', error);
+      }
+    };
+
     // Once we have the data, inject the data into the indexedDB.
-    const runIndexDb = async () => {
+    const addToFrequentIndexedDB = async () => {
       try {
         const record = await db.frequent.get(1);
-        colorLog('record', record);
         if (!record) {
           const id = await db.frequent.add({
             frequent: [
@@ -76,12 +92,13 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
       }
     };
 
-    runIndexDb();
+    addToFrequentIndexedDB();
+    addToRecentIndexedDB();
   };
 
   return (
     <EmojiButtonParent className='emoji-button' onClick={handleEmojiClick}>
-      <button>{emoji.emoji}</button>
+      <button id='text-focus'>{emoji.emoji}</button>
     </EmojiButtonParent>
   );
 };

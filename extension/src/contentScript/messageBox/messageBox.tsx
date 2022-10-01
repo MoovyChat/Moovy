@@ -3,8 +3,6 @@ import {
   ChatTextBox,
   MessageBoxParent,
   ReplyTo,
-  Spoiler,
-  TextAreaCount,
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
@@ -49,11 +47,6 @@ import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
-
-const setSpoiler = (text: string, dispatch: any) => {
-  let newText = text + ' <s></s>';
-  dispatch(sliceSetTextAreaMessage(newText));
-};
 
 type props = {
   replyWindowResponse: CommentInfo | undefined;
@@ -212,21 +205,6 @@ const MessageBox: React.FC<props> = ({
         ) : (
           <React.Fragment></React.Fragment>
         )}
-        {/* <Spoiler styles={globalStyles!}>
-          <div
-            className='spoiler-tag'
-            onClick={(e) => {
-              e.stopPropagation();
-              setSpoiler(text, dispatch);
-            }}>
-            <span>Spoiler</span>
-          </div>
-          <div className='word-count'>
-            <TextAreaCount count={150 - text.length} styles={globalStyles!}>
-              <span className='count'>{150 - text.length}</span>
-            </TextAreaCount>
-          </div>
-        </Spoiler> */}
       </MessageBoxParent>
       <div className='smiley' onClick={smileyHandler}>
         <MdTagFaces className='icon' size={25} />

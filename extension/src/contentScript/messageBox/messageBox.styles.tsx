@@ -41,43 +41,6 @@ export const MessageBoxParent = styled.div`
   outline: none;
 `;
 
-export const Spoiler = styled.div<styleProps>`
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  .spoiler-tag {
-    padding: 3px 0px;
-    width: 60px;
-    margin: 0px 5px;
-    font-weight: bolder;
-    background-color: inherit;
-    color: inherit;
-    text-align: center;
-    border-radius: 5px;
-    box-shadow: inset 0 2px 4px 1px white;
-    /* border: 1px solid ${(p) => (p.styles ? p.styles.textColor : 'white')}; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    :hover {
-      background-color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
-      color: ${(p) => (p.styles ? p.styles.backgroundColor : 'white')};
-      /* border: 1px solid
-        ${(p) => (p.styles ? p.styles.backgroundColor : 'black')}; */
-      cursor: pointer;
-    }
-    :active {
-      background-color: ${(p) => (p.styles ? p.styles.textColor : 'white')};
-      color: ${(p) => (p.styles ? p.styles.backgroundColor : 'white')};
-      /* border: 1px solid
-        ${(p) => (p.styles ? p.styles.backgroundColor : 'black')}; */
-      cursor: pointer;
-      transform: scale(0.9);
-    }
-  }
-`;
-
 type props = {
   count: number;
   styles?: globalUIStyles;

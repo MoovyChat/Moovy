@@ -9,11 +9,16 @@ import React, {
   useState,
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
-import { getFormattedWordsArray, isNumber } from '../../Utils/utilities';
+import {
+  colorLog,
+  getFormattedWordsArray,
+  isNumber,
+} from '../../Utils/utilities';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
   sliceSetTextAreaMessage,
+  sliceSetWordSuggestions,
 } from '../../redux/slices/textArea/textAreaSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
@@ -95,7 +100,8 @@ const ChatArea: React.FC<props> = ({
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
       let target = e.target as any;
-      if (target && target.id === 'comment') {
+      console.log(target);
+      if (target && (target.id === 'comment' || target.id === 'text-focus')) {
         dispatch(sliceSetIsTextAreaClicked(true));
         dispatch(sliceSetIsTextAreaFocused(true));
       } else {
@@ -154,6 +160,45 @@ const ChatArea: React.FC<props> = ({
     setFormattedTextMap(res);
   }, [text]);
 
+  const handleInputText: React.ChangeEventHandler<HTMLTextAreaElement> = async (
+    e
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
+    let text = e.target.value;
+    dispatch(sliceSetTextAreaMessage(text));
+    let words = text.split(' ');
+    let lastWord = words[words.length - 1];
+    let searchAPI = `https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=${lastWord}`;
+    // Get Predictive text from Google search API.
+    await fetch(searchAPI, {
+      mode: 'cors',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => response.text())
+      .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then((data) => {
+        const el = data.getElementsByTagName('suggestion');
+        let suggestions: string[] = [];
+        for (let item in el) {
+          let _element = el[item];
+          if (_element) {
+            let node = _element.attributes && _element.attributes[0];
+            let value = node && node.nodeValue!.split(' ');
+            if (value && !suggestions.includes(value[0])) {
+              suggestions.push(value[0]);
+            }
+            if (value && value[1] && !suggestions.includes(value[1])) {
+              suggestions.push(value[1]);
+            }
+          }
+        }
+        dispatch(sliceSetWordSuggestions(suggestions));
+      });
+  };
+
   return (
     <Parent styles={globalStyles!} textAreaHeight={textAreaHeight}>
       <ChatAreaParent
@@ -172,11 +217,7 @@ const ChatArea: React.FC<props> = ({
         placeholder={placeholder}
         value={text}
         onKeyPress={handleKeyDown}
-        onChange={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          dispatch(sliceSetTextAreaMessage(e.target.value));
-        }}
+        onChange={handleInputText}
       />
       <div id='text-area-background' className='text-area-background' ref={ref}>
         {formattedTextMap.map((value, index) => (

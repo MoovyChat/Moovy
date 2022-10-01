@@ -185,7 +185,9 @@ const ChatInterface: React.FC<props> = ({
         {delayed ? (
           <React.Fragment>
             <ChatTitle className='chat-title'>
-              <div className='title'>{movie.name}</div>
+              <div className='title'>
+                <div className='set'>{movie.name}</div>
+              </div>
               <div
                 className='icon'
                 onClick={(e) => {
