@@ -18,7 +18,7 @@ export const textAreaMixin = () => css<props>`
   width: 100%;
   padding: 5px 0px;
   max-height: 50px;
-  word-spacing: 0.25em;
+  word-spacing: 0.2em;
   outline: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -49,8 +49,8 @@ export const Parent = styled.div<props>`
     position: absolute;
     top: 0;
     left: 0;
-    ${textAreaMixin()}
-    .time, .user {
+    ${textAreaMixin()} .time,
+    .user {
       ${commentStyleMixin()}
     }
   }

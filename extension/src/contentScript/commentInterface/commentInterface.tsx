@@ -9,48 +9,47 @@ import {
   Profile,
   SpoilerTag,
   Stats,
-  UserToolTip,
 } from './commentInterface.styles';
+import { CommentInfo, ReplyInfo, User, textMap } from '../../Utils/interfaces';
+import React, { useEffect, useState } from 'react';
 import {
-  CommentInfo,
-  User,
-  globalUIStyles,
-  textMap,
-} from '../../Utils/interfaces';
+  sliceAddAllReplies,
+  sliceDeleteReply,
+} from '../../redux/slices/reply/replySlice';
 import {
-  Exact,
-  GetRepliesQuery,
-  useGetRepliesQuery,
-} from '../../generated/graphql';
-import React, { useEffect, useRef, useState } from 'react';
+  sliceDeleteComment,
+  sliceSetRepliesCount,
+} from '../../redux/slices/comment/commentSlice';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
   sliceSetPopSlideLikes,
+  sliceSetPopSlideNickName,
 } from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useDeleteCommentMutation,
+  useDeleteReplyMutation,
+  useGetRepliesQuery,
+} from '../../generated/graphql';
 
 import { MdDeleteForever } from 'react-icons/md';
 import ReplyWindow from '../replyWindow/replyWindow';
-import { UseQueryState } from 'urql';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
-import { sliceAddAllReplies } from '../../redux/slices/reply/replySlice';
-import { sliceSetRepliesCount } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
 
 type props = {
   commentedUser: User;
   messageArray: textMap[];
   time: string;
-  commentOrReply: CommentInfo;
+  commentOrReply: any;
   like: boolean;
   likesCount: number;
   type: string;
   likedUsers: any[];
   subjectLike: (e: any) => void;
-  responseFromReplyWindow: (comment: CommentInfo) => void;
+  responseFromReplyWindow: (comment: any) => void;
   className: any;
 };
 
@@ -72,35 +71,37 @@ const CommentInterface: React.FC<props> = ({
   const allReplies = useAppSelector((state) => state.replies.replies);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
-
-  // React: useState hooks.
-  const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   // State to check if the "like" is hovered, to style the parent component accordingly.
   const [deleteFlag, setDeleteFlag] = useState<boolean>(false);
   const [repliesCount, setRepliesCount] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const [hovered, setHovered] = useState<boolean>(false);
   const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
-  const [showSpoiler, setShowSpoiler] = useState<boolean>(false);
-  const [showToolTip, setShowToolTip] = useState<boolean>(false);
+  const [lastPage, setLastPage] = useState<number>(1);
   // Chrome Storage: Get global styles.
 
   const [repliesOfComment, _gr] = useGetRepliesQuery({
     variables: {
       cid: commentOrReply.cid!,
+      limit: 5,
+      page: page,
     },
     requestPolicy: 'cache-and-network',
   });
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, []);
+
+  const [_dc, deleteComment] = useDeleteCommentMutation();
+  const [_dr, deleteReply] = useDeleteReplyMutation();
 
   useEffect(() => {
     if (type === 'comment') {
       const { data, error, fetching } = repliesOfComment;
       if (error) colorLog(error);
       if (!fetching && data) {
-        const { replies, repliesCount } = data.getRepliesOfComment;
+        const { replies, repliesCount, lastPage } = data.getRepliesOfComment;
         setRepliesCount(repliesCount);
+        setLastPage(lastPage ? lastPage : 1);
+        colorLog(replies, repliesCount, data);
+
         batch(() => {
           dispatch(sliceAddAllReplies(replies));
           dispatch(sliceSetRepliesCount(repliesCount));
@@ -129,6 +130,7 @@ const CommentInterface: React.FC<props> = ({
         }
       );
     } else if (message.type === textMapTypes.USER) {
+      profileClickHandler(message.message.slice(1));
     }
   };
 
@@ -141,31 +143,65 @@ const CommentInterface: React.FC<props> = ({
     });
   };
 
+  const profileClickHandler = (username: string) => {
+    batch(() => {
+      dispatch(sliceSetPopSlide(true));
+      dispatch(slicePopSlideContentType('profile'));
+      dispatch(sliceSetPopSlideNickName(username));
+    });
+  };
+
   // TODO: Delete comment or reply.
-  const deleteCommentOrReply = () => {};
+  const deleteCommentOrReply = () => {
+    if (type === 'comment') {
+      deleteComment({ cid: commentOrReply.cid! }).then((res) => {
+        let { data, error } = res;
+        if (error) colorLog(error);
+        if (data) {
+          if (data.deleteComment?.cid) {
+            colorLog(`Comment deleted! ${data.deleteComment?.cid}`);
+            dispatch(sliceDeleteComment(data.deleteComment?.cid));
+          }
+        }
+      });
+    } else {
+      deleteReply({ rid: commentOrReply.rid! }).then((res) => {
+        let { data, error } = res;
+        if (error) colorLog(error);
+        if (data) {
+          if (data.deleteReply?.rid) {
+            colorLog(`Reply deleted! ${data.deleteReply?.rid}`);
+            dispatch(sliceDeleteReply(data.deleteReply?.rid));
+          }
+        }
+      });
+    }
+  };
 
   return (
-    <CommentCardContainer styles={globalStyles!} className={className}>
+    <CommentCardContainer className={className}>
       <div className='card-parent'>
-        {/* {commentedUser?.uid === userId && (
-          // <Delete
-          //   hovered={hovered}
-          //   deleteFlag={deleteFlag}
-          //   styles={globalStyles!}
-          //   onClick={(e) => {
-          //     e.stopPropagation();
-          //     deleteCommentOrReply();
-          //   }}>
-          //   <MdDeleteForever size={20} />
-          // </Delete>
-        )} */}
+        {commentedUser?.uid === userId && (
+          <Delete
+            deleteFlag={deleteFlag}
+            onClick={(e: any) => {
+              e.stopPropagation();
+              deleteCommentOrReply();
+            }}>
+            <MdDeleteForever size={20} />
+          </Delete>
+        )}
         <Card
           hovered={hovered}
           like={like}
           className='comment-card'
-          deleteFlag={deleteFlag}
-          styles={globalStyles!}>
-          <div className='profile'>
+          deleteFlag={deleteFlag}>
+          <div
+            className='profile'
+            onClick={(e) => {
+              e.stopPropagation();
+              profileClickHandler(commentedUser?.nickname);
+            }}>
             <Profile
               profilePic={
                 !isCommentDeleted ? commentedUser?.photoUrl! : ''
@@ -176,7 +212,12 @@ const CommentInterface: React.FC<props> = ({
             <div className='text'>
               <Comment className='comment'>
                 <div style={{ margin: '2px' }}>
-                  <span className='username'>
+                  <span
+                    className='username'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      profileClickHandler(commentedUser?.nickname);
+                    }}>
                     {!isCommentDeleted
                       ? commentedUser?.nickname
                         ? commentedUser?.nickname
@@ -186,29 +227,10 @@ const CommentInterface: React.FC<props> = ({
                   <MessageParent>
                     {messageArray.map((msg, index) =>
                       msg.type === textMapTypes.SPOILER ? (
-                        <SpoilerTag
-                          showSpoiler={showSpoiler}
-                          key={index}
-                          onClick={() => setShowSpoiler(!showSpoiler)}>
-                          {msg.message}
-                        </SpoilerTag>
+                        <SpoilerTag key={index}>{msg.message}</SpoilerTag>
                       ) : (
                         <React.Fragment key={index}>
-                          {showToolTip && msg.type === textMapTypes.USER && (
-                            <UserToolTip className='user-tooltip'>
-                              {msg.message}
-                            </UserToolTip>
-                          )}
                           <span
-                            onMouseEnter={(e) => {
-                              e.stopPropagation();
-                              if (msg.type === textMapTypes.USER)
-                                setShowToolTip(true);
-                            }}
-                            onMouseLeave={(e) => {
-                              e.stopPropagation();
-                              setShowToolTip(false);
-                            }}
                             key={index}
                             className={msg.type}
                             onClick={(e) => {
@@ -272,6 +294,9 @@ const CommentInterface: React.FC<props> = ({
       </div>
 
       <ReplyWindow
+        page={page}
+        lastPage={lastPage}
+        setPage={setPage}
         repliesCount={repliesCount}
         parentComment={commentOrReply}
         responseFromReplyWindow={responseFromReplyWindow}

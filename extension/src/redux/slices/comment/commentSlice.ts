@@ -19,7 +19,7 @@ const CommentSlice = createSlice({
     sliceDeleteComment: (state, action) => {
       const { comments } = state;
       let refreshedComments = comments.filter(
-        (comment) => comment.cid !== (action.payload as CommentInfo).cid
+        (comment) => comment.cid !== action.payload
       );
       return {
         ...state,
@@ -29,7 +29,7 @@ const CommentSlice = createSlice({
     sliceSetRepliesCount: (state, action) => {
       const { cid, count } = action.payload;
       const newComments = state.comments.map((cmt) =>
-        cmt.cid === cid ? { ...cmt, likesCount: count } : cmt
+        cmt.cid === cid ? { ...cmt, repliesCount: count } : cmt
       );
       return { ...state, comments: newComments };
     },

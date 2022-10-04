@@ -46,7 +46,7 @@ const SmileyWindow = () => {
   }, [ems, ers]);
 
   const setSpoiler = () => {
-    let newText = textAreaMessage + ' <s></s>';
+    let newText = textAreaMessage + '<s></s>';
     dispatch(sliceSetTextAreaMessage(newText));
   };
   const handleWord: React.MouseEventHandler<HTMLDivElement> = (e) => {

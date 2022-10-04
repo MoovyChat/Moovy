@@ -10,8 +10,9 @@ export interface User {
   replies?: CommentInfo[]; //Remove
   joinedAt?: string;
   updatedAt?: string;
-  watched?: string[];
+  watchedMovies?: string[] | null | undefined;
   favorites?: string[];
+  __typename?: 'User' | undefined;
 }
 
 export interface timeMessage {
@@ -52,6 +53,7 @@ export interface CommentInfo {
   likesCount?: any;
   likes?: [];
   replies?: any[];
+  repliesCount?: number;
   movieId?: string;
   platformId?: number;
   createdAt?: any;

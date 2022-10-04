@@ -19,9 +19,7 @@ const ReplySlice = createSlice({
     sliceDeleteReply: (state, action) => {
       const { payload } = action;
       const { replies } = state;
-      let newReplies = replies.filter(
-        (reply) => reply.rid !== (payload as ReplyInfo).rid
-      );
+      let newReplies = replies.filter((reply) => reply.rid !== payload);
       return { ...state, replies: newReplies };
     },
     sliceAddAllReplies: (state, action) => {

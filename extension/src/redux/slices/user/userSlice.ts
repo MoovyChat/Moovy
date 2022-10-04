@@ -9,7 +9,7 @@ export const userState: User = {
   photoUrl: '',
   comments: [],
   replies: [],
-  watched: [],
+  watchedMovies: [],
   favorites: [],
 };
 
@@ -39,7 +39,7 @@ const userSlice = createSlice({
       state.replies = action.payload;
     },
     sliceAddWatched: (state, action) => {
-      state.watched = action.payload;
+      state.watchedMovies = action.payload;
     },
     sliceResetUser: () => {
       return userState;

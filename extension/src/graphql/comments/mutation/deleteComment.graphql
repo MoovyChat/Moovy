@@ -1,0 +1,10 @@
+mutation deleteComment($cid: String!) {
+  deleteComment(cid: $cid) {
+    cid
+    message
+    commentedUserUid
+    movieMid
+    createdAt
+    deletedAt
+  }
+}

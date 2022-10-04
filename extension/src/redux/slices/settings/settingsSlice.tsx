@@ -10,6 +10,7 @@ export const settingsState = {
   smoothWidth: 0,
   isPopSlideOpen: false,
   popSlideContentType: '',
+  popSlideNickName: '',
   popSlideLikes: [],
   theme: 'light',
 };
@@ -39,6 +40,9 @@ const SettingsSlice = createSlice({
     slicePopSlideContentType: (state, action) => {
       return { ...state, popSlideContentType: action.payload };
     },
+    sliceSetPopSlideNickName: (state, action) => {
+      return { ...state, popSlideNickName: action.payload };
+    },
     sliceSetPopSlideLikes: (state, action) => {
       return { ...state, popSlideLikes: action.payload };
     },
@@ -60,6 +64,7 @@ export const {
   sliceResetSettings,
   sliceSetPopSlide,
   slicePopSlideContentType,
+  sliceSetPopSlideNickName,
   sliceSetPopSlideLikes,
   sliceSetTheme,
 } = SettingsSlice.actions;

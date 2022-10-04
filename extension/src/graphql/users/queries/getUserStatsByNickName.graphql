@@ -1,0 +1,28 @@
+query getUserStatsByNickName($nickname: String!) {
+  getUserStatistics(nickname: $nickname) {
+    user {
+      uid
+      name
+      nickname
+      email
+      joinedAt
+      photoUrl
+      watchedMovies
+    }
+    favTitles {
+      favorite
+      movieName
+      movieMid
+      userUid
+    }
+    likedTitles {
+      movieMid
+      userUid
+      like
+      movieName
+    }
+    totalComments
+    totalLikes
+    totalWatched
+  }
+}

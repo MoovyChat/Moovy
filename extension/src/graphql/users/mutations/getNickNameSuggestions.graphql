@@ -1,0 +1,5 @@
+mutation getNickNameSuggestions($search: String!) {
+  getTopThreeUserNames(search: $search) {
+    name
+  }
+}

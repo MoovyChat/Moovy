@@ -22,7 +22,7 @@ const App: React.FC = () => {
     comments: [],
     replies: [],
     joinedAt: '0',
-    watched: [],
+    watchedMovies: [],
     favorites: [],
   };
   const [user, setUser] = useState<User>(userIn);

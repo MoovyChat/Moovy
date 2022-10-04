@@ -2,6 +2,11 @@ import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
 import React, { Dispatch, useEffect, useState } from 'react';
 import {
+  slicePopSlideContentType,
+  sliceSetPopSlide,
+  sliceSetTheme,
+} from '../../redux/slices/settings/settingsSlice';
+import {
   sliceSetFavCount,
   sliceSetTotalCommentsOfTheMovie,
 } from '../../redux/slices/movie/movieSlice';
@@ -20,7 +25,6 @@ import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
-import { sliceSetTheme } from '../../redux/slices/settings/settingsSlice';
 
 type props = {
   viewStyles: boolean;
@@ -208,7 +212,8 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
       <div
         className='user'
         onClick={() => {
-          setViewStyles(!viewStyles);
+          dispatch(sliceSetPopSlide(true));
+          dispatch(slicePopSlideContentType('video-styles'));
         }}>
         <h4>Paint</h4>
         <BiPaint size={icon_Size} />

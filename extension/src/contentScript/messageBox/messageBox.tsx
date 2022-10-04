@@ -93,17 +93,17 @@ const MessageBox: React.FC<props> = ({
     if (replyWindowResponse) {
       let newReply: any = {
         repliedUserUid: user?.uid!,
-        likes: [],
+        likesCount: 0,
+        repliesCount: 0,
         commentId: replyWindowResponse.cid
           ? replyWindowResponse.cid
-          : replyWindowResponse.parentComment,
+          : replyWindowResponse.parentCommentCid,
         parentReplyRid: replyWindowResponse.rid
           ? replyWindowResponse?.rid!
           : replyWindowResponse?.cid!,
         message: text,
         movieId: movieId,
         platformId: 1,
-        likesCount: 0,
       };
       if (text) {
         // Adding replies to 'reply' collection in database.
@@ -127,7 +127,6 @@ const MessageBox: React.FC<props> = ({
     } else {
       let newComment: CommentInfo | any = {
         commentedUserId: user?.uid,
-        likes: [],
         likesCount: 0,
         message: text,
         movieId: movieId,

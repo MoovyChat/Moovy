@@ -1,0 +1,10 @@
+mutation deleteReply($rid: String!) {
+  deleteReply(rid: $rid) {
+    rid
+    message
+    commentedUserUid
+    movieMid
+    createdAt
+    deletedAt
+  }
+}

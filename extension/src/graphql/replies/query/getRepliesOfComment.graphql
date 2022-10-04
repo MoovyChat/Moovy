@@ -1,8 +1,10 @@
-query getReplies($cid: String!) {
-  getRepliesOfComment(cid: $cid) {
+query getReplies($limit: Int!, $cid: String!, $page: Int) {
+  getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
     replies {
       rid
       message
+      likesCount
+      repliesCount
       commentedUserUid
       movieMid
       parentCommentCid
@@ -11,5 +13,6 @@ query getReplies($cid: String!) {
       createdAt
     }
     repliesCount
+    lastPage
   }
 }

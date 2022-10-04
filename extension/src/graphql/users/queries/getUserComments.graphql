@@ -5,16 +5,17 @@ query getUserComments($uid: String!) {
       name
       email
       photoUrl
-      watchedMovies
       nickname
       updatedAt
+      watchedMovies
       joinedAt
     }
     comments {
       cid
       commentedUserUid
       message
-      likes
+      likesCount
+      repliesCount
       movieMid
       platformId
       createdAt

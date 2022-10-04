@@ -3,7 +3,8 @@ mutation insertComment($options: CommentInput!) {
     cid
     commentedUserUid
     createdAt
-    likes
+    likesCount
+    repliesCount
     message
     movieMid
     platformId

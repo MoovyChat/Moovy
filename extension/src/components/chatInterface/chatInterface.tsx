@@ -24,6 +24,7 @@ import VideoStyles from '../../contentScript/videoStyles/videoStyles';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
+import qcLogo from '../../static/qc_48.png';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
 
@@ -185,6 +186,7 @@ const ChatInterface: React.FC<props> = ({
         {delayed ? (
           <React.Fragment>
             <ChatTitle className='chat-title'>
+              <div className='logo'></div>
               <div className='title'>
                 <div className='set'>{movie.name}</div>
               </div>
@@ -229,18 +231,11 @@ const ChatInterface: React.FC<props> = ({
               responseFromReplyWindow={responseFromReplyWindow}
               type='comment'
             />
-            {viewStyles ? (
-              <SettingsScreen className='settings-screen'>
-                <VideoStyles setViewStyles={setViewStyles} />
-              </SettingsScreen>
-            ) : (
-              <React.Fragment></React.Fragment>
-            )}{' '}
           </React.Fragment>
         ) : (
           <Loading />
         )}
-        {isPopSlideOpen && <PopSlide />}
+        <PopSlide />
       </ChatWindowParent>
     </React.Fragment>
   );

@@ -65,21 +65,27 @@ export const ChatTitle = styled.div`
   padding: 20px 10px;
   width: 100%;
   display: grid;
-  grid-template-columns: 8fr 2fr;
+  grid-template-columns: 2fr 6fr 2fr;
   grid-template-rows: 1fr;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
-  .title {
+  .logo {
     grid-area: 1 / 1 / 2 / 2;
+    background: url('https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    width: 25px;
+    height: 25px;
+  }
+  .title {
+    grid-area: 1 / 2 / 2 / 3;
     display: flex;
     justify-content: center;
     align-items: center;
-    .set {
-      padding-left: 25%;
-    }
   }
   .icon {
-    grid-area: 1 / 2 / 2 / 3;
+    grid-area: 1 / 3 / 2 / 4;
     margin-left: 5px;
     justify-content: center;
     align-items: center;
