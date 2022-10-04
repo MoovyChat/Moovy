@@ -6,6 +6,7 @@ export const textAreaState = {
   text: '',
   isTextAreaFocused: false,
   isTextAreaClicked: false,
+  wordSuggestions: [],
 };
 
 const TextAreaSlice = createSlice({
@@ -21,6 +22,9 @@ const TextAreaSlice = createSlice({
     sliceSetIsTextAreaClicked: (state, action) => {
       return { ...state, isTextAreaClicked: action.payload };
     },
+    sliceSetWordSuggestions: (state, action) => {
+      return { ...state, wordSuggestions: action.payload };
+    },
   },
 });
 
@@ -28,5 +32,6 @@ export const {
   sliceSetTextAreaMessage,
   sliceSetIsTextAreaFocused,
   sliceSetIsTextAreaClicked,
+  sliceSetWordSuggestions,
 } = TextAreaSlice.actions;
 export default TextAreaSlice.reducer;

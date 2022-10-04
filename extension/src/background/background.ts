@@ -84,7 +84,7 @@ chrome.runtime.onInstalled.addListener(() => {
     comments: [],
     replies: [],
     joinedAt: '0',
-    watched: [],
+    watchedMovies: [],
     favorites: [],
   };
   setStoredUserLoginDetails(user);

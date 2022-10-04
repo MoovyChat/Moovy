@@ -1,30 +1,27 @@
-import React, { useState, useEffect, ChangeEventHandler } from 'react';
-import Slider from '../../components/slider/slider';
-import { borderType, filterType } from '../../Utils/interfaces';
-import { getVideoElement } from '../contentScript.utils';
 import {
   BoxShadows,
   FilterView,
   Section,
   VideoParent,
 } from './videoStyles.styles';
-import { GiCheckMark } from 'react-icons/gi';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
+import { borderType, filterType } from '../../Utils/interfaces';
 import {
   getStoredFilterValues,
   getStoredVideoFilters,
   setStoredFilterValues,
   setStoredVideoFilters,
 } from '../../Utils/storage';
+
 import { AiFillCloseCircle } from 'react-icons/ai';
-import { useAppDispatch } from '../../redux/hooks';
-import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
+import { GiCheckMark } from 'react-icons/gi';
+import Slider from '../../components/slider/slider';
 import { defaultVideoValues } from '../../Utils/defaultValues';
+import { getVideoElement } from '../contentScript.utils';
+import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
+import { useAppDispatch } from '../../redux/hooks';
 
-type props = {
-  setViewStyles: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const VideoStyles: React.FC<props> = ({ setViewStyles }) => {
+const VideoStyles = () => {
   const dispatch = useAppDispatch();
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const [canvas, setCanvas] = useState<HTMLElement>();
@@ -333,16 +330,6 @@ const VideoStyles: React.FC<props> = ({ setViewStyles }) => {
   };
   return (
     <VideoParent>
-      <Section className='warning'>
-        <p>
-          *Experimental features: You might observe abnormal behavior. Refresh
-          the movie tab to get back to default. Modify the video experience to
-          your heart's content.{' '}
-        </p>
-      </Section>
-      <div className='close' onClick={() => setViewStyles(false)}>
-        <AiFillCloseCircle size={30} />
-      </div>
       <Section className='sliders'>
         <div className='title'>Controls</div>
         <Slider

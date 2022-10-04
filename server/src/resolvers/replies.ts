@@ -6,8 +6,6 @@ import {
   Query,
   Resolver,
   Int,
-  PubSubEngine,
-  PubSub,
   Subscription,
   ObjectType,
 } from 'type-graphql';
@@ -26,14 +24,24 @@ class replyLikesObject {
   likesCount: number;
 }
 
+@ObjectType()
+class RepliesObject {
+  @Field(() => [Reply])
+  replies: Reply[];
+  @Field(() => Int)
+  repliesCount: number;
+  @Field(() => Int)
+  lastPage: number;
+}
+
 @InputType()
 class ReplyInput {
   @Field()
   message: string;
-  @Field(() => [String])
-  likes: string[];
   @Field(() => Int)
   likesCount: number;
+  @Field(() => Int)
+  repliesCount: number;
   @Field()
   movieId: string;
   @Field()
@@ -45,15 +53,6 @@ class ReplyInput {
   @Field(() => Int)
   platformId: number;
 }
-
-@ObjectType()
-class RepliesObject {
-  @Field(() => [Reply])
-  replies: Reply[];
-  @Field()
-  repliesCount: number;
-}
-
 @Resolver()
 export class ReplyResolver {
   @Query(() => [Reply])
@@ -91,12 +90,30 @@ export class ReplyResolver {
   }
 
   @Query(() => RepliesObject)
-  async getRepliesOfComment(@Arg('cid') cid: string): Promise<RepliesObject> {
-    const [replies, repliesCount] = await Reply.findAndCount({
+  async getRepliesOfComment(
+    @Arg('cid') cid: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<RepliesObject> {
+    const repliesCount = await Reply.count({
       where: { parentCommentCid: cid },
-      order: { createdAt: 'asc' },
     });
-    return { replies, repliesCount };
+    const replies = await conn
+      .getRepository(Reply)
+      .createQueryBuilder('reply')
+      .where('reply.parentCommentCid = :cid', { cid })
+      .orderBy('reply.likesCount', 'DESC')
+      .orderBy('reply.repliesCount', 'DESC')
+      .orderBy('reply.createdAt', 'ASC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+
+    return {
+      replies,
+      repliesCount,
+      lastPage: Math.ceil(repliesCount / limit),
+    };
   }
 
   @Mutation(() => Reply, { nullable: true })
@@ -112,13 +129,13 @@ export class ReplyResolver {
         .values([
           {
             message: options.message,
-            likes: options.likes,
+            likesCount: options.likesCount,
             movieMid: options.movieId,
             parentCommentCid: options.commentId,
             parentReplyRid: options.parentReplyRid,
             commentedUserUid: options.repliedUserUid!,
             platformId: options.platformId,
-            replies: [],
+            repliesCount: options.repliesCount,
           },
         ])
         .returning('*')
@@ -148,6 +165,18 @@ export class ReplyResolver {
       .andWhere('stats.replyRid = :rid', { rid })
       .getMany();
     return { likes: users, likesCount };
+  }
+
+  @Mutation(() => Reply, { nullable: true })
+  async deleteReply(@Arg('rid') rid: string): Promise<Reply | null> {
+    let deletedReply = await conn
+      .getRepository(Reply)
+      .createQueryBuilder('reply')
+      .where('reply.rid = :rid', { rid })
+      .softDelete()
+      .returning('*')
+      .execute();
+    return deletedReply.raw[0];
   }
 
   @Subscription(() => replyLikesObject, { topics: REPLY_LIKES_SUB })

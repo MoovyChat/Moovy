@@ -3,8 +3,6 @@ import {
   ChatTextBox,
   MessageBoxParent,
   ReplyTo,
-  Spoiler,
-  TextAreaCount,
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
@@ -49,11 +47,6 @@ import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
-
-const setSpoiler = (text: string, dispatch: any) => {
-  let newText = text + ' <s></s>';
-  dispatch(sliceSetTextAreaMessage(newText));
-};
 
 type props = {
   replyWindowResponse: CommentInfo | undefined;
@@ -100,17 +93,17 @@ const MessageBox: React.FC<props> = ({
     if (replyWindowResponse) {
       let newReply: any = {
         repliedUserUid: user?.uid!,
-        likes: [],
+        likesCount: 0,
+        repliesCount: 0,
         commentId: replyWindowResponse.cid
           ? replyWindowResponse.cid
-          : replyWindowResponse.parentComment,
+          : replyWindowResponse.parentCommentCid,
         parentReplyRid: replyWindowResponse.rid
           ? replyWindowResponse?.rid!
           : replyWindowResponse?.cid!,
         message: text,
         movieId: movieId,
         platformId: 1,
-        likesCount: 0,
       };
       if (text) {
         // Adding replies to 'reply' collection in database.
@@ -134,7 +127,6 @@ const MessageBox: React.FC<props> = ({
     } else {
       let newComment: CommentInfo | any = {
         commentedUserId: user?.uid,
-        likes: [],
         likesCount: 0,
         message: text,
         movieId: movieId,
@@ -212,21 +204,6 @@ const MessageBox: React.FC<props> = ({
         ) : (
           <React.Fragment></React.Fragment>
         )}
-        {/* <Spoiler styles={globalStyles!}>
-          <div
-            className='spoiler-tag'
-            onClick={(e) => {
-              e.stopPropagation();
-              setSpoiler(text, dispatch);
-            }}>
-            <span>Spoiler</span>
-          </div>
-          <div className='word-count'>
-            <TextAreaCount count={150 - text.length} styles={globalStyles!}>
-              <span className='count'>{150 - text.length}</span>
-            </TextAreaCount>
-          </div>
-        </Spoiler> */}
       </MessageBoxParent>
       <div className='smiley' onClick={smileyHandler}>
         <MdTagFaces className='icon' size={25} />

@@ -10,7 +10,7 @@
     {
       "matches": ["https://www.netflix.com/*"],
       "js": ["index.js"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [

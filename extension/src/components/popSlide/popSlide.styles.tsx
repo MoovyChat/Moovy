@@ -1,16 +1,26 @@
-import { bottomToTop1 } from '../../styles/keyframes';
-import styled from 'styled-components';
+import { bottomToTop1, topToBottom1 } from '../../styles/keyframes';
+import styled, { css } from 'styled-components';
 
-export const PopSlideParent = styled.div`
+type props = {
+  isPopSlideOpen: boolean;
+};
+export const PopSlideParent = styled.div<props>`
   position: absolute;
-  height: 75%;
   width: 100%;
-  bottom: -25px;
+  bottom: -4px;
   /* border-radius: 10% 10% 0 0; */
-  background-color: #353535;
+  background-color: ${(p) => p.theme.body};
   z-index: 15;
   box-shadow: 0 0 10px black inset;
-  animation: ${bottomToTop1} 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  animation: ${(p) =>
+    p.isPopSlideOpen
+      ? css`
+          ${bottomToTop1} 0.5s
+    cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards
+        `
+      : css`
+          ${topToBottom1} 0.5s ease-out forwards
+        `};
   display: flex;
   color: inherit;
   flex-direction: column;

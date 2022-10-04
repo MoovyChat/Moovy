@@ -1,48 +1,145 @@
-import { db, freqEmoji } from '../../indexedDB/db';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { RecentEmoji, db, freqEmoji } from '../../indexedDB/db';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { Emoji } from 'emojibase';
 import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
 import { colorLog } from '../../Utils/utilities';
-import { useAppSelector } from '../../redux/hooks';
+import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 const SmileyWindow = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [emojis, setEmojis] = useState<freqEmoji[]>([]);
-  const ems = useLiveQuery(() => db.frequent.toArray());
+  const iconSize = 30;
+  const [frequentEmojis, setFrequent] = useState<freqEmoji[]>([]);
+  const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
+  const wordSuggestions: string[] = useAppSelector(
+    (state) => state.textArea.wordSuggestions
+  );
+  const ems = useLiveQuery(() => {
+    if (db.frequent) return db.frequent.toArray();
+    return [];
+  });
+  const ers = useLiveQuery(() => {
+    if (db.recent) return db.recent.toArray();
+    return [];
+  });
+  const textAreaMessage = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
   );
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    colorLog('From Dexie', ems);
     if (ems) {
-      let allFreqEmojis = ems[0].frequent!;
+      let allFreqEmojis =
+        ems && ems[0] && ems[0].frequent ? ems[0].frequent : [];
+      let recent = ers ? ers.slice(-10) : [];
+      if (ems) setRecent(recent);
       let sorted = _.chain(allFreqEmojis)
         .sortBy((a) => -a.count)
-        .take(5)
+        .take(10)
         .value();
-      colorLog(sorted);
-      if (ems) setEmojis(sorted);
+      if (ems) setFrequent(sorted);
     }
-  }, [ems]);
+  }, [ems, ers]);
 
-  const handleOnSelect = () => {};
+  const setSpoiler = () => {
+    let newText = textAreaMessage + '<s></s>';
+    dispatch(sliceSetTextAreaMessage(newText));
+  };
+  const handleWord: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    let el = e.target as HTMLDivElement;
+    let msgArr = textAreaMessage.split(' ');
+    msgArr.pop();
+    msgArr.push(el.textContent!);
+    dispatch(sliceSetTextAreaMessage(msgArr.join(' ')));
+  };
 
   return (
-    <div>
+    <React.Fragment>
       {textAreaFocussed && (
-        <SmileyWindowParent ref={ref}>
-          <div className='frequent-emojis'>
-            {emojis.map((emoji, key) => (
-              <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
-            ))}
+        <SmileyWindowParent>
+          <div className='child'>
+            {wordSuggestions.length > 0 && (
+              <div className='section'>
+                <div className='title'>Suggestions</div>
+                <div className='suggestions'>
+                  {wordSuggestions.slice(0, 3).map((word, key) => (
+                    <div
+                      id='text-focus'
+                      className='word'
+                      key={key}
+                      onClick={handleWord}>
+                      {word}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {recentEmojis.length > 0 && (
+              <div className='section'>
+                <div className='title'>Recently used</div>
+                <div className='emojis'>
+                  {recentEmojis.map((emoji, key) => (
+                    <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                  ))}
+                </div>
+              </div>
+            )}
+            {frequentEmojis.length > 0 && (
+              <div className='section'>
+                <div className='title'>Frequently used</div>
+                <div className='emojis'>
+                  {frequentEmojis.map((emoji, key) => (
+                    <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className='section'>
+              <div className='title'>Comment options</div>
+              <div
+                className='spoiler'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSpoiler();
+                }}>
+                <div className='tag' id='text-focus'>
+                  Spoiler
+                </div>
+              </div>
+            </div>
+            <div className='section'>
+              <div className='title'>Socials</div>
+              <div className='socials'>
+                <div className='discord'>
+                  <FaDiscord color='cornflowerblue' size={iconSize} />
+                </div>
+                <div className='twitter'>
+                  <FaTwitter color='deepskyblue' size={iconSize} />
+                </div>
+                <div className='tiktok'>
+                  <FaTiktok className='icon' size={iconSize} />
+                </div>
+                <div className='instagram'>
+                  <FaInstagram color='hotpink' size={iconSize} />
+                </div>
+              </div>
+              {/* <div className='section'>
+                <div className='title'>Donate & Support</div>
+                <div className='donate'>
+                  <div className='patreon'>Patreon</div>
+                  <div className='stripe'>Stripe</div>
+                </div>
+              </div> */}
+            </div>
           </div>
         </SmileyWindowParent>
       )}
-    </div>
+    </React.Fragment>
   );
 };
 

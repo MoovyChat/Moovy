@@ -3,10 +3,7 @@ import { globalUIStyles } from '../../Utils/interfaces';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-type commentCardProps = {
-  styles: globalUIStyles;
-};
-export const CommentCardContainer = styled.div<commentCardProps>`
+export const CommentCardContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -29,7 +26,6 @@ export const CommentCardContainer = styled.div<commentCardProps>`
 type cardProps = {
   deleteFlag: boolean;
   hovered: boolean;
-  styles: globalUIStyles;
   like: boolean;
 };
 export const Card = styled.div<cardProps>`
@@ -90,6 +86,10 @@ export const Comment = styled.div`
   .username {
     font-weight: 800;
     margin-right: 0 4px;
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -139,15 +139,19 @@ export const Stats = styled.div`
 export const Reply = styled.div`
   position: relative;
 `;
-type spoilerProps = {
-  showSpoiler: boolean;
-};
-export const SpoilerTag = styled.span<spoilerProps>`
-  color: ${(p) => (p.showSpoiler ? 'inherit' : '#5c5c5c')};
+
+export const SpoilerTag = styled.span`
+  filter: blur(2px);
+  background-color: red;
+  color: white;
+  transition: filter 0.2s linear;
   margin: 0 5px;
   border-radius: 5px;
   padding: 1px 4px;
   cursor: pointer;
+  :hover {
+    filter: none;
+  }
 `;
 
 export const MessageParent = styled.span`
@@ -162,19 +166,19 @@ export const MessageParent = styled.span`
   }
 `;
 
-export const Delete = styled.div<cardProps>`
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 0;
+type deleteProps = {
+  deleteFlag: boolean;
+};
+export const Delete = styled.div<deleteProps>`
+  position: relative;
+  z-index: 3;
   background-color: #ff005d;
   display: flex;
-  width: 40px;
-  height: 100%;
-  justify-content: flex-end;
-  padding-right: 5px;
+  max-width: 0px;
   align-items: center;
-  /* visibility: ${(p) => (p.deleteFlag ? 'visible' : 'hidden')}; */
+  justify-content: center;
+  max-width: ${(p) => (p.deleteFlag ? '30px' : '0px')};
+  transition: all 0.5s linear;
   :hover {
     cursor: pointer;
   }

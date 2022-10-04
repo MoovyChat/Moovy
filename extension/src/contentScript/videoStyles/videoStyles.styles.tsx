@@ -1,34 +1,6 @@
 import styled from 'styled-components';
 
-export const VideoParent = styled.div`
-  width: 90%;
-  height: 80%;
-  padding: 10px;
-  overflow: auto;
-  background: #f9f9f9;
-  color: black;
-  border-radius: 15px;
-  box-shadow: 0 0 3px white, 0 0 10px black inset;
-  .warning {
-    width: 100%;
-    font-style: italic;
-    color: #ff0000;
-    text-align: center;
-    font-size: 1.3em;
-  }
-  .close {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    border-radius: 50%;
-    color: white;
-    mix-blend-mode: difference;
-    z-index: 999999;
-    :hover {
-      cursor: pointer;
-    }
-  }
-`;
+export const VideoParent = styled.div``;
 
 export const Section = styled.div`
   padding: 20px 5px;
@@ -37,6 +9,7 @@ export const Section = styled.div`
     font-size: 1.5rem;
     padding: 5px;
     text-align: center;
+    /* color: white; */
   }
   .filters {
     display: flex;
@@ -108,7 +81,7 @@ export const BoxShadows = styled.div<shadowProps>`
   width: 20px;
   margin: 10px;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid ${(p) => p.theme.text};
   background-color: ${(p) => p.color};
   :hover {
     cursor: pointer;

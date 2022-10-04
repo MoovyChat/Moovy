@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const SliderParent = styled.div`
   width: 100%;
   padding: 5px 2px;
-  color: black;
   border-radius: 5px;
   display: flex;
   align-items: center;

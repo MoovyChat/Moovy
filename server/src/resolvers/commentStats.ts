@@ -48,6 +48,19 @@ export class CommentStatsResolver {
         .execute();
       detail = updateStatus.raw[0];
     }
+    // Update the likes count in the comment table.
+    await conn
+      .createQueryBuilder()
+      .update(Comment)
+      .set({
+        likesCount: () => {
+          if (like) return '"likesCount"+1';
+          else return '"likesCount"-1';
+        },
+      })
+      .where('cid = :cid', { cid })
+      .returning('*')
+      .execute();
     await pubSub.publish(COMMENT_LIKES_SUB, cid);
     return detail;
   }

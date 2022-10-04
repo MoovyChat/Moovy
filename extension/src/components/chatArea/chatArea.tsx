@@ -9,17 +9,24 @@ import React, {
   useState,
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
-import { getFormattedWordsArray, isNumber } from '../../Utils/utilities';
+import {
+  colorLog,
+  getFormattedWordsArray,
+  isNumber,
+} from '../../Utils/utilities';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
   sliceSetTextAreaMessage,
+  sliceSetWordSuggestions,
 } from '../../redux/slices/textArea/textAreaSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
+import _ from 'lodash';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
+import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
 
 type props = {
   user: User | undefined;
@@ -39,6 +46,10 @@ const ChatArea: React.FC<props> = ({
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
+  const searchAPI =
+    'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
+
+  const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
@@ -95,7 +106,8 @@ const ChatArea: React.FC<props> = ({
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
       let target = e.target as any;
-      if (target && target.id === 'comment') {
+      console.log(target);
+      if (target && (target.id === 'comment' || target.id === 'text-focus')) {
         dispatch(sliceSetIsTextAreaClicked(true));
         dispatch(sliceSetIsTextAreaFocused(true));
       } else {
@@ -134,14 +146,23 @@ const ChatArea: React.FC<props> = ({
     }
   };
 
+  const textAreaScrollListener: React.UIEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    if (textAreaRef.current && ref.current) {
+      ref.current.scrollTop = textAreaRef.current.scrollTop!;
+    }
+  };
+
   useEffect(() => {
     const scrollHeight = ref.current?.offsetHeight!;
     setTextAreaHeight(scrollHeight);
     if (!text) setTextAreaHeight(17);
     var objDiv = document.getElementById('text-area-background');
-    if (textAreaRef.current && objDiv && ref.current)
+    if (textAreaRef.current && objDiv && ref.current) {
       ref.current.scrollTop = textAreaRef.current.scrollTop!;
-  }, [text]);
+    }
+  }, [text, textAreaRef.current, ref.current]);
 
   useEffect(() => {
     let res = getFormattedWordsArray(
@@ -153,6 +174,68 @@ const ChatArea: React.FC<props> = ({
     );
     setFormattedTextMap(res);
   }, [text]);
+
+  const handleInputText: React.ChangeEventHandler<HTMLTextAreaElement> = async (
+    e
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
+    let text = e.target.value;
+    dispatch(sliceSetTextAreaMessage(text));
+    let words = text.split(' ');
+    let lastWord = words[words.length - 1];
+    if (lastWord.charAt(0) === '@') {
+      let wordToSearch = lastWord.substring(1);
+      // get response from graphQL server.
+      // Expected response: First three matches.
+      getNickNameSuggestions({ search: wordToSearch }).then((res) => {
+        const { data, error } = res;
+        if (error) colorLog(error);
+        if (data) {
+          const names: { name: string }[] = data?.getTopThreeUserNames!;
+          let refined: string[] = [];
+          for (let key in names) {
+            refined.push(`@${names[key]['name']}`);
+          }
+          dispatch(sliceSetWordSuggestions(refined));
+        }
+      });
+    } else {
+      let searchURL = `${searchAPI}${lastWord}`;
+      // Get Predictive text from Google search API.
+      await fetch(searchURL, {
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then((response) => response.text())
+        .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+        .then((data) => {
+          const el = data.getElementsByTagName('suggestion');
+          let firstWordSuggestions: string[] = [];
+          let secondWordSuggestions: string[] = [];
+          for (let item in el) {
+            let _element = el[item];
+            if (_element) {
+              let node = _element.attributes && _element.attributes[0];
+              let value = node && node.nodeValue!.split(' ');
+              if (value && !firstWordSuggestions.includes(value[0])) {
+                firstWordSuggestions.push(value[0]);
+              }
+              if (value && !secondWordSuggestions.includes(value[1])) {
+                secondWordSuggestions.push(value[1]);
+              }
+            }
+          }
+          let suggestions = _.concat(
+            firstWordSuggestions,
+            secondWordSuggestions
+          );
+          dispatch(sliceSetWordSuggestions(suggestions));
+        });
+    }
+  };
 
   return (
     <Parent styles={globalStyles!} textAreaHeight={textAreaHeight}>
@@ -167,16 +250,13 @@ const ChatArea: React.FC<props> = ({
         autoComplete='off'
         autoCorrect='off'
         maxLength={150}
+        onScroll={textAreaScrollListener}
         onFocus={onFocusHandler}
         onBlur={handleTextAreaBlur}
         placeholder={placeholder}
         value={text}
         onKeyPress={handleKeyDown}
-        onChange={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          dispatch(sliceSetTextAreaMessage(e.target.value));
-        }}
+        onChange={handleInputText}
       />
       <div id='text-area-background' className='text-area-background' ref={ref}>
         {formattedTextMap.map((value, index) => (

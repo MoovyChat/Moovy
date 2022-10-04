@@ -1,6 +1,15 @@
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
 import React, { Dispatch, useEffect, useState } from 'react';
+import {
+  slicePopSlideContentType,
+  sliceSetPopSlide,
+  sliceSetTheme,
+} from '../../redux/slices/settings/settingsSlice';
+import {
+  sliceSetFavCount,
+  sliceSetTotalCommentsOfTheMovie,
+} from '../../redux/slices/movie/movieSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieLikesQuery,
@@ -16,8 +25,6 @@ import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
-import { sliceSetTheme } from '../../redux/slices/settings/settingsSlice';
-import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
 
 type props = {
   viewStyles: boolean;
@@ -49,6 +56,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   // React: useState hooks.
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
+  const [favCount, setFavCount] = useState<number>(0);
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [uiStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [pageError, setPageError] = useState<string>('');
@@ -63,7 +71,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
     }).then((response) => {
       const { data, error } = response;
       if (error) colorLog(error);
-      const { like, favorite } = data?.updateUserMovieStats!;
+      const { like } = data?.updateUserMovieStats!;
       if (like) setLike(like);
     });
   }, []);
@@ -204,7 +212,8 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
       <div
         className='user'
         onClick={() => {
-          setViewStyles(!viewStyles);
+          dispatch(sliceSetPopSlide(true));
+          dispatch(slicePopSlideContentType('video-styles'));
         }}>
         <h4>Paint</h4>
         <BiPaint size={icon_Size} />

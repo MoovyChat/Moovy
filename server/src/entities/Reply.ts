@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -46,13 +47,13 @@ export class Reply extends BaseEntity {
   @OneToMany(() => ReplyStats, (stats) => stats.reply)
   replyStats: ReplyStats[];
 
-  @Field(() => [String])
-  @Column({ type: 'text', array: true })
-  likes: string[];
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
 
-  @Field(() => [String], { nullable: true })
-  @Column({ type: 'text', array: true })
-  replies: string[];
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ type: 'int', default: 0 })
+  repliesCount: number;
 
   @Field(() => Int)
   @Column({ type: 'int', default: 0 })
@@ -77,4 +78,8 @@ export class Reply extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => String)
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

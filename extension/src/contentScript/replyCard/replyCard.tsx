@@ -25,6 +25,14 @@ interface props {
   className: any;
 }
 
+interface _users {
+  __typename?: 'User' | undefined;
+  uid: string;
+  name: string;
+  nickname: string;
+  photoUrl: string;
+}
+
 const ReplyCard: React.FC<props> = ({
   reply,
   responseFromReplyWindow,
@@ -35,10 +43,11 @@ const ReplyCard: React.FC<props> = ({
   const [commentedUser, _q] = useGetRepliedUserQuery({
     variables: { rid: rid! },
   });
+  const loggedInUser = useAppSelector((state) => state.user);
   const uid = useAppSelector((state) => state.user.uid);
   const mid = useAppSelector((state) => state.movie.mid);
   const [time, setTime] = useState<string>('');
-  const [likedUsers, setLikedUser] = useState<any>([]);
+  const [likedUsers, setLikedUser] = useState<_users[]>([]);
   const [like, setLike] = useState<boolean>(false);
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
@@ -52,7 +61,7 @@ const ReplyCard: React.FC<props> = ({
     },
   });
 
-  const [commentLikeCountQuery, _executeQuery] = useGetReplyLikesQuery({
+  const [replyLikeCountQuery, _executeQuery] = useGetReplyLikesQuery({
     variables: {
       rid: rid!,
     },
@@ -66,16 +75,16 @@ const ReplyCard: React.FC<props> = ({
   //   });
 
   useEffect(() => {
-    const { data, fetching, error } = commentLikeCountQuery;
+    const { data, fetching, error } = replyLikeCountQuery;
     if (error) colorLog(error);
     if (!fetching && data) {
       const _count = data.getReplyLikes?.likesCount!;
       const _users = data.getReplyLikes?.likes;
       //TODO:   dispatch(sliceAddToLikes({ _users, rid }));
-      setLikedUser(_users);
+      setLikedUser(_users ? _users : []);
       setLikesCount(_count);
     }
-  }, [commentLikeCountQuery.fetching]);
+  }, [replyLikeCountQuery.fetching]);
 
   useEffect(() => {
     const { fetching, error, data } = userLikeInfo;
@@ -86,7 +95,7 @@ const ReplyCard: React.FC<props> = ({
     }
   }, [userLikeInfo.fetching]);
 
-  //TODO: Set Comment likes count subscription if needed in future.
+  //TODO: Set reply likes count subscription if needed in future.
   //   useEffect(() => {
   //     const { data, fetching, error } = commentLikesSub;
   //     if (error) colorLog(error);
@@ -192,7 +201,25 @@ const ReplyCard: React.FC<props> = ({
       }).then((res) => {
         const { error, data } = res;
         if (error) colorLog(error);
-        setLike(data?.getReplyStats?.like!);
+        const isLike = data?.getReplyStats?.like!;
+        setLike(isLike);
+        let curUser: _users = {
+          uid: loggedInUser.uid,
+          name: loggedInUser.name,
+          nickname: loggedInUser.nickname,
+          photoUrl: loggedInUser.photoUrl!,
+        };
+        if (isLike) {
+          setLikesCount(likesCount + 1);
+          setLikedUser([...likedUsers, curUser]);
+        } else {
+          setLikesCount(likesCount - 1);
+          let updatedUsers = _.remove(
+            likedUsers,
+            (user) => user.uid === curUser.uid
+          );
+          setLikedUser(updatedUsers);
+        }
       });
     }
   };

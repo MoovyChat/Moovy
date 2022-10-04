@@ -46,7 +46,7 @@ const signOut = async (setUser: (user: User) => void) => {
     uid: '',
     comments: [],
     replies: [],
-    watched: [],
+    watchedMovies: [],
     favorites: [],
     joinedAt: '0',
   };

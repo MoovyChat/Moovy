@@ -27,6 +27,18 @@ export const ReplyParent = styled.div<replyParentProps>`
   max-height: ${(p) => (p.replySection ? '400px' : '0px')};
   transition: max-height ${(p) => (p.replySection ? 1 : 0.5)}s
     cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  .show-more-replies {
+    font-size: 1.1em;
+    font-weight: 900;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-bottom: 5px;
+    :hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 export const ReplyMessage = styled.div`

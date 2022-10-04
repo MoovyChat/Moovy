@@ -19,7 +19,10 @@ export class ReplyStatsResolver {
       where: { userUid: uid, replyRid: rid },
     });
     let detail;
+    // If there is no stats entry for the reply, create a new entry for the reply
+    // state table with the like.
     if (!replyStat) {
+      // Insert the new entry.
       const details = await conn
         .createQueryBuilder()
         .insert()
@@ -33,6 +36,7 @@ export class ReplyStatsResolver {
         .execute();
       detail = details.raw[0];
     } else {
+      // If the entry is already present, update the entry with the new update.
       const updateStatus = await conn
         .createQueryBuilder()
         .update(ReplyStats)
@@ -41,8 +45,21 @@ export class ReplyStatsResolver {
         .andWhere('userUid=:uid ', { uid })
         .returning('*')
         .execute();
+
       detail = updateStatus.raw[0];
     }
+    // Update the likes count in the reply table.
+    await conn
+      .createQueryBuilder()
+      .update(Reply)
+      .set({
+        likesCount: () => {
+          if (like) return '"likesCount"+1';
+          else return '"likesCount"-1';
+        },
+      })
+      .where('rid = :rid', { rid })
+      .execute();
     return detail;
   }
 }

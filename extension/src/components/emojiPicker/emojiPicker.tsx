@@ -3,7 +3,6 @@ import { EmojiPickerHeader, EmojiPickerParent } from './emojiPicker.styles';
 import { useMemo, useState } from 'react';
 
 import EmojiGroup from './emojiGroup/emojiGroup';
-import IndexedDb from './indexedDB';
 import { colorLog } from '../../Utils/utilities';
 import { db } from '../../indexedDB/db';
 import groupSet from 'emojibase-data/meta/groups.json';

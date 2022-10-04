@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -14,7 +15,6 @@ import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
-import { ReplyStats } from './ReplyStats';
 import { User } from './User';
 
 @ObjectType()
@@ -36,9 +36,13 @@ export class Comment extends BaseEntity {
   @Column()
   movieMid!: string;
 
-  @Field(() => [String])
-  @Column({ type: 'text', array: true })
-  likes: string[];
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ type: 'int', default: 0 })
+  repliesCount: number;
 
   @Field(() => Int)
   @Column({ type: 'int', default: 0 })
@@ -66,4 +70,8 @@ export class Comment extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => String)
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

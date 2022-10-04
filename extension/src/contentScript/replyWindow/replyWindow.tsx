@@ -6,16 +6,21 @@ import {
   ShowReplyText,
 } from './replyWindow.styles';
 
-import Loading from '../../components/loading/loading';
 import ReplyCard from '../replyCard/replyCard';
 import { useAppSelector } from '../../redux/hooks';
 
 type props = {
+  page: number;
+  setPage: any;
+  lastPage: number;
   repliesCount: number;
   parentComment: CommentInfo;
   responseFromReplyWindow: (e: any) => void;
 };
 const ReplyWindow: React.FC<props> = ({
+  page,
+  setPage,
+  lastPage,
   responseFromReplyWindow,
   parentComment,
   repliesCount,
@@ -24,9 +29,9 @@ const ReplyWindow: React.FC<props> = ({
   const [replies, setReplies] = useState<ReplyInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [replySection, setReplySection] = useState<boolean>(false);
-  const onBeforeGetContentResolve = useRef<any>();
 
   const handleOnBeforeGetContent = () => {
+    // colorLog(allReplies, parentComment);
     return new Promise((resolve) => {
       const filtered = allReplies.filter(
         (reply) => reply.parentCommentCid === parentComment.cid
@@ -47,8 +52,10 @@ const ReplyWindow: React.FC<props> = ({
     return () => clearTimeout(timeout);
   }, [allReplies.length, loading]);
 
-  const loadMoreReplies = () => {
-    console.log('Loading more replies...');
+  const loadMoreReplies: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    console.log('Loading more replies');
+    setPage(page + 1);
   };
   const replyText = `${replySection ? 'Hide' : 'Show'} ${repliesCount} replies`;
   return (
@@ -74,6 +81,11 @@ const ReplyWindow: React.FC<props> = ({
               reply={reply}
             />
           ))}
+          {page !== lastPage && (
+            <div className='show-more-replies' onClick={loadMoreReplies}>
+              show more replies ({page}/{lastPage})
+            </div>
+          )}
         </ReplyParent>
       )}
     </ReplyWindowParent>
