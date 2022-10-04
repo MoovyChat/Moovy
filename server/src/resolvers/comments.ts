@@ -23,8 +23,6 @@ import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../constants';
 class CommentInput {
   @Field()
   message: string;
-  @Field(() => [String])
-  likes: string[];
   @Field(() => Int)
   likesCount: number;
   @Field()
@@ -118,7 +116,7 @@ export class CommentResolver {
         .values([
           {
             message: options.message,
-            likes: options.likes,
+            likesCount: options.likesCount,
             movieMid: options.movieId,
             commentedUserUid: options.commentedUserId,
             platformId: options.platformId,
@@ -132,6 +130,19 @@ export class CommentResolver {
       throw new Error(err);
     }
     return comment;
+  }
+
+  @Mutation(() => Comment, { nullable: true })
+  async deleteComment(@Arg('cid') cid: string): Promise<Comment | null> {
+    let deletedComment = await conn
+      .getRepository(Comment)
+      .createQueryBuilder('comment')
+      .where('comment.cid = :cid', { cid })
+      .softDelete()
+      .returning('*')
+      .execute();
+    console.log(deletedComment);
+    return deletedComment.raw[0];
   }
 
   // Whenever user comments, this subscriber gets called.

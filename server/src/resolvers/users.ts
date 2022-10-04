@@ -6,13 +6,15 @@ import {
   Mutation,
   InputType,
   Field,
+  Int,
   ObjectType,
 } from 'type-graphql';
-
+import _ from 'lodash';
 import { User } from '../entities/User';
 import { Comment } from '../entities/Comment';
 import { MovieStats } from '../entities/MovieStats';
 import { Movie } from '../entities/Movie';
+import { Reply } from '../entities/Reply';
 
 @InputType()
 class UserInput {
@@ -55,6 +57,52 @@ class FullUserMovieStats {
 }
 
 @ObjectType()
+class LikedMovieObject {
+  @Field()
+  like: boolean;
+  @Field()
+  movieMid: string;
+  @Field()
+  userUid: string;
+  @Field()
+  movieName: string;
+}
+
+@ObjectType()
+class FavMovieObject {
+  @Field()
+  favorite: boolean;
+  @Field()
+  movieMid: string;
+  @Field()
+  userUid: string;
+  @Field()
+  movieName: string;
+}
+
+@ObjectType()
+class FullUserObject {
+  @Field(() => User, { nullable: true })
+  user?: User;
+  @Field(() => Int, { defaultValue: 0 })
+  totalLikes: number;
+  @Field(() => Int, { defaultValue: 0 })
+  totalComments: number;
+  @Field(() => Int, { defaultValue: 0 })
+  totalWatched: number;
+  @Field(() => [LikedMovieObject], { nullable: true })
+  likedTitles?: LikedMovieObject[];
+  @Field(() => [FavMovieObject], { nullable: true })
+  favTitles?: FavMovieObject[];
+}
+
+@ObjectType()
+class NicKNameFormat {
+  @Field()
+  name: string;
+}
+
+@ObjectType()
 class PaginatedUserComments {
   @Field(() => User)
   user: User;
@@ -72,6 +120,117 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   getUser(@Arg('uid') uid: string): Promise<User | null> {
     return User.findOne({ where: { uid } });
+  }
+
+  @Query(() => User, { nullable: true })
+  getUserByNickName(@Arg('nickname') nickname: string): Promise<User | null> {
+    return User.findOne({ where: { nickname } });
+  }
+
+  @Query(() => FullUserObject, { nullable: true })
+  async getUserStatistics(
+    @Arg('nickname') nickname: string
+  ): Promise<FullUserObject | null> {
+    let userStats: FullUserObject = {
+      user: undefined,
+      favTitles: undefined,
+      likedTitles: undefined,
+      totalComments: 0,
+      totalLikes: 0,
+      totalWatched: 0,
+    };
+    const queryRunner = conn.createQueryRunner();
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    // lets now open a new transaction:
+    await queryRunner.startTransaction();
+    try {
+      //User
+      const user = await User.findOne({ where: { nickname } });
+      //Total comments
+      const userCommentCount = await Comment.count({
+        where: { commentedUserUid: user?.uid },
+      });
+      const userReplyCount = await Reply.count({
+        where: { commentedUserUid: user?.uid },
+      });
+      //Total likes
+      const { sum } = await conn
+        .getRepository(Comment)
+        .createQueryBuilder('comment')
+        .select('SUM(comment.likesCount)', 'sum')
+        .where('comment.commentedUserUid = :uid', { uid: user?.uid })
+        .getRawOne();
+      const replySum = await conn
+        .getRepository(Reply)
+        .createQueryBuilder('reply')
+        .select('SUM(reply.likesCount)', 'sum')
+        .where('reply.commentedUserUid = :uid', { uid: user?.uid })
+        .getRawOne();
+      // Total watched movie count
+      const movieCount = user?.watchedMovies ? user?.watchedMovies?.length : 0;
+
+      const likedMovies = await conn
+        .getRepository(MovieStats)
+        .createQueryBuilder('ms')
+        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieMid = m.mid')
+        .select('ms.like', 'like')
+        .addSelect('ms.movieMid', 'movieMid')
+        .addSelect('ms.userUid', 'userUid')
+        .addSelect('m.name', 'movieName')
+        .where('ms.like = :like', { like: true })
+        .andWhere('ms.userUid = :uid', { uid: user?.uid! })
+        .orderBy('ms.updatedAt', 'DESC')
+        .getRawMany();
+
+      // Favorite movies
+      const favMovies = await conn
+        .getRepository(MovieStats)
+        .createQueryBuilder('ms')
+        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieMid = m.mid')
+        .select('ms.favorite', 'favorite')
+        .addSelect('ms.movieMid', 'movieMid')
+        .addSelect('ms.userUid', 'userUid')
+        .addSelect('m.name', 'movieName')
+        .where('ms.favorite = :fav', { fav: true })
+        .andWhere('ms.userUid = :uid', { uid: user?.uid! })
+        .orderBy('ms.updatedAt', 'DESC')
+        .getRawMany();
+      console.log(favMovies);
+      // commit transaction now:
+      await queryRunner.commitTransaction();
+      userStats = {
+        user: user!,
+        totalWatched: movieCount,
+        totalLikes: sum + replySum.sum,
+        totalComments: userCommentCount + userReplyCount,
+        likedTitles: likedMovies,
+        favTitles: favMovies,
+      };
+      return userStats;
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+    return userStats;
+  }
+
+  @Mutation(() => [NicKNameFormat], { nullable: true, defaultValue: [] })
+  async getTopThreeUserNames(
+    @Arg('search') search: string
+  ): Promise<NicKNameFormat[] | null> {
+    const names: NicKNameFormat[] = await conn
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .select('user.nickname', 'name')
+      .where('LOWER(user.nickname) like LOWER(:name)', { name: `%${search}%` })
+      .orderBy('LOWER(user.nickname)', 'ASC')
+      .limit(3)
+      .getRawMany();
+    return names;
   }
 
   @Mutation(() => User, { nullable: true })
@@ -131,7 +290,6 @@ export class UserResolver {
 
   @Mutation(() => User, { nullable: true })
   async createUser(@Arg('options') options: UserInput) {
-    // return User.create(options).save();
     let user;
     try {
       const result = await conn
@@ -212,10 +370,14 @@ export class UserResolver {
     const user = await User.findOne({ where: { uid } });
     if (!user) throw new Error('User not found');
     else {
+      let user = await User.findOne({ where: { uid } });
+      let watchedMovies = user?.watchedMovies;
+      let newList = _.union(watchedMovies, [mid]);
+      console.log('newList', newList, mid);
       let res = await conn
         .createQueryBuilder()
         .update(User)
-        .set({ watchedMovies: [mid] })
+        .set({ watchedMovies: newList })
         .where('uid=:uid', { uid })
         .execute();
       if (res && res.affected && res.affected > 0) return true;

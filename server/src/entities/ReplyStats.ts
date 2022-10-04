@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,8 +10,6 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
-import { Comment } from './Comment';
-import { Movie } from './Movie';
 import { Reply } from './Reply';
 import { User } from './User';
 
@@ -49,4 +48,8 @@ export class ReplyStats extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => String)
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
