@@ -24,7 +24,6 @@ import Comments from '../comments/comments';
 import SmileyWindow from '../../components/smileyWindow/smileyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
-import { useIsMount } from '../hooks/useIsMount';
 
 type props = {
   responseFromReplyWindow: (comment: CommentInfo) => void;
@@ -58,7 +57,10 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const lastPage = useAppSelector((state) => state.movie.lastPage);
   const _dispatch = useAppDispatch();
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
-  const isMount = useIsMount();
+
+  useEffect(() => {
+    colorLog('chatBox.tsx');
+  }, []);
 
   // New comments
   const getComments = () => {
@@ -165,7 +167,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
     <ChatBoxContainer
       className='chat-box-container'
       isTextAreaClicked={isTextAreaFocussed}>
-      {totalCommentsCount > pastLoadedCommentCount! && (
+      {totalCommentsCount > pastLoadedCommentCount! ? (
         <LoadMoreComments
           className='load-new'
           onClick={(e) => {
@@ -176,6 +178,8 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
             Show {totalCommentsCount - pastLoadedCommentCount!} new comments
           </p>
         </LoadMoreComments>
+      ) : (
+        <React.Fragment></React.Fragment>
       )}
       <div
         className='comment-section'

@@ -2,30 +2,25 @@ import {
   ChatTitle,
   ChatWindowParent,
   DragBar,
-  SettingsScreen,
+  Perimeter,
   TextAreaContainer,
 } from './chatInterface.styles';
-import { CommentInfo, User, globalUIStyles } from '../../Utils/interfaces';
+import { CommentInfo, User } from '../../Utils/interfaces';
 import { MdStar, MdStarOutline } from 'react-icons/md';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieFavCountQuery,
   useUpdateUserMovieStatusMutation,
 } from '../../generated/graphql';
 
+import { CSSTransition } from 'react-transition-group';
 import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
-import EditUserName from '../editUserName/editUserName';
-import Loading from '../loading/loading';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
-import VideoStyles from '../../contentScript/videoStyles/videoStyles';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
-import qcLogo from '../../static/qc_48.png';
-import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
 
 type props = {
@@ -111,7 +106,7 @@ const ChatInterface: React.FC<props> = ({
 
     const update = () => {
       let chatWinSize = parseInt(chatWindowSize);
-      let animationRate = chatWinSize * 0.1;
+      let animationRate = chatWinSize * 0.09;
 
       if (openChatWindow) {
         widthRef.current += animationRate;
@@ -148,11 +143,6 @@ const ChatInterface: React.FC<props> = ({
         divRef.current.style.width = `${widthRef.current}%`;
         videoPlayerElement.style!.width = `${videoWidthRef.current}%`;
       }
-      if (dragRef && divRef) {
-        dragRef.current!.style.left = `${
-          divRef?.current?.getBoundingClientRect().left! - 4
-        }px`;
-      }
 
       // Update the callback key
       if (callbackKeyRef.current !== null)
@@ -163,81 +153,76 @@ const ChatInterface: React.FC<props> = ({
     update();
   }, [openChatWindow, chatWindowSize]);
 
-  // Chat window content will be disappeared when chatWindow is toggled.
-  useLayoutEffect(() => {
-    if (openChatWindow) {
-      setTimeout(() => {
-        setDelayed(true);
-      }, 900);
-    } else {
-      setDelayed(false);
-    }
-  }, [openChatWindow]);
+  useEffect(() => {
+    colorLog('chatInterface.tsx');
+  }, []);
 
   return (
-    <React.Fragment>
+    <Perimeter ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
       <ChatWindowParent
         className='chat-interface'
-        ref={divRef}
         openChatWindow={openChatWindow!}
         onClick={(e) => e.stopPropagation()}
         width={chatWindowSize}>
-        {delayed ? (
-          <React.Fragment>
-            <ChatTitle className='chat-title'>
-              <div className='logo'></div>
-              <div className='title'>
-                <div className='set'>{movie.name}</div>
+        <React.Fragment>
+          <ChatTitle className='chat-title'>
+            <div className='logo'></div>
+            <div className='title'>
+              <div className='set'>{movie.name}</div>
+            </div>
+            <div
+              className='icon'
+              onClick={(e) => {
+                e.stopPropagation();
+                updateUserLikeFavorite({
+                  uid: user.uid,
+                  mid: movie.mid,
+                  options: {
+                    favorite: !fav,
+                  },
+                }).then((response) => {
+                  const { data, error } = response;
+                  if (error) colorLog(error);
+                  const { favorite } = data?.updateUserMovieStats!;
+                  colorLog(favorite);
+                  setFav(favorite!);
+                });
+              }}>
+              <div className='fav-count'>
+                <div className='box'>{favCount}</div>
               </div>
-              <div
-                className='icon'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  updateUserLikeFavorite({
-                    uid: user.uid,
-                    mid: movie.mid,
-                    options: {
-                      favorite: !fav,
-                    },
-                  }).then((response) => {
-                    const { data, error } = response;
-                    if (error) colorLog(error);
-                    const { favorite } = data?.updateUserMovieStats!;
-                    colorLog(favorite);
-                    setFav(favorite!);
-                  });
-                }}>
-                <div className='fav-count'>
-                  <div className='box'>{favCount}</div>
-                </div>
-                {!fav ? (
-                  <MdStarOutline className='star' size={20} />
-                ) : (
-                  <MdStar className='star' size={20} color='gold' />
-                )}
-              </div>
-            </ChatTitle>
-            <ChatStats setViewStyles={setViewStyles} viewStyles={viewStyles} />
-            <TextAreaContainer
-              className='text-area-container'
-              onClick={(e) => e.stopPropagation()}>
-              <MessageBox
-                replyWindowResponse={replyWindowResponse}
-                setReplyClickResponse={setReplyClickResponse}
-              />
-            </TextAreaContainer>
-            <ChatBox
-              responseFromReplyWindow={responseFromReplyWindow}
-              type='comment'
+              {!fav ? (
+                <MdStarOutline className='star' size={20} />
+              ) : (
+                <MdStar className='star' size={20} color='gold' />
+              )}
+            </div>
+          </ChatTitle>
+          <ChatStats setViewStyles={setViewStyles} viewStyles={viewStyles} />
+          <TextAreaContainer
+            className='text-area-container'
+            onClick={(e) => e.stopPropagation()}>
+            <MessageBox
+              replyWindowResponse={replyWindowResponse}
+              setReplyClickResponse={setReplyClickResponse}
             />
-          </React.Fragment>
-        ) : (
-          <Loading />
-        )}
-        <PopSlide />
+          </TextAreaContainer>
+          <ChatBox
+            responseFromReplyWindow={responseFromReplyWindow}
+            type='comment'
+          />
+        </React.Fragment>
+
+        <CSSTransition
+          in={isPopSlideOpen}
+          classNames='fade'
+          timeout={300}
+          unmountOnExit>
+          <PopSlide />
+        </CSSTransition>
       </ChatWindowParent>
-    </React.Fragment>
+    </Perimeter>
   );
 };
 

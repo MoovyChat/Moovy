@@ -125,7 +125,7 @@ const PopSlide = () => {
   }, [PopSlideContentType]);
 
   return (
-    <PopSlideParent isPopSlideOpen={isPopSlideOpen}>
+    <PopSlideParent isPopSlideOpen={isPopSlideOpen} className='pop-slide'>
       <div className='header'>
         <div className='section'>
           <div className='title'>{inputs.title}</div>

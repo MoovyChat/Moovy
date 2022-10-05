@@ -14,12 +14,24 @@ export const CommentCardContainer = styled.div`
   position: relative;
   padding: 5px 0;
   padding-left: 2%;
+  transition: all 0.3s;
   .card-parent {
     position: relative;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: row;
+  }
+
+  // exit from
+  &.comment-exit {
+    opacity: 1;
+  }
+
+  // exit to
+  &.comment-exit-active {
+    background-color: #ff005d;
+    opacity: 0;
   }
 `;
 

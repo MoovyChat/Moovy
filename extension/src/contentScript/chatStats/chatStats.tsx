@@ -76,6 +76,10 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
     });
   }, []);
 
+  useEffect(() => {
+    colorLog('chatStats.tsx');
+  }, []);
+
   // Get Likes Data on Initial Load.
   useEffect(() => {
     const likesData = likesQuery.data;
@@ -161,7 +165,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   };
 
   return (
-    <ChatStatContainer styles={uiStyles} like={like} themeToggled={theme}>
+    <ChatStatContainer like={like} themeToggled={theme}>
       <div className='capsule'>
         <div
           className='likes'
@@ -197,12 +201,6 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
               <IoMdMoon size={icon_Size} />
             </div>
           </div>
-
-          {/* {theme === 'light' ? (
-            <MdOutlineWbSunny size={icon_Size} />
-          ) : (
-            <IoMdMoon size={icon_Size} />
-          )} */}
         </div>
       </div>
       <div className='user' onClick={changeNickName}>

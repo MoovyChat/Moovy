@@ -31,7 +31,6 @@ const ReplyWindow: React.FC<props> = ({
   const [replySection, setReplySection] = useState<boolean>(false);
 
   const handleOnBeforeGetContent = () => {
-    // colorLog(allReplies, parentComment);
     return new Promise((resolve) => {
       const filtered = allReplies.filter(
         (reply) => reply.parentCommentCid === parentComment.cid

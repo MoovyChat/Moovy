@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import { globalUIStyles } from '../../Utils/interfaces';
 
 type props = {
-  styles?: globalUIStyles;
   like: boolean;
   themeToggled: string;
 };
@@ -100,10 +99,11 @@ export const ChatStatContainer = styled.div<props>`
     align-items: center;
     cursor: pointer;
     color: inherit;
-  }
-  * > h4 {
-    padding: 2px 3px;
-    font-size: 1.3em;
+    overflow: hidden;
+    h4 {
+      padding: 2px 3px;
+      font-size: 1.3em;
+    }
   }
 `;
 

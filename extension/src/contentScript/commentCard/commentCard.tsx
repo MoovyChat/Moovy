@@ -78,6 +78,10 @@ const CommentCard: React.FC<props> = ({
   });
 
   useEffect(() => {
+    colorLog('commentCard.tsx');
+  }, []);
+
+  useEffect(() => {
     const { data, fetching, error } = commentLikeCountQuery;
     if (error) colorLog(error);
     if (!fetching && data) {

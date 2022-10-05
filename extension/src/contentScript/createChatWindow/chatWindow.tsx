@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import ChatInterface from '../../components/chatInterface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
+import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../contentScript.utils';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
@@ -36,10 +37,6 @@ const ChatWindow = () => {
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
 
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [globalStyles]);
-
   // Drag the chat window.
   useEffect(() => {
     let onMouseMoveEventListener: any;
@@ -59,16 +56,16 @@ const ChatWindow = () => {
         onMouseMoveEventListener = (e: MouseEvent) => {
           e.stopPropagation();
           if (dragging) {
-            // Sets the dragBar position.
             document.body!.style.cursor = 'col-resize';
-            dragRef.current!.style.left = `${e.pageX + 2}px`;
             let videoElem = getPlayerViewElement();
             let bodyWidth = document.body!.clientWidth;
 
             if (divRef) {
               let newWidth = bodyWidth - e.pageX - 6;
               // Sets the chat window size.
-              dispatch(sliceSetChatWindowSize((newWidth / bodyWidth) * 100));
+              let newChatWindowSize = (newWidth / bodyWidth) * 100;
+              if (newChatWindowSize < 30) newChatWindowSize = 30;
+              dispatch(sliceSetChatWindowSize(newChatWindowSize));
               if (videoElem) {
                 widthRef.current = (newWidth / bodyWidth) * 100;
                 videoWidthRef.current = 100 - widthRef.current;
@@ -88,6 +85,10 @@ const ChatWindow = () => {
       };
     }
   }, [position.x, position.y]);
+
+  useEffect(() => {
+    colorLog('chatWindow.tsx');
+  }, []);
 
   return (
     <React.Fragment>

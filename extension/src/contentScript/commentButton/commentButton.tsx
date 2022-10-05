@@ -62,7 +62,9 @@ const Loader = (chatElement: HTMLDivElement) => {
     ],
     requestPolicy: 'cache-and-network',
   });
-  if (playerElement !== null) {
+  const existingChatWindow = document.getElementsByClassName('chat-interface');
+  if (playerElement !== null && !existingChatWindow[0]) {
+    colorLog('Creating new chat window');
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <Provider value={client}>
