@@ -16,6 +16,7 @@ import {
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { GiCheckMark } from 'react-icons/gi';
 import Slider from '../../components/slider/slider';
+import { colorLog } from '../../Utils/utilities';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
@@ -170,10 +171,8 @@ const VideoStyles = () => {
     getVideoElement().then((res) => {
       setVideoElem(res[0]);
     });
-    let playerViewCollection = document.getElementsByClassName(
-      'watch-video--player-view'
-    );
-    let playerView = playerViewCollection[0];
+    // let playerViewCollection = document.getElementsByClassName('ltr-omkt8s');
+    let playerView = document.querySelector('[data-uia="player"]');
     setCanvas(playerView as HTMLElement);
   }, []);
 
@@ -303,11 +302,11 @@ const VideoStyles = () => {
     let videoElements = document.getElementsByTagName('video');
     if (videoElements.length > 0) {
       let videoElem = videoElements[0];
-      if (videoElem)
-        videoElem.style.cssText = `
-        height: 100%;
-        width: 100%;
-      `;
+      // if (videoElem)
+      //   videoElem.style.cssText = `
+      //   height: 100%;
+      //   width: 100%;
+      // `;
     }
     if (canvas) {
       canvas.style.cssText += `
