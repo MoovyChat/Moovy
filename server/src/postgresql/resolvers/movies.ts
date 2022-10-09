@@ -18,7 +18,7 @@ import { Comment } from '../entities/Comment';
 import { Movie } from '../entities/Movie';
 import { User } from '../entities/User';
 import { MoreThan } from 'typeorm';
-import { LIKES_AND_COMMENT } from '../constants';
+import { LIKES_AND_COMMENT } from '../../constants';
 
 @InputType()
 class MovieInput {

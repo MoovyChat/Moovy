@@ -1,22 +1,13 @@
 import 'reflect-metadata';
 
 import { ApolloServer } from 'apollo-server-express';
-import { CommentResolver } from './resolvers/comments';
-import { CommentStatsResolver } from './resolvers/commentStats';
-import { HelloResolver } from './resolvers/hello';
-import { MovieResolver } from './resolvers/movies';
-import { MovieStatsResolver } from './resolvers/movieStats';
-import { PlatformResolver } from './resolvers/platforms';
 import Redis from 'ioredis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { ReplyResolver } from './resolvers/replies';
-import { ReplyStatsResolver } from './resolvers/replyStats';
-import { UserResolver } from './resolvers/users';
-import { __prod__ } from './constants';
 import { buildSchema } from 'type-graphql';
 import { conn } from './dataSource';
 import { createServer } from 'http';
 import express from 'express';
+import { resolvers } from './resolvers';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import ws from 'ws';
 
@@ -40,17 +31,7 @@ const main = async () => {
   const app = express();
   const server = createServer(app);
   const schema = await buildSchema({
-    resolvers: [
-      HelloResolver,
-      UserResolver,
-      CommentResolver,
-      MovieResolver,
-      PlatformResolver,
-      MovieStatsResolver,
-      CommentStatsResolver,
-      ReplyResolver,
-      ReplyStatsResolver,
-    ],
+    resolvers: resolvers as any,
     pubSub: getConfiguredRedisPubSub,
     validate: false,
   });

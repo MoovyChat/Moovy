@@ -16,7 +16,7 @@ import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { conn } from '../dataSource';
 import { User } from '../entities/User';
-import { STATUS_UPDATE } from '../constants';
+import { STATUS_UPDATE } from '../../constants';
 
 @ObjectType()
 class LikesAndFavObj {

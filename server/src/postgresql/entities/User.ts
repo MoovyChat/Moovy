@@ -12,6 +12,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { CommentStats } from './CommentStat';
+import { Follow } from './Follow';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
 import { Reply } from './Reply';
@@ -43,6 +44,12 @@ export class User extends BaseEntity {
   @Field(() => [String], { nullable: true })
   @Column({ type: 'text', array: true, default: [] })
   watchedMovies?: string[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  followers: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.user)
+  followings: Follow[];
 
   @OneToMany(() => MovieStats, (stats) => stats.user)
   movieStats: MovieStats[];
