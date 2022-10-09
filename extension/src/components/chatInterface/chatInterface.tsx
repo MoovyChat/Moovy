@@ -19,6 +19,7 @@ import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
+import Toast from '../toast/toast';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
@@ -221,6 +222,15 @@ const ChatInterface: React.FC<props> = ({
           unmountOnExit>
           <PopSlide />
         </CSSTransition>
+
+        {/* <CSSTransition
+          in={isPopSlideOpen}
+          classNames='fade'
+          timeout={300}
+          unmountOnExit>
+          <Toast />
+        </CSSTransition> */}
+        <Toast />
       </ChatWindowParent>
     </Perimeter>
   );

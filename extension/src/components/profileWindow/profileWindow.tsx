@@ -6,20 +6,32 @@ import {
   RadioButton,
 } from './profileWindow.styles';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
+import {
+  MdCircleNotifications,
+  MdOutlineAccountCircle,
+  MdPersonAdd,
+  MdPersonOff,
+} from 'react-icons/md';
 import React, { useEffect, useState } from 'react';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import {
   useAmIFollowingThisUserQuery,
   useGetUserStatsByNickNameQuery,
   useToggleFollowMutation,
 } from '../../generated/graphql';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { MdOutlineAccountCircle } from 'react-icons/md';
+import { IconType } from 'react-icons/lib';
 import MovieMini from '../miniCards/movieMini/movieMini';
 import NotFound from '../notFound/notFound';
 import { Profile } from '../../contentScript/commentInterface/commentInterface.styles';
 import { User } from '../../Utils/interfaces';
+import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
-import { useAppSelector } from '../../redux/hooks';
+import { iconsEnum } from '../../Utils/enums';
 
 export interface likedTitles {
   __typename?: 'LikedMovieObject' | undefined;
@@ -54,6 +66,8 @@ const ProfileWindow = () => {
   const [selectedRadio, setSelectedRadio] = useState<string>('liked');
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
+  //Redux
+  const dispatch = useAppDispatch();
   //GraphQL
   const [userFollowStatus, _uf] = useAmIFollowingThisUserQuery({
     variables: {
@@ -109,8 +123,21 @@ const ProfileWindow = () => {
       const { error, data } = res;
       if (error) colorLog(error);
       const isFollowingRes = data?.toggleFollow?.follows;
+      let icon = '';
+      let message = '';
       if (isFollowingRes !== null && isFollowingRes !== undefined) {
         setIsFollowing(isFollowingRes);
+        if (isFollowingRes) {
+          icon = iconsEnum.PERSON_FOLLOW;
+          message = `You are following ${userData?.nickname!}`;
+        } else {
+          icon = iconsEnum.PERSON_UNFOLLOW;
+          message = `You un-followed ${userData?.nickname!}`;
+        }
+        batch(() => {
+          dispatch(sliceSetToastVisible(true));
+          dispatch(sliceSetToastBody({ icon, message }));
+        });
       }
     });
   };

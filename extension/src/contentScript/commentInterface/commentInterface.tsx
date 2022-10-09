@@ -26,6 +26,10 @@ import {
   sliceSetPopSlideLikes,
   sliceSetPopSlideNickName,
 } from '../../redux/slices/settings/settingsSlice';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useDeleteCommentMutation,
@@ -38,6 +42,7 @@ import { MdDeleteForever } from 'react-icons/md';
 import ReplyWindow from '../replyWindow/replyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
+import { iconsEnum } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
 
 type props = {
@@ -165,6 +170,15 @@ const CommentInterface: React.FC<props> = ({
           if (data.deleteComment?.cid) {
             colorLog(`Comment deleted! ${data.deleteComment?.cid}`);
             setDelete(false);
+            batch(() => {
+              dispatch(sliceSetToastVisible(true));
+              dispatch(
+                sliceSetToastBody({
+                  icon: iconsEnum.DELETE_COMMENT,
+                  message: 'Comment deleted',
+                })
+              );
+            });
             setTimeout(() => {
               dispatch(sliceDeleteComment(data?.deleteComment?.cid));
             }, 300);
@@ -179,6 +193,15 @@ const CommentInterface: React.FC<props> = ({
           if (data.deleteReply?.rid) {
             colorLog(`Reply deleted! ${data.deleteReply?.rid}`);
             setDelete(false);
+            batch(() => {
+              dispatch(sliceSetToastVisible(true));
+              dispatch(
+                sliceSetToastBody({
+                  icon: iconsEnum.DELETE_COMMENT,
+                  message: 'Reply deleted',
+                })
+              );
+            });
             setTimeout(() => {
               dispatch(sliceDeleteReply(data?.deleteReply?.rid));
             }, 300);

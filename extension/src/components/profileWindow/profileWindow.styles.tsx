@@ -91,10 +91,10 @@ export const ProfileParent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 90%;
+    width: 100%;
     height: 70px;
     .container {
-      width: 100%;
+      width: 90%;
       height: 100%;
       display: flex;
       justify-content: space-between;
