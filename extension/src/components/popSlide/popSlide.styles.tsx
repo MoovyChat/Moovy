@@ -40,24 +40,28 @@ export const PopSlideParent = styled.div<props>`
       justify-content: space-evenly;
       .title {
         font-weight: 800;
-        font-size: 1.7em;
+        font-size: 2em;
       }
       .sub {
         font-weight: 500;
+        font-size: 1.3em;
       }
     }
 
-    .close {
+    .close-icon {
       position: absolute;
       right: 20px;
       top: 20px;
       cursor: pointer;
+      z-index: 1;
     }
   }
 
   .content {
     flex: 9;
     overflow: auto;
+    position: relative;
+    display: flex;
   }
 `;
 

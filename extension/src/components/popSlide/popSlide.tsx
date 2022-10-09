@@ -28,7 +28,7 @@ const PopSlide = () => {
   const popSlideContentLikes = useAppSelector(
     (state) => state.settings.popSlideLikes
   );
-  const closePopSlide: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const closePopSlide: React.MouseEventHandler<SVGElement> = (e) => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetPopSlide(false));
@@ -131,9 +131,11 @@ const PopSlide = () => {
           <div className='title'>{inputs.title}</div>
           <div className='sub'>{inputs.subTitle}</div>
         </div>
-        <div className='close' onClick={closePopSlide}>
-          <IoMdCloseCircle className='close-icon' size={20} />
-        </div>
+        <IoMdCloseCircle
+          className='close-icon'
+          size={20}
+          onClick={closePopSlide}
+        />
       </div>
       <div className='content'>
         <SelectedElement />

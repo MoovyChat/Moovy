@@ -63,6 +63,21 @@ export type FavMovieObject = {
   userUid: Scalars['String'];
 };
 
+export type Follow = {
+  __typename?: 'Follow';
+  createdAt: Scalars['String'];
+  followerUid: Scalars['String'];
+  follows?: Maybe<Scalars['Boolean']>;
+  updatedAt: Scalars['String'];
+  userUid: Scalars['String'];
+};
+
+export type FollowingUsers = {
+  __typename?: 'FollowingUsers';
+  followers?: Maybe<Array<User>>;
+  user?: Maybe<User>;
+};
+
 export type FullUserMovieStats = {
   __typename?: 'FullUserMovieStats';
   movie: Movie;
@@ -154,6 +169,7 @@ export type Mutation = {
   insertComment?: Maybe<Comment>;
   insertMovie?: Maybe<Movie>;
   insertReply?: Maybe<Reply>;
+  toggleFollow?: Maybe<Follow>;
   updateMovieTitle?: Maybe<Scalars['Boolean']>;
   updateUserMovieStats?: Maybe<MovieStats>;
   updateUserNickName: NickNameResponse;
@@ -245,6 +261,13 @@ export type MutationInsertReplyArgs = {
 };
 
 
+export type MutationToggleFollowArgs = {
+  follow: Scalars['Boolean'];
+  followerId: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
 export type MutationUpdateMovieTitleArgs = {
   mid: Scalars['String'];
   name: Scalars['String'];
@@ -307,6 +330,7 @@ export type PlatformInput = {
 
 export type Query = {
   __typename?: 'Query';
+  amIFollowingThisUser?: Maybe<Scalars['Boolean']>;
   getAllComments: Array<Comment>;
   getAllCommentsMadeByUser?: Maybe<Array<Comment>>;
   getAllMovies: Array<Movie>;
@@ -316,6 +340,7 @@ export type Query = {
   getCommentLikes?: Maybe<CommentLikesObject>;
   getCommentedUser?: Maybe<User>;
   getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
+  getFollowers?: Maybe<FollowingUsers>;
   getIsUserLikedComment?: Maybe<Scalars['Boolean']>;
   getIsUserLikedReply?: Maybe<Scalars['Boolean']>;
   getMovie: Movie;
@@ -333,6 +358,12 @@ export type Query = {
   getUserStatistics?: Maybe<FullUserObject>;
   hello: Scalars['String'];
   users: Array<User>;
+};
+
+
+export type QueryAmIFollowingThisUserArgs = {
+  fid: Scalars['String'];
+  uid: Scalars['String'];
 };
 
 
@@ -357,6 +388,11 @@ export type QueryGetCommentedUserArgs = {
 
 
 export type QueryGetCommentsOfTheUserArgs = {
+  uid: Scalars['String'];
+};
+
+
+export type QueryGetFollowersArgs = {
   uid: Scalars['String'];
 };
 
@@ -599,6 +635,30 @@ export type MovieCommentsUpdateSubscriptionVariables = Exact<{ [key: string]: ne
 
 
 export type MovieCommentsUpdateSubscription = { __typename?: 'Subscription', movieCommentsUpdate: number };
+
+export type ToggleFollowMutationVariables = Exact<{
+  follow: Scalars['Boolean'];
+  followerId: Scalars['String'];
+  uid: Scalars['String'];
+}>;
+
+
+export type ToggleFollowMutation = { __typename?: 'Mutation', toggleFollow?: { __typename?: 'Follow', createdAt: string, updatedAt: string, userUid: string, followerUid: string, follows?: boolean | null } | null };
+
+export type AmIFollowingThisUserQueryVariables = Exact<{
+  fid: Scalars['String'];
+  uid: Scalars['String'];
+}>;
+
+
+export type AmIFollowingThisUserQuery = { __typename?: 'Query', amIFollowingThisUser?: boolean | null };
+
+export type GetFollowersQueryVariables = Exact<{
+  uid: Scalars['String'];
+}>;
+
+
+export type GetFollowersQuery = { __typename?: 'Query', getFollowers?: { __typename?: 'FollowingUsers', user?: { __typename?: 'User', uid: string, name: string, nickname: string, photoUrl: string } | null, followers?: Array<{ __typename?: 'User', uid: string, nickname: string, photoUrl: string, joinedAt: string, updatedAt: string }> | null } | null };
 
 export type FetchNewCommentsMutationVariables = Exact<{
   time: Scalars['String'];
@@ -928,6 +988,53 @@ export const MovieCommentsUpdateDocument = gql`
 
 export function useMovieCommentsUpdateSubscription<TData = MovieCommentsUpdateSubscription>(options: Omit<Urql.UseSubscriptionArgs<MovieCommentsUpdateSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<MovieCommentsUpdateSubscription, TData>) {
   return Urql.useSubscription<MovieCommentsUpdateSubscription, TData, MovieCommentsUpdateSubscriptionVariables>({ query: MovieCommentsUpdateDocument, ...options }, handler);
+};
+export const ToggleFollowDocument = gql`
+    mutation toggleFollow($follow: Boolean!, $followerId: String!, $uid: String!) {
+  toggleFollow(follow: $follow, followerId: $followerId, uid: $uid) {
+    createdAt
+    updatedAt
+    userUid
+    followerUid
+    follows
+  }
+}
+    `;
+
+export function useToggleFollowMutation() {
+  return Urql.useMutation<ToggleFollowMutation, ToggleFollowMutationVariables>(ToggleFollowDocument);
+};
+export const AmIFollowingThisUserDocument = gql`
+    query amIFollowingThisUser($fid: String!, $uid: String!) {
+  amIFollowingThisUser(fid: $fid, uid: $uid)
+}
+    `;
+
+export function useAmIFollowingThisUserQuery(options: Omit<Urql.UseQueryArgs<AmIFollowingThisUserQueryVariables>, 'query'>) {
+  return Urql.useQuery<AmIFollowingThisUserQuery, AmIFollowingThisUserQueryVariables>({ query: AmIFollowingThisUserDocument, ...options });
+};
+export const GetFollowersDocument = gql`
+    query getFollowers($uid: String!) {
+  getFollowers(uid: $uid) {
+    user {
+      uid
+      name
+      nickname
+      photoUrl
+    }
+    followers {
+      uid
+      nickname
+      photoUrl
+      joinedAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+export function useGetFollowersQuery(options: Omit<Urql.UseQueryArgs<GetFollowersQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetFollowersQuery, GetFollowersQueryVariables>({ query: GetFollowersDocument, ...options });
 };
 export const FetchNewCommentsDocument = gql`
     mutation fetchNewComments($time: String!, $mid: String!) {

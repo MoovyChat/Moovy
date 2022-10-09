@@ -1,5 +1,6 @@
 import { applyMiddleware, compose, configureStore } from '@reduxjs/toolkit';
 
+import LogRocket from 'logrocket';
 import { batchedSubscribe } from 'redux-batched-subscribe';
 import debounce from 'lodash.debounce';
 import logger from 'redux-logger';
@@ -8,7 +9,7 @@ import thunk from 'redux-thunk';
 
 const debounceNotify = debounce((notify) => notify());
 const enhancer = compose(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk, LogRocket.reduxMiddleware()),
   batchedSubscribe((notify) => {
     notify();
   }),

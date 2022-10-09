@@ -1,0 +1,17 @@
+query getFollowers($uid: String!) {
+  getFollowers(uid: $uid) {
+    user {
+      uid
+      name
+      nickname
+      photoUrl
+    }
+    followers {
+      uid
+      nickname
+      photoUrl
+      joinedAt
+      updatedAt
+    }
+  }
+}

@@ -7,22 +7,18 @@ import {
   fetchExchange,
   subscriptionExchange,
 } from 'urql';
-import React, { useEffect, useState } from 'react';
-import { Provider as ReduxProvider, batch } from 'react-redux';
-import { darkTheme, lightTheme } from '../../theme/theme';
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
-import { GlobalStyles } from '../../theme/globalStyles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
-import { ThemeProvider } from 'styled-components';
-import _ from 'lodash';
+import { Provider as ReduxProvider } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';

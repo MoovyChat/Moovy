@@ -47,11 +47,6 @@ export const Card = styled.div<cardProps>`
   z-index: 1;
   display: flex;
   align-items: flex-start;
-  /* justify-content: flex-end; */
-  /* box-shadow: ${(p) => (p.like ? 'inset 0 0 10px #ff005d' : 'none')}; */
-  /* box-shadow: ${(p) => (p.hovered ? 'inset 2px 0px 0px gold' : 'none')}; */
-  /* animation: ${(p) =>
-    p.deleteFlag ? 'slideCard 0.5s linear forwards' : 'none'}; */
   .profile {
     display: flex;
     width: 40px;

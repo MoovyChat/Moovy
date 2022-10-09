@@ -89,6 +89,7 @@ const EmojiPicker = () => {
       <EmojiPickerHeader>
         {Object.values(groups).map((value, index) => (
           <div
+            key={index}
             className='header-key'
             onClick={(e) => {
               e.stopPropagation();

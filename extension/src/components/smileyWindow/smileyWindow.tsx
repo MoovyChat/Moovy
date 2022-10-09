@@ -1,6 +1,6 @@
 import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { RecentEmoji, db, freqEmoji } from '../../indexedDB/db';
+import { RecentEmoji, db } from '../../indexedDB/db';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { Emoji } from 'emojibase';
@@ -13,7 +13,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 
 const SmileyWindow = () => {
   const iconSize = 30;
-  const [frequentEmojis, setFrequent] = useState<freqEmoji[]>([]);
+  const [frequentEmojis, setFrequent] = useState<any[]>([]);
   const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
     (state) => state.textArea.wordSuggestions
@@ -33,11 +33,9 @@ const SmileyWindow = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (ems) {
-      let allFreqEmojis =
-        ems && ems[0] && ems[0].frequent ? ems[0].frequent : [];
-      let recent = ers ? ers.slice(-10) : [];
-      if (ems) setRecent(recent);
-      let sorted = _.chain(allFreqEmojis)
+      let recent = ers ? ers.slice(-10).reverse() : [];
+      if (ers) setRecent(recent);
+      let sorted = _.chain(ems)
         .sortBy((a) => -a.count)
         .take(10)
         .value();
@@ -84,7 +82,9 @@ const SmileyWindow = () => {
                 <div className='title'>Recently used</div>
                 <div className='emojis'>
                   {recentEmojis.map((emoji, key) => (
-                    <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                    <div className='emoji-child'>
+                      <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -94,7 +94,9 @@ const SmileyWindow = () => {
                 <div className='title'>Frequently used</div>
                 <div className='emojis'>
                   {frequentEmojis.map((emoji, key) => (
-                    <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                    <div className='emoji-child'>
+                      <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                    </div>
                   ))}
                 </div>
               </div>
