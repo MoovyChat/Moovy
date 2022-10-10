@@ -17,7 +17,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class CommentStats extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_comment_stats_id' })
   @Field(() => Int)
   id!: number;
 

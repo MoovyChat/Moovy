@@ -16,7 +16,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class MovieStats extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_movie_stats_id' })
   @Field(() => Int)
   id!: number;
 

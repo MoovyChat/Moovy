@@ -20,7 +20,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class Comment extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_comment_id' })
   @Field(() => String)
   cid!: string;
 

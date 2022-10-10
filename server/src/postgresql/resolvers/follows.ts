@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { FOLLOW_UPDATE } from '../../constants';
 
 import {
   Mutation,
@@ -7,6 +8,11 @@ import {
   Arg,
   ObjectType,
   Field,
+  PubSub,
+  PubSubEngine,
+  Int,
+  Subscription,
+  Root,
 } from 'type-graphql';
 import { conn } from '../dataSource';
 import { Follow } from '../entities/Follow';
@@ -20,6 +26,14 @@ class FollowingUsers {
   followers: User[];
 }
 
+@ObjectType()
+class UserFollowStats {
+  @Field(() => Int, { defaultValue: 0 })
+  followingCount: number;
+  @Field(() => Int, { defaultValue: 0 })
+  followerCount: number;
+}
+
 @Resolver()
 export class FollowResolver {
   @Mutation(() => Follow, { nullable: true })
@@ -28,47 +42,62 @@ export class FollowResolver {
     @Arg('followerId') followerId: string,
     @Arg('follow') follow: boolean
   ): Promise<Follow | null> {
-    const isExist = await Follow.findOne({
-      where: { userUid: uid, followerUid: followerId },
+    var result: any;
+    await conn.transaction(async (manager) => {
+      const res = await manager.getRepository(Follow).upsert(
+        [
+          {
+            userUid: uid,
+            followerUid: followerId,
+            follows: follow,
+          },
+        ],
+        {
+          conflictPaths: ['userUid', 'followerUid'],
+          skipUpdateIfNoValuesChanged: true, // supported by postgres, skips update if it would not change row values
+        }
+      );
+      result = res.raw[0];
+      const userRepo = manager.getRepository(User);
+      if (result && follow) {
+        await userRepo.increment({ uid }, 'followerCount', 1);
+        await userRepo.increment({ uid: followerId }, 'followingCount', 1);
+      } else if (result && !follow) {
+        await userRepo.decrement({ uid }, 'followerCount', 1);
+        await userRepo.decrement({ uid: followerId }, 'followingCount', 1);
+      }
     });
-    var result;
-    if (!isExist) {
-      const res = await conn
-        .createQueryBuilder()
-        .insert()
-        .into(Follow)
-        .values({
-          userUid: uid,
-          followerUid: followerId,
-          follows: follow,
-        })
-        .returning('*')
-        .execute();
-      result = res.raw[0];
-    } else {
-      const res = await conn
-        .createQueryBuilder()
-        .update(Follow)
-        .set({ follows: follow })
-        .where('userUid = :uid', { uid })
-        .andWhere('followerUid = :followerId', { followerId })
-        .returning('*')
-        .execute();
-      result = res.raw[0];
-    }
-    return result;
+    return {
+      ...result,
+      userUid: uid,
+      followerUid: followerId,
+      follows: follow,
+    };
   }
-
   // Query to know the loggedIn user is following the other user.
   // uid - Logged in user.
   // fid - Other user.
-  @Query(() => Boolean, { defaultValue: false })
+  @Mutation(() => Boolean, { defaultValue: false })
   async amIFollowingThisUser(@Arg('uid') uid: string, @Arg('fid') fid: string) {
     const record = await Follow.findOne({
       where: { userUid: fid, followerUid: uid },
     });
     if (!record) return false;
-    return record.follows;
+    return record.follows!;
+  }
+
+  @Mutation(() => UserFollowStats, { nullable: true })
+  async getUserFollowStats(
+    @Arg('uid') uid: string
+  ): Promise<UserFollowStats | null> {
+    const user = await User.findOne({
+      where: { uid },
+    });
+    if (!user) return null;
+    return {
+      followerCount: user?.followerCount!,
+      followingCount: user?.followingCount!,
+    };
   }
 
   @Query(() => FollowingUsers, { nullable: true })

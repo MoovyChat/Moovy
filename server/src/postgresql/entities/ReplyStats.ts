@@ -16,7 +16,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class ReplyStats extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_reply_stats_id' })
   @Field(() => Int)
   id!: number;
 

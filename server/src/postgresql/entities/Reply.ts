@@ -20,7 +20,7 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class Reply extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_reply_id' })
   @Field(() => String)
   rid!: string;
 

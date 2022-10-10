@@ -8,7 +8,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { CommentStats } from './CommentStat';
@@ -21,7 +21,7 @@ import { ReplyStats } from './ReplyStats';
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ primaryKeyConstraintName: 'pk_user_id' })
   @Field(() => String)
   uid: string;
 
@@ -40,6 +40,14 @@ export class User extends BaseEntity {
   @Field(() => String)
   @Column({ unique: true })
   nickname: string;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ default: 0 })
+  followerCount: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ default: 0 })
+  followingCount: number;
 
   @Field(() => [String], { nullable: true })
   @Column({ type: 'text', array: true, default: [] })
