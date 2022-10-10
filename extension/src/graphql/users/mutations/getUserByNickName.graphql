@@ -1,0 +1,12 @@
+mutation getUserByNickName($nickname: String!) {
+  getUserByNickName(nickname: $nickname) {
+    uid
+    name
+    nickname
+    photoUrl
+    email
+    joinedAt
+    updatedAt
+    watchedMovies
+  }
+}

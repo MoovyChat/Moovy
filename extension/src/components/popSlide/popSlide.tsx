@@ -1,17 +1,16 @@
-import { LikesUserView, PopSlideParent } from './popSlide.styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
   sliceSetPopSlideLikes,
-  sliceSetPopSlideNickName,
+  sliceSetPopSlideUserId,
 } from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import EmojiPicker from '../emojiPicker/emojiPicker';
 import { IoMdCloseCircle } from 'react-icons/io';
-import NotFound from '../notFound/notFound';
-import { Pic } from '../../extension/components/logout/logout.styles';
+import LikesWindow from '../likesWindow/likesWindow';
+import { PopSlideParent } from './popSlide.styles';
 import ProfileWindow from '../profileWindow/profileWindow';
 import VideoStyles from '../../contentScript/videoStyles/videoStyles';
 import { batch } from 'react-redux';
@@ -28,12 +27,13 @@ const PopSlide = () => {
   const popSlideContentLikes = useAppSelector(
     (state) => state.settings.popSlideLikes
   );
+
   const closePopSlide: React.MouseEventHandler<SVGElement> = (e) => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetPopSlide(false));
       dispatch(sliceSetPopSlideLikes([]));
-      dispatch(sliceSetPopSlideNickName(''));
+      dispatch(sliceSetPopSlideUserId(''));
       dispatch(slicePopSlideContentType(''));
     });
   };
@@ -82,32 +82,7 @@ const PopSlide = () => {
   const SelectedElement = useCallback(() => {
     switch (PopSlideContentType) {
       case 'likes':
-        return (
-          <React.Fragment>
-            {popSlideContentLikes.length !== 0 ? (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                }}>
-                {popSlideContentLikes.map((user: any) => (
-                  <LikesUserView key={user?.uid}>
-                    <div className='pic'>
-                      <Pic photoURL={user?.photoUrl}></Pic>
-                    </div>
-                    <div className='nick'>{user.nickname}</div>
-                  </LikesUserView>
-                ))}
-              </div>
-            ) : (
-              <React.Fragment>
-                <NotFound type='likes' />
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        );
+        return <LikesWindow />;
       case 'smiley':
         return <EmojiPicker />;
       case 'video-styles':

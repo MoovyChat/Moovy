@@ -3,13 +3,15 @@ import { ReactElement } from 'react';
 export interface User {
   uid: string;
   name: string;
-  email: string;
+  email?: string;
   nickname: string;
   photoUrl?: string;
   comments?: CommentInfo[]; //Remove
   replies?: CommentInfo[]; //Remove
   joinedAt?: string;
   updatedAt?: string;
+  followerCount?: number | null | undefined;
+  followingCount?: number | null | undefined;
   watchedMovies?: string[] | null | undefined;
   favorites?: string[];
   __typename?: 'User' | undefined;
@@ -107,7 +109,10 @@ export interface SettingsInterface {
   openChatWindow: boolean;
   smoothWidth: number;
   isPopSlideOpen: boolean;
-  popSlideContent: () => JSX.Element;
+  popSlideContentType: string;
+  popSlideUserId: string;
+  popSlideLikes: any[];
+  theme: string;
 }
 
 export interface videoBorderSettings {

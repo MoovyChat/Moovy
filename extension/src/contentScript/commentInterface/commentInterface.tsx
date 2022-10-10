@@ -24,7 +24,7 @@ import {
   slicePopSlideContentType,
   sliceSetPopSlide,
   sliceSetPopSlideLikes,
-  sliceSetPopSlideNickName,
+  sliceSetPopSlideUserId,
 } from '../../redux/slices/settings/settingsSlice';
 import {
   sliceSetToastBody,
@@ -35,6 +35,7 @@ import {
   useDeleteCommentMutation,
   useDeleteReplyMutation,
   useGetRepliesQuery,
+  useGetUserByNickNameMutation,
 } from '../../generated/graphql';
 
 import { CSSTransition } from 'react-transition-group';
@@ -85,8 +86,8 @@ const CommentInterface: React.FC<props> = ({
   const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
   const [lastPage, setLastPage] = useState<number>(1);
   const [del, setDelete] = useState<boolean>(true);
-  // Chrome Storage: Get global styles.
 
+  // GraphQL
   const [repliesOfComment, _gr] = useGetRepliesQuery({
     variables: {
       cid: commentOrReply.cid!,
@@ -95,7 +96,7 @@ const CommentInterface: React.FC<props> = ({
     },
     requestPolicy: 'cache-and-network',
   });
-
+  const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
   const [_dc, deleteComment] = useDeleteCommentMutation();
   const [_dr, deleteReply] = useDeleteReplyMutation();
 
@@ -153,10 +154,15 @@ const CommentInterface: React.FC<props> = ({
   };
 
   const profileClickHandler = (username: string) => {
-    batch(() => {
-      dispatch(sliceSetPopSlide(true));
-      dispatch(slicePopSlideContentType('profile'));
-      dispatch(sliceSetPopSlideNickName(username));
+    getUserByNickName({ nickname: username }).then((res) => {
+      const { error, data } = res;
+      if (error) colorLog(error);
+      const userId = data?.getUserByNickName?.uid!;
+      batch(() => {
+        dispatch(sliceSetPopSlide(true));
+        dispatch(slicePopSlideContentType('profile'));
+        dispatch(sliceSetPopSlideUserId(userId));
+      });
     });
   };
 

@@ -1,3 +1,3 @@
-query amIFollowingThisUser($fid: String!, $uid: String!) {
+mutation amIFollowingThisUser($fid: String!, $uid: String!) {
   amIFollowingThisUser(fid: $fid, uid: $uid)
 }

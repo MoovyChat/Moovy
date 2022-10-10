@@ -2,7 +2,7 @@ import { SettingsInterface } from '../../../Utils/interfaces';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const settingsState = {
+export const settingsState: SettingsInterface = {
   chatWindowSize: '30',
   videoParentSize: '70',
   videoSize: '70',
@@ -10,7 +10,7 @@ export const settingsState = {
   smoothWidth: 0,
   isPopSlideOpen: false,
   popSlideContentType: '',
-  popSlideNickName: '',
+  popSlideUserId: '',
   popSlideLikes: [],
   theme: 'light',
 };
@@ -40,8 +40,8 @@ const SettingsSlice = createSlice({
     slicePopSlideContentType: (state, action) => {
       return { ...state, popSlideContentType: action.payload };
     },
-    sliceSetPopSlideNickName: (state, action) => {
-      return { ...state, popSlideNickName: action.payload };
+    sliceSetPopSlideUserId: (state, action) => {
+      return { ...state, popSlideUserId: action.payload };
     },
     sliceSetPopSlideLikes: (state, action) => {
       return { ...state, popSlideLikes: action.payload };
@@ -64,7 +64,7 @@ export const {
   sliceResetSettings,
   sliceSetPopSlide,
   slicePopSlideContentType,
-  sliceSetPopSlideNickName,
+  sliceSetPopSlideUserId,
   sliceSetPopSlideLikes,
   sliceSetTheme,
 } = SettingsSlice.actions;

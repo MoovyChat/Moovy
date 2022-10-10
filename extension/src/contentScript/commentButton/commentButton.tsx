@@ -1,8 +1,14 @@
 import 'cqfill';
 
 import {
+  AnyVariables,
+  DebugEventArg,
+  Operation,
+  OperationResult,
   Provider,
+  cacheExchange,
   createClient,
+  dedupExchange,
   defaultExchanges,
   fetchExchange,
   subscriptionExchange,
@@ -19,6 +25,7 @@ import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
+import { Source } from 'wonka';
 import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';
@@ -39,6 +46,7 @@ const Loader = (chatElement: HTMLDivElement) => {
     url: 'http://localhost:4000/graphql',
     exchanges: [
       ...defaultExchanges,
+      dedupExchange,
       subscriptionExchange({
         forwardSubscription: (operation) => ({
           subscribe: (sink) => ({

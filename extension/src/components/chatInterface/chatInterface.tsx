@@ -186,7 +186,6 @@ const ChatInterface: React.FC<props> = ({
                   const { data, error } = response;
                   if (error) colorLog(error);
                   const { favorite } = data?.updateUserMovieStats!;
-                  colorLog(favorite);
                   setFav(favorite!);
                 });
               }}>

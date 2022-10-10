@@ -6,28 +6,21 @@ import {
   RadioButton,
 } from './profileWindow.styles';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
-import {
-  MdCircleNotifications,
-  MdOutlineAccountCircle,
-  MdPersonAdd,
-  MdPersonOff,
-} from 'react-icons/md';
 import React, { useEffect, useState } from 'react';
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
 } from '../../redux/slices/toast/toastSlice';
 import {
-  useAmIFollowingThisUserQuery,
-  useGetUserStatsByNickNameQuery,
+  useAmIFollowingThisUserMutation,
+  useGetUserStatsQuery,
   useToggleFollowMutation,
 } from '../../generated/graphql';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { IconType } from 'react-icons/lib';
+import { MdOutlineAccountCircle } from 'react-icons/md';
 import MovieMini from '../miniCards/movieMini/movieMini';
 import NotFound from '../notFound/notFound';
-import { Profile } from '../../contentScript/commentInterface/commentInterface.styles';
 import { User } from '../../Utils/interfaces';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
@@ -50,12 +43,12 @@ interface favTitles {
 }
 
 const ProfileWindow = () => {
-  const nickname = useAppSelector((state) => state.settings.popSlideNickName);
-  const loggedInUser = useAppSelector((state) => state.user);
+  const userId = useAppSelector((state) => state.settings.popSlideUserId);
+  const loggedInUserId = useAppSelector((state) => state.user.uid);
   const [userData, setUser] = useState<User>();
-  const [{ data, error, fetching }, _] = useGetUserStatsByNickNameQuery({
+  const [{ data, error, fetching }, _] = useGetUserStatsQuery({
     variables: {
-      nickname,
+      uid: userId,
     },
   });
   const [totalCommentsCount, setTotalComments] = useState<number>(0);
@@ -68,20 +61,20 @@ const ProfileWindow = () => {
 
   //Redux
   const dispatch = useAppDispatch();
-  //GraphQL
-  const [userFollowStatus, _uf] = useAmIFollowingThisUserQuery({
-    variables: {
-      uid: loggedInUser.uid!,
-      fid: userData?.uid!,
-    },
-  });
-  const [_sf, toggleFollow] = useToggleFollowMutation();
 
   const onRadioButtonHandler: React.FormEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as any;
     setSelectedRadio(target.value);
   };
+
+  //GraphQL
+  const [_ufs, amIFollowingThisUser] = useAmIFollowingThisUserMutation();
+  const [_sf, toggleFollow] = useToggleFollowMutation();
+
+  useEffect(() => {
+    colorLog('Profile window');
+  }, []);
 
   useEffect(() => {
     if (error) colorLog(error);
@@ -104,20 +97,24 @@ const ProfileWindow = () => {
   }, [fetching]);
 
   useEffect(() => {
-    const { data, error, fetching } = userFollowStatus;
-    // TODO: Remove this logging.
-    if (error) colorLog(error);
-    if (!fetching && data) {
-      const res = data.amIFollowingThisUser;
-      if (res) setIsFollowing(res);
-    }
-  }, [userFollowStatus.fetching, fetching]);
+    amIFollowingThisUser({
+      uid: loggedInUserId,
+      fid: userId,
+    }).then((res) => {
+      const { error, data } = res;
+      if (error) colorLog(error);
+      if (data) {
+        const res = data.amIFollowingThisUser;
+        if (res) setIsFollowing(res);
+      }
+    });
+  }, []);
 
   const toggleFollowHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     toggleFollow({
-      uid: userData?.uid!,
-      followerId: loggedInUser.uid!,
+      uid: userId,
+      followerId: loggedInUserId,
       follow: !isFollowing,
     }).then((res) => {
       const { error, data } = res;
@@ -152,7 +149,7 @@ const ProfileWindow = () => {
             </div>
             <div className='profile'>
               <ProfileImage profilePic={userData?.photoUrl!} className='pic' />
-              {loggedInUser.uid !== userData.uid ? (
+              {loggedInUserId !== userId ? (
                 <div className='heart' onClick={toggleFollowHandler}>
                   {isFollowing ? (
                     <IoMdHeart size={35} fill='red' />

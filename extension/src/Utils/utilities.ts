@@ -86,3 +86,10 @@ export const getFormattedWordsArray = (
 export const colorLog = (...args: any) => {
   console.log(`%c[qchat]`, 'color: #00d9ff', ...args);
 };
+
+export const getFormattedNumber = (count: number) => {
+ return Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(count);
+}
