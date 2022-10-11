@@ -9,24 +9,50 @@ export const TextAreaContainer = styled.div`
   margin-top: 15px;
 `;
 
+export const Perimeter = styled.div`
+  height: 100%;
+  position: fixed;
+  display: flex;
+  right: 0;
+  bottom: 0;
+  top: 0;
+`;
+
+export const DragBar = styled.div`
+  position: relative;
+  height: 100%;
+  width: 4px;
+  :hover {
+    background-color: ${(p) => p.theme.text};
+    cursor: col-resize;
+  }
+`;
+
 type chatWindowProps = {
   width: string;
   openChatWindow: boolean;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
   height: 100%;
-  width: ${(p) => (p.openChatWindow === true ? p.width : '0')}%;
-  position: fixed;
-  display: flex;
+  position: relative;
+  display: ${(p) => (p.openChatWindow ? 'flex' : 'none')};
+  width: 100%;
   flex-direction: column;
-  right: 0;
-  bottom: 0;
-  top: 0;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
 
   .chat-box-container {
     height: 100%;
     margin: 5px auto;
+  }
+
+  // exit from
+  &.fade-exit {
+    opacity: 1;
+  }
+
+  // exit to
+  &.fade-exit-active {
+    opacity: 0;
   }
 
   @keyframes openToLeft {
@@ -144,15 +170,4 @@ export const SettingsScreen = styled.div`
   background-color: transparent;
   filter: blur(0.5);
   color: inherit; ;
-`;
-
-export const DragBar = styled.div`
-  position: absolute;
-  right: 0;
-  height: 100%;
-  width: 10px;
-  :hover {
-    background-color: #2c2c2c;
-    cursor: col-resize;
-  }
 `;

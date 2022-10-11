@@ -67,15 +67,13 @@ const MessageBox: React.FC<props> = ({
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    colorLog('messageBox');
+  }, []);
   // React: useState hooks.
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
-
-  // Chrome storage: Gets the global ui styles.
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [globalStyles]);
 
   const smileyHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -163,7 +161,6 @@ const MessageBox: React.FC<props> = ({
       const referredUser = parentComment.commentedUserUid;
       getUser({ uid: referredUser }).then((res) => {
         const { data, error } = res;
-        colorLog(data);
         if (error) colorLog(error);
         const nickName = data?.getUserMut?.nickname;
         dispatch(sliceSetTextAreaMessage(`@${nickName!} `));

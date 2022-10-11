@@ -14,12 +14,24 @@ export const CommentCardContainer = styled.div`
   position: relative;
   padding: 5px 0;
   padding-left: 2%;
+  transition: all 0.3s;
   .card-parent {
     position: relative;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: row;
+  }
+
+  // exit from
+  &.comment-exit {
+    opacity: 1;
+  }
+
+  // exit to
+  &.comment-exit-active {
+    background-color: #ff005d;
+    opacity: 0;
   }
 `;
 
@@ -35,11 +47,6 @@ export const Card = styled.div<cardProps>`
   z-index: 1;
   display: flex;
   align-items: flex-start;
-  /* justify-content: flex-end; */
-  /* box-shadow: ${(p) => (p.like ? 'inset 0 0 10px #ff005d' : 'none')}; */
-  /* box-shadow: ${(p) => (p.hovered ? 'inset 2px 0px 0px gold' : 'none')}; */
-  /* animation: ${(p) =>
-    p.deleteFlag ? 'slideCard 0.5s linear forwards' : 'none'}; */
   .profile {
     display: flex;
     width: 40px;

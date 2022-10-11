@@ -15,7 +15,8 @@ export const SmileyWindowParent = styled.div`
   justify-content: space-evenly;
   overflow: auto;
   .child {
-    padding: 10px;
+    padding: 20px;
+    width: 99%;
     height: 100%;
     display: flex;
     justify-content: space-evenly;
@@ -29,6 +30,9 @@ export const SmileyWindowParent = styled.div`
       flex-wrap: wrap;
       justify-content: space-evenly;
       animation: slideFromTop 0.3s linear forwards;
+      .title {
+        padding: 10px;
+      }
       .suggestions {
         width: 100%;
         display: flex;
@@ -43,6 +47,7 @@ export const SmileyWindowParent = styled.div`
           }
         }
       }
+
       .emojis,
       .donate,
       .socials {
@@ -50,6 +55,12 @@ export const SmileyWindowParent = styled.div`
         width: 100%;
         flex-wrap: wrap;
         justify-content: space-evenly;
+      }
+      .emoji-child {
+        flex: 1 0 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .socials {
         .tiktok,

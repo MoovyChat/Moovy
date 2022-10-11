@@ -2,7 +2,9 @@ import styled from 'styled-components';
 
 export const ProfileParent = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
+  padding: 2em 3em;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -12,18 +14,48 @@ export const ProfileParent = styled.div`
     justify-content: space-evenly;
     align-items: center;
     flex: 1;
+    min-height: 65px;
     flex-shrink: 0;
+    .account {
+      position: absolute;
+      top: -10px;
+      right: 0px;
+    }
     .profile {
-      flex: 2;
+      position: relative;
       padding: 10px;
+      height: 95%;
+      aspect-ratio: 1;
       display: flex;
       justify-content: flex-end;
       align-items: center;
+      .pic {
+        width: 100%;
+        height: 100%;
+      }
+      .heart {
+        position: absolute;
+        filter: drop-shadow(0px 0px 0px);
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        transition: transform 0.3s;
+        cursor: pointer;
+        :hover {
+          transform: scale(1.05);
+          transition: transform 0.3s;
+        }
+        :active {
+          transform: scale(0.98);
+          transition: transform 0.3s;
+        }
+      }
     }
     .detail {
       display: flex;
       flex-direction: column;
       flex: 8;
+      height: 100%;
       justify-content: space-evenly;
       align-items: center;
       .info {
@@ -32,53 +64,53 @@ export const ProfileParent = styled.div`
         height: 100%;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         .name {
-          font-size: 2.8em;
+          font-size: 2em;
+          font-weight: 500;
           margin: 0 5px;
+          width: 100%;
           flex: 2;
           display: flex;
-          justify-content: flex-end;
-          overflow-wrap: anywhere;
-        }
-        .clk-parent {
-          display: flex;
-          flex: 3;
           justify-content: flex-start;
-          .follow {
-            background: #00a3ff;
-            color: white;
-            font-weight: 650;
-          }
-          .clk {
-            border: 1px solid;
-            padding: 2px 15px;
-            font-size: 1.2em;
-            margin: 5px;
-            :hover {
-              cursor: pointer;
-            }
-          }
+          align-items: center;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .bio {
+          display: flex;
+          justify-content: flex-start;
+          width: 100%;
+          font-size: 1.2em;
         }
       }
-      .stats {
+    }
+  }
+  .stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    .container {
+      width: 90%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .section {
         display: flex;
+        flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
-        width: 100%;
-        height: 50px;
-        .section {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-evenly;
-          align-items: center;
-          .heading {
-            font-weight: 700;
-            font-size: 1.4em;
-          }
-          .count {
-            font-weight: 600;
-            font-size: 1.2em;
-          }
+        .heading {
+          font-weight: 600;
+          font-size: 1.4em;
+        }
+        .count {
+          font-weight: 600;
+          font-size: 1.2em;
         }
       }
     }
@@ -96,13 +128,15 @@ export const ProfileParent = styled.div`
       display: flex;
       justify-content: space-evenly;
       align-items: center;
-      width: 98%;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 40px;
+      box-shadow: inset 0px 0px 4px 0px;
       .item {
-        border-bottom: 1px solid;
         display: flex;
         width: 100%;
         height: 100%;
-        font-size: 1.7em;
+        font-size: 1.5em;
         justify-content: center;
         align-items: center;
         :hover {
@@ -113,6 +147,7 @@ export const ProfileParent = styled.div`
     .list {
       flex: 9;
       width: 100%;
+      padding: 10px;
     }
   }
 `;
@@ -122,8 +157,6 @@ type props = {
 };
 export const ProfileImage = styled.div<props>`
   display: inline-block;
-  height: 75px;
-  width: 75px;
   display: flex;
   border-radius: 50%;
   justify-content: center;
@@ -153,5 +186,15 @@ export const RadioButton = styled.span`
     box-shadow: inset -1px 0 1px black;
     font-weight: 600;
     color: white;
+    transition: all 0.5s;
   }
+`;
+
+export const NoTitles = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 1.5em;
+  height: 100%;
 `;

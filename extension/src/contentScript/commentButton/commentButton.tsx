@@ -1,28 +1,31 @@
 import 'cqfill';
 
 import {
+  AnyVariables,
+  DebugEventArg,
+  Operation,
+  OperationResult,
   Provider,
+  cacheExchange,
   createClient,
+  dedupExchange,
   defaultExchanges,
   fetchExchange,
   subscriptionExchange,
 } from 'urql';
-import React, { useEffect, useState } from 'react';
-import { Provider as ReduxProvider, batch } from 'react-redux';
-import { darkTheme, lightTheme } from '../../theme/theme';
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
-import { GlobalStyles } from '../../theme/globalStyles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
-import { ThemeProvider } from 'styled-components';
-import _ from 'lodash';
+import { Provider as ReduxProvider } from 'react-redux';
+import { Source } from 'wonka';
 import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
 import { createClient as createWSClient } from 'graphql-ws';
@@ -43,6 +46,7 @@ const Loader = (chatElement: HTMLDivElement) => {
     url: 'http://localhost:4000/graphql',
     exchanges: [
       ...defaultExchanges,
+      dedupExchange,
       subscriptionExchange({
         forwardSubscription: (operation) => ({
           subscribe: (sink) => ({
@@ -62,7 +66,9 @@ const Loader = (chatElement: HTMLDivElement) => {
     ],
     requestPolicy: 'cache-and-network',
   });
-  if (playerElement !== null) {
+  const existingChatWindow = document.getElementsByClassName('chat-interface');
+  if (playerElement !== null && !existingChatWindow[0]) {
+    colorLog('Creating new chat window');
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <Provider value={client}>

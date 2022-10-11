@@ -5,6 +5,8 @@ query getCommentLikes($cid: String!) {
       name
       nickname
       photoUrl
+      followerCount
+      followingCount
     }
     likesCount
   }

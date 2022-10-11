@@ -10,14 +10,13 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
-import { Comment } from './Comment';
-import { Movie } from './Movie';
+import { Reply } from './Reply';
 import { User } from './User';
 
 @ObjectType()
 @Entity()
-export class CommentStats extends BaseEntity {
-  @PrimaryGeneratedColumn()
+export class ReplyStats extends BaseEntity {
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_reply_stats_id' })
   @Field(() => Int)
   id!: number;
 
@@ -27,24 +26,20 @@ export class CommentStats extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  commentCid!: string;
-
-  @Field(() => String)
-  @Column()
-  movieMid!: string;
+  replyRid!: string;
 
   @Field(() => String)
   @Column()
   userUid!: string;
 
-  @ManyToOne(() => Comment, (comment) => comment.commentStats)
-  comment: Comment;
+  @ManyToOne(() => Reply, (reply) => reply.replyStats)
+  reply: Reply;
 
-  @ManyToOne(() => User, (user) => user.movieStats || user.commentStats)
+  @ManyToOne(
+    () => User,
+    (user) => user.movieStats || user.commentStats || user.replyStats
+  )
   user: User;
-
-  @ManyToOne(() => Movie, (movie) => movie.movieStats)
-  movie: Movie;
 
   @Field(() => String)
   @CreateDateColumn()

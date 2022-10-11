@@ -17,7 +17,7 @@ import {
 import { Comment } from '../entities/Comment';
 import { User } from '../entities/User';
 import { CommentStats } from '../entities/CommentStat';
-import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../constants';
+import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../../constants';
 
 @InputType()
 class CommentInput {

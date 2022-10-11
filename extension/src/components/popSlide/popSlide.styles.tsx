@@ -40,42 +40,27 @@ export const PopSlideParent = styled.div<props>`
       justify-content: space-evenly;
       .title {
         font-weight: 800;
-        font-size: 1.7em;
+        font-size: 1.6em;
       }
       .sub {
         font-weight: 500;
+        font-size: 1.1em;
       }
     }
 
-    .close {
+    .close-icon {
       position: absolute;
       right: 20px;
       top: 20px;
       cursor: pointer;
+      z-index: 1;
     }
   }
 
   .content {
     flex: 9;
     overflow: auto;
-  }
-`;
-
-export const LikesUserView = styled.div`
-  display: flex;
-  width: 50%;
-  align-items: center;
-  margin: 6px 0;
-  .pic {
-    flex: 2;
-    align-items: center;
-    justify-content: center;
+    position: relative;
     display: flex;
-  }
-  .nick {
-    flex: 8;
-    font-size: 1.7em;
-    padding: 0 10px;
-    font-weight: 700;
   }
 `;

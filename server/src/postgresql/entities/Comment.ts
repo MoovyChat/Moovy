@@ -11,18 +11,22 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
-import { Comment } from './Comment';
+import { CommentStats } from './CommentStat';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
-import { ReplyStats } from './ReplyStats';
+import { Reply } from './Reply';
 import { User } from './User';
 
 @ObjectType()
 @Entity()
-export class Reply extends BaseEntity {
-  @PrimaryGeneratedColumn()
+export class Comment extends BaseEntity {
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_comment_id' })
   @Field(() => String)
-  rid!: string;
+  cid!: string;
+
+  @Field(() => String)
+  @Column()
+  commentedUserUid!: string;
 
   @Field(() => String)
   @Column()
@@ -31,21 +35,6 @@ export class Reply extends BaseEntity {
   @Field(() => String)
   @Column()
   movieMid!: string;
-
-  @Field(() => String)
-  @Column()
-  parentCommentCid!: string;
-
-  @Field(() => String, { nullable: true })
-  @Column()
-  parentReplyRid!: string;
-
-  @Field(() => String)
-  @Column()
-  commentedUserUid!: string;
-
-  @OneToMany(() => ReplyStats, (stats) => stats.reply)
-  replyStats: ReplyStats[];
 
   @Field(() => Int, { defaultValue: 0 })
   @Column({ type: 'int', default: 0 })
@@ -59,16 +48,19 @@ export class Reply extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
-  @ManyToOne(() => Movie, (movie) => movie.replies)
+  @OneToMany(() => Reply, (reply) => reply.parentComment)
+  replies: Reply[];
+
+  @OneToMany(() => CommentStats, (stats) => stats.comment)
+  commentStats: CommentStats[];
+
+  @ManyToOne(() => User, (user) => user.comments)
+  commentedUser: User;
+
+  @ManyToOne(() => Movie, (movie) => movie.comments)
   movie: Movie;
 
-  @ManyToOne(() => Comment, (comment) => comment.replies)
-  parentComment!: Comment;
-
-  @ManyToOne(() => User, (user) => user.replies)
-  commentedUser!: User;
-
-  @ManyToOne(() => Platform, (platform) => platform.replies)
+  @ManyToOne(() => Platform, (platform) => platform.comments)
   platform: Platform;
 
   @Field(() => String)

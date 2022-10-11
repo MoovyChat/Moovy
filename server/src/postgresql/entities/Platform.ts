@@ -16,7 +16,7 @@ import { Reply } from './Reply';
 @ObjectType()
 @Entity()
 export class Platform extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_platform_id' })
   @Field(() => String)
   id!: string;
 

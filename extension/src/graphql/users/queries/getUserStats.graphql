@@ -1,5 +1,5 @@
-query getUserStatsByNickName($nickname: String!) {
-  getUserStatistics(nickname: $nickname) {
+query getUserStats($uid: String!) {
+  getUserStatistics(uid: $uid) {
     user {
       uid
       name

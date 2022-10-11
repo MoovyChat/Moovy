@@ -106,7 +106,6 @@ const ChatArea: React.FC<props> = ({
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
       let target = e.target as any;
-      console.log(target);
       if (target && (target.id === 'comment' || target.id === 'text-focus')) {
         dispatch(sliceSetIsTextAreaClicked(true));
         dispatch(sliceSetIsTextAreaFocused(true));

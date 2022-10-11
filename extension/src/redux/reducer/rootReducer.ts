@@ -7,6 +7,7 @@ import replyReducer from '../slices/reply/replySlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import storage from 'redux-persist/lib/storage';
 import textAreaReducer from '../slices/textArea/textAreaSlice';
+import toastReducer from '../slices/toast/toastSlice';
 import userReducer from '../slices/user/userSlice';
 
 const persistConfig = {
@@ -24,6 +25,7 @@ const rootReducer = {
   settings: settingsReducer,
   loading: loadingReducer,
   textArea: textAreaReducer,
+  toast: toastReducer,
 };
 
 export default rootReducer;

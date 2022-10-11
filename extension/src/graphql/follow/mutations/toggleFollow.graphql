@@ -1,0 +1,9 @@
+mutation toggleFollow($follow: Boolean!, $followerId: String!, $uid: String!) {
+  toggleFollow(follow: $follow, followerId: $followerId, uid: $uid) {
+    createdAt
+    updatedAt
+    userUid
+    followerUid
+    follows
+  }
+}

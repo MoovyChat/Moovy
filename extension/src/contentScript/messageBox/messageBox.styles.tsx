@@ -15,7 +15,7 @@ export const ChatTextBox = styled.div<mBoxProps>`
   align-items: center;
   z-index: 8;
   width: 98%;
-  height: 100%;
+  height: 96%;
   transition: all 0.5s;
   border: 1px solid;
   border-radius: 40px;

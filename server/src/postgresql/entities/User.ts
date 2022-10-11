@@ -8,10 +8,11 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { CommentStats } from './CommentStat';
+import { Follow } from './Follow';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
 import { Reply } from './Reply';
@@ -20,7 +21,7 @@ import { ReplyStats } from './ReplyStats';
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ primaryKeyConstraintName: 'pk_user_id' })
   @Field(() => String)
   uid: string;
 
@@ -40,9 +41,23 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   nickname: string;
 
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ default: 0 })
+  followerCount: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column({ default: 0 })
+  followingCount: number;
+
   @Field(() => [String], { nullable: true })
   @Column({ type: 'text', array: true, default: [] })
   watchedMovies?: string[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  followers: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.user)
+  followings: Follow[];
 
   @OneToMany(() => MovieStats, (stats) => stats.user)
   movieStats: MovieStats[];

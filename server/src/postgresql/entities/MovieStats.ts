@@ -10,13 +10,13 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
-import { Reply } from './Reply';
+import { Movie } from './Movie';
 import { User } from './User';
 
 @ObjectType()
 @Entity()
-export class ReplyStats extends BaseEntity {
-  @PrimaryGeneratedColumn()
+export class MovieStats extends BaseEntity {
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_movie_stats_id' })
   @Field(() => Int)
   id!: number;
 
@@ -24,22 +24,23 @@ export class ReplyStats extends BaseEntity {
   @Column({ default: false })
   like?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @Column({ default: false })
+  favorite?: boolean;
+
   @Field(() => String)
   @Column()
-  replyRid!: string;
+  movieMid!: string;
 
   @Field(() => String)
   @Column()
   userUid!: string;
 
-  @ManyToOne(() => Reply, (reply) => reply.replyStats)
-  reply: Reply;
-
-  @ManyToOne(
-    () => User,
-    (user) => user.movieStats || user.commentStats || user.replyStats
-  )
+  @ManyToOne(() => User, (user) => user.movieStats)
   user: User;
+
+  @ManyToOne(() => Movie, (movie) => movie.movieStats)
+  movie: Movie;
 
   @Field(() => String)
   @CreateDateColumn()

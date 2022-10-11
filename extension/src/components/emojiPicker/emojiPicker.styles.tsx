@@ -13,7 +13,7 @@ export const EmojiPickerHeader = styled.div`
   height: 60%;
   width: 16px;
   justify-content: space-evenly;
-  border: 1px solid white;
+  border: 1px solid;
   border-radius: 10px;
   padding: 10px;
   .header-key {

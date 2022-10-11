@@ -122,14 +122,14 @@ export class UserResolver {
     return User.findOne({ where: { uid } });
   }
 
-  @Query(() => User, { nullable: true })
+  @Mutation(() => User, { nullable: true })
   getUserByNickName(@Arg('nickname') nickname: string): Promise<User | null> {
     return User.findOne({ where: { nickname } });
   }
 
   @Query(() => FullUserObject, { nullable: true })
   async getUserStatistics(
-    @Arg('nickname') nickname: string
+    @Arg('uid') uid: string
   ): Promise<FullUserObject | null> {
     let userStats: FullUserObject = {
       user: undefined,
@@ -146,7 +146,7 @@ export class UserResolver {
     await queryRunner.startTransaction();
     try {
       //User
-      const user = await User.findOne({ where: { nickname } });
+      const user = await User.findOne({ where: { uid } });
       //Total comments
       const userCommentCount = await Comment.count({
         where: { commentedUserUid: user?.uid },
@@ -155,18 +155,24 @@ export class UserResolver {
         where: { commentedUserUid: user?.uid },
       });
       //Total likes
-      const { sum } = await conn
+      let cs = 0;
+      let rs = 0;
+      let commentSum = await conn
         .getRepository(Comment)
         .createQueryBuilder('comment')
         .select('SUM(comment.likesCount)', 'sum')
-        .where('comment.commentedUserUid = :uid', { uid: user?.uid })
+        .where('comment.commentedUserUid = :uid', { uid })
         .getRawOne();
-      const replySum = await conn
+      if (commentSum.sum) cs = parseInt(commentSum.sum);
+      else cs = 0;
+      let replySum = await conn
         .getRepository(Reply)
         .createQueryBuilder('reply')
         .select('SUM(reply.likesCount)', 'sum')
-        .where('reply.commentedUserUid = :uid', { uid: user?.uid })
+        .where('reply.commentedUserUid = :uid', { uid })
         .getRawOne();
+      if (replySum.sum) rs = parseInt(replySum.sum);
+      else rs = 0;
       // Total watched movie count
       const movieCount = user?.watchedMovies ? user?.watchedMovies?.length : 0;
 
@@ -179,7 +185,7 @@ export class UserResolver {
         .addSelect('ms.userUid', 'userUid')
         .addSelect('m.name', 'movieName')
         .where('ms.like = :like', { like: true })
-        .andWhere('ms.userUid = :uid', { uid: user?.uid! })
+        .andWhere('ms.userUid = :uid', { uid })
         .orderBy('ms.updatedAt', 'DESC')
         .getRawMany();
 
@@ -193,16 +199,15 @@ export class UserResolver {
         .addSelect('ms.userUid', 'userUid')
         .addSelect('m.name', 'movieName')
         .where('ms.favorite = :fav', { fav: true })
-        .andWhere('ms.userUid = :uid', { uid: user?.uid! })
+        .andWhere('ms.userUid = :uid', { uid })
         .orderBy('ms.updatedAt', 'DESC')
         .getRawMany();
-      console.log(favMovies);
       // commit transaction now:
       await queryRunner.commitTransaction();
       userStats = {
         user: user!,
         totalWatched: movieCount,
-        totalLikes: sum + replySum.sum,
+        totalLikes: cs + rs,
         totalComments: userCommentCount + userReplyCount,
         likedTitles: likedMovies,
         favTitles: favMovies,

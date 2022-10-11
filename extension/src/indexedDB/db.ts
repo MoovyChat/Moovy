@@ -3,11 +3,6 @@ import Dexie, { Table } from 'dexie';
 import { Emoji } from 'emojibase';
 import { refinedG } from '../components/emojiPicker/emojiPicker';
 
-export interface freqEmoji {
-  emoji: Emoji;
-  count: number;
-}
-
 export interface Emojis {
   id?: number;
   emojis: refinedG;
@@ -15,7 +10,8 @@ export interface Emojis {
 
 export interface FrequentEmoji {
   id?: number;
-  frequent: freqEmoji[];
+  count: number;
+  emoji: Emoji;
 }
 
 export interface RecentEmoji {
@@ -34,7 +30,7 @@ export class EmojiDB extends Dexie {
     super('emojiDB');
     this.version(1).stores({
       emojis: '++id, emojis',
-      frequent: '++id, frequent',
+      frequent: '++id, count, emoji',
       recent: '++id, recent',
     });
   }

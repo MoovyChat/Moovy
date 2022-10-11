@@ -7,10 +7,10 @@
   "private": true,
   "scripts": {
     "watch": "tsc -w",
-    "dev": "nodemon dist/index.js",
-    "start": "node dist/index.js",
-    "start2": "ts-node src/index.ts",
-    "dev2": "nodemon --exec ts-node src/index.ts"
+    "dev": "nodemon dist/postgresql/index.js",
+    "start": "node dist/postgresql/index.js",
+    "start2": "ts-node src/postgresql/index.ts",
+    "dev2": "nodemon --exec ts-node src/postgresql/index.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",

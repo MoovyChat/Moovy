@@ -14,7 +14,7 @@ import { Reply } from '../entities/Reply';
 import { conn } from '../dataSource';
 import { ReplyStats } from '../entities/ReplyStats';
 import { User } from '../entities/User';
-import { REPLY_LIKES_SUB } from '../constants';
+import { REPLY_LIKES_SUB } from '../../constants';
 
 @ObjectType()
 class replyLikesObject {

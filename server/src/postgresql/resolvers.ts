@@ -1,17 +1,23 @@
 import { CommentResolver } from './resolvers/comments';
-import { CommentStats } from './entities/CommentStat';
+import { CommentStatsResolver } from './resolvers/commentStats';
+import { FollowResolver } from './resolvers/follows';
 import { HelloResolver } from './resolvers/hello';
 import { MovieResolver } from './resolvers/movies';
 import { MovieStatsResolver } from './resolvers/movieStats';
 import { PlatformResolver } from './resolvers/platforms';
+import { ReplyResolver } from './resolvers/replies';
+import { ReplyStatsResolver } from './resolvers/replyStats';
 import { UserResolver } from './resolvers/users';
 
-export const resolvers = {
+export const resolvers = [
   HelloResolver,
   UserResolver,
   CommentResolver,
   MovieResolver,
   PlatformResolver,
   MovieStatsResolver,
-  CommentStats,
-};
+  CommentStatsResolver,
+  ReplyResolver,
+  ReplyStatsResolver,
+  FollowResolver,
+];
