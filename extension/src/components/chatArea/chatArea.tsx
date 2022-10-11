@@ -23,6 +23,7 @@ import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
 import { urqlClient } from '../../Utils/urqlClient';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User | undefined;
