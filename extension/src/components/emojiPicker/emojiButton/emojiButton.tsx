@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import {
   sliceSetIsTextAreaFocused,
   sliceSetTextAreaMessage,
@@ -7,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 
 import { Emoji } from 'emojibase';
 import { EmojiButtonParent } from './emojiButton.styles';
+import React from 'react';
 import { colorLog } from '../../../Utils/utilities';
 import { db } from '../../../indexedDB/db';
 

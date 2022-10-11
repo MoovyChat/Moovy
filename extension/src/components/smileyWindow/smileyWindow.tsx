@@ -1,13 +1,11 @@
 import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RecentEmoji, db } from '../../indexedDB/db';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { Emoji } from 'emojibase';
 import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
-import { colorLog } from '../../Utils/utilities';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { useLiveQuery } from 'dexie-react-hooks';
 

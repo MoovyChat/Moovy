@@ -47,6 +47,8 @@ import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   replyWindowResponse: CommentInfo | undefined;
@@ -225,4 +227,4 @@ const MessageBox: React.FC<props> = ({
   );
 };
 
-export default MessageBox;
+export default withUrqlClient(urqlClient)(MessageBox);

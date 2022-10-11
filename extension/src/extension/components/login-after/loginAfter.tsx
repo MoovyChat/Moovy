@@ -7,16 +7,15 @@ import {
 import { User } from '../../../Utils/interfaces';
 import { UserCredential } from 'firebase/auth';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
+import { urqlClient } from '../../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface loginAfterProps {
   setUser: (user: User) => void;
   userFromAuth: UserCredential;
 }
 
-export const LoginAfter: React.FC<loginAfterProps> = ({
-  setUser,
-  userFromAuth,
-}) => {
+const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
   const setUserToStore = (user: User, setUser: (user: User) => void) => {
     // Store it in the Chrome storage.
     setStoredUserLoginDetails(user).then(() => {
@@ -79,3 +78,5 @@ export const LoginAfter: React.FC<loginAfterProps> = ({
 
   return <div style={{ color: 'white' }}>Singing In</div>;
 };
+
+export default withUrqlClient(urqlClient)(LoginAfter);

@@ -3,17 +3,12 @@ import React, {
   Dispatch,
   FocusEventHandler,
   KeyboardEventHandler,
-  SetStateAction,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
-import {
-  colorLog,
-  getFormattedWordsArray,
-  isNumber,
-} from '../../Utils/utilities';
+import { colorLog, getFormattedWordsArray } from '../../Utils/utilities';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
@@ -26,6 +21,7 @@ import { AnyAction } from 'redux';
 import _ from 'lodash';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
 
 type props = {
@@ -268,4 +264,4 @@ const ChatArea: React.FC<props> = ({
   );
 };
 
-export default ChatArea;
+export default withUrqlClient(urqlClient)(ChatArea);

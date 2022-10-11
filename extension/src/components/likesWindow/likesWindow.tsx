@@ -11,7 +11,9 @@ import { MdOutlineAccountCircle } from 'react-icons/md';
 import NotFound from '../notFound/notFound';
 import { ProfileImage } from '../profileWindow/profileWindow.styles';
 import { User } from '../../Utils/interfaces';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
@@ -97,4 +99,4 @@ const LikesWindow = () => {
   );
 };
 
-export default LikesWindow;
+export default withUrqlClient(urqlClient)(LikesWindow);

@@ -1,14 +1,7 @@
-import React, {
-  KeyboardEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EditNickNameParent } from './editNickName.styles';
-import { setStoredUserLoginDetails } from '../../Utils/storage';
-import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 
 const EditUserName = () => {

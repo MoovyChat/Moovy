@@ -25,6 +25,8 @@ import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   viewStyles: boolean;
@@ -220,4 +222,4 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   );
 };
 
-export default ChatStats;
+export default withUrqlClient(urqlClient)(ChatStats);

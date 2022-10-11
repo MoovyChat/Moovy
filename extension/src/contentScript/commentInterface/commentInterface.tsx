@@ -45,6 +45,8 @@ import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   commentedUser: User;
@@ -346,4 +348,4 @@ const CommentInterface: React.FC<props> = ({
   );
 };
 
-export default CommentInterface;
+export default withUrqlClient(urqlClient)(CommentInterface);

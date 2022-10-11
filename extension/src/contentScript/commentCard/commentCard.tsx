@@ -30,6 +30,8 @@ import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface props {
   comment: any;
@@ -232,4 +234,4 @@ const CommentCard: React.FC<props> = ({
   );
 };
 
-export default CommentCard;
+export default withUrqlClient(urqlClient)(CommentCard);

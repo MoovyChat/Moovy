@@ -25,6 +25,8 @@ import { User } from '../../Utils/interfaces';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 export interface likedTitles {
   __typename?: 'LikedMovieObject' | undefined;
@@ -79,6 +81,7 @@ const ProfileWindow = () => {
   useEffect(() => {
     if (error) colorLog(error);
     if (!fetching && data && data.getUserStatistics) {
+      colorLog(data);
       const {
         user,
         favTitles,
@@ -237,4 +240,4 @@ const ProfileWindow = () => {
   );
 };
 
-export default ProfileWindow;
+export default withUrqlClient(urqlClient, { ssr: true })(ProfileWindow);

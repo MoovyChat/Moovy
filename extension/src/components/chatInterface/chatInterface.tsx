@@ -23,6 +23,8 @@ import Toast from '../toast/toast';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
@@ -235,4 +237,4 @@ const ChatInterface: React.FC<props> = ({
   );
 };
 
-export default ChatInterface;
+export default withUrqlClient(urqlClient, { ssr: true })(ChatInterface);

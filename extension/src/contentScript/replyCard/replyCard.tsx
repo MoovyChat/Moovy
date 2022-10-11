@@ -17,6 +17,8 @@ import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface props {
   reply: ReplyInfo;
@@ -240,4 +242,4 @@ const ReplyCard: React.FC<props> = ({
   );
 };
 
-export default ReplyCard;
+export default withUrqlClient(urqlClient)(ReplyCard);

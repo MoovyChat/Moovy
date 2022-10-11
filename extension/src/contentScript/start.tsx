@@ -17,7 +17,9 @@ import { colorLog } from '../Utils/utilities';
 import { sliceResetComments } from '../redux/slices/comment/commentSlice';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
 import { sliceResetSettings } from '../redux/slices/settings/settingsSlice';
+import { urqlClient } from '../Utils/urqlClient';
 import { useAppDispatch } from '../redux/hooks';
+import { withUrqlClient } from 'next-urql';
 
 interface props {
   video_id: string;
@@ -110,4 +112,4 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   return user?.uid ? <CommentButton /> : <></>;
 };
 
-export default Start;
+export default withUrqlClient(urqlClient)(Start);

@@ -24,6 +24,8 @@ import Comments from '../comments/comments';
 import SmileyWindow from '../../components/smileyWindow/smileyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   responseFromReplyWindow: (comment: CommentInfo) => void;
@@ -200,4 +202,4 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   );
 };
 
-export default ChatBox;
+export default withUrqlClient(urqlClient)(ChatBox);

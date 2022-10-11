@@ -1,19 +1,6 @@
 import 'cqfill';
 
 import {
-  AnyVariables,
-  DebugEventArg,
-  Operation,
-  OperationResult,
-  Provider,
-  cacheExchange,
-  createClient,
-  dedupExchange,
-  defaultExchanges,
-  fetchExchange,
-  subscriptionExchange,
-} from 'urql';
-import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
@@ -25,57 +12,26 @@ import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Source } from 'wonka';
 import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
-import { createClient as createWSClient } from 'graphql-ws';
 import { getStoredCheckedStatus } from '../../Utils/storage';
-import { persistedFetchExchange } from '@urql/exchange-persisted-fetch';
-import { retryExchange } from '@urql/exchange-retry';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useUpdateMovieTitleMutation } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
-const wsClient = createWSClient({
-  url: 'ws://localhost:4000/graphql',
-});
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
-  const client = createClient({
-    url: 'http://localhost:4000/graphql',
-    exchanges: [
-      ...defaultExchanges,
-      dedupExchange,
-      subscriptionExchange({
-        forwardSubscription: (operation) => ({
-          subscribe: (sink) => ({
-            unsubscribe: wsClient.subscribe(operation, sink),
-          }),
-        }),
-      }),
-      persistedFetchExchange({
-        preferGetForPersistedQueries: true,
-      }),
-      retryExchange({
-        retryIf: (error) => {
-          return !!(error.graphQLErrors.length > 0 || error.networkError);
-        },
-      }),
-      fetchExchange,
-    ],
-    requestPolicy: 'cache-and-network',
-  });
   const existingChatWindow = document.getElementsByClassName('chat-interface');
   if (playerElement !== null && !existingChatWindow[0]) {
     colorLog('Creating new chat window');
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
-      <Provider value={client}>
-        <ReduxProvider store={store}>
-          <ChatWindow />
-        </ReduxProvider>
-      </Provider>
+      <ReduxProvider store={store}>
+        <ChatWindow />
+      </ReduxProvider>
     );
   }
 };
@@ -186,4 +142,4 @@ const CommentButton = () => {
   );
 };
 
-export default CommentButton;
+export default withUrqlClient(urqlClient)(CommentButton);

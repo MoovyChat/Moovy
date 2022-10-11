@@ -5,7 +5,9 @@ import { MdCheckCircle } from 'react-icons/md';
 import { User } from '../../../Utils/interfaces';
 import { UserNameEditParent } from './userNameEdit.styles';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
+import { urqlClient } from '../../../Utils/urqlClient';
 import { useUpdateUserNickNameMutation } from '../../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
@@ -115,4 +117,4 @@ const UserNameEdit: React.FC<props> = ({
   );
 };
 
-export default UserNameEdit;
+export default withUrqlClient(urqlClient)(UserNameEdit);

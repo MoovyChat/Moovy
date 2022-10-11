@@ -1,6 +1,5 @@
 import { HeaderBlock, LogoBlock, Perimeter } from './header.styles';
 
-import { MdSettingsSuggest } from 'react-icons/md';
 import React from 'react';
 import constants from '../../../constants';
 
