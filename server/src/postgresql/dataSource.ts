@@ -9,6 +9,7 @@ import { Platform } from './entities/Platform';
 import { Reply } from './entities/Reply';
 import { ReplyStats } from './entities/ReplyStats';
 import { User } from './entities/User';
+import path from 'path';
 import { userSubscriber } from './subscriptions/user.subscription';
 
 export const conn = new DataSource({
@@ -32,5 +33,5 @@ export const conn = new DataSource({
     Follow,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
-  migrations: [],
+  migrations: [path.join(__dirname, '../migrations/*')],
 });

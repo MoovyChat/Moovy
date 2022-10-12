@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { FOLLOW_UPDATE } from '../../constants';
 
 import {
   Mutation,
@@ -8,11 +7,7 @@ import {
   Arg,
   ObjectType,
   Field,
-  PubSub,
-  PubSubEngine,
   Int,
-  Subscription,
-  Root,
 } from 'type-graphql';
 import { conn } from '../dataSource';
 import { Follow } from '../entities/Follow';

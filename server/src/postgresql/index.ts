@@ -26,6 +26,7 @@ const main = async () => {
     .initialize()
     .then(async () => {
       // here you can start to work with your database
+      conn.runMigrations();
     })
     .catch((error) => console.log(error));
   const app = express();
