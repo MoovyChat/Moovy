@@ -12,10 +12,14 @@ const Home = () => {
       <div className='home'>
         <div className='pics'>
           <div className='first pic'>
-            <img className='image' src={Light} alt='light' />
+            <picture>
+              <img className='image' src={Light} alt='light' />
+            </picture>
           </div>
           <div className='second pic'>
-            <img className='image' src={Dark} alt='dark' />
+            <picture>
+              <img className='image' src={Dark} alt='dark' />
+            </picture>
           </div>
         </div>
         <div className='heading'>

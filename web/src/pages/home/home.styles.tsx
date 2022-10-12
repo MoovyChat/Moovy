@@ -22,11 +22,31 @@ export const HomeParent = styled.div`
       .pic {
         position: absolute;
         height: 70%;
+
+        picture {
+          /* ::after {
+            position: absolute;
+            top: 0;
+            left: 0px;
+            content: '';
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            transform: skew(351deg, 10deg);
+            background: -webkit-linear-gradient(
+              top,
+              transparent,
+              rgba(200, 200, 200, 0.1),
+              transparent
+            );
+          } */
+        }
         .image {
           height: 100%;
           width: 100%;
           transform: skew(351deg, 10deg);
           border: 1px solid;
+          content: '';
         }
       }
       .first {
@@ -35,7 +55,6 @@ export const HomeParent = styled.div`
         transition: all 0.5s;
       }
       .second {
-        /* transform: skewY(10deg) skewX(10deg); */
         transition: all 0.5s;
       }
       :hover {
@@ -66,7 +85,7 @@ export const HomeParent = styled.div`
         font-size: 3rem;
         font-weight: 600;
         text-transform: uppercase;
-        animation: ${HomeTitleKeyframes} 4s linear forwards;
+        animation: ${HomeTitleKeyframes} 2s linear forwards;
       }
       .platform-container {
         height: 30%;
@@ -75,7 +94,7 @@ export const HomeParent = styled.div`
       }
       .sub,
       .sub2 {
-        animation: ${HomeTitleKeyframes} 4s linear forwards;
+        animation: ${HomeTitleKeyframes} 2s linear forwards;
       }
       .sub2 {
         padding: 20px 0;

@@ -17,6 +17,11 @@ export const HeaderParent = styled.div`
     position: relative;
     align-self: flex-end;
     float: right;
+    .hb {
+      :hover {
+        border: 1px solid;
+      }
+    }
     .toggle-theme {
       input {
         width: 0;
@@ -98,5 +103,6 @@ export const HeaderButton = styled.div`
   height: 20px;
   font-weight: 500;
   border-radius: 10px;
+  cursor: pointer;
   /* background: linear-gradient(purple, black); */
 `;

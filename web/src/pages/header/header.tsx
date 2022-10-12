@@ -11,21 +11,26 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const themeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
-    dispatch(sliceSetTheme());
+    dispatch(sliceSetTheme(e.target.checked));
   };
   return (
     <HeaderParent>
       <div className='header'></div>
       <div className='header-buttons'>
         <HeaderButton className='toggle-theme'>
-          <input type='checkbox' id='theme-toggle' onChange={themeHandler} />
+          <input
+            type='checkbox'
+            id='theme-toggle'
+            defaultChecked={true}
+            onChange={themeHandler}
+          />
           <label htmlFor='theme-toggle'>
             <MdLightMode className='sun' size={25} fill='white' />
             <MdNightlight className='moon' size={25} fill='black' />
           </label>
         </HeaderButton>
-        <HeaderButton className='login-button'>Login</HeaderButton>
-        <HeaderButton className='install-button'>
+        <HeaderButton className='login-button hb'>Login</HeaderButton>
+        <HeaderButton className='install-button hb'>
           Install Extension
         </HeaderButton>
       </div>
