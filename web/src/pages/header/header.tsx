@@ -1,4 +1,5 @@
 import { HeaderButton, HeaderParent } from './header.styles';
+import { MdLightMode, MdNightlight } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import React from 'react';
@@ -8,7 +9,7 @@ import { themes } from '../../constants';
 const Header = () => {
   const theme = useAppSelector((state) => state.settings.theme);
   const dispatch = useAppDispatch();
-  const themeHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const themeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetTheme());
   };
@@ -16,8 +17,12 @@ const Header = () => {
     <HeaderParent>
       <div className='header'></div>
       <div className='header-buttons'>
-        <HeaderButton onClick={themeHandler}>
-          {theme.toLowerCase()}
+        <HeaderButton className='toggle-theme'>
+          <input type='checkbox' id='theme-toggle' onChange={themeHandler} />
+          <label htmlFor='theme-toggle'>
+            <MdLightMode className='sun' size={25} fill='white' />
+            <MdNightlight className='moon' size={25} fill='black' />
+          </label>
         </HeaderButton>
         <HeaderButton className='login-button'>Login</HeaderButton>
         <HeaderButton className='install-button'>

@@ -32,9 +32,19 @@ export const HomeParent = styled.div`
       .first {
         /* transform: skewY(10deg) skewX(10deg); */
         transform: rotate(349deg) translateY(-33px) translateX(-40px);
+        transition: all 0.5s;
       }
       .second {
         /* transform: skewY(10deg) skewX(10deg); */
+        transition: all 0.5s;
+      }
+      :hover {
+        .first {
+          transform: rotate(340deg) translateY(-50px) translateX(-100px);
+        }
+        .second {
+          transform: rotate(5deg) translateX(40px);
+        }
       }
     }
     .heading {
@@ -62,6 +72,10 @@ export const HomeParent = styled.div`
         height: 30%;
         width: 100%;
         margin-top: 50px;
+      }
+      .sub,
+      .sub2 {
+        animation: ${HomeTitleKeyframes} 4s linear forwards;
       }
       .sub2 {
         padding: 20px 0;
