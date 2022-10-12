@@ -11,7 +11,7 @@ import { useAppSelector } from '../../redux/hooks';
 const App = () => {
   const theme = useAppSelector((state) => state.settings.theme);
   return (
-    <ThemeProvider theme={theme === themes.DARK ? darkTheme : lightTheme}>
+    <ThemeProvider theme={theme === themes.LIGHT ? darkTheme : lightTheme}>
       <GlobalStyles />
       <AppParent>
         <Home />
