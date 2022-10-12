@@ -26,7 +26,6 @@ const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
   const existingChatWindow = document.getElementsByClassName('chat-interface');
   if (playerElement !== null && !existingChatWindow[0]) {
-    colorLog('Creating new chat window');
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <ReduxProvider store={store}>

@@ -1,14 +1,11 @@
-import { Movie, globalUIStyles } from '../../Utils/interfaces';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChatInterface from '../../components/chatInterface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
-import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../contentScript.utils';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
 import { useMousePosition } from '../hooks/useMouseMove';
 
@@ -29,7 +26,6 @@ const ChatWindow = () => {
   // Custom: useMousePosition hook.
   const position = useMousePosition();
   // React: useState hook.
-  const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const theme = useAppSelector((state) => state.settings.theme);
   // React: useRef hook.
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -85,10 +81,6 @@ const ChatWindow = () => {
       };
     }
   }, [position.x, position.y]);
-
-  useEffect(() => {
-    colorLog('chatWindow.tsx');
-  }, []);
 
   return (
     <React.Fragment>

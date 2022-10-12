@@ -103,9 +103,6 @@ const CommentInterface: React.FC<props> = ({
   const [_dr, deleteReply] = useDeleteReplyMutation();
 
   useEffect(() => {
-    colorLog('commentInterface.tsx');
-  }, []);
-  useEffect(() => {
     if (type === 'comment') {
       const { data, error, fetching } = repliesOfComment;
       if (error) colorLog(error);

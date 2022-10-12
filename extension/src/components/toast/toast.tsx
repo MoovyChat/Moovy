@@ -7,9 +7,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { IconType } from 'react-icons/lib';
 import { ToastParent } from './toast.styles';
-import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { sliceSetToastVisible } from '../../redux/slices/toast/toastSlice';
 

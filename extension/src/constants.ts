@@ -15,3 +15,5 @@ export const textMapTypes = {
   SPOILER: 'spoiler',
 };
 export default constants;
+
+export const isServer = () => typeof window === 'undefined';

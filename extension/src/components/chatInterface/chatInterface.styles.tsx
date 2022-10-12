@@ -31,11 +31,12 @@ export const DragBar = styled.div`
 type chatWindowProps = {
   width: string;
   openChatWindow: boolean;
+  windowOpened: boolean;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
   height: 100%;
   position: relative;
-  display: ${(p) => (p.openChatWindow ? 'flex' : 'none')};
+  display: ${(p) => (p.windowOpened && p.openChatWindow ? 'flex' : 'none')};
   width: 100%;
   flex-direction: column;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
@@ -53,31 +54,6 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
   // exit to
   &.fade-exit-active {
     opacity: 0;
-  }
-
-  @keyframes openToLeft {
-    0% {
-      width: 0%;
-      opacity: 0;
-    }
-    90% {
-      opacity: 0.7;
-    }
-    100% {
-      width: ${(p) => p.width}%;
-      opacity: 1;
-    }
-  }
-
-  @keyframes closeToRight {
-    0% {
-      width: ${(p) => p.width}%;
-      opacity: 1;
-    }
-    100% {
-      width: 0%;
-      opacity: 0;
-    }
   }
 `;
 

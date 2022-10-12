@@ -64,7 +64,7 @@ const ChatInterface: React.FC<props> = ({
   const dispatch = useAppDispatch();
 
   // React:useState hooks.
-  const [delayed, setDelayed] = useState<boolean>(false);
+  const [windowOpened, setWindowOpened] = useState<boolean>(false);
   const [fav, setFav] = useState<boolean>(false);
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [viewStyles, setViewStyles] = useState<boolean>(false);
@@ -124,9 +124,8 @@ const ChatInterface: React.FC<props> = ({
         if (videoWidthRef.current > 100) videoWidthRef.current = 100;
       }
       dispatch(sliceSetSmoothWidth(widthRef.current));
-
       if (!openChatWindow && videoWidthRef.current > 99.5) {
-        console.log('Window closed');
+        setWindowOpened(false);
         videoWidthRef.current = 100;
         callbackKeyRef.current = null;
         cancelAnimationFrame(callbackKeyRef.current);
@@ -135,7 +134,7 @@ const ChatInterface: React.FC<props> = ({
         widthRef.current + 0.5 > parseInt(chatWindowSize)
       ) {
         widthRef.current = parseInt(chatWindowSize);
-        console.log('Window opened');
+        setWindowOpened(true);
         callbackKeyRef.current = null;
         cancelAnimationFrame(callbackKeyRef.current);
       }
@@ -156,10 +155,6 @@ const ChatInterface: React.FC<props> = ({
     update();
   }, [openChatWindow, chatWindowSize]);
 
-  useEffect(() => {
-    colorLog('chatInterface.tsx');
-  }, []);
-
   return (
     <Perimeter ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
@@ -167,7 +162,8 @@ const ChatInterface: React.FC<props> = ({
         className='chat-interface'
         openChatWindow={openChatWindow!}
         onClick={(e) => e.stopPropagation()}
-        width={chatWindowSize}>
+        width={chatWindowSize}
+        windowOpened={windowOpened}>
         <React.Fragment>
           <ChatTitle className='chat-title'>
             <div className='logo'></div>

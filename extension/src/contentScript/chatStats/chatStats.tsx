@@ -1,6 +1,7 @@
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
 import React, { Dispatch, useEffect, useState } from 'react';
+import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -21,7 +22,6 @@ import {
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MdOutlineWbSunny } from 'react-icons/md';
-import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
@@ -78,10 +78,6 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
     });
   }, []);
 
-  useEffect(() => {
-    colorLog('chatStats.tsx');
-  }, []);
-
   // Get Likes Data on Initial Load.
   useEffect(() => {
     const likesData = likesQuery.data;
@@ -113,11 +109,6 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
       }
     }
   }, [commentsUpdateStatus]);
-
-  // Gets the stored global UI styles.
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [uiStyles]);
 
   // Get the comments, likes, replies count.
   // TODO: Get the stats from the database..
@@ -175,7 +166,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
             e.stopPropagation();
             toggleLike();
           }}>
-          <span>{likesCount}</span>
+          <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
             <AiFillLike className='icon' size={icon_Size} />
           ) : (
@@ -183,7 +174,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
           )}
         </div>
         <div className='comment'>
-          <span>{commentsCount}</span>
+          <span>{getFormattedNumber(commentsCount)}</span>
           <BiComment size={icon_Size} />
         </div>
         <div

@@ -60,10 +60,6 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const _dispatch = useAppDispatch();
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    colorLog('chatBox.tsx');
-  }, []);
-
   // New comments
   const getComments = () => {
     fetchNewComments({
@@ -76,7 +72,6 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       if (error) colorLog(error);
       if (data) {
         const newComments = data.fetchNewComments;
-        colorLog(newComments);
         if (newComments.length === 0) {
           colorLog('Unable to load new Comments');
           return;

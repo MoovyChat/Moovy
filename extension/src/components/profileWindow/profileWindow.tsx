@@ -7,6 +7,7 @@ import {
 } from './profileWindow.styles';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import React, { useEffect, useState } from 'react';
+import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
@@ -23,7 +24,6 @@ import MovieMini from '../miniCards/movieMini/movieMini';
 import NotFound from '../notFound/notFound';
 import { User } from '../../Utils/interfaces';
 import { batch } from 'react-redux';
-import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -75,13 +75,8 @@ const ProfileWindow = () => {
   const [_sf, toggleFollow] = useToggleFollowMutation();
 
   useEffect(() => {
-    colorLog('Profile window');
-  }, []);
-
-  useEffect(() => {
     if (error) colorLog(error);
     if (!fetching && data && data.getUserStatistics) {
-      colorLog(data);
       const {
         user,
         favTitles,
@@ -179,15 +174,21 @@ const ProfileWindow = () => {
             <div className='container'>
               <div className='section watched-movies'>
                 <div className='heading'>Titles</div>
-                <div className='count'>{totalWatchedTitle}</div>
+                <div className='count'>
+                  {getFormattedNumber(totalWatchedTitle)}
+                </div>
               </div>
               <div className='section total-comments'>
                 <div className='heading'>Comments</div>
-                <div className='count'>{totalCommentsCount}</div>
+                <div className='count'>
+                  {getFormattedNumber(totalCommentsCount)}
+                </div>
               </div>
               <div className='section total-likes'>
                 <div className='heading'>Likes</div>
-                <div className='count'>{totalLikesCount}</div>
+                <div className='count'>
+                  {getFormattedNumber(totalLikesCount)}
+                </div>
               </div>
             </div>
           </div>
