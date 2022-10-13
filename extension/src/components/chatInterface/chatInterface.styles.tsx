@@ -9,13 +9,19 @@ export const TextAreaContainer = styled.div`
   margin-top: 15px;
 `;
 
-export const Perimeter = styled.div`
-  height: 100%;
+type perimeterProps = {
+  chatWindowSize: string;
+  openChatWindow: boolean;
+};
+export const Perimeter = styled.div<perimeterProps>`
   position: fixed;
+  height: 100%;
+  width: 100%;
   display: flex;
   right: 0;
   bottom: 0;
   top: 0;
+  transition: max-width 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 `;
 
 export const DragBar = styled.div`
@@ -29,18 +35,17 @@ export const DragBar = styled.div`
 `;
 
 type chatWindowProps = {
-  width: string;
   openChatWindow: boolean;
   windowOpened: boolean;
+  chatWindowSize: string;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
   height: 100%;
-  position: relative;
-  display: ${(p) => (p.windowOpened && p.openChatWindow ? 'flex' : 'none')};
   width: 100%;
+  position: relative;
+  display: ${(p) => (p.windowOpened ? 'flex' : 'none')};
   flex-direction: column;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
-
   .chat-box-container {
     height: 100%;
     margin: 5px auto;

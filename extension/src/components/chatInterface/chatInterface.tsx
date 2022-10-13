@@ -7,7 +7,17 @@ import {
 } from './chatInterface.styles';
 import { CommentInfo, User } from '../../Utils/interfaces';
 import { MdStar, MdStarOutline } from 'react-icons/md';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  sliceSetChatWindowSize,
+  sliceSetSmoothWidth,
+} from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieFavCountQuery,
@@ -22,8 +32,8 @@ import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
 import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
-import { sliceSetSmoothWidth } from '../../redux/slices/settings/settingsSlice';
 import { urqlClient } from '../../Utils/urqlClient';
+import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
 import { withUrqlClient } from 'next-urql';
 
 type props = {
@@ -32,7 +42,6 @@ type props = {
   dragRef?: React.MutableRefObject<HTMLDivElement | null>;
   widthRef: React.MutableRefObject<number>;
   videoWidthRef: React.MutableRefObject<number>;
-  chatWindowSize: string;
   openChatWindow: boolean;
 };
 const ChatInterface: React.FC<props> = ({
@@ -41,12 +50,19 @@ const ChatInterface: React.FC<props> = ({
   dragRef,
   widthRef,
   videoWidthRef,
-  chatWindowSize,
   openChatWindow,
 }) => {
+  let commentIcon = document.getElementById('comment-header');
+  let videoElem = getPlayerViewElement();
+  let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
+  const dispatch = useAppDispatch();
+  const position = useMousePosition();
   // Redux: App selectors.
   const isEditNameBoxOpen = useAppSelector(
     (state) => state.loading.isEditNameBoxOpen
+  );
+  const chatWindowSize = useAppSelector(
+    (state) => state.settings.chatWindowSize
   );
   const movie = useAppSelector((state) => state.movie);
   const isPopSlideOpen = useAppSelector(
@@ -60,17 +76,12 @@ const ChatInterface: React.FC<props> = ({
     },
   });
 
-  // Redux: App dispatch.
-  const dispatch = useAppDispatch();
-
   // React:useState hooks.
-  const [windowOpened, setWindowOpened] = useState<boolean>(false);
   const [fav, setFav] = useState<boolean>(false);
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [viewStyles, setViewStyles] = useState<boolean>(false);
   const [favCount, SetFavCount] = useState<number>(0);
-  // React: useRef hook.
-  const callbackKeyRef = useRef<any>();
+  const [display, setDisplay] = useState<boolean>(true);
 
   // Update Movie Favorite on the initial load.
   useEffect(() => {
@@ -102,68 +113,130 @@ const ChatInterface: React.FC<props> = ({
     setReplyClickResponse(comment);
   };
 
-  // This code is run every time the component is rendered.
-  useEffect(() => {
-    cancelAnimationFrame(callbackKeyRef.current);
-    callbackKeyRef.current = -1;
-
-    const update = () => {
-      let chatWinSize = parseInt(chatWindowSize);
-      let animationRate = chatWinSize * 0.09;
-
-      if (openChatWindow) {
-        widthRef.current += animationRate;
-        if (widthRef.current > chatWinSize) widthRef.current = chatWinSize;
-        videoWidthRef.current -= animationRate;
-        if (videoWidthRef.current < 100 - chatWinSize)
-          videoWidthRef.current = 100 - chatWinSize;
-      } else {
-        widthRef.current -= animationRate;
-        if (widthRef.current < 0) widthRef.current = 0;
-        videoWidthRef.current += animationRate;
-        if (videoWidthRef.current > 100) videoWidthRef.current = 100;
-      }
-      dispatch(sliceSetSmoothWidth(widthRef.current));
-      if (!openChatWindow && videoWidthRef.current > 99.5) {
-        setWindowOpened(false);
-        videoWidthRef.current = 100;
-        callbackKeyRef.current = null;
-        cancelAnimationFrame(callbackKeyRef.current);
-      } else if (
-        openChatWindow &&
-        widthRef.current + 0.5 > parseInt(chatWindowSize)
-      ) {
-        widthRef.current = parseInt(chatWindowSize);
-        setWindowOpened(true);
-        callbackKeyRef.current = null;
-        cancelAnimationFrame(callbackKeyRef.current);
-      }
-
-      let videoPlayerElement = getPlayerViewElement();
-      // Update the div in the DOM
-      if (divRef?.current && videoPlayerElement) {
-        divRef.current.style.width = `${widthRef.current}%`;
-        videoPlayerElement.style!.width = `${videoWidthRef.current}%`;
-      }
-
-      // Update the callback key
-      if (callbackKeyRef.current !== null)
-        callbackKeyRef.current = requestAnimationFrame(update);
+  // Drag the chat window
+  useMemo(() => {
+    let onMouseMoveEventListener: any;
+    let onMouseUpEventListener: any;
+    let dragging = false;
+    onMouseUpEventListener = (event: MouseEvent) => {
+      event.stopPropagation();
+      dragging = false;
+      document.body!.style.cursor = 'default';
+      let defaultChatWidth = 100 - videoWidthRef.current;
+      divRef!.current!.style.cssText = `
+          max-width: ${defaultChatWidth}%;
+          transition: max-width 1s ${windowTransition};
+      `;
+      commentIcon!.style.cssText = `
+          right: ${defaultChatWidth}%;
+          opacity: 1;
+          transition: right 1s ${windowTransition};
+      `;
+      document.body.removeEventListener('mousemove', onMouseMoveEventListener);
+      document.body.removeEventListener('mouseup', onMouseUpEventListener);
     };
+    if (dragRef!.current) {
+      dragRef!.current!.onmousedown = (event) => {
+        event.stopPropagation();
+        dragging = true;
+        onMouseMoveEventListener = (e: MouseEvent) => {
+          e.stopPropagation();
+          if (dragging) {
+            setDisplay(true);
+            document.body!.style.cursor = 'col-resize';
+            let bodyWidth = document.body!.clientWidth;
+            if (divRef) {
+              let newWidth = bodyWidth - e.pageX - 6;
+              // Sets the chat window size.
+              let newChatWindowSize = (newWidth / bodyWidth) * 100;
+              if (newChatWindowSize < 30) newChatWindowSize = 30;
+              dispatch(sliceSetChatWindowSize(newChatWindowSize));
+              divRef!.current!.style.cssText = `
+                max-width: ${newChatWindowSize}%;
+                transition: none;
+              `;
+              commentIcon!.style.cssText = `
+                right: ${newChatWindowSize}%;
+                transition: none;
+              `;
+              if (videoElem) {
+                widthRef.current = (newWidth / bodyWidth) * 100;
+                videoWidthRef.current = 100 - widthRef.current;
+                if (videoWidthRef.current > 70) videoWidthRef.current = 70;
+                videoElem.style.cssText = `
+                  max-width: ${videoWidthRef.current}% !important;
+                `;
+              }
+            }
+          }
+        };
+        onMouseMoveEventListener = document.body.addEventListener(
+          'mousemove',
+          onMouseMoveEventListener,
+          { passive: true }
+        );
+        document.body.addEventListener('mouseup', onMouseUpEventListener, {
+          once: true,
+          passive: true,
+        });
+      };
+    }
+  }, [position.x, position.y]);
 
-    // Start the animation loop
-    update();
-  }, [openChatWindow, chatWindowSize]);
+  // Animations on initial button click.
+  useEffect(() => {
+    if (!divRef || !commentIcon || !videoElem) return;
+    if (openChatWindow) {
+      commentIcon!.style.cssText = `
+        right: ${chatWindowSize}%;
+        transition: all 0.6s ${windowTransition};
+      `;
+      divRef.current!.style.cssText = `
+        max-width: ${chatWindowSize}%;
+      `;
+      videoElem.style.cssText = `
+        max-width: ${100 - parseInt(chatWindowSize)}% !important;
+        transition: max-width 1s ${windowTransition};
+      `;
+    } else {
+      commentIcon!.style.cssText = `
+        right: 0%;
+        transition: all 1s ${windowTransition};
+      `;
+      divRef.current!.style.cssText = `
+        max-width: 0%;
+      `;
+      videoElem.style.cssText = `
+        max-width: 100% !important;
+        transition: max-width 1s ${windowTransition};
+      `;
+    }
+  }, [openChatWindow]);
+
+  // Animation detection
+  useEffect(() => {
+    setDisplay(false);
+    let timeout = setTimeout(() => {
+      if (!openChatWindow) setDisplay(false);
+      else setDisplay(true);
+      clearTimeout(timeout);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [openChatWindow]);
 
   return (
-    <Perimeter ref={divRef}>
+    <Perimeter
+      ref={divRef}
+      chatWindowSize={chatWindowSize}
+      openChatWindow={openChatWindow!}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
       <ChatWindowParent
         className='chat-interface'
         openChatWindow={openChatWindow!}
+        chatWindowSize={chatWindowSize}
         onClick={(e) => e.stopPropagation()}
-        width={chatWindowSize}
-        windowOpened={windowOpened}>
+        windowOpened={display}>
         <React.Fragment>
           <ChatTitle className='chat-title'>
             <div className='logo'></div>

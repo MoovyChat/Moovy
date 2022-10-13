@@ -117,8 +117,8 @@ const CommentButton = () => {
         setTimeout(() => {
           let nComments = document.getElementById('NComments');
           if (nComments === null) {
-            createChatWindow(chatWindowSize);
             dispatch(sliceSetIsOpenChatWindow(true));
+            createChatWindow(chatWindowSize);
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);
       }}>
