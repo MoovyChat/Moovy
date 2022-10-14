@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-export const VideoParent = styled.div``;
+export const VideoParent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+`;
 
 export const Section = styled.div`
   padding: 20px 5px;
