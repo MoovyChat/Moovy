@@ -7,6 +7,7 @@ import {
 } from './replyWindow.styles';
 
 import ReplyCard from '../replyCard/replyCard';
+import { ViewportList } from 'react-viewport-list';
 import { useAppSelector } from '../../redux/hooks';
 
 type props = {
@@ -29,7 +30,8 @@ const ReplyWindow: React.FC<props> = ({
   const [replies, setReplies] = useState<ReplyInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [replySection, setReplySection] = useState<boolean>(false);
-
+  const parentRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<any>(null);
   const handleOnBeforeGetContent = () => {
     return new Promise((resolve) => {
       const filtered = allReplies.filter(
@@ -57,6 +59,7 @@ const ReplyWindow: React.FC<props> = ({
     setPage(page + 1);
   };
   const replyText = `${replySection ? 'Hide' : 'Show'} ${repliesCount} replies`;
+
   return (
     <ReplyWindowParent>
       {repliesCount !== 0 && (
@@ -70,21 +73,18 @@ const ReplyWindow: React.FC<props> = ({
         </ShowReplyText>
       )}
       {!loading && (
-        <ReplyParent replySection={replySection}>
-          {replies.map((reply) => (
-            <ReplyCard
-              key={reply.rid}
-              type='reply'
-              responseFromReplyWindow={responseFromReplyWindow}
-              className='reply-card'
-              reply={reply}
-            />
-          ))}
-          {page !== lastPage && (
-            <div className='show-more-replies' onClick={loadMoreReplies}>
-              show more replies ({page}/{lastPage})
-            </div>
-          )}
+        <ReplyParent replySection={replySection} ref={parentRef}>
+          <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
+            {(reply) => (
+              <ReplyCard
+                key={reply.rid}
+                type='reply'
+                responseFromReplyWindow={responseFromReplyWindow}
+                className='reply-card'
+                reply={reply}
+              />
+            )}
+          </ViewportList>
         </ReplyParent>
       )}
     </ReplyWindowParent>

@@ -162,6 +162,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
 
   return (
     <ChatBoxContainer
+      id='chat-box-container'
       className='chat-box-container'
       isTextAreaClicked={isTextAreaFocussed}>
       {totalCommentsCount > pastLoadedCommentCount! ? (
@@ -190,6 +191,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         <Comments
           responseFromReplyWindow={responseFromReplyWindow}
           type={type}
+          chatBoxRef={chatBoxRef}
         />
       </div>
       <SmileyWindow />

@@ -10,7 +10,7 @@ import {
   SpoilerTag,
   Stats,
 } from './commentInterface.styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ReplyInfo, User, textMap } from '../../Utils/interfaces';
 import {
   sliceAddAllReplies,
@@ -79,6 +79,7 @@ const CommentInterface: React.FC<props> = ({
   const userId = useAppSelector((state) => state.user.uid);
   const allReplies = useAppSelector((state) => state.replies.replies);
   // Redux: App Dispatch hook.
+  const chatBoxRefElement = document.getElementById('chat-box-container');
   const dispatch = useAppDispatch();
   // State to check if the "like" is hovered, to style the parent component accordingly.
   const [deleteFlag, setDeleteFlag] = useState<boolean>(false);
@@ -89,6 +90,8 @@ const CommentInterface: React.FC<props> = ({
   const [lastPage, setLastPage] = useState<number>(1);
   const [del, setDelete] = useState<boolean>(true);
 
+  const commentRef = useRef<HTMLDivElement>(null);
+
   // GraphQL
   const [repliesOfComment, _gr] = useGetRepliesQuery({
     variables: {
@@ -96,7 +99,6 @@ const CommentInterface: React.FC<props> = ({
       limit: 5,
       page: page,
     },
-    requestPolicy: 'cache-and-network',
   });
   const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
   const [_dc, deleteComment] = useDeleteCommentMutation();
@@ -218,7 +220,7 @@ const CommentInterface: React.FC<props> = ({
 
   return (
     <CSSTransition in={del} classNames='comment' timeout={300} unmountOnExit>
-      <CommentCardContainer className={className}>
+      <CommentCardContainer className={className} ref={commentRef}>
         <div className='card-parent'>
           {commentedUser?.uid === userId && (
             <Delete

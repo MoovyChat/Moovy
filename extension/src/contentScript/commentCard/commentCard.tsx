@@ -1,21 +1,10 @@
-import { CommentInfo, User, textMap } from '../../Utils/interfaces';
-import React, {
-  Dispatch,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
+import { User, textMap } from '../../Utils/interfaces';
 import {
   colorLog,
   getFormattedWordsArray,
   getTimeFrame,
 } from '../../Utils/utilities';
-import {
-  sliceAddToLikes,
-  sliceRemoveFromLikes,
-} from '../../redux/slices/comment/commentSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useCommentLikesSubscription,
@@ -25,10 +14,10 @@ import {
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
-import { AnyAction } from 'redux';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
+import { sliceAddToLikes } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -38,6 +27,7 @@ interface props {
   responseFromReplyWindow: (comment: any) => void;
   type: string;
   className: any;
+  cardRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const CommentCard: React.FC<props> = ({
@@ -128,7 +118,7 @@ const CommentCard: React.FC<props> = ({
   }, [createdAt, time]);
 
   // Set commented user info.
-  useEffect(() => {
+  useMemo(() => {
     let { data, fetching, error } = commentedUser;
     if (error) colorLog(error);
     if (!fetching && data) {
@@ -140,9 +130,8 @@ const CommentCard: React.FC<props> = ({
   }, [commentedUser]);
 
   // (Spoiler) Converting message to messageArray
-  useEffect(() => {
+  useMemo(() => {
     let msgArray: textMap[] = [];
-    let isFinal: boolean = false;
     if (message) {
       let msg: string = message;
       let finalEnd = 0;
@@ -210,8 +199,6 @@ const CommentCard: React.FC<props> = ({
         if (error) colorLog(error);
         setLike(data?.getCommentStats?.like!);
       });
-    } else if (type === 'reply') {
-      // TODO: Update the reply in database.
     }
   };
   return (

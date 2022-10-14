@@ -1,5 +1,3 @@
-import 'cqfill';
-
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
