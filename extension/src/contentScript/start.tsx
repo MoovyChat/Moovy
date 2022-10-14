@@ -43,7 +43,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   );
 
   useEffect(() => {
-    colorLog('"Start" component started');
+    colorLog('"Start" component initiated');
     colorLog('Cleared Redux storage');
     // Clear redux cache.
     dispatch(sliceResetUser());
@@ -102,8 +102,6 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   }, [user?.uid!, video_id, data?.getUser?.uid!, stableDispatch]);
 
   useEffect(() => {
-    //Redux: Clear movie name
-    stableDispatch(sliceAddMovieName(''));
     //Redux: Add new movie id
     stableDispatch(sliceAddMovieId(video_id));
     return () => {};

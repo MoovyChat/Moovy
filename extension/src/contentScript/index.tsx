@@ -115,6 +115,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+type NotPresentStrategy = 'error' | 'ignore';
+
+function getElementByDataUIA(tag: string): HTMLElement;
+function getElementByDataUIA(tag: string, IfNotPresent: 'error'): HTMLElement;
+function getElementByDataUIA(
+  tag: string,
+  IfNotPresent: 'ignore'
+): HTMLElement | null;
+function getElementByDataUIA(tag: string, IfNotPresent?: NotPresentStrategy) {
+  const element = document.querySelector(`[data-uia=${tag}]`);
+  if (IfNotPresent === 'error' && !element) throw new Error('No Element Found');
+  return element;
+}
+
 const getUserRemoveNodeInitiateContentScript = () => {
   getStoredUserLoginDetails().then((res) => {
     // If user exists no need to re-render the page
@@ -136,11 +150,17 @@ const getUserRemoveNodeInitiateContentScript = () => {
         initiateContentScript();
         colorLog('LOG:CONTENT SCRIPT INITIATED');
       }
-
       // Reset the netflix video player.
-      let videoPlayers = document.getElementsByClassName('watch-video');
-      let videoPlayer = videoPlayers[0] as HTMLElement;
-      if (videoPlayer) videoPlayer.style.cssText = 'width: 100%';
+      let watchVideo = getElementByDataUIA('watch-video');
+      const watchVideoPlayerView = getElementByDataUIA(
+        'watch-video-player-view-minimized'
+      );
+      watchVideo.style.cssText = `
+          max-width: 100%; !important;
+      `;
+      watchVideoPlayerView.style.cssText = `
+          max-width: 100%; !important;
+      `;
     }
   });
 };

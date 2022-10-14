@@ -2,29 +2,35 @@ import { getStoredFilterValues, getStoredVideoFilters } from '../Utils/storage';
 
 import { filterType } from '../Utils/interfaces';
 
+type NotPresentStrategy = 'error' | 'ignore';
+
+function getElementByDataUIA(tag: string): HTMLElement;
+function getElementByDataUIA(tag: string, IfNotPresent: 'error'): HTMLElement;
+function getElementByDataUIA(
+  tag: string,
+  IfNotPresent: 'ignore'
+): HTMLElement | null;
+function getElementByDataUIA(tag: string, IfNotPresent?: NotPresentStrategy) {
+  const element = document.querySelector(`[data-uia=${tag}]`);
+  if (IfNotPresent === 'error' && !element) {
+    return;
+  }
+  return element;
+}
+
 export const getVideoTitleFromNetflixWatch = () => {
   let video_title = '';
+  let completeText: string[] = [];
+  let mergedText = '';
   // Check if the data-uia is loaded.
-  if (document.querySelectorAll('[data-uia]')) {
-    // Get all selectors from the query
-    const dataSelectors = document.querySelectorAll('[data-uia]');
-    // Loop through all the selectors and find the 'video-title' attribute
-    dataSelectors.forEach((value, index) => {
-      if (
-        value.textContent &&
-        value.getAttribute('data-uia') === 'video-title'
-      ) {
-        let completeText: string[] = [];
-        let mergedText = '';
-        value.childNodes.forEach((child) => {
-          completeText.push(child.textContent!);
-        });
-        mergedText = completeText.join(' ');
-        if (video_title === '' || video_title === null)
-          video_title = mergedText || value.textContent!;
-      }
-    });
-  }
+  const videoTitleElement = getElementByDataUIA('video-title');
+  if (!videoTitleElement) return;
+  videoTitleElement.childNodes.forEach((child) => {
+    completeText.push(child.textContent!);
+  });
+  mergedText = completeText.join(' ');
+  if (video_title === '' || video_title === null)
+    video_title = mergedText || videoTitleElement.textContent!;
   return video_title;
 };
 
@@ -52,7 +58,7 @@ export const getDomain = (url: string) => {
   return result;
 };
 
-export const removeNodeFromDom = (nodeId: string) => {
+export const removeNodeFromDomById = (nodeId: string) => {
   if (!nodeId) return;
   let node = document.getElementById(nodeId) as Node;
   let nodeParent = node?.parentNode;

@@ -4,10 +4,10 @@ export const EmojiButtonParent = styled.div`
   height: 50px;
   width: 50px;
   display: flex;
-  overflow: hidden;
   position: relative;
   justify-content: center;
   align-items: center;
+  flex: 0 0 10%;
   button {
     height: 100%;
     width: 100%;

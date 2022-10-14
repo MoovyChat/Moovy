@@ -1,5 +1,9 @@
 import { Provider, createClient } from 'urql';
-import { getIdFromNetflixURL, setVideoFilters } from './contentScript.utils';
+import {
+  getIdFromNetflixURL,
+  removeNodeFromDomById,
+  setVideoFilters,
+} from './contentScript.utils';
 
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -14,6 +18,7 @@ export const initiateContentScript = async () => {
   colorLog('Initiating content script');
   var reactApp = document.createElement('div');
   reactApp.id = 'chatIcon';
+
   document.body.appendChild(reactApp);
   document.body.style.setProperty('margin', '0');
   const boot = createRoot(reactApp);
@@ -41,11 +46,7 @@ export const initiateContentScript = async () => {
 
 export const removeAllNodes = () => {
   try {
-    let iconNode = document.getElementById('chatIcon');
-    if (iconNode) {
-      document.body.removeChild(iconNode!);
-      colorLog('Chat icon removed');
-    }
+    removeNodeFromDomById('chatIcon');
 
     let windowNodes = document.getElementsByClassName('NComments');
     while (windowNodes.length > 0) {

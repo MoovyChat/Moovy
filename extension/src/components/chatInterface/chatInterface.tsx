@@ -1,5 +1,4 @@
 import {
-  ChatTitle,
   ChatWindowParent,
   DragBar,
   Perimeter,
@@ -27,6 +26,7 @@ import {
 import { CSSTransition } from 'react-transition-group';
 import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
+import ChatTitle from '../chatTitle/chatTitle';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
@@ -68,45 +68,10 @@ const ChatInterface: React.FC<props> = ({
   const isPopSlideOpen = useAppSelector(
     (state) => state.settings.isPopSlideOpen
   );
-  // GraphQL: Custom Hooks.
-  const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
-  const [{ error, fetching, data }, _query] = useGetMovieFavCountQuery({
-    variables: {
-      mid: movie.mid,
-    },
-  });
 
   // React:useState hooks.
-  const [fav, setFav] = useState<boolean>(false);
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
-  const [viewStyles, setViewStyles] = useState<boolean>(false);
-  const [favCount, SetFavCount] = useState<number>(0);
   const [display, setDisplay] = useState<boolean>(true);
-
-  // Update Movie Favorite on the initial load.
-  useEffect(() => {
-    updateUserLikeFavorite({
-      uid: user?.uid!,
-      mid: movie.mid,
-      options: {},
-    }).then((response) => {
-      const { data, error } = response;
-      if (error) colorLog(error);
-      const { favorite } = data?.updateUserMovieStats!;
-      if (favorite) setFav(favorite);
-    });
-  }, []);
-
-  // Get Movie Fav count.
-  useEffect(() => {
-    if (error) {
-      colorLog(error);
-      return;
-    }
-    if (!fetching && data) {
-      SetFavCount(data.getMovieFavoriteCount ? data.getMovieFavoriteCount : 0);
-    }
-  }, [fetching]);
 
   // Set the response to the global text area.
   const responseFromReplyWindow = (comment: CommentInfo) => {
@@ -238,39 +203,8 @@ const ChatInterface: React.FC<props> = ({
         onClick={(e) => e.stopPropagation()}
         windowOpened={display}>
         <React.Fragment>
-          <ChatTitle className='chat-title'>
-            <div className='logo'></div>
-            <div className='title'>
-              <div className='set'>{movie.name}</div>
-            </div>
-            <div
-              className='icon'
-              onClick={(e) => {
-                e.stopPropagation();
-                updateUserLikeFavorite({
-                  uid: user.uid,
-                  mid: movie.mid,
-                  options: {
-                    favorite: !fav,
-                  },
-                }).then((response) => {
-                  const { data, error } = response;
-                  if (error) colorLog(error);
-                  const { favorite } = data?.updateUserMovieStats!;
-                  setFav(favorite!);
-                });
-              }}>
-              <div className='fav-count'>
-                <div className='box'>{favCount}</div>
-              </div>
-              {!fav ? (
-                <MdStarOutline className='star' size={20} />
-              ) : (
-                <MdStar className='star' size={20} color='gold' />
-              )}
-            </div>
-          </ChatTitle>
-          <ChatStats setViewStyles={setViewStyles} viewStyles={viewStyles} />
+          <ChatTitle />
+          <ChatStats />
           <TextAreaContainer
             className='text-area-container'
             onClick={(e) => e.stopPropagation()}>
@@ -306,4 +240,4 @@ const ChatInterface: React.FC<props> = ({
   );
 };
 
-export default withUrqlClient(urqlClient, { ssr: true })(ChatInterface);
+export default ChatInterface;

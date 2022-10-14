@@ -28,14 +28,11 @@ import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
-type props = {
-  viewStyles: boolean;
-  setViewStyles: Dispatch<any>;
-};
+type props = {};
 
 // Component: Displays the likes. comments count of the movie and provides the
 // edit nick name option and paint features.
-const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
+const ChatStats: React.FC<props> = () => {
   let icon_Size = 20;
 
   // Redux: App selector hooks.

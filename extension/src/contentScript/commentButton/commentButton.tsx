@@ -3,7 +3,7 @@ import {
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
@@ -48,8 +48,6 @@ const CommentButton = () => {
   // Redux: App selectors.
   // Settings > openChatWindow, smoothWidth, chatWindowSize
   // User > uid, name
-  const movieId = useAppSelector((state) => state.movie.mid);
-  const movieName = useAppSelector((state) => state.movie.name);
   const openChatWindow = useAppSelector(
     (state) => state.settings.openChatWindow
   );
@@ -57,12 +55,6 @@ const CommentButton = () => {
   const chatWindowSize = useAppSelector(
     (state) => state.settings.chatWindowSize
   );
-  const currentPage = useAppSelector((state) => state.movie.currentPage);
-  const lastPage = useAppSelector((state) => state.movie.lastPage);
-
-  // GraphQL: updateMovie and movieComments hooks.
-  const [updateMovieStatus, updateMovieTitle] = useUpdateMovieTitleMutation();
-
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -88,25 +80,6 @@ const CommentButton = () => {
     });
     return () => {};
   }, [setIsVisible]);
-
-  useEffect(() => {
-    // Adding the Interval to grab the video title from DOM
-    let interval = setInterval(() => {
-      let title = getVideoTitleFromNetflixWatch();
-      if (title) {
-        // Update movie name in the database only if the name is not available.
-        if (!movieName && !updateMovieStatus.fetching) {
-          updateMovieTitle({ mid: movieId, name: title }).then((res: any) => {
-            dispatch(sliceAddMovieName({ movieId, title }));
-            clearInterval(interval);
-          });
-        }
-      }
-    }, 100);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [dispatch, movieId, movieName, updateMovieStatus]);
 
   return (
     <div
@@ -139,4 +112,4 @@ const CommentButton = () => {
   );
 };
 
-export default withUrqlClient(urqlClient)(CommentButton);
+export default CommentButton;
