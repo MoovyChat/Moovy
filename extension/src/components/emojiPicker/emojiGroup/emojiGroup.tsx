@@ -5,8 +5,9 @@ import { subGroup } from '../emojiPicker';
 
 type props = {
   subGroup: subGroup;
+  groupNumber: number;
 };
-const EmojiGroup: React.FC<props> = ({ subGroup }) => {
+const EmojiGroup: React.FC<props> = ({ subGroup, groupNumber }) => {
   return (
     <GroupParent>
       {subGroup &&

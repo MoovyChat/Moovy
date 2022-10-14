@@ -7,6 +7,7 @@ import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
 import { getPlayerViewElement } from '../contentScript.utils';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
+import useFetchEmojis from '../hooks/useFetchEmojis';
 import { useMousePosition } from '../hooks/useMouseMove';
 
 // Chat window component -> Renders ChatInterface component.
@@ -25,6 +26,9 @@ const ChatWindow = () => {
   const dragRef = useRef<HTMLDivElement | null>(null);
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
+
+  // Initialize the emojiDB
+  useFetchEmojis();
 
   return (
     <React.Fragment>
