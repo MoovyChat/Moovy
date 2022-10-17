@@ -1,9 +1,12 @@
+import { DIRECTION } from '../../utils/enums';
 import Dark from '../../static/images/dark-chat.png';
 import DisplayPlatforms from '../../components/display-platforms/displayPlatforms';
+import { GET_CONSTANT } from '../../components/tooltip/constants';
 import { HomeParent } from './home.styles';
 import Light from '../../static/images/light-chat.png';
 import React from 'react';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
+import Tooltip from '../../components/tooltip/tooltip';
 import { home } from '../../constants';
 
 const Home = () => {

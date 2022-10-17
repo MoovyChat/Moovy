@@ -27,7 +27,6 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <React.Fragment>
-        <Header />
         <RouterProvider router={router} />
       </React.Fragment>
     </Provider>
