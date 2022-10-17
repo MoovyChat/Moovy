@@ -15,6 +15,7 @@ import { conn } from '../dataSource';
 import { ReplyStats } from '../entities/ReplyStats';
 import { User } from '../entities/User';
 import { REPLY_LIKES_SUB } from '../../constants';
+import { Comment } from '../entities/Comment';
 
 @ObjectType()
 class replyLikesObject {
@@ -47,9 +48,9 @@ class ReplyInput {
   @Field()
   commentId: string;
   @Field()
-  parentReplyRid: string;
+  parentReplyId: string;
   @Field()
-  repliedUserUid: string;
+  repliedUserId: string;
   @Field(() => Int)
   platformId: number;
 }
@@ -62,13 +63,13 @@ export class ReplyResolver {
 
   @Query(() => Reply, { nullable: true })
   getReply(@Arg('rid') rid: string): Promise<Reply | null> {
-    return Reply.findOne({ where: { rid } });
+    return Reply.findOne({ where: { id: rid } });
   }
 
   @Query(() => Boolean, { nullable: true })
   async getIsUserLikedReply(@Arg('rid') rid: string, @Arg('uid') uid: string) {
     const replyStat = await ReplyStats.findOne({
-      where: { replyRid: rid, userUid: uid },
+      where: { replyId: rid, userId: uid },
     });
     return replyStat?.like;
   }
@@ -82,9 +83,9 @@ export class ReplyResolver {
       .innerJoinAndSelect(
         'user.replies',
         'reply',
-        'reply.commentedUserUid = user.uid'
+        'reply.commentedUserId = user.id'
       )
-      .where('reply.rid = :rid', { rid })
+      .where('reply.id = :rid', { rid })
       .getOne();
     return user;
   }
@@ -96,14 +97,14 @@ export class ReplyResolver {
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<RepliesObject> {
     const repliesCount = await Reply.count({
-      where: { parentCommentCid: cid },
+      where: { parentCommentId: cid },
     });
     const replies = await conn
       .getRepository(Reply)
       .createQueryBuilder('reply')
-      .where('reply.parentCommentCid = :cid', { cid })
-      .orderBy('reply.likesCount', 'DESC')
-      .orderBy('reply.repliesCount', 'DESC')
+      .where('reply.parentCommentId = :cid', { cid })
+      .orderBy('reply.likesCount', 'ASC')
+      .orderBy('reply.repliesCount', 'ASC')
       .orderBy('reply.createdAt', 'ASC')
       .offset((page - 1) * limit)
       .limit(limit)
@@ -118,30 +119,45 @@ export class ReplyResolver {
 
   @Mutation(() => Reply, { nullable: true })
   async insertReply(@Arg('options') options: ReplyInput) {
-    if (!options.repliedUserUid) throw new Error('User does not exist');
+    if (!options.repliedUserId) throw new Error('User does not exist');
     let reply;
     try {
-      // Insert comment.
-      const result = await conn
-        .createQueryBuilder()
-        .insert()
-        .into(Reply)
-        .values([
-          {
-            message: options.message,
-            likesCount: options.likesCount,
-            movieMid: options.movieId,
-            parentCommentCid: options.commentId,
-            parentReplyRid: options.parentReplyRid,
-            commentedUserUid: options.repliedUserUid!,
-            platformId: options.platformId,
-            repliesCount: options.repliesCount,
-          },
-        ])
-        .returning('*')
-        .execute();
+      await conn.transaction(async (transactionalEntityManager) => {
+        // execute queries using transactionalEntityManager
+        // Insert Reply.
+        const result = await transactionalEntityManager
+          .createQueryBuilder()
+          .insert()
+          .into(Reply)
+          .values([
+            {
+              message: options.message,
+              likesCount: options.likesCount,
+              movieId: options.movieId,
+              parentCommentId: options.commentId,
+              parentReplyId: options.parentReplyId,
+              commentedUserId: options.repliedUserId!,
+              platformId: options.platformId,
+              repliesCount: options.repliesCount,
+            },
+          ])
+          .returning('*')
+          .execute();
+        // Update "Parent comment" reply count.
+        await Comment.update(
+          { id: options.commentId },
+          { repliesCount: () => '"repliesCount"+1' }
+        );
+        if (options.parentReplyId !== options.commentId) {
+          // Update "parent reply" reply count.
+          await Reply.update(
+            { id: options.parentReplyId },
+            { repliesCount: () => '"repliesCount"+1' }
+          );
+        }
+        reply = result.raw[0];
+      });
       // await pubSub.publish(REPLY_LIKES_SUB, options.movieId);
-      reply = result.raw[0];
     } catch (err) {
       throw new Error(err);
     }
@@ -151,18 +167,14 @@ export class ReplyResolver {
   @Query(() => replyLikesObject, { defaultValue: 0 })
   async getReplyLikes(@Arg('rid') rid: string): Promise<replyLikesObject> {
     const likesCount = await ReplyStats.count({
-      where: { replyRid: rid, like: true },
+      where: { replyId: rid, like: true },
     });
     const users = await conn
       .getRepository(User)
       .createQueryBuilder('user')
-      .innerJoinAndSelect(
-        'user.replyStats',
-        'stats',
-        'stats.userUid = user.uid'
-      )
+      .innerJoinAndSelect('user.replyStats', 'stats', 'stats.userId = user.id')
       .where('stats.like = :like', { like: true })
-      .andWhere('stats.replyRid = :rid', { rid })
+      .andWhere('stats.replyId = :rid', { rid })
       .getMany();
     return { likes: users, likesCount };
   }
@@ -172,7 +184,7 @@ export class ReplyResolver {
     let deletedReply = await conn
       .getRepository(Reply)
       .createQueryBuilder('reply')
-      .where('reply.rid = :rid', { rid })
+      .where('reply.id = :rid', { rid })
       .softDelete()
       .returning('*')
       .execute();
@@ -182,18 +194,14 @@ export class ReplyResolver {
   @Subscription(() => replyLikesObject, { topics: REPLY_LIKES_SUB })
   async replyLikesUpdate(@Arg('rid') rid: string): Promise<replyLikesObject> {
     const likesCount = await ReplyStats.count({
-      where: { replyRid: rid, like: true },
+      where: { replyId: rid, like: true },
     });
     const users = await conn
       .getRepository(User)
       .createQueryBuilder('user')
-      .innerJoinAndSelect(
-        'user.replyStats',
-        'stats',
-        'stats.userUid = user.uid'
-      )
+      .innerJoinAndSelect('user.replyStats', 'stats', 'stats.userId = user.id')
       .where('stats.like = :like', { like: true })
-      .andWhere('stats.replyRid = :rid', { rid })
+      .andWhere('stats.replyId = :rid', { rid })
       .getMany();
     return { likes: users, likesCount };
   }

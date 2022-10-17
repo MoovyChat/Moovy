@@ -34,7 +34,13 @@ class CommentInput {
 }
 
 @ObjectType()
-class commentLikesObject {
+class IsUserLikedObject {
+  @Field(() => Boolean, { defaultValue: false })
+  isLiked: boolean;
+}
+
+@ObjectType()
+class CommentLikesObject {
   @Field(() => [User])
   likes: User[];
   @Field(() => Int)
@@ -50,18 +56,18 @@ export class CommentResolver {
 
   @Query(() => Comment)
   getComment(@Arg('cid') cid: string): Promise<Comment | null> {
-    return Comment.findOne({ where: { cid } });
+    return Comment.findOne({ where: { id: cid } });
   }
 
-  @Query(() => Boolean, { nullable: true })
+  @Query(() => IsUserLikedObject, { nullable: true })
   async getIsUserLikedComment(
     @Arg('cid') cid: string,
     @Arg('uid') uid: string
   ) {
     const commentStat = await CommentStats.findOne({
-      where: { commentCid: cid, userUid: uid },
+      where: { commentId: cid, userId: uid },
     });
-    return commentStat?.like;
+    return { isLiked: commentStat?.like };
   }
 
   @Query(() => User, { nullable: true })
@@ -73,17 +79,17 @@ export class CommentResolver {
       .innerJoinAndSelect(
         'user.comments',
         'comment',
-        'comment.commentedUserUid = user.uid'
+        'comment.commentedUserId = user.id'
       )
-      .where('comment.cid = :cid', { cid })
+      .where('comment.id = :cid', { cid })
       .getOne();
     return user;
   }
 
-  @Query(() => commentLikesObject, { defaultValue: 0 })
-  async getCommentLikes(@Arg('cid') cid: string): Promise<commentLikesObject> {
+  @Query(() => CommentLikesObject, { defaultValue: 0 })
+  async getCommentLikes(@Arg('cid') cid: string): Promise<CommentLikesObject> {
     const likesCount = await CommentStats.count({
-      where: { commentCid: cid, like: true },
+      where: { commentId: cid, like: true },
     });
     const users = await conn
       .getRepository(User)
@@ -91,10 +97,10 @@ export class CommentResolver {
       .innerJoinAndSelect(
         'user.commentStats',
         'stats',
-        'stats.userUid = user.uid'
+        'stats.userId = user.id'
       )
       .where('stats.like = :like', { like: true })
-      .andWhere('stats.commentCid = :cid', { cid })
+      .andWhere('stats.commentId = :cid', { cid })
       .getMany();
     return { likes: users, likesCount };
   }
@@ -117,8 +123,8 @@ export class CommentResolver {
           {
             message: options.message,
             likesCount: options.likesCount,
-            movieMid: options.movieId,
-            commentedUserUid: options.commentedUserId,
+            movieId: options.movieId,
+            commentedUserId: options.commentedUserId,
             platformId: options.platformId,
           },
         ])
@@ -137,7 +143,7 @@ export class CommentResolver {
     let deletedComment = await conn
       .getRepository(Comment)
       .createQueryBuilder('comment')
-      .where('comment.cid = :cid', { cid })
+      .where('comment.id = :cid', { cid })
       .softDelete()
       .returning('*')
       .execute();
@@ -149,17 +155,17 @@ export class CommentResolver {
   @Subscription(() => Int, { topics: COMMENT_COUNT_UPDATE })
   async movieCommentsUpdate(@Root() mid: string): Promise<number> {
     const commentsCount = await Comment.count({
-      where: { movieMid: mid },
+      where: { movieId: mid },
     });
     return commentsCount;
   }
 
-  @Subscription(() => commentLikesObject, { topics: COMMENT_LIKES_SUB })
+  @Subscription(() => CommentLikesObject, { topics: COMMENT_LIKES_SUB })
   async commentLikesUpdate(
     @Arg('cid') cid: string
-  ): Promise<commentLikesObject> {
+  ): Promise<CommentLikesObject> {
     const likesCount = await CommentStats.count({
-      where: { commentCid: cid, like: true },
+      where: { commentId: cid, like: true },
     });
     const users = await conn
       .getRepository(User)
@@ -167,10 +173,10 @@ export class CommentResolver {
       .innerJoinAndSelect(
         'user.commentStats',
         'stats',
-        'stats.userUid = user.uid'
+        'stats.userId = user.id'
       )
       .where('stats.like = :like', { like: true })
-      .andWhere('stats.commentCid = :cid', { cid })
+      .andWhere('stats.commentId = :cid', { cid })
       .getMany();
     return { likes: users, likesCount };
   }

@@ -1,22 +1,33 @@
 import { ReplyStats } from '../entities/ReplyStats';
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { Arg, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
 import { Reply } from '../entities/Reply';
 import { conn } from '../dataSource';
+import { User } from '../entities/User';
 
+@ObjectType()
+class ReplyStatsObject {
+  @Field(() => ReplyStats)
+  likeStatus: ReplyStats;
+  @Field(() => User)
+  user: User;
+}
 @Resolver()
 export class ReplyStatsResolver {
-  @Mutation(() => ReplyStats, { nullable: true })
-  async getReplyStats(
+  @Mutation(() => ReplyStatsObject, { nullable: true })
+  async setReplyLike(
     @Arg('uid') uid: string,
     @Arg('rid') rid: string,
+    @Arg('mid') mid: string,
     @Arg('like') like: boolean
-  ): Promise<ReplyStats | null> {
-    const reply = await Reply.findOne({ where: { rid } });
+  ): Promise<ReplyStatsObject | null> {
+    const reply = await Reply.findOne({ where: { id: rid } });
+    const user = await User.findOne({ where: { id: uid } });
+    if (!user) throw new Error('You need to login to interact with reply');
     if (!reply) {
       throw new Error('Comment not found');
     }
     const replyStat = await ReplyStats.findOne({
-      where: { userUid: uid, replyRid: rid },
+      where: { userId: uid, replyId: rid },
     });
     let detail;
     // If there is no stats entry for the reply, create a new entry for the reply
@@ -28,8 +39,9 @@ export class ReplyStatsResolver {
         .insert()
         .into(ReplyStats)
         .values({
-          userUid: uid,
-          replyRid: rid,
+          userId: uid,
+          replyId: rid,
+          movieId: mid,
           like,
         })
         .returning('*')
@@ -41,8 +53,9 @@ export class ReplyStatsResolver {
         .createQueryBuilder()
         .update(ReplyStats)
         .set({ like })
-        .where('replyRid = :rid', { rid })
-        .andWhere('userUid=:uid ', { uid })
+        .where('replyId = :rid', { rid })
+        .andWhere('userId=:uid ', { uid })
+        .andWhere('movieId=:mid', { mid })
         .returning('*')
         .execute();
 
@@ -58,8 +71,8 @@ export class ReplyStatsResolver {
           else return '"likesCount"-1';
         },
       })
-      .where('rid = :rid', { rid })
+      .where('id = :rid', { rid })
       .execute();
-    return detail;
+    return { likeStatus: detail, user };
   }
 }

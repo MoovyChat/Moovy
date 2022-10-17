@@ -22,11 +22,11 @@ import { User } from './User';
 export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_comment_id' })
   @Field(() => String)
-  cid!: string;
+  id!: string;
 
   @Field(() => String)
   @Column()
-  commentedUserUid!: string;
+  commentedUserId!: string;
 
   @Field(() => String)
   @Column()
@@ -34,7 +34,7 @@ export class Comment extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  movieMid!: string;
+  movieId!: string;
 
   @Field(() => Int, { defaultValue: 0 })
   @Column({ type: 'int', default: 0 })

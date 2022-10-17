@@ -1,25 +1,43 @@
 import { CommentStats } from '../entities/CommentStat';
-import { Arg, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Field,
+  Mutation,
+  ObjectType,
+  PubSub,
+  PubSubEngine,
+  Resolver,
+} from 'type-graphql';
 import { Comment } from '../entities/Comment';
 import { conn } from '../dataSource';
 import { COMMENT_LIKES_SUB } from '../../constants';
+import { User } from '../entities/User';
+
+@ObjectType()
+class CommentsStatsObject {
+  @Field(() => CommentStats)
+  likeStatus: CommentStats;
+  @Field(() => User)
+  user: User;
+}
 
 @Resolver()
 export class CommentStatsResolver {
-  @Mutation(() => CommentStats, { nullable: true })
-  async getCommentStats(
+  @Mutation(() => CommentsStatsObject, { nullable: true })
+  async setCommentLike(
     @Arg('uid') uid: string,
     @Arg('cid') cid: string,
     @Arg('mid') mid: string,
     @Arg('like') like: boolean,
     @PubSub() pubSub: PubSubEngine
-  ): Promise<CommentStats | null> {
-    const comment = await Comment.findOne({ where: { cid } });
-    if (!comment) {
-      throw new Error('Comment not found');
-    }
+  ): Promise<CommentsStatsObject | null> {
+    const comment = await Comment.findOne({ where: { id: cid } });
+    const user = await User.findOne({ where: { id: uid } });
+    if (!user) throw new Error('You need to login to interact with comment');
+    if (!comment) throw new Error('Comment not found');
+
     const commentStat = await CommentStats.findOne({
-      where: { userUid: uid, commentCid: cid },
+      where: { userId: uid, commentId: cid },
     });
     let detail;
     if (!commentStat) {
@@ -28,9 +46,9 @@ export class CommentStatsResolver {
         .insert()
         .into(CommentStats)
         .values({
-          userUid: uid,
-          commentCid: cid,
-          movieMid: mid,
+          userId: uid,
+          commentId: cid,
+          movieId: mid,
           like,
         })
         .returning('*')
@@ -41,9 +59,9 @@ export class CommentStatsResolver {
         .createQueryBuilder()
         .update(CommentStats)
         .set({ like })
-        .where('commentCid = :cid', { cid })
-        .andWhere('userUid=:uid ', { uid })
-        .andWhere('movieMid=:mid', { mid })
+        .where('commentId = :cid', { cid })
+        .andWhere('userId=:uid ', { uid })
+        .andWhere('movieId=:mid', { mid })
         .returning('*')
         .execute();
       detail = updateStatus.raw[0];
@@ -58,10 +76,10 @@ export class CommentStatsResolver {
           else return '"likesCount"-1';
         },
       })
-      .where('cid = :cid', { cid })
+      .where('id = :cid', { cid })
       .returning('*')
       .execute();
     await pubSub.publish(COMMENT_LIKES_SUB, cid);
-    return detail;
+    return { likeStatus: detail, user };
   }
 }

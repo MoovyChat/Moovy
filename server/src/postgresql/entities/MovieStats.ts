@@ -30,11 +30,11 @@ export class MovieStats extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  movieMid!: string;
+  movieId!: string;
 
   @Field(() => String)
   @Column()
-  userUid!: string;
+  userId!: string;
 
   @ManyToOne(() => User, (user) => user.movieStats)
   user: User;

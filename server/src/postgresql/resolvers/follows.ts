@@ -42,30 +42,30 @@ export class FollowResolver {
       const res = await manager.getRepository(Follow).upsert(
         [
           {
-            userUid: uid,
-            followerUid: followerId,
+            userId: uid,
+            followerId: followerId,
             follows: follow,
           },
         ],
         {
-          conflictPaths: ['userUid', 'followerUid'],
+          conflictPaths: ['userId', 'followerId'],
           skipUpdateIfNoValuesChanged: true, // supported by postgres, skips update if it would not change row values
         }
       );
       result = res.raw[0];
       const userRepo = manager.getRepository(User);
       if (result && follow) {
-        await userRepo.increment({ uid }, 'followerCount', 1);
-        await userRepo.increment({ uid: followerId }, 'followingCount', 1);
+        await userRepo.increment({ id: uid }, 'followerCount', 1);
+        await userRepo.increment({ id: followerId }, 'followingCount', 1);
       } else if (result && !follow) {
-        await userRepo.decrement({ uid }, 'followerCount', 1);
-        await userRepo.decrement({ uid: followerId }, 'followingCount', 1);
+        await userRepo.decrement({ id: uid }, 'followerCount', 1);
+        await userRepo.decrement({ id: followerId }, 'followingCount', 1);
       }
     });
     return {
       ...result,
-      userUid: uid,
-      followerUid: followerId,
+      userId: uid,
+      followerId: followerId,
       follows: follow,
     };
   }
@@ -75,7 +75,7 @@ export class FollowResolver {
   @Mutation(() => Boolean, { defaultValue: false })
   async amIFollowingThisUser(@Arg('uid') uid: string, @Arg('fid') fid: string) {
     const record = await Follow.findOne({
-      where: { userUid: fid, followerUid: uid },
+      where: { userId: fid, followerId: uid },
     });
     if (!record) return false;
     return record.follows!;
@@ -86,7 +86,7 @@ export class FollowResolver {
     @Arg('uid') uid: string
   ): Promise<UserFollowStats | null> {
     const user = await User.findOne({
-      where: { uid },
+      where: { id: uid },
     });
     if (!user) return null;
     return {
@@ -97,15 +97,15 @@ export class FollowResolver {
 
   @Query(() => FollowingUsers, { nullable: true })
   async getFollowers(@Arg('uid') uid: string): Promise<FollowingUsers | null> {
-    const user = await User.findOne({ where: { uid } });
+    const user = await User.findOne({ where: { id: uid } });
     if (!user) return null;
     const followers: User[] = await conn
       .getRepository(User)
       .createQueryBuilder('user')
       .innerJoin('user.followers', 'followers')
-      .where('followers.userUid = :uid', { uid })
+      .where('followers.userId = :uid', { uid })
       .andWhere('followers.follows = true')
-      .select('user.uid', 'uid')
+      .select('user.id', 'uid')
       .addSelect('user.name', 'name')
       .addSelect('user.email', 'email')
       .addSelect('user.photoUrl', 'photoUrl')
@@ -114,9 +114,8 @@ export class FollowResolver {
       .addSelect('user.joinedAt', 'joinedAt')
       .addSelect('user.updatedAt', 'updatedAt')
       .addSelect('user.deletedAt', 'deletedAt')
-      .andWhere('user.uid = followers.followerUid')
+      .andWhere('user.id = followers.followerId')
       .getRawMany();
-    console.log(followers);
     return { user, followers };
   }
 }

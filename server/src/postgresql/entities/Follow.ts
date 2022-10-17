@@ -16,11 +16,11 @@ import { User } from './User';
 export class Follow extends BaseEntity {
   @Field(() => String)
   @PrimaryColumn()
-  userUid!: string;
+  userId!: string;
 
   @Field(() => String)
   @PrimaryColumn()
-  followerUid!: string;
+  followerId!: string;
 
   @Field(() => Boolean, { defaultValue: false })
   @Column()

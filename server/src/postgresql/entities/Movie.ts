@@ -22,7 +22,7 @@ import { User } from './User';
 export class Movie extends BaseEntity {
   @PrimaryColumn({ primaryKeyConstraintName: 'pk_movie_id' })
   @Field(() => String)
-  mid!: string;
+  id!: string;
 
   @Field(() => String)
   @Column()

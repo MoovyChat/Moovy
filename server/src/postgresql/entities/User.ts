@@ -23,7 +23,7 @@ import { ReplyStats } from './ReplyStats';
 export class User extends BaseEntity {
   @PrimaryColumn({ primaryKeyConstraintName: 'pk_user_id' })
   @Field(() => String)
-  uid: string;
+  id: string;
 
   @Field(() => String)
   @Column()

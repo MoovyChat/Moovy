@@ -43,12 +43,12 @@ export class MovieStatsResolver {
     @Arg('options') options: UserMovieOptions,
     @PubSub() pubSub: PubSubEngine
   ): Promise<MovieStats | null> {
-    const movie = await Movie.findOne({ where: { mid } });
+    const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) {
-      await Movie.insert({ mid: mid, name: '', platformId: 1, likes: [] });
+      await Movie.insert({ id: mid, name: '', platformId: 1, likes: [] });
     }
     const movieStat = await MovieStats.findOne({
-      where: { userUid: uid, movieMid: mid },
+      where: { userId: uid, movieId: mid },
     });
     let detail;
     if (!movieStat) {
@@ -57,8 +57,8 @@ export class MovieStatsResolver {
         .insert()
         .into(MovieStats)
         .values({
-          userUid: uid,
-          movieMid: mid,
+          userId: uid,
+          movieId: mid,
           like: options.like ? options.like : false,
           favorite: options.favorite ? options.favorite : false,
         })
@@ -70,8 +70,8 @@ export class MovieStatsResolver {
         .createQueryBuilder()
         .update(MovieStats)
         .set(options)
-        .where('movieMid = :mid', { mid })
-        .andWhere('userUid=:uid ', { uid })
+        .where('movieId = :mid', { mid })
+        .andWhere('userId=:uid ', { uid })
         .returning('*')
         .execute();
       detail = updateStatus.raw[0];
@@ -85,7 +85,7 @@ export class MovieStatsResolver {
     const userLikesCount = await conn
       .getRepository(User)
       .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid: root,
       })
       .where('stats.like = :like', { like: true })
@@ -93,7 +93,7 @@ export class MovieStatsResolver {
     const userFavoriteCount = await conn
       .getRepository(User)
       .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid: root,
       })
       .where('stats.favorite = :fav', { fav: true })

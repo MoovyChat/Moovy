@@ -19,7 +19,7 @@ import { Reply } from '../entities/Reply';
 @InputType()
 class UserInput {
   @Field()
-  uid: string;
+  id: string;
   @Field()
   name: string;
   @Field()
@@ -61,9 +61,9 @@ class LikedMovieObject {
   @Field()
   like: boolean;
   @Field()
-  movieMid: string;
+  movieId: string;
   @Field()
-  userUid: string;
+  userId: string;
   @Field()
   movieName: string;
 }
@@ -73,9 +73,9 @@ class FavMovieObject {
   @Field()
   favorite: boolean;
   @Field()
-  movieMid: string;
+  movieId: string;
   @Field()
-  userUid: string;
+  userId: string;
   @Field()
   movieName: string;
 }
@@ -119,7 +119,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   getUser(@Arg('uid') uid: string): Promise<User | null> {
-    return User.findOne({ where: { uid } });
+    return User.findOne({ where: { id: uid } });
   }
 
   @Mutation(() => User, { nullable: true })
@@ -146,13 +146,13 @@ export class UserResolver {
     await queryRunner.startTransaction();
     try {
       //User
-      const user = await User.findOne({ where: { uid } });
+      const user = await User.findOne({ where: { id: uid } });
       //Total comments
       const userCommentCount = await Comment.count({
-        where: { commentedUserUid: user?.uid },
+        where: { commentedUserId: user?.id },
       });
       const userReplyCount = await Reply.count({
-        where: { commentedUserUid: user?.uid },
+        where: { commentedUserId: user?.id },
       });
       //Total likes
       let cs = 0;
@@ -161,7 +161,7 @@ export class UserResolver {
         .getRepository(Comment)
         .createQueryBuilder('comment')
         .select('SUM(comment.likesCount)', 'sum')
-        .where('comment.commentedUserUid = :uid', { uid })
+        .where('comment.commentedUserId = :uid', { uid })
         .getRawOne();
       if (commentSum.sum) cs = parseInt(commentSum.sum);
       else cs = 0;
@@ -169,7 +169,7 @@ export class UserResolver {
         .getRepository(Reply)
         .createQueryBuilder('reply')
         .select('SUM(reply.likesCount)', 'sum')
-        .where('reply.commentedUserUid = :uid', { uid })
+        .where('reply.commentedUserId = :uid', { uid })
         .getRawOne();
       if (replySum.sum) rs = parseInt(replySum.sum);
       else rs = 0;
@@ -179,13 +179,13 @@ export class UserResolver {
       const likedMovies = await conn
         .getRepository(MovieStats)
         .createQueryBuilder('ms')
-        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieMid = m.mid')
+        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieId = m.id')
         .select('ms.like', 'like')
-        .addSelect('ms.movieMid', 'movieMid')
-        .addSelect('ms.userUid', 'userUid')
+        .addSelect('ms.movieId', 'movieId')
+        .addSelect('ms.userId', 'userId')
         .addSelect('m.name', 'movieName')
         .where('ms.like = :like', { like: true })
-        .andWhere('ms.userUid = :uid', { uid })
+        .andWhere('ms.userId = :uid', { uid })
         .orderBy('ms.updatedAt', 'DESC')
         .getRawMany();
 
@@ -193,13 +193,13 @@ export class UserResolver {
       const favMovies = await conn
         .getRepository(MovieStats)
         .createQueryBuilder('ms')
-        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieMid = m.mid')
+        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieId = m.id')
         .select('ms.favorite', 'favorite')
-        .addSelect('ms.movieMid', 'movieMid')
-        .addSelect('ms.userUid', 'userUid')
+        .addSelect('ms.movieId', 'movieId')
+        .addSelect('ms.userId', 'userId')
         .addSelect('m.name', 'movieName')
         .where('ms.favorite = :fav', { fav: true })
-        .andWhere('ms.userUid = :uid', { uid })
+        .andWhere('ms.userId = :uid', { uid })
         .orderBy('ms.updatedAt', 'DESC')
         .getRawMany();
       // commit transaction now:
@@ -240,14 +240,14 @@ export class UserResolver {
 
   @Mutation(() => User, { nullable: true })
   getUserMut(@Arg('uid') uid: string): Promise<User | null> {
-    return User.findOne({ where: { uid } });
+    return User.findOne({ where: { id: uid } });
   }
 
   @Query(() => [Comment], { nullable: true })
   getAllCommentsMadeByUser(@Arg('uid') uid: string): Promise<Comment[] | null> {
     let allComments;
     try {
-      const user = User.findOne({ where: { uid } });
+      const user = User.findOne({ where: { id: uid } });
       user.then((res) => {
         if (res) {
           allComments = res.comments;
@@ -265,7 +265,7 @@ export class UserResolver {
   async getCommentsOfTheUser(
     @Arg('uid') uid: string
   ): Promise<PaginatedUserComments | null> {
-    const user = await User.findOne({ where: { uid } });
+    const user = await User.findOne({ where: { id: uid } });
     if (!user) throw new Error('User not found');
     const comments = await conn
       .getRepository(Comment)
@@ -273,21 +273,21 @@ export class UserResolver {
       .innerJoinAndSelect(
         'c.commentedUser',
         'user',
-        'user.uid = c.commentedUserUid'
+        'user.id = c.commentedUserId'
       )
-      .where('c.commentedUserUid = :uid', { uid })
+      .where('c.commentedUserId = :uid', { uid })
       .getMany();
     return { user, comments };
   }
 
   @Query(() => FullUserMovieStats, { nullable: true })
   async getUserMovieStatus(@Arg('uid') uid: string, @Arg('mid') mid: string) {
-    const user = await User.findOne({ where: { uid } });
+    const user = await User.findOne({ where: { id: uid } });
     if (!user) throw new Error('User not found');
-    const movie = await Movie.findOne({ where: { mid } });
+    const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error('Movie not found');
     const movieStats = await MovieStats.findOne({
-      where: { userUid: uid, movieMid: mid },
+      where: { userId: uid, movieId: mid },
     });
     if (!movieStats) throw new Error('Stats not found');
     return { user, movie, movieStats };
@@ -303,7 +303,7 @@ export class UserResolver {
         .into(User)
         .values([
           {
-            uid: options.uid,
+            id: options.id,
             name: options.name,
             email: options.email,
             photoUrl: options.photoUrl,
@@ -324,7 +324,7 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Arg('nickname', () => String, { nullable: true }) nickname: string
   ): Promise<NickNameResponse> {
-    const user = await User.findOne({ where: { uid } });
+    const user = await User.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
@@ -360,7 +360,7 @@ export class UserResolver {
     }
 
     if (typeof nickname !== undefined) {
-      await User.update({ uid }, { nickname });
+      await User.update({ id: uid }, { nickname });
     }
     return {
       user,
@@ -372,18 +372,17 @@ export class UserResolver {
     @Arg('mid') mid: string,
     @Arg('uid') uid: string
   ): Promise<boolean> {
-    const user = await User.findOne({ where: { uid } });
+    const user = await User.findOne({ where: { id: uid } });
     if (!user) throw new Error('User not found');
     else {
-      let user = await User.findOne({ where: { uid } });
+      let user = await User.findOne({ where: { id: uid } });
       let watchedMovies = user?.watchedMovies;
       let newList = _.union(watchedMovies, [mid]);
-      console.log('newList', newList, mid);
       let res = await conn
         .createQueryBuilder()
         .update(User)
         .set({ watchedMovies: newList })
-        .where('uid=:uid', { uid })
+        .where('id=:uid', { uid })
         .execute();
       if (res && res.affected && res.affected > 0) return true;
     }

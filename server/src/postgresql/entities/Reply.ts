@@ -22,7 +22,7 @@ import { User } from './User';
 export class Reply extends BaseEntity {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_reply_id' })
   @Field(() => String)
-  rid!: string;
+  id!: string;
 
   @Field(() => String)
   @Column()
@@ -30,19 +30,19 @@ export class Reply extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  movieMid!: string;
+  movieId!: string;
 
   @Field(() => String)
   @Column()
-  parentCommentCid!: string;
+  parentCommentId!: string;
 
   @Field(() => String, { nullable: true })
   @Column()
-  parentReplyRid!: string;
+  parentReplyId!: string;
 
   @Field(() => String)
   @Column()
-  commentedUserUid!: string;
+  commentedUserId!: string;
 
   @OneToMany(() => ReplyStats, (stats) => stats.reply)
   replyStats: ReplyStats[];
