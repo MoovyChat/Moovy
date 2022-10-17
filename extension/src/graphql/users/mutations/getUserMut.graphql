@@ -1,6 +1,6 @@
 mutation getUserMut($uid: String!) {
   getUserMut(uid: $uid) {
-    uid
+    id
     name
     nickname
     photoUrl

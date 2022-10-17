@@ -16,7 +16,6 @@ import {
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { GiCheckMark } from 'react-icons/gi';
 import Slider from '../../components/slider/slider';
-import { colorLog } from '../../Utils/utilities';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';

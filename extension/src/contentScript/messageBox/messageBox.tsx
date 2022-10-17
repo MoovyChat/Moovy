@@ -6,12 +6,7 @@ import {
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
-import {
-  CommentInfo,
-  ReplyInfo,
-  User,
-  globalUIStyles,
-} from '../../Utils/interfaces';
+import { CommentInfo, User, globalUIStyles } from '../../Utils/interfaces';
 import React, {
   Dispatch,
   MouseEvent,
@@ -36,6 +31,7 @@ import {
 } from '../../generated/graphql';
 
 import { AnyAction } from 'redux';
+import { COMMENT } from '../../redux/actionTypes';
 import ChatArea from '../../components/chatArea/chatArea';
 import { IoArrowForwardCircle } from 'react-icons/io5';
 import { MdTagFaces } from 'react-icons/md';
@@ -44,8 +40,8 @@ import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
-import { sliceAddComment } from '../../redux/slices/comment/commentSlice';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -63,15 +59,12 @@ const MessageBox: React.FC<props> = ({
   const [_gu, getUser] = useGetUserMutMutation();
   const [_ir, insertReply] = useInsertReplyMutation();
   // Redux: App selectors.
-  const movieId = useAppSelector((state) => state.movie.mid);
+  const movieId = useAppSelector((state) => state.movie.id);
   const user = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    colorLog('messageBox');
-  }, []);
   // React: useState hooks.
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [isReply, setIsReply] = useState<boolean>(false);
@@ -92,15 +85,15 @@ const MessageBox: React.FC<props> = ({
   ) => {
     if (replyWindowResponse) {
       let newReply: any = {
-        repliedUserUid: user?.uid!,
+        repliedUserId: user?.id!,
         likesCount: 0,
         repliesCount: 0,
-        commentId: replyWindowResponse.cid
-          ? replyWindowResponse.cid
+        commentId: replyWindowResponse.id
+          ? replyWindowResponse.id
           : replyWindowResponse.parentCommentCid,
-        parentReplyRid: replyWindowResponse.rid
+        parentReplyId: replyWindowResponse.rid
           ? replyWindowResponse?.rid!
-          : replyWindowResponse?.cid!,
+          : replyWindowResponse?.id!,
         message: text,
         movieId: movieId,
         platformId: 1,
@@ -115,7 +108,7 @@ const MessageBox: React.FC<props> = ({
             const insertedReply = data?.insertReply;
             // Adds the new comment to redux store.
             batch(() => {
-              dispatch(sliceAddReply(insertedReply));
+              dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
               // dispatch(sliceSetPastLoadedCount(1));
             });
             setIsReply(false);
@@ -126,7 +119,7 @@ const MessageBox: React.FC<props> = ({
       }
     } else {
       let newComment: CommentInfo | any = {
-        commentedUserId: user?.uid,
+        commentedUserId: user?.id,
         likesCount: 0,
         message: text,
         movieId: movieId,
@@ -141,7 +134,15 @@ const MessageBox: React.FC<props> = ({
           const insertedComment = data?.insertComment;
           // Adds the new comment to redux store.
           batch(() => {
-            dispatch(sliceAddComment(insertedComment));
+            // dispatch(
+            //   sliceAddComment({ ...insertedComment, isReplyWindowOpen: false })
+            // );
+            dispatch(
+              sliceComment({
+                payload: { ...insertedComment, isReplyWindowOpen: false },
+                type: COMMENT.ADD_COMMENT,
+              })
+            );
             dispatch(sliceSetPastLoadedCount(1));
           });
           setIsReply(false);
@@ -158,9 +159,9 @@ const MessageBox: React.FC<props> = ({
   useEffect(() => {
     if (replyWindowResponse) {
       setIsReply(true);
-      const parentComment = replyWindowResponse as any;
+      const parentComment = replyWindowResponse as CommentInfo;
       // GraphQL: Handle reply user data.
-      const referredUser = parentComment.commentedUserUid;
+      const referredUser = parentComment.commentedUserId!;
       getUser({ uid: referredUser }).then((res) => {
         const { data, error } = res;
         if (error) colorLog(error);

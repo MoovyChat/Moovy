@@ -10,14 +10,14 @@ import {
   useCommentLikesSubscription,
   useGetCommentLikesQuery,
   useGetCommentedUserQuery,
-  useGetIsUserLikedCommentQuery,
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
+import { COMMENT } from '../../redux/actionTypes';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
-import { sliceAddToLikes } from '../../redux/slices/comment/commentSlice';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -36,12 +36,13 @@ const CommentCard: React.FC<props> = ({
   type,
   className,
 }) => {
-  const { cid, message, createdAt } = comment;
+  const { id, message, createdAt } = comment;
   const [commentedUser, _q] = useGetCommentedUserQuery({
-    variables: { cid: cid! },
+    variables: { cid: id! },
   });
-  const uid = useAppSelector((state) => state.user.uid);
-  const mid = useAppSelector((state) => state.movie.mid);
+  const user = useAppSelector((state) => state.user);
+  const uid = useAppSelector((state) => state.user.id);
+  const mid = useAppSelector((state) => state.movie.id);
   const [time, setTime] = useState<string>('');
   const [likedUsers, setLikedUser] = useState<User[]>([]);
   const [like, setLike] = useState<boolean>(false);
@@ -50,22 +51,16 @@ const CommentCard: React.FC<props> = ({
   const [likesCount, setLikesCount] = useState<number>(0);
   const dispatch = useAppDispatch();
   const [_likeRes, setCommentLike] = useSetCommentLikeMutation();
-  const [userLikeInfo, _isUserLiked] = useGetIsUserLikedCommentQuery({
-    variables: {
-      cid: cid!,
-      uid,
-    },
-  });
 
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
-      cid: cid!,
+      cid: id!,
     },
   });
 
   const [commentLikesSub] = useCommentLikesSubscription({
     variables: {
-      cid: cid!,
+      cid: id!,
     },
   });
 
@@ -75,20 +70,19 @@ const CommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
-      dispatch(sliceAddToLikes({ _users, cid }));
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
+      const findCurrentUser = _users?.find((u) => u.id === uid);
+      if (findCurrentUser) setLike(true);
+      else setLike(false);
       setLikedUser(_users!);
       setLikesCount(_count);
     }
   }, [commentLikeCountQuery.fetching]);
-
-  useEffect(() => {
-    const { fetching, error, data } = userLikeInfo;
-    if (error) colorLog(error);
-    if (!fetching && data) {
-      const isLike = data.getIsUserLikedComment!;
-      setLike(isLike);
-    }
-  }, [userLikeInfo.fetching]);
 
   //Set Comment likes count
   useEffect(() => {
@@ -97,10 +91,14 @@ const CommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const commentLikesCount = data.commentLikesUpdate?.likesCount;
       setLikesCount(commentLikesCount!);
-      const commentLikes = data.commentLikesUpdate?.likes;
-      colorLog('sub', commentLikes);
-      dispatch(sliceAddToLikes({ commentLikes, cid }));
-      setLikedUser(commentLikes);
+      const _users = data.commentLikesUpdate?.likes;
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
+      setLikedUser(_users);
     }
   }, [commentLikesSub.fetching]);
 
@@ -188,16 +186,32 @@ const CommentCard: React.FC<props> = ({
   const subjectLike = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     if (type === 'comment') {
+      // Instant update to user.
       setLike(!like);
+      setLikedUser(
+        like ? likedUsers.filter((u) => u.id !== uid) : [...likedUsers, user]
+      );
+      setLikesCount(like ? likesCount - 1 : likesCount + 1);
+      // Deal with backend
       setCommentLike({
-        cid: cid!,
+        cid: id!,
         uid,
         mid,
         like: !like,
       }).then((res) => {
         const { error, data } = res;
         if (error) colorLog(error);
-        setLike(data?.getCommentStats?.like!);
+        setLike(data?.setCommentLike?.likeStatus?.like!);
+        setLikedUser(
+          !like
+            ? likedUsers.filter((u) => u.id !== uid)
+            : [...likedUsers, data?.setCommentLike?.user!]
+        );
+        setLikesCount(
+          data?.setCommentLike?.likeStatus.like!
+            ? likesCount + 1
+            : likesCount - 1
+        );
       });
     }
   };

@@ -6,15 +6,15 @@ mutation getCommentsOfTheMovie(
 ) {
   getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
     movie {
-      mid
+      id
       name
     }
     lastPage
     totalCommentCount
     pastLoadedCount
     comments {
-      cid
-      commentedUserUid
+      id
+      commentedUserId
       createdAt
       message
     }

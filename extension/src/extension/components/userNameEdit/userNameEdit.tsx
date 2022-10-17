@@ -6,6 +6,7 @@ import { User } from '../../../Utils/interfaces';
 import { UserNameEditParent } from './userNameEdit.styles';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
 import { urqlClient } from '../../../Utils/urqlClient';
+import { useAppDispatch } from '../../../redux/hooks';
 import { useUpdateUserNickNameMutation } from '../../../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
@@ -50,7 +51,7 @@ const UserNameEdit: React.FC<props> = ({
   const changeName = async () => {
     // Update nickname/username fields in the user.
     await updateUserName({
-      uid: user.uid,
+      uid: user.id,
       nickname: name,
     }).then(async ({ data }) => {
       const errors = await data?.updateUserNickName.errors;
@@ -59,6 +60,17 @@ const UserNameEdit: React.FC<props> = ({
       else {
         setStoredUserLoginDetails({ ...user, nickname: name });
         setShowNickNameEdit(false);
+        chrome.windows.getCurrent((w) => {
+          chrome.tabs.query({ active: true, windowId: w.id! }, (tabs) => {
+            chrome.tabs.sendMessage(
+              tabs[0].id!,
+              { type: 'EDIT_NICK_NAME', name: name },
+              (response) => {
+                console.log(response, response?.farewell);
+              }
+            );
+          });
+        });
       }
     });
   };

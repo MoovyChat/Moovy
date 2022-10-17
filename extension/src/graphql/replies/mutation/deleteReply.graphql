@@ -1,9 +1,9 @@
 mutation deleteReply($rid: String!) {
   deleteReply(rid: $rid) {
-    rid
+    id
     message
-    commentedUserUid
-    movieMid
+    commentedUserId
+    movieId
     createdAt
     deletedAt
   }

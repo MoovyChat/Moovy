@@ -1,6 +1,6 @@
 query GetAllUsers {
   users {
-    uid
+    id
     email
     nickname
     name

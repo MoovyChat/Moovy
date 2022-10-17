@@ -55,7 +55,7 @@ const ChatArea: React.FC<props> = ({
   const isTextAreaClicked = useAppSelector(
     (state) => state.textArea.isTextAreaClicked
   );
-  const movieId = useAppSelector((state) => state.movie.mid);
+  const movieId = useAppSelector((state) => state.movie.id);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

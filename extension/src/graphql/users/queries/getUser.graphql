@@ -1,6 +1,6 @@
 query GetUser($uid: String!) {
   getUser(uid: $uid) {
-    uid
+    id
     name
     photoUrl
     email

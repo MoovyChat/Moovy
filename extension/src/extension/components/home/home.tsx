@@ -15,7 +15,7 @@ type props = {
 const Home: React.FC<props> = ({ user, setUser, setSideOpen, userLoaded }) => {
   const [isUserSet, setIsUserSet] = useState<boolean>(false);
   useEffect(() => {
-    if (user && user.uid) {
+    if (user && user.id) {
       setIsUserSet(true);
     } else {
       setIsUserSet(false);

@@ -8,7 +8,6 @@ import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
 import { useCallback, useMemo, useState } from 'react';
 
 import EmojiGroup from './emojiGroup/emojiGroup';
-import { colorLog } from '../../Utils/utilities';
 import groupSet from 'emojibase-data/meta/groups.json';
 import useFetchEmojis from '../../contentScript/hooks/useFetchEmojis';
 

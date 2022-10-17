@@ -30,7 +30,6 @@ import ChatTitle from '../chatTitle/chatTitle';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
-import { colorLog } from '../../Utils/utilities';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { urqlClient } from '../../Utils/urqlClient';
 import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
@@ -75,6 +74,7 @@ const ChatInterface: React.FC<props> = ({
 
   // Set the response to the global text area.
   const responseFromReplyWindow = (comment: CommentInfo) => {
+    console.log(comment);
     setReplyClickResponse(comment);
   };
 

@@ -7,8 +7,8 @@ mutation updateUserMovieStatus(
     id
     like
     favorite
-    userUid
-    movieMid
+    userId
+    movieId
     favorite
     updatedAt
     createdAt

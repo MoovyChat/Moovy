@@ -1,13 +1,12 @@
+import { CommentInfo, User, _users, textMap } from '../../Utils/interfaces';
 import React, { MouseEvent, useEffect, useState } from 'react';
-import { ReplyInfo, User, textMap } from '../../Utils/interfaces';
+import { getFormattedWordsArray, getTimeFrame } from '../../Utils/utilities';
 import {
-  colorLog,
-  getFormattedWordsArray,
-  getTimeFrame,
-} from '../../Utils/utilities';
+  sliceAddToReplyLikes,
+  sliceSetReplyLikeCount,
+} from '../../redux/slices/reply/replySlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  useGetIsUserLikedReplyQuery,
   useGetRepliedUserQuery,
   useGetReplyLikesQuery,
   useSetReplyLikeMutation,
@@ -15,24 +14,17 @@ import {
 
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
+import { batch } from 'react-redux';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
 interface props {
-  reply: ReplyInfo;
-  responseFromReplyWindow: (comment: any) => void;
+  reply: CommentInfo;
+  responseFromReplyWindow: (comment: CommentInfo) => void;
   type: string;
   className: any;
-}
-
-interface _users {
-  __typename?: 'User' | undefined;
-  uid: string;
-  name: string;
-  nickname: string;
-  photoUrl: string;
 }
 
 const ReplyCard: React.FC<props> = ({
@@ -41,75 +33,42 @@ const ReplyCard: React.FC<props> = ({
   type,
   className,
 }) => {
-  const { rid, message, createdAt } = reply;
+  const { id, message, createdAt } = reply;
   const [commentedUser, _q] = useGetRepliedUserQuery({
-    variables: { rid: rid! },
+    variables: { rid: id! },
   });
   const loggedInUser = useAppSelector((state) => state.user);
-  const uid = useAppSelector((state) => state.user.uid);
-  const mid = useAppSelector((state) => state.movie.mid);
+  const uid = useAppSelector((state) => state.user.id);
+  const mid = useAppSelector((state) => state.movie.id);
   const [time, setTime] = useState<string>('');
-  const [likedUsers, setLikedUser] = useState<_users[]>([]);
+  const [likedUsers, setLikedUser] = useState<User[]>([]);
   const [like, setLike] = useState<boolean>(false);
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
   const [likesCount, setLikesCount] = useState<number>(0);
   const dispatch = useAppDispatch();
   const [_likeRes, setReplyLike] = useSetReplyLikeMutation();
-  const [userLikeInfo, _isUserLiked] = useGetIsUserLikedReplyQuery({
-    variables: {
-      rid: rid!,
-      uid,
-    },
-  });
 
   const [replyLikeCountQuery, _executeQuery] = useGetReplyLikesQuery({
     variables: {
-      rid: rid!,
+      rid: id!,
     },
   });
 
-  // TODO: Use subscription if necessary in future
-  //   const [commentLikesSub] = useCommentLikesSubscription({
-  //     variables: {
-  //       cid: cid!,
-  //     },
-  //   });
-
   useEffect(() => {
     const { data, fetching, error } = replyLikeCountQuery;
-    if (error) colorLog(error);
+    if (error) console.log(error);
     if (!fetching && data) {
       const _count = data.getReplyLikes?.likesCount!;
       const _users = data.getReplyLikes?.likes;
       //TODO:   dispatch(sliceAddToLikes({ _users, rid }));
+      const isFoundUser = _users && _users.find((u) => u.id === uid);
+      if (isFoundUser) setLike(true);
+      else setLike(false);
       setLikedUser(_users ? _users : []);
-      setLikesCount(_count);
+      setLikesCount(_users ? _count : 0);
     }
   }, [replyLikeCountQuery.fetching]);
-
-  useEffect(() => {
-    const { fetching, error, data } = userLikeInfo;
-    if (error) colorLog(error);
-    if (!fetching && data) {
-      const isLike = data.getIsUserLikedReply!;
-      setLike(isLike);
-    }
-  }, [userLikeInfo.fetching]);
-
-  //TODO: Set reply likes count subscription if needed in future.
-  //   useEffect(() => {
-  //     const { data, fetching, error } = commentLikesSub;
-  //     if (error) colorLog(error);
-  //     if (!fetching && data) {
-  //       const commentLikesCount = data.commentLikesUpdate?.likesCount;
-  //       setLikesCount(commentLikesCount!);
-  //       const commentLikes = data.commentLikesUpdate?.likes;
-  //       colorLog('sub', commentLikes);
-  //       dispatch(sliceAddToLikes({ commentLikes, cid }));
-  //       setLikedUser(commentLikes);
-  //     }
-  //   }, [commentLikesSub]);
 
   useEffect(() => {
     let interval: any;
@@ -127,14 +86,15 @@ const ReplyCard: React.FC<props> = ({
   // Set commented user info.
   useEffect(() => {
     let { data, fetching, error } = commentedUser;
-    if (error) colorLog(error);
+    if (error) console.log(error);
+    console.log(commentedUser);
     if (!fetching && data) {
       const commentData = data.getRepliedUser;
-      if (!commentData) colorLog('Comment data is not available');
+      if (!commentData) console.log('Comment data is not available');
       setCommentedUser(commentData as User);
     }
     return () => {};
-  }, [commentedUser]);
+  }, [commentedUser.fetching]);
 
   // (Spoiler) Converting message to messageArray
   useEffect(() => {
@@ -158,7 +118,7 @@ const ReplyCard: React.FC<props> = ({
             text,
             msgPlace.COMMENT_CARD,
             dispatch,
-            reply.repliedUserUid!,
+            reply.repliedUserId!,
             reply.createdAt!
           );
           msgArray = _.concat(msgArray, res);
@@ -182,7 +142,7 @@ const ReplyCard: React.FC<props> = ({
           finalPhrase,
           msgPlace.COMMENT_CARD,
           dispatch,
-          reply.repliedUserUid!,
+          reply.repliedUserId!,
           reply.createdAt!
         );
         msgArray = _.concat(msgArray, res);
@@ -195,35 +155,32 @@ const ReplyCard: React.FC<props> = ({
   // Update likes
   const subjectLike = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    if (type === 'reply') {
-      setReplyLike({
-        rid: rid!,
-        uid,
-        like: !like,
-      }).then((res) => {
-        const { error, data } = res;
-        if (error) colorLog(error);
-        const isLike = data?.getReplyStats?.like!;
-        setLike(isLike);
-        let curUser: _users = {
-          uid: loggedInUser.uid,
-          name: loggedInUser.name,
-          nickname: loggedInUser.nickname,
-          photoUrl: loggedInUser.photoUrl!,
-        };
-        if (isLike) {
-          setLikesCount(likesCount + 1);
-          setLikedUser([...likedUsers, curUser]);
-        } else {
-          setLikesCount(likesCount - 1);
-          let updatedUsers = _.remove(
-            likedUsers,
-            (user) => user.uid === curUser.uid
-          );
-          setLikedUser(updatedUsers);
-        }
-      });
-    }
+    // Instant update to user.
+    setLike(!like);
+    setLikedUser(
+      like
+        ? likedUsers.filter((u) => u.id !== uid)
+        : [...likedUsers, loggedInUser]
+    );
+    setLikesCount(like ? likesCount - 1 : likesCount + 1);
+    setReplyLike({
+      rid: id!,
+      uid,
+      mid: mid,
+      like: !like,
+    }).then((res) => {
+      const { error, data } = res;
+      if (error) console.log(error);
+      setLike(data?.setReplyLike?.likeStatus?.like!);
+      setLikedUser(
+        !like
+          ? likedUsers.filter((u) => u.id !== uid)
+          : [...likedUsers, data?.setReplyLike?.user!]
+      );
+      setLikesCount(
+        data?.setReplyLike?.likeStatus.like! ? likesCount + 1 : likesCount - 1
+      );
+    });
   };
   return (
     <CommentInterface

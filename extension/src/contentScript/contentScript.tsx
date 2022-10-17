@@ -1,5 +1,6 @@
 import { Provider, createClient } from 'urql';
 import {
+  getElementByDataUIA,
   getIdFromNetflixURL,
   removeNodeFromDomById,
   setVideoFilters,
@@ -16,32 +17,48 @@ import { store } from '../redux/store';
 const client = createClient({ url: 'http://localhost:4000/graphql' });
 export const initiateContentScript = async () => {
   colorLog('Initiating content script');
+  const CHAT_ICON = 'chatIcon';
   var reactApp = document.createElement('div');
-  reactApp.id = 'chatIcon';
-
-  document.body.appendChild(reactApp);
-  document.body.style.setProperty('margin', '0');
-  const boot = createRoot(reactApp);
+  reactApp.id = CHAT_ICON;
   let movieId = getIdFromNetflixURL(window.location.href!);
-  const userDetails = await getStoredUserLoginDetails();
-  if (!userDetails) {
-    colorLog('user not found! terminating the app');
-    return;
-  }
-  if (movieId === '') {
-    colorLog('ERR: FAILED TO GET THE VIDEO ID');
-    boot.render(<React.Fragment></React.Fragment>);
-  } else {
-    colorLog('Content script Initiated, chat Icon added');
-    boot.render(
-      <Provider value={client}>
-        <ReduxProvider store={store}>
-          <Start video_id={movieId} userDetails={userDetails} />
-          );
-        </ReduxProvider>
-      </Provider>
-    );
-  }
+  // Attach the chat icon when the video is loaded.
+  let interval = setInterval(async () => {
+    let elem = getElementByDataUIA('watch-video');
+    if (elem) {
+      const elemChildNodes = elem.childNodes;
+      elemChildNodes.forEach((node) => {
+        const nodeElem = node as HTMLDivElement;
+        if (nodeElem.id === CHAT_ICON) {
+          elem.removeChild(nodeElem);
+        }
+      });
+      elem.appendChild(reactApp);
+      document.body.style.setProperty('margin', '0');
+
+      const boot = createRoot(reactApp);
+
+      const userDetails = await getStoredUserLoginDetails();
+      if (!userDetails) {
+        colorLog('user not found! terminating the app');
+        return;
+      }
+      if (movieId === '') {
+        colorLog('ERR: FAILED TO GET THE VIDEO ID');
+        boot.render(<React.Fragment></React.Fragment>);
+      } else {
+        colorLog('Content script Initiated, chat Icon added');
+        boot.render(
+          <Provider value={client}>
+            <ReduxProvider store={store}>
+              <Start video_id={movieId} userDetails={userDetails} />
+              );
+            </ReduxProvider>
+          </Provider>
+        );
+      }
+      clearInterval(interval);
+    }
+  }, 500);
 };
 
 export const removeAllNodes = () => {

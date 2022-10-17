@@ -1,5 +1,5 @@
 import { CommentList, CommentsParent } from './comments.styles';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
@@ -26,17 +26,24 @@ const Comments: React.FC<props> = ({
   const listRef = useRef<any>(null);
   return (
     <React.Fragment>
-      <ViewportList ref={listRef} viewportRef={chatBoxRef} items={commentsList}>
-        {(comment) => (
-          <CommentCard
-            className='comment-card'
-            key={comment.cid}
-            comment={comment}
-            responseFromReplyWindow={responseFromReplyWindow}
-            type={type}
-          />
-        )}
-      </ViewportList>
+      {commentsList.length !== 0 && (
+        <ViewportList
+          ref={listRef}
+          viewportRef={chatBoxRef}
+          items={commentsList}>
+          {(comment, index) =>
+            comment && (
+              <CommentCard
+                className='comment-card'
+                key={comment.id}
+                comment={comment}
+                responseFromReplyWindow={responseFromReplyWindow}
+                type={type}
+              />
+            )
+          }
+        </ViewportList>
+      )}
       {currentPage !== lastPage && (
         <ShowMoreComments
           onClick={() => {

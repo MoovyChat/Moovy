@@ -4,7 +4,7 @@ import { colorLog } from '../../../Utils/utilities';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const movieState: Movie = {
-  mid: '',
+  id: '',
   name: '',
   likes: [],
   platformId: 1,
@@ -27,7 +27,7 @@ const MovieSlice = createSlice({
   reducers: {
     sliceAddMovie: (state, action) => {
       const { payload } = action;
-      state.mid = payload.mid;
+      state.id = payload.id;
       state.likes = payload.likes;
       state.name = payload.name;
       state.totalCommentsCountOfMovie = payload.totalCommentsCountOfMovie;
@@ -36,12 +36,15 @@ const MovieSlice = createSlice({
       state.totalRepliesCountOfMovie = payload.totalRepliesCountOfMovie;
     },
     sliceAddMovieId: (state, action) => {
-      state.mid = action.payload;
+      state.id = action.payload;
     },
     sliceAddMovieName: (state, action) => {
       const { video_id, title } = action.payload;
-      if (state.mid === video_id) state.name = title;
-      else colorLog('Wrong movie id');
+      if (state.id === video_id) state.name = title;
+      else
+        colorLog(
+          `sliceAddMovieName: Wrong movie id -> stateId: ${state.id} | videoId: ${video_id}`
+        );
     },
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
       return { ...state, totalCommentsCountOfMovie: action.payload };

@@ -44,7 +44,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
   // Set the like and favorite on Initial load.
   useEffect(() => {
     updateUserLikeFavorite({
-      uid: user.uid,
+      uid: user.id,
       mid: id,
       options: {},
     }).then((response) => {
@@ -58,7 +58,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
   const LikeAndFav = (type: string, value: boolean) => {
     const options = type === 'like' ? { like: value } : { favorite: value };
     updateUserLikeFavorite({
-      uid: user.uid,
+      uid: user.id,
       mid: id,
       options,
     }).then((res) => {

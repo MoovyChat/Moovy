@@ -1,10 +1,6 @@
 import { ChatBoxContainer, LoadMoreComments } from './chatBox.styles';
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
-  sliceAddAllComments,
-  sliceAddCommentsAtFirst,
-} from '../../redux/slices/comment/commentSlice';
-import {
   sliceSetCommentsLoadedCount,
   sliceSetFetchingComments,
   sliceSetLastPage,
@@ -19,11 +15,13 @@ import {
   useGetCommentsOfTheMovieMutation,
 } from '../../generated/graphql';
 
+import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
 import SmileyWindow from '../../components/smileyWindow/smileyWindow';
 import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
@@ -32,7 +30,7 @@ type props = {
   type: string;
 };
 const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
-  const mid = useAppSelector((state) => state.movie.mid);
+  const mid = useAppSelector((state) => state.movie.id);
   const initialLoadedTime = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
   );
@@ -72,22 +70,21 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       if (error) colorLog(error);
       if (data) {
         const newComments = data.fetchNewComments;
+        console.log(newComments);
         if (newComments.length === 0) {
           colorLog('Unable to load new Comments');
           return;
         }
-        // const lastCommentTimeStamp =
-        //   newComments[newComments.length - 1].createdAt;
         _dispatch(
           sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString())
         );
-        // if (lastCommentTimeStamp)
-        //   _dispatch(sliceSetNewlyLoadedTimeStamp(lastCommentTimeStamp!));
-        // else {
-
-        // }
         if (newComments && newComments.length !== 0) {
-          _dispatch(sliceAddCommentsAtFirst(newComments));
+          _dispatch(
+            sliceComment({
+              payload: newComments,
+              type: COMMENT.ADD_COMMENTS_FIRST,
+            })
+          );
           _dispatch(sliceSetPastLoadedCount(newComments.length));
         } else {
           colorLog('Failed to load new comments');
@@ -123,7 +120,12 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         // Redux: Add total comment count of the movie.
         _dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
         // Redux: Add the initial 25 comments of the movie.
-        _dispatch(sliceAddAllComments(commentsFromData));
+        _dispatch(
+          sliceComment({
+            payload: commentsFromData,
+            type: COMMENT.ADD_ALL_COMMENTS,
+          })
+        );
         // Redux: Add total loaded comments.
         _dispatch(
           sliceSetCommentsLoadedCount(

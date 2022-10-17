@@ -16,4 +16,4 @@ export const textMapTypes = {
 };
 export default constants;
 
-export const isServer = () => typeof window === 'undefined';
+export const isServerSide = () => typeof window === 'undefined';

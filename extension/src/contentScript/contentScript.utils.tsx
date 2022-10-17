@@ -4,13 +4,19 @@ import { filterType } from '../Utils/interfaces';
 
 type NotPresentStrategy = 'error' | 'ignore';
 
-function getElementByDataUIA(tag: string): HTMLElement;
-function getElementByDataUIA(tag: string, IfNotPresent: 'error'): HTMLElement;
-function getElementByDataUIA(
+export function getElementByDataUIA(tag: string): HTMLElement;
+export function getElementByDataUIA(
+  tag: string,
+  IfNotPresent: 'error'
+): HTMLElement;
+export function getElementByDataUIA(
   tag: string,
   IfNotPresent: 'ignore'
 ): HTMLElement | null;
-function getElementByDataUIA(tag: string, IfNotPresent?: NotPresentStrategy) {
+export function getElementByDataUIA(
+  tag: string,
+  IfNotPresent?: NotPresentStrategy
+) {
   const element = document.querySelector(`[data-uia=${tag}]`);
   if (IfNotPresent === 'error' && !element) {
     return;

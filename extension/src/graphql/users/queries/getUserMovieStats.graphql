@@ -1,14 +1,14 @@
 query getUserMovieStatus($mid: String!, $uid: String!) {
   getUserMovieStatus(mid: $mid, uid: $uid) {
     user {
-      uid
+      id
       name
       email
       photoUrl
       watchedMovies
     }
     movie {
-      mid
+      id
       name
       platformId
     }
@@ -16,8 +16,8 @@ query getUserMovieStatus($mid: String!, $uid: String!) {
       id
       like
       favorite
-      movieMid
-      userUid
+      movieId
+      userId
     }
   }
 }

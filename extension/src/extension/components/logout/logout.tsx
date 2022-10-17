@@ -43,7 +43,7 @@ const signOut = async (setUser: (user: User) => void) => {
     email: '',
     photoUrl: '',
     nickname: '',
-    uid: '',
+    id: '',
     comments: [],
     replies: [],
     watchedMovies: [],
@@ -85,7 +85,7 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
   useEffect(() => {
-    if (user && user.nickname === user.uid) {
+    if (user && user.nickname === user.id) {
       setShowNickNameEdit(true);
     }
   }, [user]);

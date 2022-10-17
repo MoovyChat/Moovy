@@ -10,7 +10,6 @@ import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
-import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
 import { getStoredCheckedStatus } from '../../Utils/storage';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';

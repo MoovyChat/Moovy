@@ -49,7 +49,7 @@ const loadOnReload = () => {
 
     // Check if the user is logged in. Run the script only if the user is logged in.
     getStoredUserLoginDetails().then((res) => {
-      if (res.uid) {
+      if (res.id) {
         if (
           document.readyState.toString() === 'ready' ||
           document.readyState.toString() === 'complete'
@@ -97,8 +97,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       videoElem.requestPictureInPicture();
     });
   } else if (!sender.tab && request.user) {
-    const { uid } = request.user as User;
-    if (uid) getUserRemoveNodeInitiateContentScript();
+    const { id } = request.user as User;
+    if (id) getUserRemoveNodeInitiateContentScript();
     sendResponse({
       data: 'Request fulfilled',
     });
@@ -134,7 +134,7 @@ const getUserRemoveNodeInitiateContentScript = () => {
     // If user exists no need to re-render the page
     let url = window.location.href;
     const netflixId = getIdFromNetflixURL(url);
-    if (res.uid) {
+    if (res.id) {
       // Removing the previously rendered chatIcon node on every URL Change.
       removeAllNodes();
 

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 export interface User {
-  uid: string;
+  id: string;
   name: string;
   email?: string;
   nickname: string;
@@ -28,7 +28,7 @@ interface timeMsgObj {
   [key: string]: timeMessage[];
 }
 export interface Movie {
-  mid: string;
+  id: string;
   name: string;
   platformId?: number;
   likes: string[];
@@ -48,36 +48,37 @@ export interface Movie {
   loadNew?: number;
 }
 
+export interface CommonInfo {
+  id?: string;
+}
 export interface CommentInfo {
-  cid?: string;
-  commentedUserId?: string;
-  message?: string;
-  likesCount?: any;
-  likes?: [];
-  replies?: any[];
-  repliesCount?: number;
-  movieId?: string;
-  platformId?: number;
+  id: string;
+  commentedUserId: string;
+  message: string;
+  likesCount: any;
+  likes: any[];
+  repliesCount: number;
+  isReplyWindowOpen?: boolean;
+  movieId: string;
+  page?: number;
+  lastPage?: number;
+  repliedUserId?: string;
+  parentCommentId?: string;
+  parentReplyId?: string;
+  platformId: number;
   createdAt?: any;
   updatedAt?: any;
   __typename?: any;
 }
 
-export interface ReplyInfo {
-  rid?: string;
-  repliedUserUid: string;
-  parentCommentCid: string;
-  parentReplyRid?: string;
-  movieMid: string;
-  platformId: number;
-  message: string;
-  likesCount: number;
-  likes?: [];
-  replies?: any[];
-  createdAt?: any;
-  updatedAt?: any;
-  __typename?: any;
+export interface _users {
+  __typename?: 'User' | undefined;
+  id: string;
+  name: string;
+  nickname: string;
+  photoUrl: string;
 }
+
 export interface filterType {
   title: string;
   filter?: string;

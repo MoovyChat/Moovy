@@ -1,12 +1,12 @@
 mutation insertReply($options: ReplyInput!) {
   insertReply(options: $options) {
-    commentedUserUid
+    commentedUserId
     createdAt
     message
-    movieMid
-    parentCommentCid
-    parentReplyRid
+    movieId
+    parentCommentId
+    parentReplyId
     platformId
-    rid
+    id
   }
 }

@@ -1,5 +1,9 @@
 import { MdStar, MdStarOutline } from 'react-icons/md';
 import React, { useEffect, useMemo, useState } from 'react';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieFavCountQuery,
@@ -8,8 +12,9 @@ import {
 } from '../../generated/graphql';
 
 import { ChatTitleParent } from './chatTitle.styles';
-import { colorLog } from '../../Utils/utilities';
+import { batch } from 'react-redux';
 import { getVideoTitleFromNetflixWatch } from '../../contentScript/contentScript.utils';
+import { iconsEnum } from '../../Utils/enums';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -18,8 +23,8 @@ const ChatTitle = () => {
   const [fav, setFav] = useState<boolean>(false);
   const [favCount, SetFavCount] = useState<number>(0);
   const movieTitle = useAppSelector((state) => state.movie.name);
-  const movieId = useAppSelector((state) => state.movie.mid);
-  const userId = useAppSelector((state) => state.user.uid);
+  const movieId = useAppSelector((state) => state.movie.id);
+  const userId = useAppSelector((state) => state.user.id);
   const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const dispatch = useAppDispatch();
   const [tempTitle, setTempTitle] = useState<string>(movieTitle);
@@ -106,10 +111,30 @@ const ChatTitle = () => {
             },
           }).then((response) => {
             const { data, error } = response;
+            let toastBody = {
+              icon: '',
+              message: '',
+            };
             if (error) console.log(error);
             const { favorite } = data?.updateUserMovieStats!;
             setFav(favorite!);
-            SetFavCount(favCount + 1);
+            if (fav) {
+              toastBody = {
+                icon: iconsEnum.REMOVE_FAVORITES,
+                message: 'Removed from favorites',
+              };
+              SetFavCount(favCount - 1);
+            } else {
+              toastBody = {
+                icon: iconsEnum.ADD_FAVORITES,
+                message: 'Added to favorites',
+              };
+              SetFavCount(favCount + 1);
+            }
+            batch(() => {
+              dispatch(sliceSetToastVisible(true));
+              dispatch(sliceSetToastBody(toastBody));
+            });
           });
         }}>
         <div className='fav-count'>

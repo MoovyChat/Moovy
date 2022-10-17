@@ -22,8 +22,8 @@ import {
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MdOutlineWbSunny } from 'react-icons/md';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
+import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -48,28 +48,40 @@ const ChatStats: React.FC<props> = () => {
   const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const [likesQuery, _lq] = useGetMovieLikesQuery({
     variables: {
-      mid: movie.mid,
+      mid: movie.id,
     },
   });
   const [commentsUpdateStatus] = useMovieCommentsUpdateSubscription();
   // React: useState hooks.
+  const [nickname, setNickName] = useState<string>(user.nickname);
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [favCount, setFavCount] = useState<number>(0);
   const [repliesCount, setRepliesCount] = useState<number>(0);
-  const [uiStyles, setGlobalStyles] = useState<globalUIStyles>();
-  const [pageError, setPageError] = useState<string>('');
   const [themeToggled, setThemeToggled] = useState<number>(0);
   const theme = useAppSelector((state) => state.settings.theme);
+
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (!sender.tab && request.type === 'EDIT_NICK_NAME') {
+      const editedNickName = request.name;
+      dispatch(sliceAddUserNickName(editedNickName));
+      setNickName(editedNickName);
+      sendResponse({
+        data: 'Request fulfilled',
+      });
+    }
+    return true;
+  });
+
   // Set the like and favorite on Initial load.
   useEffect(() => {
     updateUserLikeFavorite({
-      uid: user.uid,
-      mid: movie.mid,
+      uid: user.id,
+      mid: movie.id,
       options: {},
     }).then((response) => {
       const { data, error } = response;
-      if (error) colorLog(error);
+      if (error) console.error(error);
       const { like } = data?.updateUserMovieStats!;
       if (like) setLike(like);
     });
@@ -98,24 +110,14 @@ const ChatStats: React.FC<props> = () => {
   useEffect(() => {
     const { data, error, fetching } = commentsUpdateStatus;
     if (error) {
-      setPageError(`${error.response}: ${error.message} `);
+      console.log(error);
     } else {
-      setPageError('');
       if (!fetching && data) {
+        console.log(data)
         dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
       }
     }
-  }, [commentsUpdateStatus]);
-
-  // Get the comments, likes, replies count.
-  // TODO: Get the stats from the database..
-  useEffect(() => {
-    if (movie) {
-      // setCommentCount(movieInfo.commentsCount);
-      // setRepliesCount(movieInfo.repliesCount!);
-    }
-    return () => {};
-  }, []);
+  }, [commentsUpdateStatus.fetching]);
 
   // Text area: Stops the propagation of the keys.
   useEffect(() => {
@@ -141,8 +143,8 @@ const ChatStats: React.FC<props> = () => {
   // GraphQL: Toggle like of the movie.
   const toggleLike = () => {
     updateUserLikeFavorite({
-      uid: user?.uid,
-      mid: movie.mid,
+      uid: user?.id,
+      mid: movie.id,
       options: {
         like: !like,
       },
@@ -194,7 +196,7 @@ const ChatStats: React.FC<props> = () => {
         </div>
       </div>
       <div className='user' onClick={changeNickName}>
-        <h4>{user.nickname}</h4>
+        <h4>{nickname ? nickname : user.nickname}</h4>
         <BiEdit size={icon_Size} />
       </div>
       <div

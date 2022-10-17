@@ -1,7 +1,7 @@
 query getReplyLikes($rid: String!) {
   getReplyLikes(rid: $rid) {
     likes {
-      uid
+      id
       name
       nickname
       photoUrl

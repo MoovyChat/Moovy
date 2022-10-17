@@ -1,6 +1,6 @@
 query getMovie($mid: String!) {
   getMovie(mid: $mid) {
-    mid
+    id
     name
     likes
     platformId

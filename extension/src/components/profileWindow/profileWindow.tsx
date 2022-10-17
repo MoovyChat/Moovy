@@ -30,8 +30,8 @@ import { withUrqlClient } from 'next-urql';
 
 export interface likedTitles {
   __typename?: 'LikedMovieObject' | undefined;
-  movieMid: string;
-  userUid: string;
+  movieId: string;
+  userId: string;
   like: boolean;
   movieName: string;
 }
@@ -40,13 +40,13 @@ interface favTitles {
   __typename?: 'FavMovieObject' | undefined;
   favorite: boolean;
   movieName: string;
-  movieMid: string;
-  userUid: string;
+  movieId: string;
+  userId: string;
 }
 
 const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
-  const loggedInUserId = useAppSelector((state) => state.user.uid);
+  const loggedInUserId = useAppSelector((state) => state.user.id);
   const [userData, setUser] = useState<User>();
   const [{ data, error, fetching }, _] = useGetUserStatsQuery({
     variables: {
@@ -217,14 +217,14 @@ const ProfileWindow = () => {
               {selectedRadio === 'liked' ? (
                 likedTitlesList.length > 0 ? (
                   likedTitlesList.map((title) => (
-                    <MovieMini title={title.movieName} id={title.movieMid} />
+                    <MovieMini title={title.movieName} id={title.movieId} />
                   ))
                 ) : (
                   <NoTitles>No Titles Found</NoTitles>
                 )
               ) : FavTitlesList.length > 0 ? (
                 FavTitlesList.map((title) => (
-                  <MovieMini title={title.movieName} id={title.movieMid} />
+                  <MovieMini title={title.movieName} id={title.movieId} />
                 ))
               ) : (
                 <NoTitles>No Titles Found</NoTitles>

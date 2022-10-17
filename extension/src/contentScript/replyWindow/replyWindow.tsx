@@ -1,18 +1,22 @@
-import { CommentInfo, ReplyInfo } from '../../Utils/interfaces';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ReplyParent,
   ReplyWindowParent,
   ShowReplyText,
 } from './replyWindow.styles';
+import {
+  sliceComment,
+  sliceSetCurrentPage,
+} from '../../redux/slices/comment/commentSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import { COMMENT } from '../../redux/actionTypes';
+import { CommentInfo } from '../../Utils/interfaces';
 import ReplyCard from '../replyCard/replyCard';
 import { ViewportList } from 'react-viewport-list';
-import { useAppSelector } from '../../redux/hooks';
 
 type props = {
   page: number;
-  setPage: any;
   lastPage: number;
   repliesCount: number;
   parentComment: CommentInfo;
@@ -20,22 +24,22 @@ type props = {
 };
 const ReplyWindow: React.FC<props> = ({
   page,
-  setPage,
   lastPage,
   responseFromReplyWindow,
   parentComment,
   repliesCount,
 }) => {
   const allReplies = useAppSelector((state) => state.replies.replies);
-  const [replies, setReplies] = useState<ReplyInfo[]>([]);
+  const dispatch = useAppDispatch();
+  const [replies, setReplies] = useState<CommentInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [replySection, setReplySection] = useState<boolean>(false);
   const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
+  const replyWindowScrollSessionKey = `replyWindowScrollPosition${parentComment.id}`;
   const handleOnBeforeGetContent = () => {
     return new Promise((resolve) => {
       const filtered = allReplies.filter(
-        (reply) => reply.parentCommentCid === parentComment.cid
+        (reply) => reply.parentCommentId === parentComment.id
       );
       setReplies(filtered);
       resolve(true);
@@ -55,29 +59,60 @@ const ReplyWindow: React.FC<props> = ({
 
   const loadMoreReplies: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    console.log('Loading more replies');
-    setPage(page + 1);
+    dispatch(sliceSetCurrentPage({ page: page + 1, id: parentComment.id }));
   };
-  const replyText = `${replySection ? 'Hide' : 'Show'} ${repliesCount} replies`;
+
+  // Handle scroll position.
+  useEffect(() => {
+    if (replies && replies.length > 0) {
+      const scrollPos = sessionStorage.getItem(replyWindowScrollSessionKey);
+      if (scrollPos) {
+        if (parentRef && parentRef.current) {
+          parentRef.current.scrollTo(0, parseInt(scrollPos, 10));
+        }
+        sessionStorage.removeItem(replyWindowScrollSessionKey);
+      }
+    }
+  }, [replies]);
+
+  const toggleReplyWindow: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    dispatch(
+      sliceComment({
+        payload: {
+          id: parentComment.id,
+          value: !parentComment.isReplyWindowOpen,
+        },
+        type: COMMENT.TOGGLE_REPLY_WINDOW,
+      })
+    );
+  };
+
+  const replyText = `${
+    parentComment.isReplyWindowOpen ? 'Hide' : 'Show'
+  } ${repliesCount} replies`;
 
   return (
     <ReplyWindowParent>
       {repliesCount !== 0 && (
-        <ShowReplyText
-          className='reply-status'
-          onClick={(e) => {
-            e.stopPropagation();
-            setReplySection(!replySection);
-          }}>
+        <ShowReplyText className='reply-status' onClick={toggleReplyWindow}>
           {replyText}
         </ShowReplyText>
       )}
       {!loading && (
-        <ReplyParent replySection={replySection} ref={parentRef}>
+        <ReplyParent
+          replySection={parentComment.isReplyWindowOpen!}
+          ref={parentRef}
+          onScroll={() =>
+            sessionStorage.setItem(
+              replyWindowScrollSessionKey,
+              `${parentRef!.current!.scrollTop!}`
+            )
+          }>
           <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
             {(reply) => (
               <ReplyCard
-                key={reply.rid}
+                key={reply.id}
                 type='reply'
                 responseFromReplyWindow={responseFromReplyWindow}
                 className='reply-card'
@@ -85,6 +120,11 @@ const ReplyWindow: React.FC<props> = ({
               />
             )}
           </ViewportList>
+          {page !== lastPage && (
+            <div className='show-more-replies' onClick={loadMoreReplies}>
+              show more replies ({page}/{lastPage})
+            </div>
+          )}
         </ReplyParent>
       )}
     </ReplyWindowParent>

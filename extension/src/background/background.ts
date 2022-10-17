@@ -80,7 +80,7 @@ chrome.runtime.onInstalled.addListener(() => {
     email: '',
     photoUrl: '',
     nickname: '',
-    uid: '',
+    id: '',
     comments: [],
     replies: [],
     joinedAt: '0',

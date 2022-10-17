@@ -1,27 +1,44 @@
+import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
 import {
-  dedupExchange,
-  defaultExchanges,
-  fetchExchange,
-  subscriptionExchange,
-} from 'urql';
+  GetCommentLikesDocument,
+  GetCommentLikesQuery,
+  SetCommentLikeMutation,
+} from '../generated/graphql';
+import { commentLikeChanges, replyLikeChanges } from './betterUpdateQuery';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 
-import { cacheExchange } from '@urql/exchange-graphcache';
 import { createClient as createWSClient } from 'graphql-ws';
+import { devtoolsExchange } from '@urql/devtools';
+import { isServerSide } from '../constants';
 import { retryExchange } from '@urql/exchange-retry';
 
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
 });
+const cache: Partial<CacheExchangeOpts> = {
+  keys: {
+    LikesObject: (data) => data.id as string,
+    CommentLikesObject: (data) => data.id as string,
+    RepliesObject: (data) => data.id as string,
+    replyLikesObject: (data) => data.id as string,
+  },
+  updates: {
+    Mutation: {
+      setCommentLike: commentLikeChanges,
+      setReplyLike: replyLikeChanges,
+    },
+    Subscription: {
+      commentLikesUpdate: commentLikeChanges,
+    },
+  },
+};
+
 export const urqlClient = (ssrExchange: any) => ({
   url: 'http://localhost:4000/graphql',
   exchanges: [
-    ...defaultExchanges,
+    devtoolsExchange,
     dedupExchange,
-    cacheExchange({
-      updates: {
-        Mutation: {},
-      },
-    }),
+    cacheExchange(cache),
     subscriptionExchange({
       forwardSubscription: (operation) => ({
         subscribe: (sink) => ({

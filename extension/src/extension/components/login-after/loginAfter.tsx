@@ -34,8 +34,6 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
   });
   useEffect(() => {
     if (!fetching && !error) {
-      console.log('data', data, fetching);
-      //   setUser(userFromAuth.user);
       if (!fetching) {
         const { uid, email, displayName, photoURL } = userFromAuth.user;
         let user: User = {
@@ -43,7 +41,7 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
           email: email!,
           photoUrl: photoURL!,
           nickname: uid,
-          uid: uid,
+          id: uid,
         };
         // User doesn't exist in the database yet.
         if (data!.getUser === null) {
