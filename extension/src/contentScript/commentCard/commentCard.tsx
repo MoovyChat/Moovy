@@ -193,6 +193,7 @@ const CommentCard: React.FC<props> = ({
       );
       setLikesCount(like ? likesCount - 1 : likesCount + 1);
       // Deal with backend
+      console.log('CommentCard: ', id);
       setCommentLike({
         cid: id!,
         uid,
@@ -201,17 +202,8 @@ const CommentCard: React.FC<props> = ({
       }).then((res) => {
         const { error, data } = res;
         if (error) colorLog(error);
+        console.log(res);
         setLike(data?.setCommentLike?.likeStatus?.like!);
-        setLikedUser(
-          !like
-            ? likedUsers.filter((u) => u.id !== uid)
-            : [...likedUsers, data?.setCommentLike?.user!]
-        );
-        setLikesCount(
-          data?.setCommentLike?.likeStatus.like!
-            ? likesCount + 1
-            : likesCount - 1
-        );
       });
     }
   };

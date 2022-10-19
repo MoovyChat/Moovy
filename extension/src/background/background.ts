@@ -1,20 +1,58 @@
 import {
+  getDomain,
+  getIdFromNetflixURL,
+} from '../contentScript/contentScript.utils';
+import {
   getStoredUserLoginDetails,
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
 import { User } from '../Utils/interfaces';
-import { getIdFromNetflixURL } from '../contentScript/contentScript.utils';
+import { domains } from '../constants';
 
-chrome.runtime.onInstalled.addListener(async () => {
+const setCookieForWebPage = async () => {
+  // const user = await getStoredUserLoginDetails();
+  // if (!user) return;
+  // const userId = user.id;
+  // chrome.cookies.set(
+  //   {
+  //     name: 'userId',
+  //     url: 'http://localhost:3000/',
+  //     value: userId,
+  //   },
+  //   (cookie) => {
+  //     console.log(JSON.stringify(cookie));
+  //     console.log(chrome.extension.lastError);
+  //     console.log(chrome.runtime.lastError);
+  //   }
+  // );
+};
+
+const injectScriptsOnReload = async () => {
   for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
     for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        files: ['index.js', 'netflix.js'],
-      });
+      const url = tab.url!;
+      const _url = getDomain(url);
+      switch (_url) {
+        case domains.NETFLIX:
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            files: ['netflix.js'],
+          });
+          break;
+        case domains.LOCALHOST:
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            files: ['qchat.js'],
+          });
+          break;
+      }
     }
   }
+};
+
+chrome.runtime.onInstalled.addListener(async () => {
+  injectScriptsOnReload();
 });
 
 var test = (time: string) => {
@@ -75,6 +113,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 });
 
 chrome.runtime.onInstalled.addListener(() => {
+  setCookieForWebPage();
   let user: User = {
     name: '',
     email: '',
@@ -93,29 +132,35 @@ chrome.runtime.onInstalled.addListener(() => {
 // Listen to the url change and 'strictly' for update the icons and popup page.
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, async (tab) => {
-    if (tab.url?.match('https://www.netflix.com/watch/*')) {
-      // Change Icon when the url is visited.
-
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Changing the pop up html
-      chrome.action.setPopup({ popup: 'popup.html' });
-    } else {
-      // Change icon when url is not visited.
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Change the pop up html
-      chrome.action.setPopup({ popup: 'offsite.html' });
+    const url = await tab.url!;
+    const domain = getDomain(url);
+    switch (domain) {
+      case domains.LOCALHOST:
+      case domains.NETFLIX:
+        // Change Icon when the url is visited.
+        injectScriptsOnReload();
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Changing the pop up html
+        chrome.action.setPopup({ popup: 'popup.html' });
+        break;
+      default:
+        // Change icon when url is not visited.
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Change the pop up html
+        chrome.action.setPopup({ popup: 'offsite.html' });
+        break;
     }
   });
 });
@@ -125,22 +170,21 @@ let updateListener = function listener(
   changeInfo: chrome.tabs.TabChangeInfo,
   tab: chrome.tabs.Tab
 ) {
-  console.log('CHANGED -> ', changeInfo.url);
-
+  console.log('CHANGED -> ', changeInfo);
+  if (
+    (changeInfo.status === 'complete' &&
+      getDomain(tab.url!) === domains.LOCALHOST) ||
+    domains.NETFLIX
+  ) {
+    injectScriptsOnReload();
+  }
+  let domain = getDomain(changeInfo.url!);
   // read changeInfo data and do something with it (like read the url)
-  if (changeInfo.url) {
-    if (
-      changeInfo.url.match(
-        'https://www.netflix.com/watch/*' ||
-          'http://www.netflix.com/watch/*' ||
-          'https://www.netflix.com' ||
-          'http://www.netflix.com'
-      )
-    ) {
-      chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        console.log(tabs[0].url);
-        console.log(tabs[0].id);
-        let activeTab = tabs[0];
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    let activeTab = tabs[0];
+    switch (domain) {
+      case domains.LOCALHOST:
+      case domains.NETFLIX:
         chrome.tabs.sendMessage(
           activeTab.id!,
           { type: 'REFRESH_SCRIPT', msg: 'Hi from background script' },
@@ -148,29 +192,29 @@ let updateListener = function listener(
             console.log(res);
           }
         );
-      });
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Changing the pop up html
-      chrome.action.setPopup({ popup: 'popup.html' });
-    } else {
-      // Change icon when url is not visited.
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Change the pop up html
-      chrome.action.setPopup({ popup: 'offsite.html' });
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Changing the pop up html
+        chrome.action.setPopup({ popup: 'popup.html' });
+        break;
+      default:
+        // Change icon when url is not visited.
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Change the pop up html
+        chrome.action.setPopup({ popup: 'offsite.html' });
     }
-  }
+  });
 };
 
 // Condition is for when user is already loggedIn.
@@ -181,6 +225,7 @@ chrome.tabs.onCreated.addListener(() => {
 });
 chrome.tabs.onUpdated.addListener(updateListener);
 
+// Listeners
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'NEED_ID') {
     chrome.tabs.query(
@@ -192,6 +237,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         var tab = tabs[0];
         var url = tab.url;
         const id = getIdFromNetflixURL(url!);
+        if (id === '') return;
         setTimeout(function () {
           sendResponse({ id: id });
         }, 1);
@@ -203,13 +249,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // From content script
-  if (sender.tab && request.type === 'GET_USER') {
-    getStoredUserLoginDetails().then((res) => {
-      sendResponse(res);
-    });
-  } else {
-    if (sender.tab && request.type === 'test') {
-      sendResponse('TEST OK!');
+  if (sender.tab) {
+    switch (request.type) {
+      case 'GET_USER':
+        getStoredUserLoginDetails().then((res) => {
+          sendResponse(res);
+        });
+        break;
+      case 'test':
+        sendResponse('TEST OK!');
+        break;
+      case 'DELETE_COOKIE':
+        if (sender.tab && request.type === 'DELETE_COOKIE') {
+          chrome.cookies.getAll({}, function (cookies) {
+            console.log('@getCookies. Cookies found ' + cookies.length);
+            cookies.forEach(function (cookie) {
+              console.log('[COOKIE] => ' + JSON.stringify(cookie));
+            });
+          });
+        }
+        break;
     }
   }
 });

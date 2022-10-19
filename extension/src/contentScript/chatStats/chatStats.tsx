@@ -109,15 +109,16 @@ const ChatStats: React.FC<props> = () => {
   // GraphQL Subscription: Get real time comment count.
   useEffect(() => {
     const { data, error, fetching } = commentsUpdateStatus;
+    console.log(commentsUpdateStatus);
     if (error) {
       console.log(error);
     } else {
       if (!fetching && data) {
-        console.log(data)
+        console.log(data);
         dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
       }
     }
-  }, [commentsUpdateStatus.fetching]);
+  }, [commentsUpdateStatus]);
 
   // Text area: Stops the propagation of the keys.
   useEffect(() => {

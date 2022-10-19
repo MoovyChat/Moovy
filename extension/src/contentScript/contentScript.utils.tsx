@@ -1,5 +1,6 @@
 import { getStoredFilterValues, getStoredVideoFilters } from '../Utils/storage';
 
+import { domains } from '../constants';
 import { filterType } from '../Utils/interfaces';
 
 type NotPresentStrategy = 'error' | 'ignore';
@@ -41,27 +42,20 @@ export const getVideoTitleFromNetflixWatch = () => {
 };
 
 export const getIdFromNetflixURL = (url: string): string => {
+  let _url = new URL(url);
+  let isNetflix = _url.hostname === domains.NETFLIX;
+  let pathName = _url.pathname;
+  let watchId = pathName.split('/').pop();
+  console.log('WATCH ID: ' + watchId);
   let urlPath = url.split('?')[0];
-  console.log(
-    '%c[qchat]',
-    'color: #00d9ff',
-    'Retrieved movie id',
-    urlPath.split('watch/')[1]
-  );
-  return urlPath.split('watch/')[1];
+  isNetflix &&
+    console.log('%c[qchat]', 'color: #00d9ff', 'Retrieved movie id', watchId);
+  return isNetflix ? watchId! : '';
 };
 
 export const getDomain = (url: string) => {
-  let result = '';
-  let domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im;
-  let match: RegExpMatchArray | null;
-  if ((match = url.match(domainRegex))) {
-    result = match[1];
-    if ((match = result.match(/^[^\.]+\.(.+\..+)$/))) {
-      result = match[1];
-    }
-  }
-  return result;
+  let _url = new URL(url);
+  return _url.hostname;
 };
 
 export const removeNodeFromDomById = (nodeId: string) => {

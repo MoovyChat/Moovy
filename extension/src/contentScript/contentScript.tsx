@@ -1,5 +1,6 @@
 import { Provider, createClient } from 'urql';
 import {
+  getDomain,
   getElementByDataUIA,
   getIdFromNetflixURL,
   removeNodeFromDomById,
@@ -11,16 +12,21 @@ import { Provider as ReduxProvider } from 'react-redux';
 import Start from './start';
 import { colorLog } from '../Utils/utilities';
 import { createRoot } from 'react-dom/client';
+import { domains } from '../constants';
 import { getStoredUserLoginDetails } from '../Utils/storage';
 import { store } from '../redux/store';
 
 const client = createClient({ url: 'http://localhost:4000/graphql' });
 export const initiateContentScript = async () => {
   colorLog('Initiating content script');
+  const url = window.location.href!;
   const CHAT_ICON = 'chatIcon';
   var reactApp = document.createElement('div');
   reactApp.id = CHAT_ICON;
-  let movieId = getIdFromNetflixURL(window.location.href!);
+  let movieId = getIdFromNetflixURL(url);
+  if (movieId === '') return;
+  const domain = getDomain(url);
+  if (domain !== domains.NETFLIX) return;
   // Attach the chat icon when the video is loaded.
   let interval = setInterval(async () => {
     let elem = getElementByDataUIA('watch-video');

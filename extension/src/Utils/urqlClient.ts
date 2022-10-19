@@ -4,6 +4,7 @@ import {
   GetCommentLikesQuery,
   SetCommentLikeMutation,
 } from '../generated/graphql';
+import { NextUrqlClientConfig, WithUrqlClientOptions } from 'next-urql';
 import { commentLikeChanges, replyLikeChanges } from './betterUpdateQuery';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 
@@ -33,8 +34,11 @@ const cache: Partial<CacheExchangeOpts> = {
   },
 };
 
-export const urqlClient = (ssrExchange: any) => ({
+export const urqlClient: NextUrqlClientConfig = (ssrExchange: any) => ({
   url: 'http://localhost:4000/graphql',
+  fetchOptions: {
+    credentials: 'include',
+  },
   exchanges: [
     devtoolsExchange,
     dedupExchange,

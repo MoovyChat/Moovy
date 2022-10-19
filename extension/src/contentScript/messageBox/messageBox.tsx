@@ -59,7 +59,7 @@ const MessageBox: React.FC<props> = ({
   const [_gu, getUser] = useGetUserMutMutation();
   const [_ir, insertReply] = useInsertReplyMutation();
   // Redux: App selectors.
-  const movieId = useAppSelector((state) => state.movie.id);
+  const movieIdFromRedux = useAppSelector((state) => state.movie.id);
   const user = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
   // Redux: App dispatch hook.
@@ -95,7 +95,7 @@ const MessageBox: React.FC<props> = ({
           ? replyWindowResponse?.rid!
           : replyWindowResponse?.id!,
         message: text,
-        movieId: movieId,
+        movieId: movieIdFromRedux,
         platformId: 1,
       };
       if (text) {
@@ -122,7 +122,7 @@ const MessageBox: React.FC<props> = ({
         commentedUserId: user?.id,
         likesCount: 0,
         message: text,
-        movieId: movieId,
+        movieId: movieIdFromRedux,
         platformId: 1,
       };
       if (text) {
@@ -216,7 +216,7 @@ const MessageBox: React.FC<props> = ({
             postComment(
               user,
               dispatch,
-              movieId,
+              movieIdFromRedux,
               replyWindowResponse,
               setReplyClickResponse
             );
