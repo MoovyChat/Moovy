@@ -1,8 +1,8 @@
 // Content script
 function main() {
   // Set up content script
-  let login = document.getElementById('login-parent');
-  login.style.cssText = ``;
+  let login = document.getElementById('login-btn');
+  if (!login) return;
   login.addEventListener('click', async (e) => {
     const user = localStorage.getItem('user');
     const userObj = JSON.parse(user);

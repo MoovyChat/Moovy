@@ -1,12 +1,5 @@
-mutation insertReply($options: ReplyInput!) {
+mutation InsertReply($options: ReplyInput!) {
   insertReply(options: $options) {
-    commentedUserId
-    createdAt
-    message
-    movieId
-    parentCommentId
-    parentReplyId
-    platformId
-    id
+    ...FullReply
   }
 }

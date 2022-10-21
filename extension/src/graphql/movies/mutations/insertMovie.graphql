@@ -3,7 +3,7 @@ mutation insertMovie($options: MovieInput!) {
     id
     name
     platformId
-    likes
+    likesCount
     createdAt
     updatedAt
   }

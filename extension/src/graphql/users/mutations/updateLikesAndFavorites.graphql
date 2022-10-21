@@ -4,13 +4,6 @@ mutation updateUserMovieStatus(
   $uid: String!
 ) {
   updateUserMovieStats(options: $options, mid: $mid, uid: $uid) {
-    id
-    like
-    favorite
-    userId
-    movieId
-    favorite
-    updatedAt
-    createdAt
+    ...FullMovieStats
   }
 }

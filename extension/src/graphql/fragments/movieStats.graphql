@@ -1,0 +1,9 @@
+fragment FullMovieStats on MovieStats {
+  like
+  favorite
+  userId
+  movieId
+  favorite
+  updatedAt
+  createdAt
+}

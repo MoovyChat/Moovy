@@ -1,6 +1,6 @@
-subscription movieStatusSubscribe {
+subscription MovieStatusUpdate {
   movieStatusUpdate {
-    userFavoriteCount
     userLikesCount
+    userFavoriteCount
   }
 }

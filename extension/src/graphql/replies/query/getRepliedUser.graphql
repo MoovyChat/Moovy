@@ -1,9 +1,5 @@
 query getRepliedUser($rid: String!) {
   getRepliedUser(rid: $rid) {
-    id
-    name
-    nickname
-    photoUrl
-    watchedMovies
+    ...FullUser
   }
 }
