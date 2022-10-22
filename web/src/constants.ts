@@ -9,3 +9,12 @@ export const themes = {
   LIGHT: 'LIGHT',
   DARK: 'DARK',
 };
+
+export const isServer = () => typeof window === 'undefined';
+
+export const textMapTypes = {
+  USER: 'user',
+  TIME: 'time',
+  BASIC: 'basic',
+  SPOILER: 'spoiler',
+};

@@ -42,3 +42,5 @@ export const DisplayPlatformsStyles = styled.div`
     }
   }
 `;
+
+export const LogoSetParent = styled.div``;

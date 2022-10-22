@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",
@@ -10,6 +11,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/chrome": "^0.0.198",
     "@types/jest": "^27.0.1",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^16.7.13",
@@ -20,10 +22,17 @@
     "@types/redux-batched-subscribe": "^0.1.4",
     "@types/redux-logger": "^3.0.9",
     "@types/styled-components": "^5.1.26",
+    "@urql/devtools": "^2.0.3",
+    "@urql/exchange-graphcache": "^5.0.2",
+    "@urql/exchange-retry": "^1.0.0",
+    "chrome": "^0.1.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "firebase": "^9.12.1",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
+    "graphql-ws": "^5.11.2",
     "lodash": "^4.17.21",
+    "next-urql": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
@@ -39,13 +48,15 @@
     "reselect": "^4.1.6",
     "styled-components": "^5.3.6",
     "typescript": "^4.4.2",
+    "urql": "^3.0.3",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "gen": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": [
@@ -66,6 +77,12 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.13.7",
+    "@graphql-codegen/typed-document-node": "^2.3.4",
+    "@graphql-codegen/typescript": "^2.7.4",
+    "@graphql-codegen/typescript-operations": "^2.5.4",
+    "@graphql-codegen/typescript-react-query": "^4.0.2",
+    "@graphql-codegen/typescript-urql": "^3.7.1",
     "@types/redux-persist": "^4.3.1"
   }
 }

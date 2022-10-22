@@ -6,6 +6,7 @@ import { darkTheme, lightTheme } from '../src/utils/themes/theme';
 import App from './pages/app/app';
 import { GlobalStyles } from './utils/themes/globalStyles';
 import Header from './pages/header/header';
+import Home from './pages/home/home';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -15,8 +16,12 @@ import { store } from './redux/store';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/welcome',
     element: <App />,
+  },
+  {
+    path: '/',
+    element: <Home />,
   },
 ]);
 
