@@ -1,42 +1,45 @@
-import { Comment, Reply, User } from '../../utils/interfaces';
 import {
   MdFavoriteBorder,
   MdKeyboardBackspace,
   MdOutlineMoreHoriz,
   MdReply,
 } from 'react-icons/md';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { Reply, User } from '../../utils/interfaces';
 import {
-  useGetCommentQuery,
-  useGetCommentedUserQuery,
-  useGetRepliesOfCommentQuery,
-  useGetUserQuery,
+  useGetRepliedUserQuery,
+  useGetRepliesOfReplyQuery,
+  useGetReplyQuery,
 } from '../../generated/graphql';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CommentThreadParent } from './commentThread.styles';
-import NotFound from '../notFound/notFound';
 import ProfilePic from '../../components/profilePic/profilePic';
 import ReplyCard from '../../components/comment-card/replyCard';
-import { error } from 'console';
 import { getDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
 
-const CommentThread = () => {
+const ReplyThread = () => {
   const { id } = useParams();
   const ref = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [commentQueyResults] = useGetCommentQuery({
-    variables: { cid: id! },
+  const [commentQueyResults] = useGetReplyQuery({
+    variables: { rid: id! },
     pause: isServer(),
   });
-  const [commentedQueryResult] = useGetCommentedUserQuery({
-    variables: { cid: id! },
+  const [commentedQueryResult] = useGetRepliedUserQuery({
+    variables: { rid: id! },
     pause: isServer(),
   });
-  const [comment, setComment] = useState<Comment>();
-  const [commentHeight, setCommentHeight] = useState<number>(0);
+  const [repliesQueryResult] = useGetRepliesOfReplyQuery({
+    variables: {
+      rid: id!,
+      limit: 5,
+    },
+  });
+  const [comment, setComment] = useState<Reply>();
   const [replies, setReplies] = useState<Reply[]>();
+  const [commentHeight, setCommentHeight] = useState<number>(0);
   const [replyCount, setReplyCount] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(1);
   const [commentedUser, setCommentedUser] = useState<User>();
@@ -44,41 +47,41 @@ const CommentThread = () => {
     e.stopPropagation();
     navigate(-1);
   };
+
+  // Get Reply data
   useEffect(() => {
     const { data, fetching, error } = commentQueyResults;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getComment as Comment;
+      const _data = data.getReply as Reply;
       setComment(_data);
     }
   }, [commentQueyResults]);
+
+  // Get commented user data
   useEffect(() => {
     const { data, error, fetching } = commentedQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getCommentedUser as User;
+      const _data = data.getRepliedUser as User;
       setCommentedUser(_data);
     }
   }, [commentedQueryResult]);
-  const [repliesQueryResult] = useGetRepliesOfCommentQuery({
-    variables: {
-      cid: id!,
-      limit: 5,
-    },
-  });
+
   // Get replies.
   useEffect(() => {
     const { data, error, fetching } = repliesQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _repliesData = data.getRepliesOfComment.replies;
-      const _repliesCount = data.getRepliesOfComment.repliesCount;
-      const _lastPage = data.getRepliesOfComment.lastPage;
+      const _repliesData = data.getRepliesOfReply.replies;
+      const _repliesCount = data.getRepliesOfReply.repliesCount;
+      const _lastPage = data.getRepliesOfReply.lastPage;
       setReplies(_repliesData);
       setReplyCount(_repliesCount);
       setLastPage(_lastPage);
     }
   }, [repliesQueryResult]);
+
   // Get comment height.
   useEffect(() => {
     setCommentHeight(ref.current?.clientHeight!);
@@ -140,4 +143,4 @@ const CommentThread = () => {
   );
 };
 
-export default CommentThread;
+export default ReplyThread;

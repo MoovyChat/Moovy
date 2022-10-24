@@ -21,7 +21,6 @@ const MovieThread = () => {
   const [movieInfo, setMovieInfo] = useState<Movie>();
   const [, getMovieComments] = useGetCommentsOfTheMovieMutation();
   const [comments, setComments] = useState<Comment[]>();
-  const [newTimeStamp, setNewTimeStamp] = useState<string>();
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
   // Check if the movie Id is valid.

@@ -397,6 +397,7 @@ export type Query = {
   getOnlyUserMovieStats?: Maybe<MovieStats>;
   getRepliedUser?: Maybe<User>;
   getRepliesOfComment: RepliesObject;
+  getRepliesOfReply: RepliesObject;
   getReply?: Maybe<Reply>;
   getReplyLikes?: Maybe<ReplyLikesObject>;
   getUser?: Maybe<User>;
@@ -490,6 +491,13 @@ export type QueryGetRepliesOfCommentArgs = {
   cid: Scalars['String'];
   limit: Scalars['Int'];
   page?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetRepliesOfReplyArgs = {
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
+  rid: Scalars['String'];
 };
 
 
@@ -646,6 +654,8 @@ export type FullCommentFragment = { __typename?: 'Comment', id: string, commente
 
 export type FullMovieFragment = { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string };
 
+export type FullReplyFragment = { __typename?: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
+
 export type FullUserFragment = { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string };
 
 export type GetCommentsOfTheMovieMutationVariables = Exact<{
@@ -665,6 +675,13 @@ export type GetMovieQueryVariables = Exact<{
 
 export type GetMovieQuery = { __typename?: 'Query', getMovie: { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string } };
 
+export type GetRepliedUserQueryVariables = Exact<{
+  rid: Scalars['String'];
+}>;
+
+
+export type GetRepliedUserQuery = { __typename?: 'Query', getRepliedUser?: { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string } | null };
+
 export type GetRepliesOfCommentQueryVariables = Exact<{
   limit: Scalars['Int'];
   cid: Scalars['String'];
@@ -673,6 +690,21 @@ export type GetRepliesOfCommentQueryVariables = Exact<{
 
 
 export type GetRepliesOfCommentQuery = { __typename?: 'Query', getRepliesOfComment: { __typename?: 'RepliesObject', repliesCount: number, lastPage: number, replies: Array<{ __typename?: 'Reply', id: string, likesCount?: number | null, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, platformId: number, commentedUserId: string, repliesCount?: number | null, createdAt: string, updatedAt: string }> } };
+
+export type GetRepliesOfReplyQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  rid: Scalars['String'];
+}>;
+
+
+export type GetRepliesOfReplyQuery = { __typename?: 'Query', getRepliesOfReply: { __typename?: 'RepliesObject', repliesCount: number, lastPage: number, replies: Array<{ __typename?: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
+
+export type GetReplyQueryVariables = Exact<{
+  rid: Scalars['String'];
+}>;
+
+
+export type GetReplyQuery = { __typename?: 'Query', getReply?: { __typename?: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null };
 
 export type LoginMutationVariables = Exact<{
   uid: Scalars['String'];
@@ -743,6 +775,21 @@ export const FullMovieFragmentDoc = gql`
   updatedAt
 }
     `;
+export const FullReplyFragmentDoc = gql`
+    fragment FullReply on Reply {
+  id
+  message
+  movieId
+  parentCommentId
+  parentReplyId
+  commentedUserId
+  likesCount
+  repliesCount
+  platformId
+  createdAt
+  updatedAt
+}
+    `;
 export const FullUserFragmentDoc = gql`
     fragment FullUser on User {
   id
@@ -799,6 +846,17 @@ export const GetMovieDocument = gql`
 export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
 };
+export const GetRepliedUserDocument = gql`
+    query getRepliedUser($rid: String!) {
+  getRepliedUser(rid: $rid) {
+    ...FullUser
+  }
+}
+    ${FullUserFragmentDoc}`;
+
+export function useGetRepliedUserQuery(options: Omit<Urql.UseQueryArgs<GetRepliedUserQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetRepliedUserQuery, GetRepliedUserQueryVariables>({ query: GetRepliedUserDocument, ...options });
+};
 export const GetRepliesOfCommentDocument = gql`
     query getRepliesOfComment($limit: Int!, $cid: String!, $page: Int) {
   getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
@@ -823,6 +881,32 @@ export const GetRepliesOfCommentDocument = gql`
 
 export function useGetRepliesOfCommentQuery(options: Omit<Urql.UseQueryArgs<GetRepliesOfCommentQueryVariables>, 'query'>) {
   return Urql.useQuery<GetRepliesOfCommentQuery, GetRepliesOfCommentQueryVariables>({ query: GetRepliesOfCommentDocument, ...options });
+};
+export const GetRepliesOfReplyDocument = gql`
+    query getRepliesOfReply($limit: Int!, $rid: String!) {
+  getRepliesOfReply(limit: $limit, rid: $rid) {
+    replies {
+      ...FullReply
+    }
+    repliesCount
+    lastPage
+  }
+}
+    ${FullReplyFragmentDoc}`;
+
+export function useGetRepliesOfReplyQuery(options: Omit<Urql.UseQueryArgs<GetRepliesOfReplyQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetRepliesOfReplyQuery, GetRepliesOfReplyQueryVariables>({ query: GetRepliesOfReplyDocument, ...options });
+};
+export const GetReplyDocument = gql`
+    query getReply($rid: String!) {
+  getReply(rid: $rid) {
+    ...FullReply
+  }
+}
+    ${FullReplyFragmentDoc}`;
+
+export function useGetReplyQuery(options: Omit<Urql.UseQueryArgs<GetReplyQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetReplyQuery, GetReplyQueryVariables>({ query: GetReplyDocument, ...options });
 };
 export const LoginDocument = gql`
     mutation login($uid: String!) {

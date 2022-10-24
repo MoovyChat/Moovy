@@ -1,0 +1,5 @@
+query getRepliedUser($rid: String!) {
+  getRepliedUser(rid: $rid) {
+    ...FullUser
+  }
+}

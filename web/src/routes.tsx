@@ -12,6 +12,7 @@ import Notifications from './pages/notifications/notifications';
 import Profile from './pages/profile/profile';
 import React from 'react';
 import Replies from './pages/replies/replies';
+import ReplyThread from './pages/commentThread/replyThread';
 import Trending from './pages/trending/trending';
 
 const HomeRouter = () => {
@@ -23,6 +24,9 @@ const HomeRouter = () => {
           <Route path='comments' element={<Comments />} />
           <Route path='comment' element={<CommentThread />}>
             <Route path=':id' element={<CommentThread />} />
+          </Route>
+          <Route path='reply' element={<ReplyThread />}>
+            <Route path=':id' element={<ReplyThread />} />
           </Route>
           <Route path='replies' element={<Replies />} />
           <Route path='notifications' element={<Notifications />} />

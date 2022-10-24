@@ -20,7 +20,7 @@ export const CardParent = styled.div<props>`
   }
   :hover {
     cursor: pointer;
-    background-image: linear-gradient(to right, #681515, #302b63, #3e2524);
+    background-image: ${(p) => p.theme.movieHeader};
   }
   .content {
     display: flex;

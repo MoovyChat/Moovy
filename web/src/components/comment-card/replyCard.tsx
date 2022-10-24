@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { Reply, User } from '../../utils/interfaces';
 import { getFormattedNumber, getTimeFrame } from '../../utils/helpers';
 
@@ -9,12 +9,14 @@ import ProfilePic from '../profilePic/profilePic';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetUserQuery } from '../../generated/graphql';
+import { useNavigate } from 'react-router-dom';
 
 type props = {
   comment: Reply;
 };
 const ReplyCard: React.FC<props> = ({ comment }) => {
   const movieId = comment.movieId;
+  const navigate = useNavigate();
   const commentedUserId = comment.commentedUserId;
   const loggedInUser = useAppSelector((state) => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
@@ -34,8 +36,13 @@ const ReplyCard: React.FC<props> = ({ comment }) => {
     }
   }, []);
 
+  const goToReply: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    navigate(`/reply/${comment.id}`);
+  };
+
   return (
-    <CardParent isReply>
+    <CardParent isReply onClick={goToReply}>
       <div className='content'>
         <div className='user-pic'>
           <div className='pic-container'>

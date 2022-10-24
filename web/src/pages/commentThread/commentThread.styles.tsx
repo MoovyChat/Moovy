@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export const CommentThreadParent = styled.div`
+type props = {
+  commentHeight: number;
+};
+export const CommentThreadParent = styled.div<props>`
   display: flex;
   position: relative;
   width: 100%;
@@ -42,7 +45,7 @@ export const CommentThreadParent = styled.div`
     display: flex;
     width: 90%;
     flex-direction: column;
-    height: 400px;
+    max-height: 400px;
     .comment-usr-detail {
       display: flex;
       align-items: center;
@@ -59,6 +62,8 @@ export const CommentThreadParent = styled.div`
         }
         .name {
           padding: 10px;
+          font-size: 1.1em;
+          font-weight: 550;
         }
       }
       .options-container {
@@ -142,5 +147,10 @@ export const CommentThreadParent = styled.div`
         }
       }
     }
+  }
+  .comment-replies {
+    position: absolute;
+    width: 90%;
+    top: calc(12% + ${(p) => p.commentHeight}px);
   }
 `;

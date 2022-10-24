@@ -51,7 +51,7 @@ const CommentCard: React.FC<props> = ({ comment }) => {
 
   const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    return navigate(`/comment/${comment.id}`);
+    navigate(`/comment/${comment.id}`);
   };
 
   // Get user info.
@@ -128,7 +128,7 @@ const CommentCard: React.FC<props> = ({ comment }) => {
           </div>
           <ReplyWindow showReplies={showR}>
             {replies?.map((reply) => (
-              <ReplyCard comment={reply} key={reply.id} />
+              <ReplyCard comment={reply} key={`reply${reply.id}`} />
             ))}
           </ReplyWindow>
         </div>
