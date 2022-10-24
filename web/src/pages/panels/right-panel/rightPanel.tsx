@@ -61,7 +61,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
         </div>
         <div className='content'>
           {fakeTitles.map((title) => (
-            <div className='item'>
+            <div className='item' key={title.title}>
               <div className='title'>{title.title}</div>
               <div className='count'>{title.views} views</div>
             </div>
@@ -75,7 +75,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
         </div>
         <div className='content'>
           {fakeHashTags.map((tag) => (
-            <div className='item'>
+            <div className='item' key={tag.tag}>
               <div className='title'>{tag.tag}</div>
               <div className='count'>{tag.mentions} mentions</div>
             </div>

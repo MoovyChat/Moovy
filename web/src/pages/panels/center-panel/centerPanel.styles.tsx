@@ -5,20 +5,7 @@ export const CenterParent = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  border: 1px solid;
+  border-left: 0.3px solid;
+  border-right: 0.3px solid;
   overflow: hidden;
-  .textarea-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5% 10%;
-  }
-  .comment-section {
-    width: 100%;
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
-  }
 `;

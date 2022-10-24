@@ -1,29 +1,11 @@
 import './index.css';
 
-import { Route, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { darkTheme, lightTheme } from '../src/utils/themes/theme';
-
-import App from './pages/app/app';
-import { GlobalStyles } from './utils/themes/globalStyles';
-import Header from './pages/header/header';
-import Home from './pages/home/home';
+import HomeRouter from './routes';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ThemeProvider } from 'styled-components';
 import reportWebVitals from './reportWebVitals';
 import { store } from './redux/store';
-
-const router = createBrowserRouter([
-  {
-    path: '/welcome',
-    element: <App />,
-  },
-  {
-    path: '/',
-    element: <Home />,
-  },
-]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -32,7 +14,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <React.Fragment>
-        <RouterProvider router={router} />
+        <HomeRouter />
       </React.Fragment>
     </Provider>
   </React.StrictMode>

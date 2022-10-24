@@ -79,3 +79,12 @@ export const HomeTitleKeyframes = keyframes`
     opacity: 1;
   }
 `;
+
+export const expandDown = keyframes`
+    0% {
+      height: 0px;
+    }
+    100% {
+      height: 100px;
+    }
+`;

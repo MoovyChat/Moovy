@@ -28,6 +28,8 @@ export const LeftParent = styled.div`
       border-radius: 20px 0px 0px 20px;
       width: 70%;
       padding: 10px;
+      color: inherit;
+      text-decoration: none;
       :hover {
         background-color: #ff0044;
         cursor: pointer;
@@ -42,6 +44,9 @@ export const LeftParent = styled.div`
         flex: 1 0 80%;
         font-weight: 600;
       }
+    }
+    .active {
+      color: gold;
     }
   }
 `;

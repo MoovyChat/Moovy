@@ -16,14 +16,14 @@ export const RightParent = styled.div`
     top: 0;
     height: 30%;
     width: 80%;
-    border: 1px solid white;
+    border: 1px solid;
     margin: 20px;
   }
   .trending {
     position: absolute;
     height: 50%;
     width: 80%;
-    background: #3c3c3c;
+    background: ${(p) => p.theme.trendingTiles};
     margin: 20px;
     border-radius: 20px;
     overflow: hidden;
@@ -40,7 +40,7 @@ export const RightParent = styled.div`
         }
         .count {
           font-size: 0.7em;
-          color: #b6b4b4;
+          opacity: 0.8;
         }
       }
     }

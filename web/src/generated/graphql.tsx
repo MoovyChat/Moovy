@@ -635,9 +635,28 @@ export type ReplyLikesObject = {
   likesCount: Scalars['Int'];
 };
 
+export type GetCommentQueryVariables = Exact<{
+  cid: Scalars['String'];
+}>;
+
+
+export type GetCommentQuery = { __typename?: 'Query', getComment: { __typename?: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } };
+
+export type FullCommentFragment = { __typename?: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string };
+
 export type FullMovieFragment = { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string };
 
 export type FullUserFragment = { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string };
+
+export type GetCommentsOfTheMovieMutationVariables = Exact<{
+  limit: Scalars['Int'];
+  mid: Scalars['String'];
+  page?: InputMaybe<Scalars['Int']>;
+  time?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetCommentsOfTheMovieMutation = { __typename?: 'Mutation', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', lastPage: number, totalCommentCount: number, pastLoadedCount: number, movie: { __typename?: 'Movie', id: string, name: string }, comments: Array<{ __typename?: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
 
 export type GetMovieQueryVariables = Exact<{
   mid: Scalars['String'];
@@ -645,6 +664,15 @@ export type GetMovieQueryVariables = Exact<{
 
 
 export type GetMovieQuery = { __typename?: 'Query', getMovie: { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string } };
+
+export type GetRepliesOfCommentQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cid: Scalars['String'];
+  page?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetRepliesOfCommentQuery = { __typename?: 'Query', getRepliesOfComment: { __typename?: 'RepliesObject', repliesCount: number, lastPage: number, replies: Array<{ __typename?: 'Reply', id: string, likesCount?: number | null, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, platformId: number, commentedUserId: string, repliesCount?: number | null, createdAt: string, updatedAt: string }> } };
 
 export type LoginMutationVariables = Exact<{
   uid: Scalars['String'];
@@ -657,6 +685,13 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
+export type GetCommentedUserQueryVariables = Exact<{
+  cid: Scalars['String'];
+}>;
+
+
+export type GetCommentedUserQuery = { __typename?: 'Query', getCommentedUser?: { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string } | null };
 
 export type GetUserQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -682,6 +717,19 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string }> };
 
+export const FullCommentFragmentDoc = gql`
+    fragment FullComment on Comment {
+  id
+  commentedUserId
+  message
+  likesCount
+  repliesCount
+  movieId
+  platformId
+  createdAt
+  updatedAt
+}
+    `;
 export const FullMovieFragmentDoc = gql`
     fragment FullMovie on Movie {
   id
@@ -709,6 +757,37 @@ export const FullUserFragmentDoc = gql`
   updatedAt
 }
     `;
+export const GetCommentDocument = gql`
+    query getComment($cid: String!) {
+  getComment(cid: $cid) {
+    ...FullComment
+  }
+}
+    ${FullCommentFragmentDoc}`;
+
+export function useGetCommentQuery(options: Omit<Urql.UseQueryArgs<GetCommentQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetCommentQuery, GetCommentQueryVariables>({ query: GetCommentDocument, ...options });
+};
+export const GetCommentsOfTheMovieDocument = gql`
+    mutation getCommentsOfTheMovie($limit: Int!, $mid: String!, $page: Int, $time: String) {
+  getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
+    movie {
+      id
+      name
+    }
+    lastPage
+    totalCommentCount
+    pastLoadedCount
+    comments {
+      ...FullComment
+    }
+  }
+}
+    ${FullCommentFragmentDoc}`;
+
+export function useGetCommentsOfTheMovieMutation() {
+  return Urql.useMutation<GetCommentsOfTheMovieMutation, GetCommentsOfTheMovieMutationVariables>(GetCommentsOfTheMovieDocument);
+};
 export const GetMovieDocument = gql`
     query getMovie($mid: String!) {
   getMovie(mid: $mid) {
@@ -719,6 +798,31 @@ export const GetMovieDocument = gql`
 
 export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
+};
+export const GetRepliesOfCommentDocument = gql`
+    query getRepliesOfComment($limit: Int!, $cid: String!, $page: Int) {
+  getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
+    repliesCount
+    lastPage
+    replies {
+      id
+      likesCount
+      message
+      movieId
+      parentCommentId
+      parentReplyId
+      platformId
+      commentedUserId
+      repliesCount
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+export function useGetRepliesOfCommentQuery(options: Omit<Urql.UseQueryArgs<GetRepliesOfCommentQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetRepliesOfCommentQuery, GetRepliesOfCommentQueryVariables>({ query: GetRepliesOfCommentDocument, ...options });
 };
 export const LoginDocument = gql`
     mutation login($uid: String!) {
@@ -742,6 +846,17 @@ export const LogoutDocument = gql`
 
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
+export const GetCommentedUserDocument = gql`
+    query getCommentedUser($cid: String!) {
+  getCommentedUser(cid: $cid) {
+    ...FullUser
+  }
+}
+    ${FullUserFragmentDoc}`;
+
+export function useGetCommentedUserQuery(options: Omit<Urql.UseQueryArgs<GetCommentedUserQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetCommentedUserQuery, GetCommentedUserQueryVariables>({ query: GetCommentedUserDocument, ...options });
 };
 export const GetUserDocument = gql`
     query getUser($uid: String!) {
@@ -779,19 +894,11 @@ export const GetCommentsOfTheUserDocument = gql`
       joinedAt
     }
     comments {
-      id
-      commentedUserId
-      message
-      likesCount
-      repliesCount
-      movieId
-      platformId
-      createdAt
-      updatedAt
+      ...FullComment
     }
   }
 }
-    `;
+    ${FullCommentFragmentDoc}`;
 
 export function useGetCommentsOfTheUserQuery(options: Omit<Urql.UseQueryArgs<GetCommentsOfTheUserQueryVariables>, 'query'>) {
   return Urql.useQuery<GetCommentsOfTheUserQuery, GetCommentsOfTheUserQueryVariables>({ query: GetCommentsOfTheUserDocument, ...options });

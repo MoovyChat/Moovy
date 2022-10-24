@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 import { Comment } from '../../utils/interfaces';
-import CommentCard from '../comment-card/commentCard';
+import CommentCard from '../../components/comment-card/commentCard';
 import CommentGroup from './commentGroup';
 import { CommentParent } from './comments.styles';
+import { MdSort } from 'react-icons/md';
+import { Outlet } from 'react-router-dom';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetCommentsOfTheUserQuery } from '../../generated/graphql';
@@ -36,10 +38,22 @@ const Comments = () => {
   }, [fetching, data, error]);
   return (
     <CommentParent>
-      {comments &&
-        Object.keys(comments).map((child) => (
-          <CommentGroup movieId={child} comments={comments[child]} />
-        ))}
+      <div className='heading-container'>
+        <div className='heading'>Comments</div>
+        <div className='sort'>
+          <span>Sort</span> <MdSort size={20} />
+        </div>
+      </div>
+      <div className='child'>
+        {comments &&
+          Object.keys(comments).map((child) => (
+            <CommentGroup
+              movieId={child}
+              comments={comments[child]}
+              key={child}
+            />
+          ))}
+      </div>
     </CommentParent>
   );
 };

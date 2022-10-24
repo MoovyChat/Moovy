@@ -11,15 +11,7 @@ query getCommentsOfTheUser($uid: String!) {
       joinedAt
     }
     comments {
-      id
-      commentedUserId
-      message
-      likesCount
-      repliesCount
-      movieId
-      platformId
-      createdAt
-      updatedAt
+      ...FullComment
     }
   }
 }

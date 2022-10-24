@@ -6,6 +6,7 @@ const w = 12;
 export const HomeHeaderParent = styled.div`
   display: flex;
   overflow: hidden;
+  box-shadow: 0 2px 10px;
   .logo,
   .user {
     position: relative;
@@ -13,8 +14,6 @@ export const HomeHeaderParent = styled.div`
     height: 100%;
     justify-content: space-evenly;
     align-items: center;
-    background: black;
-    border-radius: 20px;
     flex: 1 0 ${w}%;
     .logo-pic {
       width: 100%;
@@ -71,6 +70,8 @@ export const HomeHeaderParent = styled.div`
           display: flex;
           width: 10%;
           justify-content: space-evenly;
+          font-weight: 600;
+          font-size: 0.8em;
           .count {
           }
           .text {

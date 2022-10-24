@@ -93,3 +93,13 @@ export const getFormattedNumber = (count: number) => {
     maximumFractionDigits: 1,
   }).format(count);
 };
+
+export const getDateFormat = (time: string | undefined) => {
+  if (!time) return;
+  let intTimeFormat = parseInt(time);
+  let intlFormat = new Intl.DateTimeFormat('en-GB', {
+    dateStyle: 'full',
+    timeStyle: 'long',
+  }).format(intTimeFormat);
+  return intlFormat.toString();
+};

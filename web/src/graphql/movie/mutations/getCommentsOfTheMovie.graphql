@@ -1,0 +1,19 @@
+mutation getCommentsOfTheMovie(
+  $limit: Int!
+  $mid: String!
+  $page: Int
+  $time: String
+) {
+  getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
+    movie {
+      id
+      name
+    }
+    lastPage
+    totalCommentCount
+    pastLoadedCount
+    comments {
+      ...FullComment
+    }
+  }
+}

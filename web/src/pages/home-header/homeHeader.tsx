@@ -13,9 +13,6 @@ const HomeHeader: React.FC<props> = ({ className }) => {
       <div className='logo'>
         <div className='logo-pic'>
           <img className='image' src={QCLogo} alt='QuietChat' />
-          <div className='logo-text'>
-            Quiet Chat<sup>&reg;</sup>
-          </div>
         </div>
       </div>
 
@@ -23,12 +20,9 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         <div className='inner'>
           <div className='front side'>
             <div className='follower one'>
-              <div className='count'>{user.followerCount!}</div>
-              <div className='text'>followers</div>
-            </div>
-            <div className='following one'>
-              <div className='count'>{user.followingCount!}</div>
-              <div className='text'>following</div>
+              <div className='text'>
+                Quiet Chat<sup>&reg;</sup>
+              </div>
             </div>
           </div>
           <div className='back side'>
@@ -40,12 +34,23 @@ const HomeHeader: React.FC<props> = ({ className }) => {
               <div className='count'>12</div>
               <div className='text'>comments</div>
             </div>
+            <div className='comment one'>
+              <div className='count'>{user.watchedMovies?.length}</div>
+              <div className='text'>titles</div>
+            </div>
+            <div className='comment one'>
+              <div className='count'>{user.followingCount!}</div>
+              <div className='text'>following</div>
+            </div>
+            <div className='comment one'>
+              <div className='count'>{user.followerCount!}</div>
+              <div className='text'>followers</div>
+            </div>
           </div>
         </div>
       </div>
       <div className='user'>
         <div className='logo-pic'>
-          <div className='logo-text'>{user.nickname}</div>
           <img className='image' src={user.photoUrl} alt='user' />
         </div>
       </div>

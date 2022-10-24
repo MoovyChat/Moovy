@@ -10,8 +10,7 @@ const SettingsSlice = createSlice({
   name: 'settings',
   initialState: settingsState,
   reducers: {
-    sliceSetTheme: (state, action) => {
-      console.log(action.payload);
+    sliceSetTheme: (state, action: { payload: boolean }) => {
       return {
         ...state,
         theme: action.payload ? themes.DARK : themes.LIGHT,

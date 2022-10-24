@@ -10,9 +10,8 @@ export const HomeParent = styled.div`
   flex-direction: column;
   .home-header {
     display: flex;
-    width: 99%;
+    width: 99.9%;
     height: ${offset}px;
-    border: 1px solid;
   }
   .panels {
     display: flex;

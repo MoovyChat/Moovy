@@ -23,8 +23,25 @@ export interface Comment {
   repliesCount?: number | null | undefined;
   updatedAt: string;
   createdAt: string;
+  isReplyWindowOpen?: boolean;
+  page?: number;
+  lastPage?: number;
 }
 
+export interface Reply {
+  __typename?: 'Reply' | undefined;
+  id: string;
+  likesCount?: number | null | undefined;
+  message: string;
+  movieId: string;
+  commentedUserId: string;
+  parentCommentId: string;
+  platformId: number;
+  repliesCount?: number | null | undefined;
+  parentReplyId?: string | null | undefined;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface Movie {
   __typename?: 'Movie' | undefined;
   commentCount: number;

@@ -3,7 +3,7 @@ body {
   font-family: 'Prompt', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: rgb(22, 22, 22);
+  background: rgb(0, 0, 0);
   color: white;
 }
 
