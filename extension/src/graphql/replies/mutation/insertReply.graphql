@@ -1,4 +1,4 @@
-mutation InsertReply($options: ReplyInput!) {
+mutation insertReply($options: ReplyInput!) {
   insertReply(options: $options) {
     ...FullReply
   }

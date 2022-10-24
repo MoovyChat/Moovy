@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetRepliedUserQuery,
   useGetReplyLikesQuery,
+  useGetUserQuery,
   useSetReplyLikeMutation,
 } from '../../generated/graphql';
 
@@ -33,9 +34,9 @@ const ReplyCard: React.FC<props> = ({
   type,
   className,
 }) => {
-  const { id, message, createdAt } = reply;
-  const [commentedUser, _q] = useGetRepliedUserQuery({
-    variables: { rid: id! },
+  const { id, message, createdAt, commentedUserId } = reply;
+  const [commentedUser, _q] = useGetUserQuery({
+    variables: { uid: commentedUserId! },
   });
   const loggedInUser = useAppSelector((state) => state.user);
   const uid = useAppSelector((state) => state.user.id);
@@ -87,14 +88,13 @@ const ReplyCard: React.FC<props> = ({
   useEffect(() => {
     let { data, fetching, error } = commentedUser;
     if (error) console.log(error);
-    console.log(commentedUser);
     if (!fetching && data) {
-      const commentData = data.getRepliedUser;
-      if (!commentData) console.log('Comment data is not available');
-      setCommentedUser(commentData as User);
+      const commentedUserData = data.getUser;
+      if (!commentedUserData) console.log('Comment data is not available');
+      setCommentedUser(commentedUserData as User);
     }
     return () => {};
-  }, [commentedUser.fetching]);
+  }, [commentedUser]);
 
   // (Spoiler) Converting message to messageArray
   useEffect(() => {
@@ -118,7 +118,7 @@ const ReplyCard: React.FC<props> = ({
             text,
             msgPlace.COMMENT_CARD,
             dispatch,
-            reply.repliedUserId!,
+            reply.commentedUserId!,
             reply.createdAt!
           );
           msgArray = _.concat(msgArray, res);
@@ -142,7 +142,7 @@ const ReplyCard: React.FC<props> = ({
           finalPhrase,
           msgPlace.COMMENT_CARD,
           dispatch,
-          reply.repliedUserId!,
+          reply.commentedUserId!,
           reply.createdAt!
         );
         msgArray = _.concat(msgArray, res);

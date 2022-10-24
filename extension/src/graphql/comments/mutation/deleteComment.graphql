@@ -1,5 +1,5 @@
-mutation deleteComment($cid: String!) {
-  deleteComment(cid: $cid) {
+mutation deleteComment($cid: String!, $mid: String!) {
+  deleteComment(cid: $cid, mid: $mid) {
     id
     message
     commentedUserId

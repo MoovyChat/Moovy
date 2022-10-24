@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieLikesQuery,
   useMovieCommentsUpdateSubscription,
-  useMovieStatusSubscribeSubscription,
+  useMovieStatusUpdateSubscription,
   useUpdateUserMovieStatusMutation,
 } from '../../generated/graphql';
 
@@ -43,7 +43,7 @@ const ChatStats: React.FC<props> = () => {
   );
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
-  const [movieLikesSub] = useMovieStatusSubscribeSubscription();
+  const [movieLikesSub] = useMovieStatusUpdateSubscription();
   // GraphQL
   const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const [likesQuery, _lq] = useGetMovieLikesQuery({
@@ -56,7 +56,7 @@ const ChatStats: React.FC<props> = () => {
   const [nickname, setNickName] = useState<string>(user.nickname);
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const [favCount, setFavCount] = useState<number>(0);
+  // TODO: Comments + replies count
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [themeToggled, setThemeToggled] = useState<number>(0);
   const theme = useAppSelector((state) => state.settings.theme);
@@ -73,26 +73,18 @@ const ChatStats: React.FC<props> = () => {
     return true;
   });
 
-  // Set the like and favorite on Initial load.
-  useEffect(() => {
-    updateUserLikeFavorite({
-      uid: user.id,
-      mid: movie.id,
-      options: {},
-    }).then((response) => {
-      const { data, error } = response;
-      if (error) console.error(error);
-      const { like } = data?.updateUserMovieStats!;
-      if (like) setLike(like);
-    });
-  }, []);
-
   // Get Likes Data on Initial Load.
   useEffect(() => {
     const likesData = likesQuery.data;
     const likesFetching = likesQuery.fetching;
     if (!likesFetching && likesData) {
       const _lc = likesData.getMovieLikes?.likesCount;
+      const likes = likesData.getMovieLikes?.likes;
+      if (likes) {
+        const found = likes.map((l) => l.id === user.id);
+        if (found.length > 0) setLike(true);
+        else setLike(false);
+      }
       if (_lc) setLikesCount(_lc);
     }
   }, [likesQuery]);
@@ -143,17 +135,13 @@ const ChatStats: React.FC<props> = () => {
 
   // GraphQL: Toggle like of the movie.
   const toggleLike = () => {
+    setLike(!like);
     updateUserLikeFavorite({
       uid: user?.id,
       mid: movie.id,
       options: {
         like: !like,
       },
-    }).then((res) => {
-      const { data, error } = res;
-      if (error) colorLog(error);
-      const isLike = data?.updateUserMovieStats!.like!;
-      setLike(isLike);
     });
   };
 

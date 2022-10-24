@@ -6,7 +6,6 @@ import { createSlice } from '@reduxjs/toolkit';
 export const movieState: Movie = {
   id: '',
   name: '',
-  likes: [],
   platformId: 1,
   totalCommentsCountOfMovie: 0,
   commentsLoadedCount: 0,
@@ -28,7 +27,7 @@ const MovieSlice = createSlice({
     sliceAddMovie: (state, action) => {
       const { payload } = action;
       state.id = payload.id;
-      state.likes = payload.likes;
+      state.likesCount = payload.likesCount;
       state.name = payload.name;
       state.totalCommentsCountOfMovie = payload.totalCommentsCountOfMovie;
       state.commentsLoadedCount = payload.commentsLoadedCount;

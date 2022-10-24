@@ -81,6 +81,7 @@ const CommentInterface: React.FC<props> = ({
 }) => {
   const mounted = useRef<boolean>(false);
   const nodeRef = useRef<any>(null);
+  const movieId = useAppSelector((state) => state.movie.id);
   // Check if the passed component is comment or reply.
   if (!commentOrReply) return <div>Invalid comment</div>;
   const isComment = commentOrReply.__typename === 'Comment' ? true : false;
@@ -212,7 +213,7 @@ const CommentInterface: React.FC<props> = ({
   const commonDelete = (): Promise<OperationResult<any, Exact<any>>> => {
     return new Promise((resolve, reject) => {
       if (isComment) {
-        deleteComment({ cid: commentOrReply.id! })
+        deleteComment({ cid: commentOrReply.id!, mid: movieId })
           .then((res) => resolve(res))
           .catch((err) => reject(err));
       } else {
@@ -228,6 +229,7 @@ const CommentInterface: React.FC<props> = ({
     commonDelete().then((res) => {
       let { data, error } = res;
       if (error) console.log(error);
+      console.log('delete comment', res);
       if (data) {
         setDelete(false);
         colorLog(

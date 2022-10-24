@@ -31,7 +31,6 @@ export interface Movie {
   id: string;
   name: string;
   platformId?: number;
-  likes: string[];
   totalCommentsCountOfMovie: number;
   commentsLoadedCount: number;
   totalRepliesCountOfMovie: number;
@@ -53,7 +52,7 @@ export interface CommonInfo {
 }
 export interface CommentInfo {
   id: string;
-  commentedUserId: string;
+  commentedUserId?: string;
   message: string;
   likesCount: any;
   likes: any[];
@@ -62,7 +61,6 @@ export interface CommentInfo {
   movieId: string;
   page?: number;
   lastPage?: number;
-  repliedUserId?: string;
   parentCommentId?: string;
   parentReplyId?: string;
   platformId: number;

@@ -71,7 +71,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
       options: {
         id: video_id,
         name: '',
-        likes: [],
+        likesCount: 0,
         platformId: 1,
       },
     });
@@ -84,8 +84,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
       let sqlData = res.data?.insertMovie;
       let toRedux: Movie = {
         id: sqlData?.id!,
-        likes: sqlData?.likes!,
-        likesCount: sqlData?.likes!.length || 0,
+        likesCount: sqlData?.likesCount! || 0,
         name: sqlData?.name!,
         commentsLoadedCount: 0,
         totalCommentsCountOfMovie: 0,

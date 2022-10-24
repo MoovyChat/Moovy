@@ -26,11 +26,9 @@ import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
 type props = {
-  user: User | undefined;
   postComment: (
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
-    movieId: string,
     replyWindowResponse: any,
     setReplyClickResponse: (e: any) => void
   ) => Promise<void>;
@@ -38,14 +36,13 @@ type props = {
   setReplyClickResponse: (e: any) => void;
 };
 const ChatArea: React.FC<props> = ({
-  user,
   postComment,
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
   const searchAPI =
     'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
-
+  const user = useAppSelector((state) => state.user);
   const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const text = useAppSelector((state) => state.textArea.text);
@@ -127,13 +124,7 @@ const ChatArea: React.FC<props> = ({
       e.isPropagationStopped();
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      postComment(
-        user,
-        dispatch,
-        movieId,
-        replyWindowResponse,
-        setReplyClickResponse
-      );
+      postComment(user, dispatch, replyWindowResponse, setReplyClickResponse);
     } else if (
       (e.key >= 'a' && e.key <= 'z') ||
       (e.key >= 'A' && e.key <= 'Z')
