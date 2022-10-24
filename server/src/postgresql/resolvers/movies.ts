@@ -26,8 +26,8 @@ class MovieInput {
   id: string;
   @Field()
   name: string;
-  @Field(() => [String])
-  likes: string[];
+  @Field(() => Int)
+  likesCount: number;
   @Field(() => Int)
   platformId!: number;
 }
@@ -127,22 +127,32 @@ export class MovieResolver {
     return Movie.findOne({ where: { id: mid } });
   }
 
+  @Query(() => Movie, { nullable: true })
+  async getMovieById(@Arg('mid') mid: string): Promise<Movie | null> {
+    const movie = await Movie.findOne({ where: { id: mid } });
+    if (!movie) throw new Error(`Movie not found: ${mid}`);
+    return movie;
+  }
+
   @Query(() => LikesAndComment, { nullable: true })
   async getMovieLikesAndCommentsCount(
     @Arg('mid') mid: string,
     @PubSub() pubSub: PubSubEngine
   ): Promise<LikesAndComment> {
-    const likesCount = await conn
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
-        mid,
-      })
-      .where('stats.like = :like', { like: true })
-      .getCount();
-    const commentsCount = await Comment.count({
-      where: { movieId: mid },
-    });
+    const movie = await Movie.findOne({ where: { id: mid } });
+    const likesCount = movie?.likesCount!;
+    const commentsCount = movie?.commentCount!;
+    // const likesCount = await conn
+    //   .getRepository(User)
+    //   .createQueryBuilder('user')
+    //   .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
+    //     mid,
+    //   })
+    //   .where('stats.like = :like', { like: true })
+    //   .getCount();
+    // const commentsCount = await Comment.count({
+    //   where: { movieId: mid },
+    // });
     const payload: LikesAndComment = { likesCount, commentsCount };
     await pubSub.publish(LIKES_AND_COMMENT, payload);
     return payload;
@@ -150,7 +160,7 @@ export class MovieResolver {
 
   @Query(() => LikesObject, { nullable: true })
   async getMovieLikes(@Arg('mid') mid: string): Promise<LikesObject> {
-    const userLikes = await conn
+    const qb = await conn
       .getRepository(User)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
@@ -160,22 +170,16 @@ export class MovieResolver {
       .getMany();
     const result = {
       id: mid,
-      likes: userLikes,
-      likesCount: userLikes.length,
+      likes: qb,
+      likesCount: qb.length,
     };
     return result;
   }
 
   @Query(() => Int, { nullable: true })
   async getMovieFavoriteCount(@Arg('mid') mid: string): Promise<number> {
-    return await conn
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
-        mid,
-      })
-      .where('stats.favorite = :favorite', { favorite: true })
-      .getCount();
+    const movie = await Movie.findOne({ where: { id: mid } });
+    return movie?.favCount!;
   }
 
   @Mutation(() => Boolean, { nullable: true })
@@ -195,8 +199,14 @@ export class MovieResolver {
 
   @Mutation(() => Movie, { nullable: true })
   async insertMovie(@Arg('options') options: MovieInput) {
+    try {
+      parseInt(options.id);
+    } catch {
+      throw new Error('Invalid movie id');
+    }
     // Check if the movie already exists.
     const m = await conn.getRepository(Movie).findOneBy({ id: options.id });
+
     if (m) return m;
     else {
       let movie;
@@ -209,7 +219,7 @@ export class MovieResolver {
             {
               id: options.id,
               name: options.name,
-              likes: options.likes,
+              likesCount: options.likesCount,
               platformId: options.platformId,
             },
           ])

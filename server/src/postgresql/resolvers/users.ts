@@ -8,13 +8,16 @@ import {
   Field,
   Int,
   ObjectType,
+  Ctx,
 } from 'type-graphql';
+import { MyContext } from '../types';
 import _ from 'lodash';
 import { User } from '../entities/User';
 import { Comment } from '../entities/Comment';
 import { MovieStats } from '../entities/MovieStats';
 import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
+import { COOKIE_NAME } from '../../constants';
 
 @InputType()
 class UserInput {
@@ -94,6 +97,14 @@ class FullUserObject {
   likedTitles?: LikedMovieObject[];
   @Field(() => [FavMovieObject], { nullable: true })
   favTitles?: FavMovieObject[];
+}
+
+@ObjectType()
+class UserResponse {
+  @Field(() => User, { nullable: true })
+  user?: User;
+  @Field({ nullable: true })
+  error?: string;
 }
 
 @ObjectType()
@@ -393,5 +404,40 @@ export class UserResolver {
   async deleteUser(@Arg('uid') uid: string): Promise<boolean> {
     await User.delete(uid);
     return true;
+  }
+
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req }: MyContext): Promise<User | null> {
+    // User is not logged in.
+    console.log(req.session);
+    if (!req.session.userId) return null;
+    const user = await User.findOne({ where: { id: req.session.userId } });
+    return user;
+  }
+
+  @Mutation(() => UserResponse, { nullable: true })
+  async login(
+    @Arg('uid') uid: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    const user = await User.findOne({ where: { id: uid } });
+    if (!user) return { error: 'User does not exist' };
+    req.session.userId = user!.id;
+    return { user };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
+    return new Promise((resolve) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+        res.clearCookie(COOKIE_NAME);
+        resolve(true);
+      });
+    });
   }
 }

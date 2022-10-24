@@ -10,6 +10,7 @@ import {
   PubSubEngine,
   Subscription,
   Int,
+  Query,
 } from 'type-graphql';
 
 import { Movie } from '../entities/Movie';
@@ -36,6 +37,17 @@ class UserMovieOptions {
 
 @Resolver()
 export class MovieStatsResolver {
+  @Query(() => MovieStats, { nullable: true })
+  async getOnlyUserMovieStats(
+    @Arg('uid') uid: string,
+    @Arg('mid') mid: string
+  ) {
+    const res = await MovieStats.findOne({
+      where: { movieId: mid, userId: uid },
+    });
+    return res;
+  }
+
   @Mutation(() => MovieStats, { nullable: true })
   async updateUserMovieStats(
     @Arg('uid') uid: string,
@@ -43,39 +55,46 @@ export class MovieStatsResolver {
     @Arg('options') options: UserMovieOptions,
     @PubSub() pubSub: PubSubEngine
   ): Promise<MovieStats | null> {
-    const movie = await Movie.findOne({ where: { id: mid } });
-    if (!movie) {
-      await Movie.insert({ id: mid, name: '', platformId: 1, likes: [] });
-    }
-    const movieStat = await MovieStats.findOne({
-      where: { userId: uid, movieId: mid },
+    let detail: any;
+    await conn.transaction(async (manager) => {
+      const movie = await Movie.findOne({ where: { id: mid } });
+      if (!movie) {
+        await Movie.insert({
+          id: mid,
+          name: '',
+          platformId: 1,
+          likesCount: 0,
+        });
+      }
+      const res = await manager.getRepository(MovieStats).upsert(
+        [
+          {
+            userId: uid,
+            movieId: mid,
+            like: options.like && options.like,
+            favorite: options.favorite && options.favorite,
+          },
+        ],
+        {
+          conflictPaths: ['userId', 'movieId'],
+          skipUpdateIfNoValuesChanged: true, // supported by postgres, skips update if it would not change row values
+        }
+      );
+      detail = res.raw[0];
+      const movieRepo = manager.getRepository(Movie);
+      // Update like count.
+      if (detail && options.like === true) {
+        await movieRepo.increment({ id: mid }, 'likesCount', 1);
+      } else if (detail && options.like === false) {
+        await movieRepo.decrement({ id: mid }, 'likesCount', 1);
+      }
+      // Update fav count.
+      if (detail && options.favorite === true) {
+        await movieRepo.increment({ id: mid }, 'favCount', 1);
+      } else if (detail && options.favorite === false) {
+        await movieRepo.decrement({ id: mid }, 'favCount', 1);
+      }
     });
-    let detail;
-    if (!movieStat) {
-      const details = await conn
-        .createQueryBuilder()
-        .insert()
-        .into(MovieStats)
-        .values({
-          userId: uid,
-          movieId: mid,
-          like: options.like ? options.like : false,
-          favorite: options.favorite ? options.favorite : false,
-        })
-        .returning('*')
-        .execute();
-      detail = details.raw[0];
-    } else {
-      const updateStatus = await conn
-        .createQueryBuilder()
-        .update(MovieStats)
-        .set(options)
-        .where('movieId = :mid', { mid })
-        .andWhere('userId=:uid ', { uid })
-        .returning('*')
-        .execute();
-      detail = updateStatus.raw[0];
-    }
     await pubSub.publish(STATUS_UPDATE, mid);
     return detail;
   }

@@ -5,3 +5,4 @@ export const COMMENT_COUNT_UPDATE = 'COMMENT_COUNT_UPDATE';
 export const LIKES_AND_COMMENT = 'LIKES_AND_COMMENT';
 export const STATUS_UPDATE = 'STATUS_UPDATE';
 export const FOLLOW_UPDATE = 'FOLLOW_UPDATE';
+export const COOKIE_NAME = 'userId';

@@ -28,9 +28,21 @@ export class Movie extends BaseEntity {
   @Column()
   name!: string;
 
-  @Field(() => [String])
-  @Column({ type: 'text', array: true })
-  likes: string[];
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  commentCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  viewsCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  favCount: number;
 
   @Field(() => Int)
   @Column({ type: 'int', default: 0 })

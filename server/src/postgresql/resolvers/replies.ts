@@ -46,11 +46,11 @@ class ReplyInput {
   @Field()
   movieId: string;
   @Field()
-  commentId: string;
+  parentCommentId: string;
   @Field()
   parentReplyId: string;
   @Field()
-  repliedUserId: string;
+  commentedUserId: string;
   @Field(() => Int)
   platformId: number;
 }
@@ -117,9 +117,36 @@ export class ReplyResolver {
     };
   }
 
+  @Query(() => RepliesObject)
+  async getRepliesOfReply(
+    @Arg('rid') rid: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<RepliesObject> {
+    const repliesCount = await Reply.count({
+      where: { parentReplyId: rid },
+    });
+    const replies = await conn
+      .getRepository(Reply)
+      .createQueryBuilder('reply')
+      .where('reply.parentReplyId = :rid', { rid })
+      .orderBy('reply.likesCount', 'ASC')
+      .orderBy('reply.repliesCount', 'ASC')
+      .orderBy('reply.createdAt', 'ASC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+
+    return {
+      replies,
+      repliesCount,
+      lastPage: Math.ceil(repliesCount / limit),
+    };
+  }
+
   @Mutation(() => Reply, { nullable: true })
   async insertReply(@Arg('options') options: ReplyInput) {
-    if (!options.repliedUserId) throw new Error('User does not exist');
+    if (!options.commentedUserId) throw new Error('User does not exist');
     let reply;
     try {
       await conn.transaction(async (transactionalEntityManager) => {
@@ -134,9 +161,9 @@ export class ReplyResolver {
               message: options.message,
               likesCount: options.likesCount,
               movieId: options.movieId,
-              parentCommentId: options.commentId,
+              parentCommentId: options.parentCommentId,
               parentReplyId: options.parentReplyId,
-              commentedUserId: options.repliedUserId!,
+              commentedUserId: options.commentedUserId!,
               platformId: options.platformId,
               repliesCount: options.repliesCount,
             },
@@ -145,10 +172,10 @@ export class ReplyResolver {
           .execute();
         // Update "Parent comment" reply count.
         await Comment.update(
-          { id: options.commentId },
+          { id: options.parentCommentId },
           { repliesCount: () => '"repliesCount"+1' }
         );
-        if (options.parentReplyId !== options.commentId) {
+        if (options.parentReplyId !== options.parentCommentId) {
           // Update "parent reply" reply count.
           await Reply.update(
             { id: options.parentReplyId },
@@ -179,16 +206,16 @@ export class ReplyResolver {
     return { likes: users, likesCount };
   }
 
-  @Mutation(() => Reply, { nullable: true })
-  async deleteReply(@Arg('rid') rid: string): Promise<Reply | null> {
+  @Mutation(() => Boolean, { defaultValue: false })
+  async deleteReply(@Arg('rid') rid: string): Promise<boolean | null> {
     let deletedReply = await conn
       .getRepository(Reply)
       .createQueryBuilder('reply')
       .where('reply.id = :rid', { rid })
       .softDelete()
-      .returning('*')
       .execute();
-    return deletedReply.raw[0];
+    console.log(deletedReply);
+    return true;
   }
 
   @Subscription(() => replyLikesObject, { topics: REPLY_LIKES_SUB })

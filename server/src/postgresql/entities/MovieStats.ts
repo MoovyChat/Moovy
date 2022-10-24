@@ -5,6 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,10 +17,6 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class MovieStats extends BaseEntity {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_movie_stats_id' })
-  @Field(() => Int)
-  id!: number;
-
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @Column({ default: false })
   like?: boolean;
@@ -29,11 +26,11 @@ export class MovieStats extends BaseEntity {
   favorite?: boolean;
 
   @Field(() => String)
-  @Column()
+  @PrimaryColumn()
   movieId!: string;
 
   @Field(() => String)
-  @Column()
+  @PrimaryColumn()
   userId!: string;
 
   @ManyToOne(() => User, (user) => user.movieStats)

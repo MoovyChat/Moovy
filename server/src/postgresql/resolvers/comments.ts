@@ -18,6 +18,7 @@ import { Comment } from '../entities/Comment';
 import { User } from '../entities/User';
 import { CommentStats } from '../entities/CommentStat';
 import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../../constants';
+import { Movie } from '../entities/Movie';
 
 @InputType()
 class CommentInput {
@@ -113,9 +114,9 @@ export class CommentResolver {
     // return User.create(options).save();
     if (!options.commentedUserId) throw new Error('User does not exist');
     let comment;
-    try {
+    await conn.transaction(async (manager) => {
       // Insert comment.
-      const result = await conn
+      const result = await manager
         .createQueryBuilder()
         .insert()
         .into(Comment)
@@ -132,23 +133,36 @@ export class CommentResolver {
         .execute();
       await pubSub.publish(COMMENT_COUNT_UPDATE, options.movieId);
       comment = result.raw[0];
-    } catch (err) {
-      throw new Error(err);
-    }
+
+      const movieRepo = manager.getRepository(Movie);
+      await movieRepo.increment({ id: options.movieId }, 'commentCount', 1);
+    });
     return comment;
   }
 
   @Mutation(() => Comment, { nullable: true })
-  async deleteComment(@Arg('cid') cid: string): Promise<Comment | null> {
-    let deletedComment = await conn
-      .getRepository(Comment)
-      .createQueryBuilder('comment')
-      .where('comment.id = :cid', { cid })
-      .softDelete()
-      .returning('*')
-      .execute();
-    console.log(deletedComment);
-    return deletedComment.raw[0];
+  async deleteComment(
+    @Arg('cid') cid: string,
+    @Arg('mid') mid: string
+  ): Promise<Comment | null> {
+    let deletedComment: any;
+    await conn.transaction(async (manager) => {
+      const result = await conn
+        .getRepository(Comment)
+        .createQueryBuilder('comment')
+        .where('comment.id = :cid', { cid })
+        .softDelete()
+        .returning('*')
+        .execute();
+      console.log('Deleted Comment', result);
+      deletedComment = result.raw[0];
+      if (deletedComment) {
+        // Update comment count.
+        const movieRepo = manager.getRepository(Movie);
+        await movieRepo.decrement({ id: mid }, 'commentCount', 1);
+      }
+    });
+    return deletedComment;
   }
 
   // Whenever user comments, this subscriber gets called.
