@@ -55,6 +55,17 @@ export interface Movie {
   viewsCount: number;
 }
 
+export interface Notifications {
+  __typename?: 'Notifications' | undefined;
+  id: string;
+  userId: string;
+  message: string;
+  fromUser: string;
+  fromUserPhotoUrl: string;
+  isRead: string;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface textMap {
   message: string;
   type: string;

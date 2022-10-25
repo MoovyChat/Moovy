@@ -7,7 +7,7 @@ import { MdSort } from 'react-icons/md';
 import MessageBox from '../../../components/messageBox/messageBox';
 import MovieThread from '../../movieThread/movieThread';
 import NotFound from '../../notFound/notFound';
-import Notifications from '../../notifications/notifications';
+import Notifications from '../../notifications/NotificationsModule';
 import Profile from '../../profile/profile';
 import React from 'react';
 import Replies from '../../replies/replies';

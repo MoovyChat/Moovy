@@ -33,11 +33,6 @@ export const CommentThreadParent = styled.div<props>`
         background-color: #ffffffa2;
       }
     }
-    .header-text {
-      font-size: 1.4em;
-      margin-left: 30px;
-      font-weight: 700;
-    }
   }
   .comment-container {
     position: absolute;
@@ -164,4 +159,10 @@ export const StyledButton = styled.div<ButtonProps>`
     cursor: pointer;
     background-color: ${(p) => p.color};
   }
+`;
+
+export const HeaderText = styled.div`
+  font-size: 1.4em;
+  margin-left: 30px;
+  font-weight: 700;
 `;

@@ -8,7 +8,7 @@ import Feed from './pages/feed/feed';
 import Home from './pages/home/home';
 import MovieThread from './pages/movieThread/movieThread';
 import NotFound from './pages/notFound/notFound';
-import Notifications from './pages/notifications/notifications';
+import Notifications from './pages/notifications/NotificationsModule';
 import Profile from './pages/profile/profile';
 import React from 'react';
 import Replies from './pages/replies/replies';
@@ -24,9 +24,11 @@ const HomeRouter = () => {
           <Route path='comments' element={<Comments />} />
           <Route path='comment' element={<CommentThread />}>
             <Route path=':id' element={<CommentThread />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='reply' element={<ReplyThread />}>
             <Route path=':id' element={<ReplyThread />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='replies' element={<Replies />} />
           <Route path='notifications' element={<Notifications />} />

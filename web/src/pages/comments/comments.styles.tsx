@@ -56,6 +56,7 @@ export const CommentGroupParent = styled.div<props>`
     border-radius: 20px;
     box-shadow: inset 0 0 5px 1px;
     max-height: 40vh;
+    overflow: hidden;
     .comments-child {
       display: block;
       position: relative;
@@ -63,6 +64,7 @@ export const CommentGroupParent = styled.div<props>`
       align-items: flex-end;
       height: 100%;
       width: 90%;
+      margin: 4px 0;
       border-radius: 20px;
       overflow: auto;
       ::-webkit-scrollbar {

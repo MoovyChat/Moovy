@@ -18,3 +18,7 @@ export const textMapTypes = {
   BASIC: 'basic',
   SPOILER: 'spoiler',
 };
+
+export const popupStates = {
+  IMAGE_POP_UP: 'IMAGE_POP_UP',
+};

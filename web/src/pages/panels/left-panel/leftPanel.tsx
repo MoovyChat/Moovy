@@ -32,7 +32,10 @@ const LeftPanel: React.FC<props> = ({ className }) => {
     dispatch(sliceSetTheme(value));
   };
   const iconSize = 30;
-
+  // log changed data
+  useEffect(() => {
+    console.log(user);
+  }, [user.photoUrl]);
   return (
     <LeftParent className={className}>
       <div className='profile'>

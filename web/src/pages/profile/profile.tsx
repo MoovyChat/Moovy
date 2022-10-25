@@ -1,12 +1,26 @@
 import { MdCameraAlt, MdOutlineEdit } from 'react-icons/md';
+import React, { MouseEventHandler } from 'react';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { ProfileParent } from './profile.styles';
 import ProfilePic from '../../components/profilePic/profilePic';
-import React from 'react';
-import { useAppSelector } from '../../redux/hooks';
+import { batch } from 'react-redux';
+import { popupStates } from '../../constants';
 
 const Profile = () => {
   const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const profilePicChangeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.IMAGE_POP_UP));
+    });
+  };
   return (
     <ProfileParent>
       <div className='cover-photo'>
@@ -22,7 +36,7 @@ const Profile = () => {
       <div className='user-photo'>
         <div className='user-container'>
           <ProfilePic src={user.photoUrl!} />
-          <div className='edit'>
+          <div className='edit' onClick={profilePicChangeHandler}>
             <MdCameraAlt size={25} />
           </div>
         </div>

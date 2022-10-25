@@ -1,0 +1,10 @@
+fragment FullNotification on Notifications {
+  id
+  userId
+  message
+  fromUser
+  fromUserPhotoUrl
+  isRead
+  createdAt
+  updatedAt
+}

@@ -351,6 +351,19 @@ export type NickNameResponse = {
   user?: Maybe<User>;
 };
 
+export type Notifications = {
+  __typename?: 'Notifications';
+  createdAt: Scalars['String'];
+  deletedAt: Scalars['String'];
+  fromUser: Scalars['String'];
+  fromUserPhotoUrl: Scalars['String'];
+  id: Scalars['String'];
+  isRead: Scalars['String'];
+  message: Scalars['String'];
+  updatedAt: Scalars['String'];
+  userId: Scalars['String'];
+};
+
 export type PaginatedMovieComments = {
   __typename?: 'PaginatedMovieComments';
   comments: Array<Comment>;
@@ -387,6 +400,7 @@ export type Query = {
   getAllComments: Array<Comment>;
   getAllCommentsMadeByUser?: Maybe<Array<Comment>>;
   getAllMovies: Array<Movie>;
+  getAllNotifications: Array<Notifications>;
   getAllPlatforms: Array<Platform>;
   getAllReplies: Array<Reply>;
   getComment: Comment;
@@ -409,6 +423,7 @@ export type Query = {
   getReplyLikes?: Maybe<ReplyLikesObject>;
   getUser?: Maybe<User>;
   getUserMovieStatus?: Maybe<FullUserMovieStats>;
+  getUserNotifications: Array<Notifications>;
   getUserStatistics?: Maybe<FullUserObject>;
   hello: Scalars['String'];
   me?: Maybe<User>;
@@ -525,6 +540,11 @@ export type QueryGetUserArgs = {
 
 export type QueryGetUserMovieStatusArgs = {
   mid: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
+export type QueryGetUserNotificationsArgs = {
   uid: Scalars['String'];
 };
 
@@ -661,6 +681,8 @@ export type FullCommentFragment = { __typename?: 'Comment', id: string, commente
 
 export type FullMovieFragment = { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string };
 
+export type FullNotificationFragment = { __typename?: 'Notifications', id: string, userId: string, message: string, fromUser: string, fromUserPhotoUrl: string, isRead: string, createdAt: string, updatedAt: string };
+
 export type FullReplyFragment = { __typename?: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
 
 export type FullUserFragment = { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string };
@@ -681,6 +703,13 @@ export type GetMovieQueryVariables = Exact<{
 
 
 export type GetMovieQuery = { __typename?: 'Query', getMovie: { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number, createdAt: string, updatedAt: string } };
+
+export type GetUserNotificationsQueryVariables = Exact<{
+  uid: Scalars['String'];
+}>;
+
+
+export type GetUserNotificationsQuery = { __typename?: 'Query', getUserNotifications: Array<{ __typename?: 'Notifications', id: string, userId: string, message: string, fromUser: string, fromUserPhotoUrl: string, isRead: string, createdAt: string, updatedAt: string }> };
 
 export type GetRepliedUserQueryVariables = Exact<{
   rid: Scalars['String'];
@@ -790,6 +819,18 @@ export const FullMovieFragmentDoc = gql`
   updatedAt
 }
     `;
+export const FullNotificationFragmentDoc = gql`
+    fragment FullNotification on Notifications {
+  id
+  userId
+  message
+  fromUser
+  fromUserPhotoUrl
+  isRead
+  createdAt
+  updatedAt
+}
+    `;
 export const FullReplyFragmentDoc = gql`
     fragment FullReply on Reply {
   id
@@ -860,6 +901,17 @@ export const GetMovieDocument = gql`
 
 export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
+};
+export const GetUserNotificationsDocument = gql`
+    query getUserNotifications($uid: String!) {
+  getUserNotifications(uid: $uid) {
+    ...FullNotification
+  }
+}
+    ${FullNotificationFragmentDoc}`;
+
+export function useGetUserNotificationsQuery(options: Omit<Urql.UseQueryArgs<GetUserNotificationsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserNotificationsQuery, GetUserNotificationsQueryVariables>({ query: GetUserNotificationsDocument, ...options });
 };
 export const GetRepliedUserDocument = gql`
     query getRepliedUser($rid: String!) {

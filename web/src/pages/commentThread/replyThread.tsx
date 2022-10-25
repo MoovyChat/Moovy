@@ -1,4 +1,8 @@
-import { CommentThreadParent, StyledButton } from './commentThread.styles';
+import {
+  CommentThreadParent,
+  HeaderText,
+  StyledButton,
+} from './commentThread.styles';
 import {
   MdFavoriteBorder,
   MdKeyboardBackspace,
@@ -92,7 +96,7 @@ const ReplyThread = () => {
         <div className='back-button' onClick={backButtonHandler}>
           <MdKeyboardBackspace size={35} />
         </div>
-        <div className='header-text'>Memo</div>
+        <HeaderText className='header-text'>Memo</HeaderText>
       </div>
       <div className='comment-container' ref={ref}>
         <div className='comment-usr-detail'>

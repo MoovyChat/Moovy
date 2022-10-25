@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 type props = {
-  selectedOption: string;
+  url?: string;
 };
-export const ImageChangerParent = styled.div`
+export const ImageChangerParent = styled.div<props>`
   position: relative;
   width: 100%;
   height: 100%;
@@ -20,10 +20,12 @@ export const ImageChangerParent = styled.div`
   .save-close {
     position: absolute;
     display: flex;
-    top: 15px;
+    top: 0px;
     right: 15px;
+    z-index: 6;
     .save {
       margin-right: 10px;
+      pointer-events: ${(p) => (p.url ? 'all' : 'none')};
     }
   }
   .options {

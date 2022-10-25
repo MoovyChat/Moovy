@@ -19,16 +19,21 @@ import ReactCrop, {
   makeAspectCrop,
 } from 'react-image-crop';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ImageCrop from '../image-crop/imageCrop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
+import { batch } from 'react-redux';
 import { imgPreview } from '../image-crop/imagePreview';
 import { isImageURLValid } from '../../utils/helpers';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { useSaveProfilePictureMutation } from '../../generated/graphql';
 
-const Popup = () => {
+const ImageChanger = () => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const storage = getStorage();
   const imageRef = useRef<HTMLImageElement>(null);
@@ -118,19 +123,26 @@ const Popup = () => {
         break;
     }
   };
+  const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(false));
+      dispatch(sliceSetSelectedElement(''));
+    });
+  };
 
   const saveText = saveClicked ? (saved ? `Saved` : `Saving..`) : `Save`;
   return (
-    <ImageChangerParent>
+    <ImageChangerParent url={url}>
       <div className='heading'>Upload the photo</div>
       <div className='save-close'>
         <StyledButton
           className='save'
-          color='#de1328'
+          color={url ? '#de1328' : '#9c535b'}
           onClick={savePhotoFromUrl}>
           {saveText}
         </StyledButton>
-        <StyledButton className='close' color='#484242'>
+        <StyledButton className='close' color='#484242' onClick={closeHandler}>
           Close
         </StyledButton>
       </div>
@@ -200,4 +212,4 @@ const Popup = () => {
   );
 };
 
-export default Popup;
+export default ImageChanger;
