@@ -197,6 +197,7 @@ export type Mutation = {
   updateMovieTitle?: Maybe<Scalars['Boolean']>;
   updateUserMovieStats?: Maybe<MovieStats>;
   updateUserNickName: NickNameResponse;
+  updateUserProfilePhoto: NickNameResponse;
 };
 
 
@@ -331,6 +332,12 @@ export type MutationUpdateUserMovieStatsArgs = {
 export type MutationUpdateUserNickNameArgs = {
   nickname?: InputMaybe<Scalars['String']>;
   uid: Scalars['String'];
+};
+
+
+export type MutationUpdateUserProfilePhotoArgs = {
+  uid: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type NicKNameFormat = {
@@ -718,6 +725,14 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
+export type SaveProfilePictureMutationVariables = Exact<{
+  url: Scalars['String'];
+  uid: Scalars['String'];
+}>;
+
+
+export type SaveProfilePictureMutation = { __typename?: 'Mutation', updateUserProfilePhoto: { __typename?: 'NickNameResponse', errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt: string, updatedAt: string } | null } };
+
 export type GetCommentedUserQueryVariables = Exact<{
   cid: Scalars['String'];
 }>;
@@ -930,6 +945,23 @@ export const LogoutDocument = gql`
 
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
+export const SaveProfilePictureDocument = gql`
+    mutation saveProfilePicture($url: String!, $uid: String!) {
+  updateUserProfilePhoto(url: $url, uid: $uid) {
+    errors {
+      field
+      message
+    }
+    user {
+      ...FullUser
+    }
+  }
+}
+    ${FullUserFragmentDoc}`;
+
+export function useSaveProfilePictureMutation() {
+  return Urql.useMutation<SaveProfilePictureMutation, SaveProfilePictureMutationVariables>(SaveProfilePictureDocument);
 };
 export const GetCommentedUserDocument = gql`
     query getCommentedUser($cid: String!) {

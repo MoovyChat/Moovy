@@ -57,7 +57,7 @@ export const CommentGroupParent = styled.div<props>`
     box-shadow: inset 0 0 5px 1px;
     max-height: 40vh;
     .comments-child {
-      display: flex;
+      display: block;
       position: relative;
       flex-direction: column;
       align-items: flex-end;

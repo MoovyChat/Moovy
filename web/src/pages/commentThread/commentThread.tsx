@@ -1,4 +1,5 @@
 import { Comment, Reply, User } from '../../utils/interfaces';
+import { CommentThreadParent, StyledButton } from './commentThread.styles';
 import {
   MdFavoriteBorder,
   MdKeyboardBackspace,
@@ -14,7 +15,6 @@ import {
 } from '../../generated/graphql';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CommentThreadParent } from './commentThread.styles';
 import NotFound from '../notFound/notFound';
 import ProfilePic from '../../components/profilePic/profilePic';
 import ReplyCard from '../../components/comment-card/replyCard';
@@ -63,7 +63,7 @@ const CommentThread = () => {
   const [repliesQueryResult] = useGetRepliesOfCommentQuery({
     variables: {
       cid: id!,
-      limit: 5,
+      limit: 10,
     },
   });
   // Get replies.
@@ -89,7 +89,7 @@ const CommentThread = () => {
         <div className='back-button' onClick={backButtonHandler}>
           <MdKeyboardBackspace size={35} />
         </div>
-        <div className='header-text'>Tweet</div>
+        <div className='header-text'>Memo</div>
       </div>
       <div className='comment-container' ref={ref}>
         <div className='comment-usr-detail'>
@@ -101,7 +101,9 @@ const CommentThread = () => {
           </div>
           <div className='options-container'>
             <div className='follow'>
-              <div className='follow-btn'>Follow</div>
+              <StyledButton className='follow-btn' color='#de1328'>
+                Follow
+              </StyledButton>
             </div>
             <div className='option'>
               <MdOutlineMoreHoriz className='icon' size={20} />

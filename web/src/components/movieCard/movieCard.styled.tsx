@@ -26,7 +26,7 @@ export const MovieCardParent = styled.div<props>`
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: ${(p) => p.theme.text};
     text-decoration: none;
     :hover {
       cursor: pointer;

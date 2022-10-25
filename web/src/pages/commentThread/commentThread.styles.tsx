@@ -75,13 +75,6 @@ export const CommentThreadParent = styled.div<props>`
 
         .follow {
           padding: 0 10px;
-          .follow-btn {
-            padding: 10px 20px;
-            font-size: 0.9em;
-            font-weight: 700;
-            border-radius: 10px;
-            background-color: #de1328;
-          }
         }
         .option {
           display: flex;
@@ -151,6 +144,24 @@ export const CommentThreadParent = styled.div<props>`
   .comment-replies {
     position: absolute;
     width: 90%;
-    top: calc(12% + ${(p) => p.commentHeight}px);
+    height: calc(88% - ${(p) => p.commentHeight + 50}px);
+    overflow: auto;
+    top: calc(12% + ${(p) => p.commentHeight + 50}px);
+  }
+`;
+
+type ButtonProps = {
+  color: string;
+};
+export const StyledButton = styled.div<ButtonProps>`
+  padding: 10px 20px;
+  font-size: 0.9em;
+  font-weight: 700;
+  border-radius: 10px;
+  color: white;
+  background-color: ${(p) => p.color};
+  :hover {
+    cursor: pointer;
+    background-color: ${(p) => p.color};
   }
 `;

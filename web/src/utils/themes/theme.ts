@@ -27,7 +27,7 @@ export const lightThemeForHome: ThemeProps = {
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: '#ffffff',
-  movieHeader: 'linear-gradient(to right, #41cffe, #b9dbe4, #7fb7cf)',
+  movieHeader: 'linear-gradient(to right, #e11f1f, #e3c9fe, #f07878)',
   trendingTiles: '#e2e2e2',
 };
 export const darkThemeForHome: ThemeProps = {

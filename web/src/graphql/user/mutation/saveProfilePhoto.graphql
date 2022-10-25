@@ -1,0 +1,11 @@
+mutation saveProfilePicture($url: String!, $uid: String!) {
+  updateUserProfilePhoto(url: $url, uid: $uid) {
+    errors {
+      field
+      message
+    }
+    user {
+      ...FullUser
+    }
+  }
+}

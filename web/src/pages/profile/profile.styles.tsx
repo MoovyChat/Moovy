@@ -28,7 +28,7 @@ export const ProfileParent = styled.div`
     padding: 0px 12px;
     top: 150px;
     right: 10px;
-    background-color: #ffffff;
+    background-color: #ffffffb4;
     border-radius: 6px;
     color: #1c1e21;
     font-size: 12px;
