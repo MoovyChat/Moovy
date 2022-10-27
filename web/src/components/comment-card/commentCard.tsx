@@ -17,8 +17,10 @@ import ReplyCard from './replyCard';
 import _ from 'lodash';
 import { error } from 'console';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   comment: Comment;
@@ -137,4 +139,4 @@ const CommentCard: React.FC<props> = ({ comment }) => {
   );
 };
 
-export default CommentCard;
+export default withUrqlClient(urqlClient)(CommentCard);

@@ -29,10 +29,12 @@ const MovieCard: React.FC<props> = ({ movie }) => {
   return (
     <MovieCardParent like={false} themeToggled=''>
       <div className='group-pic'>
-        <div className='container'>
-          <ProfilePic src='https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI' />
+        <div className='parent'>
+          <div className='container'>
+            <ProfilePic src='https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI' />
+          </div>
         </div>
-        <div className='title' onClick={titleClickHandler}>
+        <div className='title name' onClick={titleClickHandler}>
           {movie?.name}
         </div>
         <Link to={`/movie/${movie?.id}`} className='thread title'>

@@ -13,4 +13,7 @@ export const PopupParent = styled.div`
   z-index: 8;
   flex-direction: column;
   padding: 20px 0;
+  @media (max-width: 500px) {
+    width: 90vw;
+  }
 `;

@@ -5,8 +5,10 @@ import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
 import { Notifications } from '../../utils/interfaces';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetUserNotificationsQuery } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 const NotificationsModule = () => {
   const user = useAppSelector((state) => state.user);
@@ -41,4 +43,4 @@ const NotificationsModule = () => {
   );
 };
 
-export default NotificationsModule;
+export default withUrqlClient(urqlClient)(NotificationsModule);

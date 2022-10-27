@@ -7,9 +7,11 @@ import { IoMdHeartEmpty } from 'react-icons/io';
 import { MdOutlineModeComment } from 'react-icons/md';
 import ProfilePic from '../profilePic/profilePic';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetUserQuery } from '../../generated/graphql';
 import { useNavigate } from 'react-router-dom';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   comment: Reply;
@@ -75,4 +77,4 @@ const ReplyCard: React.FC<props> = ({ comment }) => {
   );
 };
 
-export default ReplyCard;
+export default withUrqlClient(urqlClient)(ReplyCard);

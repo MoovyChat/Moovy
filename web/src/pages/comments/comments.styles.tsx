@@ -45,6 +45,8 @@ export const CommentGroupParent = styled.div<props>`
   flex-direction: column;
   margin: 20px 0px;
   .movie {
+    width: 100%;
+    display: flex;
   }
   .comments {
     display: flex;
@@ -70,6 +72,11 @@ export const CommentGroupParent = styled.div<props>`
       ::-webkit-scrollbar {
         display: none;
       }
+    }
+  }
+  @media (max-width: 900px) {
+    .comments {
+      border-radius: 0px;
     }
   }
 `;

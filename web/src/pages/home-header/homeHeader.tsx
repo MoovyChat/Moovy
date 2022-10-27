@@ -1,18 +1,36 @@
+import { MdMenu, MdOutlineClose } from 'react-icons/md';
+import React, { MouseEventHandler } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+
 import { HomeHeaderParent } from './homeHeader.styles';
 import QCLogo from '../../static/images/qc.png';
-import React from 'react';
-import { useAppSelector } from '../../redux/hooks';
+import { sliceSetNavBar } from '../../redux/slices/miscSlice';
+import useIsAuth from '../../utils/isAuthUser';
 
 type props = {
   className: string;
 };
 const HomeHeader: React.FC<props> = ({ className }) => {
+  useIsAuth();
+  const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
+  const dispatch = useAppDispatch();
+  const navBarHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetNavBar(!isNavBarOpen));
+  };
   const user = useAppSelector((state) => state.user);
   return (
     <HomeHeaderParent className={className}>
       <div className='logo'>
-        <div className='logo-pic'>
+        <div className='logo-image'>
           <img className='image' src={QCLogo} alt='QuietChat' />
+        </div>
+        <div className='logo-icon' onClick={navBarHandler}>
+          {isNavBarOpen ? (
+            <MdOutlineClose className='icon' size={20} />
+          ) : (
+            <MdMenu className='icon' size={20} />
+          )}
         </div>
       </div>
 
@@ -50,7 +68,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         </div>
       </div>
       <div className='user'>
-        <div className='logo-pic'>
+        <div className='logo-image'>
           <img className='image' src={user.photoUrl} alt='user' />
         </div>
       </div>

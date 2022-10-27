@@ -7,8 +7,10 @@ import { CommentParent } from './comments.styles';
 import { MdSort } from 'react-icons/md';
 import { Outlet } from 'react-router-dom';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetCommentsOfTheUserQuery } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 export interface allCommentsInterface {
   [key: string]: Comment[];
@@ -40,9 +42,9 @@ const Comments = () => {
     <CommentParent>
       <div className='heading-container'>
         <div className='heading'>Comments</div>
-        <div className='sort'>
+        {/* <div className='sort'>
           <span>Sort</span> <MdSort size={20} />
-        </div>
+        </div> */}
       </div>
       <div className='child'>
         {comments &&
@@ -58,4 +60,4 @@ const Comments = () => {
   );
 };
 
-export default Comments;
+export default withUrqlClient(urqlClient)(Comments);

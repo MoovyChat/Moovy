@@ -19,12 +19,15 @@ import {
 } from '../../generated/graphql';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import ChildHeader from '../../components/childHeader/childHeader';
 import NotFound from '../notFound/notFound';
 import ProfilePic from '../../components/profilePic/profilePic';
 import ReplyCard from '../../components/comment-card/replyCard';
 import { error } from 'console';
 import { getDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
+import { withUrqlClient } from 'next-urql';
 
 const CommentThread = () => {
   const { id } = useParams();
@@ -86,15 +89,10 @@ const CommentThread = () => {
   // Get comment height.
   useEffect(() => {
     setCommentHeight(ref.current?.clientHeight!);
-  }, [ref.current]);
+  }, []);
   return (
     <CommentThreadParent commentHeight={commentHeight}>
-      <div className='comment-header'>
-        <div className='back-button' onClick={backButtonHandler}>
-          <MdKeyboardBackspace size={35} />
-        </div>
-        <HeaderText className='header-text'>Memo</HeaderText>
-      </div>
+      <ChildHeader className='comment-header' text='Memo' />
       <div className='comment-container' ref={ref}>
         <div className='comment-usr-detail'>
           <div className='user-container'>
@@ -146,4 +144,4 @@ const CommentThread = () => {
   );
 };
 
-export default CommentThread;
+export default withUrqlClient(urqlClient)(CommentThread);

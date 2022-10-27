@@ -5,6 +5,7 @@ import {
   useGetMovieQuery,
 } from '../../generated/graphql';
 
+import ChildHeader from '../../components/childHeader/childHeader';
 import CommentCard from '../../components/comment-card/commentCard';
 import MovieCard from '../../components/movieCard/movieCard';
 import { MovieThreadParent } from './movieThread.styled';
@@ -12,9 +13,13 @@ import NotFound from '../notFound/notFound';
 import _ from 'lodash';
 import { isNumber } from '../../utils/helpers';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
+import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
+import { withUrqlClient } from 'next-urql';
 
 const MovieThread = () => {
+  useIsAuth();
   const { id } = useParams();
   const limit = 10;
   const [valid, setValid] = useState<boolean>(false);
@@ -70,23 +75,26 @@ const MovieThread = () => {
     <div>
       {valid ? (
         <MovieThreadParent>
-          <div className='thread-movie'>
-            <MovieCard movie={movieInfo} />
-          </div>
-          <div className='thread-comments'>
-            {comments?.map((cmt) => (
-              <CommentCard comment={cmt} key={cmt.id} />
-            ))}
-            {page !== lastPage && (
-              <div
-                className='show-more'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPage(page + 1);
-                }}>
-                Show more comments
-              </div>
-            )}
+          <ChildHeader text='Movie' className='movie-header' />
+          <div className='movie-container'>
+            <div className='thread-movie'>
+              <MovieCard movie={movieInfo} />
+            </div>
+            <div className='thread-comments'>
+              {comments?.map((cmt) => (
+                <CommentCard comment={cmt} key={cmt.id} />
+              ))}
+              {page !== lastPage && (
+                <div
+                  className='show-more'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPage(page + 1);
+                  }}>
+                  Show more comments
+                </div>
+              )}
+            </div>
           </div>
         </MovieThreadParent>
       ) : (
@@ -96,4 +104,4 @@ const MovieThread = () => {
   );
 };
 
-export default MovieThread;
+export default withUrqlClient(urqlClient)(MovieThread);

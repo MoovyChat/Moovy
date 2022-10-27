@@ -22,6 +22,8 @@ import ProfilePic from '../../components/profilePic/profilePic';
 import ReplyCard from '../../components/comment-card/replyCard';
 import { getDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
+import { withUrqlClient } from 'next-urql';
 
 const ReplyThread = () => {
   const { id } = useParams();
@@ -149,4 +151,4 @@ const ReplyThread = () => {
   );
 };
 
-export default ReplyThread;
+export default withUrqlClient(urqlClient)(ReplyThread);

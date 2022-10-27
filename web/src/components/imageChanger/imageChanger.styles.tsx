@@ -106,6 +106,29 @@ export const ImageChangerParent = styled.div<props>`
       }
     }
   }
+  @media (max-width: 500px) {
+    .heading {
+      font-size: 1em;
+      font-weight: 600;
+    }
+    .save-close {
+      width: 90%;
+      .save {
+        position: absolute;
+        left: 0;
+      }
+      .close {
+        position: absolute;
+        right: 0;
+      }
+    }
+    .options {
+      flex-direction: column;
+      .or {
+        display: none;
+      }
+    }
+  }
 `;
 
 export const DisplayImage = styled.div`

@@ -5,7 +5,11 @@ type props = {
   src: string;
 };
 const ProfilePic: React.FC<props> = ({ src }) => {
-  return <ProfilePicParent src={src}></ProfilePicParent>;
+  return (
+    <ProfilePicParent>
+      <img src={src} alt='profilePic' />
+    </ProfilePicParent>
+  );
 };
 
 export default ProfilePic;

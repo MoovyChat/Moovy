@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 
 import { User } from './interfaces';
 import { isServer } from '../constants';
+import { urqlClient } from './urlClient';
 import { useAppDispatch } from '../redux/hooks';
 import { useMeQuery } from '../generated/graphql';
 import { useNavigate } from 'react-router-dom';
+import { withUrqlClient } from 'next-urql';
 
-export const useIsAuth = () => {
+const useIsAuth = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(userState);
   const [{ data, fetching, error }] = useMeQuery({});
@@ -21,3 +23,5 @@ export const useIsAuth = () => {
     }
   }, [fetching, data, error]);
 };
+
+export default useIsAuth;

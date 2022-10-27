@@ -31,7 +31,9 @@ import { batch } from 'react-redux';
 import { imgPreview } from '../image-crop/imagePreview';
 import { isImageURLValid } from '../../utils/helpers';
 import { sliceSetUser } from '../../redux/slices/userSlice';
+import { urqlClient } from '../../utils/urlClient';
 import { useSaveProfilePictureMutation } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 const ImageChanger = () => {
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -212,4 +214,4 @@ const ImageChanger = () => {
   );
 };
 
-export default ImageChanger;
+export default withUrqlClient(urqlClient)(ImageChanger);

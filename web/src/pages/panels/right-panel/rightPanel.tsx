@@ -2,6 +2,7 @@ import { FaHashtag } from 'react-icons/fa';
 import { MdLocalFireDepartment } from 'react-icons/md';
 import React from 'react';
 import { RightParent } from './rightPanel.styles';
+import useIsAuth from '../../../utils/isAuthUser';
 
 type props = {
   className: string;
@@ -51,6 +52,7 @@ const fakeHashTags = [
   },
 ];
 const RightPanel: React.FC<props> = ({ className }) => {
+  useIsAuth();
   return (
     <RightParent className={className}>
       <div className='adblock'>Advertisements goes here</div>

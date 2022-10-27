@@ -11,7 +11,9 @@ import MovieCard from '../../components/movieCard/movieCard';
 import ProfilePic from '../../components/profilePic/profilePic';
 import { getFormattedNumber } from '../../utils/helpers';
 import { isServer } from '../../constants';
+import { urqlClient } from '../../utils/urlClient';
 import { useGetMovieQuery } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   comments: Comment[];
@@ -49,4 +51,4 @@ const CommentGroup: React.FC<props> = ({ movieId, comments }) => {
   );
 };
 
-export default CommentGroup;
+export default withUrqlClient(urqlClient)(CommentGroup);

@@ -6,7 +6,7 @@ const w = 12;
 export const HomeHeaderParent = styled.div`
   display: flex;
   overflow: hidden;
-  box-shadow: 0 2px 10px;
+  border-bottom: 0.3px solid;
   .logo,
   .user {
     position: relative;
@@ -15,11 +15,11 @@ export const HomeHeaderParent = styled.div`
     justify-content: space-evenly;
     align-items: center;
     flex: 1 0 ${w}%;
-    .logo-pic {
+    .logo-image {
       width: 100%;
       display: flex;
       justify-content: space-evenly;
-      img {
+      .image {
         width: 40px;
         height: 40px;
       }
@@ -27,6 +27,14 @@ export const HomeHeaderParent = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+    }
+    .logo-icon {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      .icon {
+        display: none;
       }
     }
   }
@@ -75,6 +83,39 @@ export const HomeHeaderParent = styled.div`
           .count {
           }
           .text {
+          }
+        }
+      }
+      @media (max-width: 900px) {
+        .side {
+          .one {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 500px) {
+    .stats {
+      .inner {
+        animation: none;
+      }
+    }
+    .logo {
+      .logo-image {
+        display: none;
+      }
+      .logo-icon {
+        .icon {
+          display: flex;
+          :hover {
+            background-color: #6e6e6e50;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: 5px;
+          }
+          :active {
+            background-color: #6e6e6e7d;
           }
         }
       }
