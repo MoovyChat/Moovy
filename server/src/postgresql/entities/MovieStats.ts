@@ -6,10 +6,9 @@ import {
   Entity,
   ManyToOne,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 
 import { Movie } from './Movie';
 import { User } from './User';
@@ -25,11 +24,11 @@ export class MovieStats extends BaseEntity {
   @Column({ default: false })
   favorite?: boolean;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @PrimaryColumn()
   movieId!: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @PrimaryColumn()
   userId!: string;
 

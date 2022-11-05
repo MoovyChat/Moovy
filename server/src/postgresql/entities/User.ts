@@ -15,6 +15,7 @@ import { CommentStats } from './CommentStat';
 import { Follow } from './Follow';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
+import { Notifications } from './Notifications';
 import { Reply } from './Reply';
 import { ReplyStats } from './ReplyStats';
 
@@ -70,6 +71,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];
+
+  @OneToMany(() => Notifications, (Notifications) => Notifications.user)
+  notifications: Notification[];
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];

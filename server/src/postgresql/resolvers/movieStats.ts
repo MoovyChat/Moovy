@@ -27,6 +27,13 @@ class LikesAndFavObj {
   userFavoriteCount: number;
 }
 
+@ObjectType()
+class LikeAndFav {
+  @Field(() => Boolean, { nullable: true })
+  like: boolean;
+  @Field(() => Boolean, { nullable: true })
+  favorite: boolean;
+}
 @InputType()
 class UserMovieOptions {
   @Field(() => Boolean, { nullable: true })
@@ -48,24 +55,16 @@ export class MovieStatsResolver {
     return res;
   }
 
-  @Mutation(() => MovieStats, { nullable: true })
+  @Mutation(() => LikeAndFav, { nullable: true })
   async updateUserMovieStats(
     @Arg('uid') uid: string,
     @Arg('mid') mid: string,
     @Arg('options') options: UserMovieOptions,
     @PubSub() pubSub: PubSubEngine
-  ): Promise<MovieStats | null> {
+  ): Promise<LikeAndFav | null> {
     let detail: any;
+    console.log(mid);
     await conn.transaction(async (manager) => {
-      const movie = await Movie.findOne({ where: { id: mid } });
-      if (!movie) {
-        await Movie.insert({
-          id: mid,
-          name: '',
-          platformId: 1,
-          likesCount: 0,
-        });
-      }
       const res = await manager.getRepository(MovieStats).upsert(
         [
           {
@@ -96,7 +95,10 @@ export class MovieStatsResolver {
       }
     });
     await pubSub.publish(STATUS_UPDATE, mid);
-    return detail;
+    return {
+      like: detail ? detail.like : null,
+      favorite: detail ? detail.favorite : null,
+    };
   }
 
   @Subscription(() => LikesAndFavObj, { topics: STATUS_UPDATE })

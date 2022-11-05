@@ -130,6 +130,7 @@ export class ReplyResolver {
       .getRepository(Reply)
       .createQueryBuilder('reply')
       .where('reply.parentReplyId = :rid', { rid })
+      .andWhere('cast(reply.parentReplyId AS INT) != reply.parentCommentId')
       .orderBy('reply.likesCount', 'ASC')
       .orderBy('reply.repliesCount', 'ASC')
       .orderBy('reply.createdAt', 'ASC')

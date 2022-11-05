@@ -15,6 +15,7 @@ import { Comment } from './Comment';
 import { MovieStats } from './MovieStats';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
+import { Title } from './Title';
 import { User } from './User';
 
 @ObjectType()
@@ -27,6 +28,30 @@ export class Movie extends BaseEntity {
   @Field(() => String)
   @Column()
   name!: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  synopsis?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  stills: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  thumbs: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  season: string;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column()
+  year: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column()
+  runtime: number;
 
   @Field(() => Int)
   @Column({ type: 'int', default: 0 })
@@ -48,6 +73,16 @@ export class Movie extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
+  @Field()
+  @Column()
+  titleId!: string;
+
+  @ManyToOne(() => Title, (info) => info.movie)
+  title: Title;
+
+  @ManyToOne(() => User, (user) => user.movies)
+  viewedUsers: User[];
+
   @OneToMany(() => Comment, (comment) => comment.movie)
   comments: Comment[];
 
@@ -56,9 +91,6 @@ export class Movie extends BaseEntity {
 
   @OneToMany(() => MovieStats, (stats) => stats.movie)
   movieStats: MovieStats[];
-
-  @ManyToOne(() => User, (user) => user.movies)
-  viewedUsers: User[];
 
   @ManyToOne(() => Platform, (platform) => platform.movies)
   platform: Platform;

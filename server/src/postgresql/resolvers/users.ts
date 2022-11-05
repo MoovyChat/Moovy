@@ -115,6 +115,8 @@ class NicKNameFormat {
 
 @ObjectType()
 class PaginatedUserComments {
+  @Field()
+  id: string;
   @Field(() => User)
   user: User;
   @Field(() => [Comment])
@@ -288,7 +290,7 @@ export class UserResolver {
       )
       .where('c.commentedUserId = :uid', { uid })
       .getMany();
-    return { user, comments };
+    return { id: uid, user, comments };
   }
 
   @Query(() => FullUserMovieStats, { nullable: true })
@@ -328,6 +330,42 @@ export class UserResolver {
       console.log(err);
     }
     return user;
+  }
+
+  @Mutation(() => NickNameResponse)
+  async updateUserProfilePhoto(
+    @Arg('uid') uid: string,
+    @Arg('url') url: string
+  ): Promise<NickNameResponse> {
+    const user = await User.findOne({ where: { id: uid } });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: 'user',
+            message: 'User not found',
+          },
+        ],
+      };
+    }
+
+    if (url.length < 0) {
+      return {
+        errors: [
+          {
+            field: 'empty nick name',
+            message: 'URL should not be empty',
+          },
+        ],
+      };
+    }
+
+    if (typeof url !== undefined) {
+      await User.update({ id: uid }, { photoUrl: url });
+    }
+    return {
+      user,
+    };
   }
 
   @Mutation(() => NickNameResponse)

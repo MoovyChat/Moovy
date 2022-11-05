@@ -26,9 +26,23 @@ class MovieInput {
   id: string;
   @Field()
   name: string;
-  @Field(() => Int)
+  @Field()
+  synopsis: string;
+  @Field()
+  stills: string;
+  @Field()
+  thumbs: string;
+  @Field()
+  season: string;
+  @Field(() => Int, { defaultValue: 0 })
+  year: number;
+  @Field(() => Int, { defaultValue: 0 })
+  runtime: number;
+  @Field({ nullable: true })
+  titleId: string;
+  @Field(() => Int, { defaultValue: 0 })
   likesCount: number;
-  @Field(() => Int)
+  @Field(() => Int, { defaultValue: 1 })
   platformId!: number;
 }
 
@@ -74,6 +88,7 @@ export class MovieResolver {
     return Movie.find();
   }
 
+  @Query(() => PaginatedMovieComments, { nullable: true })
   @Mutation(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
     @Arg('mid') mid: string,
@@ -122,7 +137,7 @@ export class MovieResolver {
     return comments;
   }
 
-  @Query(() => Movie)
+  @Query(() => Movie, { nullable: true })
   getMovie(@Arg('mid') mid: string): Promise<Movie | null> {
     return Movie.findOne({ where: { id: mid } });
   }
@@ -142,17 +157,6 @@ export class MovieResolver {
     const movie = await Movie.findOne({ where: { id: mid } });
     const likesCount = movie?.likesCount!;
     const commentsCount = movie?.commentCount!;
-    // const likesCount = await conn
-    //   .getRepository(User)
-    //   .createQueryBuilder('user')
-    //   .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
-    //     mid,
-    //   })
-    //   .where('stats.like = :like', { like: true })
-    //   .getCount();
-    // const commentsCount = await Comment.count({
-    //   where: { movieId: mid },
-    // });
     const payload: LikesAndComment = { likesCount, commentsCount };
     await pubSub.publish(LIKES_AND_COMMENT, payload);
     return payload;
@@ -219,6 +223,13 @@ export class MovieResolver {
             {
               id: options.id,
               name: options.name,
+              titleId: options.titleId,
+              year: options.year,
+              season: options.season,
+              stills: options.stills,
+              thumbs: options.thumbs,
+              synopsis: options.synopsis,
+              runtime: options.runtime,
               likesCount: options.likesCount,
               platformId: options.platformId,
             },

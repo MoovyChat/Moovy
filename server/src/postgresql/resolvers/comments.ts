@@ -36,6 +36,8 @@ class CommentInput {
 
 @ObjectType()
 class IsUserLikedObject {
+  @Field()
+  id: string;
   @Field(() => Boolean, { defaultValue: false })
   isLiked: boolean;
 }
@@ -68,7 +70,7 @@ export class CommentResolver {
     const commentStat = await CommentStats.findOne({
       where: { commentId: cid, userId: uid },
     });
-    return { isLiked: commentStat?.like };
+    return { id: cid, isLiked: commentStat?.like };
   }
 
   @Query(() => User, { nullable: true })
