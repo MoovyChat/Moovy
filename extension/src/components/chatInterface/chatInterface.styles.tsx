@@ -12,6 +12,7 @@ export const TextAreaContainer = styled.div`
 type perimeterProps = {
   chatWindowSize: string;
   openChatWindow: boolean;
+  thumbs: string;
 };
 export const Perimeter = styled.div<perimeterProps>`
   position: fixed;
@@ -22,6 +23,20 @@ export const Perimeter = styled.div<perimeterProps>`
   bottom: 0;
   top: 0;
   transition: max-width 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  background-image: url(${(p) => p.thumbs});
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  ::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(11px);
+    z-index: -1;
+    background: ${(p) => p.theme.body};
+    opacity: 0.7;
+  }
 `;
 
 export const DragBar = styled.div`

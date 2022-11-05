@@ -1,11 +1,5 @@
-query GetMovie($mid: String!) {
+query getMovie($mid: String!) {
   getMovie(mid: $mid) {
-    id
-    name
-    platformId
-    likesCount
-    favCount
-    commentCount
-    viewsCount
+    ...FullMovie
   }
 }

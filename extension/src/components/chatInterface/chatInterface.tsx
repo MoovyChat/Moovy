@@ -54,6 +54,7 @@ const ChatInterface: React.FC<props> = ({
   let commentIcon = document.getElementById('comment-header');
   let videoElem = getPlayerViewElement();
   let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
+  let thumbs = useAppSelector((state) => state.movie.thumbs!);
   const dispatch = useAppDispatch();
   const position = useMousePosition();
   // Redux: App selectors.
@@ -192,6 +193,7 @@ const ChatInterface: React.FC<props> = ({
 
   return (
     <Perimeter
+      thumbs={thumbs}
       ref={divRef}
       chatWindowSize={chatWindowSize}
       openChatWindow={openChatWindow!}>

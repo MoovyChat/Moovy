@@ -1,4 +1,10 @@
 import {
+  EpisodeInfo,
+  MovieFullInformation,
+  SeasonInfo,
+  User,
+} from '../Utils/interfaces';
+import {
   getDomain,
   getIdFromNetflixURL,
 } from '../contentScript/contentScript.utils';
@@ -7,7 +13,6 @@ import {
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
-import { User } from '../Utils/interfaces';
 import { domains } from '../constants';
 
 const setCookieForWebPage = async () => {
@@ -55,7 +60,68 @@ chrome.runtime.onInstalled.addListener(async () => {
   injectScriptsOnReload();
 });
 
-var test = (time: string) => {
+var getMovieInfo = (movieId: string) => {
+  let netflixApi = (window as any).netflix;
+  // let videoState = netflixApi.appContext?.getPlayerApp().getState();
+  let api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
+  let videoMetaData = api?.getVideoMetadataByVideoId(movieId);
+  let videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
+  let _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
+  let _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
+  let metaData = videoMetaData?._metadata?.video;
+  let mainYear = metaData.year;
+  let mainRunTime = metaData.runtime;
+  let mainTitleType: string = metaData?.type;
+  let mainTitle: string = metaData?.title;
+  let artwork: string = metaData?.artwork[0]?.url;
+  let boxart: string = metaData?.boxart[0]?.url;
+  let storyart: string = metaData?.storyart[0]?.url;
+  let rating: string = metaData?.rating;
+  let synopsis: string = metaData?.synopsis;
+  let _seasons: any[] = videoMetaData?._seasons;
+  let _finalSeasonValue: SeasonInfo[] | null = [];
+  if (_seasons) {
+    _finalSeasonValue = _seasons.map((s) => {
+      let _seasonInfo = s?._season;
+      let title = _seasonInfo?.title;
+      let year = _seasonInfo?.year;
+      let _episodes: any[] = s._episodes;
+      let episodeReturnvalue = _episodes.map((e) => {
+        let episodeInfo: EpisodeInfo = {
+          id: e?._video?.id,
+          title: e?._video?.title,
+          thumbs: e?._video?.thumbs[0]?.url,
+          stills: e?._video?.stills[0]?.url,
+          runtime: e?._video?.runtime,
+          synopsis: e?._video?.synopsis,
+        };
+        return episodeInfo;
+      });
+      let seasonInfo: SeasonInfo = {
+        year,
+        title,
+        episodes: episodeReturnvalue,
+      };
+      return seasonInfo;
+    });
+  }
+  let finalResult: MovieFullInformation = {
+    type: mainTitleType,
+    title: mainTitle,
+    synopsis,
+    storyart,
+    rating,
+    boxart,
+    artwork,
+    year: mainYear,
+    runtime: mainRunTime,
+    advisories: _advisories,
+    seasons: _finalSeasonValue,
+  };
+  return finalResult;
+};
+
+var timeSkipForNetflix = (time: string) => {
   // Conversion of time to milliseconds
   if (time !== '') {
     let timeArray = time.split(':');
@@ -73,7 +139,8 @@ var test = (time: string) => {
     let totalSeconds = hours * 3600 + minutes * 60 + seconds;
     let timeInMS = totalSeconds * 1000;
 
-    let netflixApi = window.netflix;
+    let netflixApi = (window as any).netflix;
+    console.log(window);
     let videoPlayer =
       netflixApi?.appContext?.state.playerApp.getAPI().videoPlayer;
     if (videoPlayer) {
@@ -99,7 +166,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabId, allFrames: true },
-        func: test,
+        func: timeSkipForNetflix,
         args: [msg.time],
         world: 'MAIN',
       },
@@ -243,8 +310,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }, 1);
       }
     );
+    return true;
+  } else if (request.type === 'MOVIE_INFO') {
+    if (sender.tab) {
+      const tabId = sender.tab?.id!;
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabId, allFrames: true },
+          func: getMovieInfo,
+          args: [request.movieId],
+          world: 'MAIN',
+        },
+        (e) => {
+          let result = e[0].result;
+          sendResponse({ result });
+        }
+      );
+    }
+    return true;
   }
-  return true;
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

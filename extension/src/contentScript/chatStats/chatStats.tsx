@@ -162,7 +162,7 @@ const ChatStats: React.FC<props> = () => {
           )}
         </div>
         <div className='comment'>
-          <span>{getFormattedNumber(commentsCount)}</span>
+          <span>{getFormattedNumber(commentsCount!)}</span>
           <BiComment size={icon_Size} />
         </div>
         <div

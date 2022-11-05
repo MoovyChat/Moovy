@@ -23,6 +23,7 @@ function main() {
     // colorLog(url, lastUrl);
     if (url !== lastUrl) {
       // URL IS CHANGED
+      console.log('End');
       colorLog('FETCHED NEW URL');
       observer.disconnect();
       // THIS IS WORKING FOR INSIDE NETFLIX URL CHANGE/SWITCHING TO NEXT EPISODE

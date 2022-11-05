@@ -18,21 +18,22 @@ export const movieState: Movie = {
   pastLoadedCount: 0,
   newlyLoadedCommentTimeStamp: '', // For loading new comments...'
   loadNew: 0,
+  viewsCount: 0,
+  commentCount: 0,
+  runtime: 0,
+  thumbs: '',
+  season: '',
+  titleId: '',
+  fetched: false,
 };
 
 const MovieSlice = createSlice({
   name: 'movie',
   initialState: movieState,
   reducers: {
-    sliceAddMovie: (state, action) => {
-      const { payload } = action;
-      state.id = payload.id;
-      state.likesCount = payload.likesCount;
-      state.name = payload.name;
-      state.totalCommentsCountOfMovie = payload.totalCommentsCountOfMovie;
-      state.commentsLoadedCount = payload.commentsLoadedCount;
-      state.likesCount = payload.likesCount;
-      state.totalRepliesCountOfMovie = payload.totalRepliesCountOfMovie;
+    sliceAddMovie: (_state, action: { payload: Movie }) => {
+      let movieObject: Movie = action.payload;
+      return { ...movieObject, fetched: true };
     },
     sliceAddMovieId: (state, action) => {
       state.id = action.payload;
@@ -84,6 +85,9 @@ const MovieSlice = createSlice({
     sliceSetFavCount: (state, action) => {
       return { ...state, favCount: action.payload };
     },
+    sliceSetFetched: (state, action: { payload: boolean }) => {
+      return { ...state, fetched: true };
+    },
     sliceResetMovie: () => {
       return movieState;
     },
@@ -118,6 +122,7 @@ export const {
   sliceSetPastLoadedCount,
   sliceAddMovieName,
   sliceSetLoadNew,
+  sliceSetFetched,
   sliceSetTotalCommentsOfTheMovie,
   sliceSetCommentsLoadedCount,
   sliceSetLikesCount,

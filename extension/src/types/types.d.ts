@@ -8,6 +8,7 @@ declare global {
             getAPI: any;
           };
         };
+        getPlayerApp: () => any;
       };
     };
   }

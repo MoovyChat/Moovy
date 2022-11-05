@@ -31,13 +31,15 @@ export interface Movie {
   id: string;
   name: string;
   platformId?: number;
-  totalCommentsCountOfMovie: number;
-  commentsLoadedCount: number;
-  totalRepliesCountOfMovie: number;
+  totalCommentsCountOfMovie?: number;
+  commentsLoadedCount?: number;
+  totalRepliesCountOfMovie?: number;
   newlyLoadedCommentTimeStamp?: string;
   lastPage?: number;
   currentPage?: number;
-  likesCount: number;
+  likesCount?: number;
+  commentCount?: number;
+  viewsCount?: number;
   createdAt?: any;
   favCount?: number;
   updatedAt?: any;
@@ -45,6 +47,11 @@ export interface Movie {
   initialLoadedTimeStamp?: string;
   pastLoadedCount?: number;
   loadNew?: number;
+  runtime?: number | null | undefined;
+  thumbs?: string | null | undefined;
+  season?: string | null | undefined;
+  titleId?: string | null | undefined;
+  fetched?: boolean;
 }
 
 export interface CommonInfo {
@@ -137,4 +144,32 @@ export interface loadingInterface {
 export interface borderType {
   title: string;
   color: string;
+}
+
+export interface EpisodeInfo {
+  id: number;
+  title: string;
+  synopsis: string;
+  stills: string;
+  thumbs: string;
+  runtime: number;
+}
+
+export interface SeasonInfo {
+  title: string;
+  year: number;
+  episodes: EpisodeInfo[];
+}
+export interface MovieFullInformation {
+  title?: string;
+  type?: string;
+  artwork?: string;
+  boxart?: string;
+  storyart?: string;
+  rating?: string;
+  synopsis?: string;
+  advisories?: string[];
+  runtime?: number;
+  year?: number;
+  seasons: SeasonInfo[] | null;
 }

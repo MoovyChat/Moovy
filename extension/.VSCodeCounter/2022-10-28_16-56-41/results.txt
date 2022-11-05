@@ -1,0 +1,316 @@
+Date : 2022-10-28 16:56:41
+Directory : /Users/kishore/Documents/Github/QuietChat/extension
+Total : 192 files,  11545 codes, 322 comments, 1165 blanks, all 13032 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript React   |        100 |      8,893 |        178 |        873 |      9,944 |
+| TypeScript         |         30 |      1,579 |         81 |        164 |      1,824 |
+| GraphQL            |         44 |        461 |          0 |         44 |        505 |
+| JavaScript         |          9 |        281 |         22 |         29 |        332 |
+| JSON               |          2 |        153 |         41 |          1 |        195 |
+| Markdown           |          3 |        136 |          0 |         50 |        186 |
+| JSON with Comments |          1 |         26 |          0 |          1 |         27 |
+| YAML               |          1 |         12 |          0 |          1 |         13 |
+| SCSS               |          2 |          4 |          0 |          2 |          6 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                  | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                     |        192 |     11,545 |        322 |      1,165 |     13,032 |
+| src                                                                                                                   |        182 |     11,017 |        309 |      1,093 |     12,419 |
+| src/Utils                                                                                                             |          8 |        648 |         20 |         65 |        733 |
+| src/background                                                                                                        |          1 |        263 |         30 |         17 |        310 |
+| src/components                                                                                                        |         41 |      2,838 |         40 |        201 |      3,079 |
+| src/components/button                                                                                                 |          2 |         76 |          0 |          7 |         83 |
+| src/components/chatArea                                                                                               |          2 |        292 |          3 |         23 |        318 |
+| src/components/chatInterface                                                                                          |          2 |        292 |         14 |         19 |        325 |
+| src/components/chatTitle                                                                                              |          2 |        217 |          6 |          8 |        231 |
+| src/components/editUserName                                                                                           |          2 |        162 |          6 |         13 |        181 |
+| src/components/emojiPicker                                                                                            |          8 |        264 |          1 |         33 |        298 |
+| src/components/emojiPicker/emojiButton                                                                                |          2 |        108 |          1 |         11 |        120 |
+| src/components/emojiPicker/emojiGroup                                                                                 |          2 |         24 |          0 |          5 |         29 |
+| src/components/emojiPicker/emojiSubGroup                                                                              |          2 |         38 |          0 |          5 |         43 |
+| src/components/likesWindow                                                                                            |          2 |        183 |          0 |         12 |        195 |
+| src/components/loading                                                                                                |          2 |         40 |          0 |          5 |         45 |
+| src/components/miniCards                                                                                              |          4 |        176 |          1 |         16 |        193 |
+| src/components/miniCards/movieMini                                                                                    |          2 |        138 |          1 |         11 |        150 |
+| src/components/notFound                                                                                               |          2 |         59 |          0 |          7 |         66 |
+| src/components/popSlide                                                                                               |          2 |        180 |          0 |         10 |        190 |
+| src/components/profileWindow                                                                                          |          2 |        425 |          2 |         19 |        446 |
+| src/components/slider                                                                                                 |          2 |         68 |          0 |          6 |         74 |
+| src/components/smileyWindow                                                                                           |          2 |        251 |          7 |          8 |        266 |
+| src/components/toast                                                                                                  |          2 |        131 |          0 |          9 |        140 |
+| src/components/tooltip                                                                                                |          3 |         22 |          0 |          6 |         28 |
+| src/contentScript                                                                                                     |         31 |      3,300 |        132 |        247 |      3,679 |
+| src/contentScript/chatBox                                                                                             |          2 |        261 |          7 |         16 |        284 |
+| src/contentScript/chatStats                                                                                           |          2 |        289 |         14 |         19 |        322 |
+| src/contentScript/commentButton                                                                                       |          2 |        169 |          9 |         12 |        190 |
+| src/contentScript/commentCard                                                                                         |          2 |        204 |         10 |         16 |        230 |
+| src/contentScript/commentInterface                                                                                    |          2 |        568 |         12 |         32 |        612 |
+| src/contentScript/comments                                                                                            |          2 |         74 |          0 |          7 |         81 |
+| src/contentScript/createChatWindow                                                                                    |          2 |         41 |          7 |          7 |         55 |
+| src/contentScript/hooks                                                                                               |          4 |        116 |          4 |         19 |        139 |
+| src/contentScript/likesView                                                                                           |          2 |          8 |          0 |          5 |         13 |
+| src/contentScript/messageBox                                                                                          |          2 |        311 |         14 |         17 |        342 |
+| src/contentScript/replyCard                                                                                           |          1 |        181 |          9 |         13 |        203 |
+| src/contentScript/replyWindow                                                                                         |          2 |        186 |          1 |         15 |        202 |
+| src/contentScript/videoStyles                                                                                         |          2 |        460 |         19 |         25 |        504 |
+| src/extension                                                                                                         |         23 |      1,241 |          8 |        111 |      1,360 |
+| src/extension/components                                                                                              |         18 |      1,108 |          8 |         97 |      1,213 |
+| src/extension/components/app                                                                                          |          3 |        121 |          1 |         13 |        135 |
+| src/extension/components/header                                                                                       |          2 |         39 |          1 |          8 |         48 |
+| src/extension/components/home                                                                                         |          2 |         49 |          0 |          8 |         57 |
+| src/extension/components/login                                                                                        |          2 |         94 |          1 |          9 |        104 |
+| src/extension/components/login-after                                                                                  |          1 |         71 |          4 |          6 |         81 |
+| src/extension/components/logout                                                                                       |          2 |        330 |          0 |         21 |        351 |
+| src/extension/components/sidebar                                                                                      |          2 |        157 |          0 |         13 |        170 |
+| src/extension/components/stats                                                                                        |          2 |         60 |          0 |         10 |         70 |
+| src/extension/components/userNameEdit                                                                                 |          2 |        187 |          1 |          9 |        197 |
+| src/extension/options                                                                                                 |          1 |         12 |          0 |          2 |         14 |
+| src/extension/popup                                                                                                   |          4 |        121 |          0 |         12 |        133 |
+| src/extension/popup/offsite                                                                                           |          3 |        109 |          0 |         10 |        119 |
+| src/generated                                                                                                         |          1 |      1,342 |          1 |        299 |      1,642 |
+| src/graphql                                                                                                           |         44 |        461 |          0 |         44 |        505 |
+| src/graphql/comments                                                                                                  |          7 |         88 |          0 |          7 |         95 |
+| src/graphql/comments/mutation                                                                                         |          3 |         47 |          0 |          3 |         50 |
+| src/graphql/comments/query                                                                                            |          2 |         26 |          0 |          2 |         28 |
+| src/graphql/comments/subscriptions                                                                                    |          2 |         15 |          0 |          2 |         17 |
+| src/graphql/follow                                                                                                    |          4 |         35 |          0 |          4 |         39 |
+| src/graphql/follow/mutations                                                                                          |          1 |          9 |          0 |          1 |         10 |
+| src/graphql/follow/query                                                                                              |          3 |         26 |          0 |          3 |         29 |
+| src/graphql/fragments                                                                                                 |          3 |         34 |          0 |          3 |         37 |
+| src/graphql/movies                                                                                                    |          9 |         77 |          0 |          9 |         86 |
+| src/graphql/movies/mutations                                                                                          |          4 |         43 |          0 |          4 |         47 |
+| src/graphql/movies/queries                                                                                            |          4 |         28 |          0 |          4 |         32 |
+| src/graphql/movies/subscription                                                                                       |          1 |          6 |          0 |          1 |          7 |
+| src/graphql/replies                                                                                                   |          7 |         54 |          0 |          7 |         61 |
+| src/graphql/replies/mutation                                                                                          |          3 |         29 |          0 |          3 |         32 |
+| src/graphql/replies/query                                                                                             |          4 |         25 |          0 |          4 |         29 |
+| src/graphql/users                                                                                                     |         14 |        173 |          0 |         14 |        187 |
+| src/graphql/users/mutations                                                                                           |          8 |         72 |          0 |          8 |         80 |
+| src/graphql/users/queries                                                                                             |          6 |        101 |          0 |          6 |        107 |
+| src/indexedDB                                                                                                         |          1 |         30 |          2 |          8 |         40 |
+| src/netflix-api                                                                                                       |          2 |         15 |          0 |          6 |         21 |
+| src/optionsPage                                                                                                       |          4 |         62 |          0 |         10 |         72 |
+| src/optionsPage/header                                                                                                |          2 |         28 |          0 |          5 |         33 |
+| src/optionsPage/optionsHome                                                                                           |          2 |         34 |          0 |          5 |         39 |
+| src/redux                                                                                                             |         12 |        551 |         26 |         51 |        628 |
+| src/redux/reducer                                                                                                     |          1 |         25 |          1 |          6 |         32 |
+| src/redux/slices                                                                                                      |          8 |        484 |         21 |         35 |        540 |
+| src/redux/slices/comment                                                                                              |          1 |         99 |          0 |          4 |        103 |
+| src/redux/slices/loading                                                                                              |          1 |         28 |          0 |          5 |         33 |
+| src/redux/slices/movie                                                                                                |          1 |        106 |         21 |          5 |        132 |
+| src/redux/slices/reply                                                                                                |          1 |         68 |          0 |          5 |         73 |
+| src/redux/slices/settings                                                                                             |          1 |         68 |          0 |          4 |         72 |
+| src/redux/slices/textArea                                                                                             |          1 |         34 |          0 |          4 |         38 |
+| src/redux/slices/toast                                                                                                |          1 |         24 |          0 |          4 |         28 |
+| src/redux/slices/user                                                                                                 |          1 |         57 |          0 |          4 |         61 |
+| src/static                                                                                                            |          3 |         65 |         46 |          6 |        117 |
+| src/styles                                                                                                            |          1 |         94 |          0 |          9 |        103 |
+| src/theme                                                                                                             |          2 |         31 |          0 |          5 |         36 |
+| src/types                                                                                                             |          3 |         23 |          0 |          4 |         27 |
++-----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                              | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/kishore/Documents/Github/QuietChat/extension/README.md                                                         | Markdown           |         38 |          0 |         33 |         71 |
+| /Users/kishore/Documents/Github/QuietChat/extension/_generated_help.md                                                | Markdown           |         38 |          0 |          2 |         40 |
+| /Users/kishore/Documents/Github/QuietChat/extension/codegen.yml                                                       | YAML               |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/help.js                                                           | JavaScript         |         87 |         13 |         10 |        110 |
+| /Users/kishore/Documents/Github/QuietChat/extension/help.md                                                           | Markdown           |         60 |          0 |         15 |         75 |
+| /Users/kishore/Documents/Github/QuietChat/extension/package.json                                                      | JSON               |        142 |          0 |          1 |        143 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/betterUpdateQuery.ts                                    | TypeScript         |        123 |         10 |          5 |        138 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/defaultValues.ts                                        | TypeScript         |         15 |          0 |          3 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/enums.ts                                                | TypeScript         |         18 |          0 |          3 |         21 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/interfaces.ts                                           | TypeScript         |        127 |          0 |         14 |        141 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/mixins.tsx                                              | TypeScript React   |          5 |          0 |          2 |          7 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/storage.ts                                              | TypeScript         |        226 |          1 |         24 |        251 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/urqlClient.ts                                           | TypeScript         |         57 |          0 |          4 |         61 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/Utils/utilities.ts                                            | TypeScript         |         77 |          9 |         10 |         96 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/background/background.ts                                      | TypeScript         |        263 |         30 |         17 |        310 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/button/button.styles.tsx                           | TypeScript React   |         40 |          0 |          4 |         44 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/button/button.tsx                                  | TypeScript React   |         36 |          0 |          3 |         39 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatArea/chatArea.styles.tsx                       | TypeScript React   |         52 |          0 |          6 |         58 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatArea/chatArea.tsx                              | TypeScript React   |        240 |          3 |         17 |        260 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatInterface/chatInterface.styles.tsx             | TypeScript React   |         75 |          0 |          6 |         81 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatInterface/chatInterface.tsx                    | TypeScript React   |        217 |         14 |         13 |        244 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatTitle/chatTitle.styles.tsx                     | TypeScript React   |         75 |          0 |          2 |         77 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/chatTitle/chatTitle.tsx                            | TypeScript React   |        142 |          6 |          6 |        154 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/editUserName/editNickName.styles.tsx               | TypeScript React   |         59 |          0 |          2 |         61 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/editUserName/editUserName.tsx                      | TypeScript React   |        103 |          6 |         11 |        120 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiButton/emojiButton.styles.tsx     | TypeScript React   |         38 |          0 |          2 |         40 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiButton/emojiButton.tsx            | TypeScript React   |         70 |          1 |          9 |         80 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiGroup/emojiGroup.styles.tsx       | TypeScript React   |          5 |          0 |          2 |          7 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiGroup/emojiGroup.tsx              | TypeScript React   |         19 |          0 |          3 |         22 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiPicker.styles.tsx                 | TypeScript React   |         30 |          0 |          4 |         34 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiPicker.tsx                        | TypeScript React   |         64 |          0 |          8 |         72 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiSubGroup/emojiSubGroup.styles.tsx | TypeScript React   |         14 |          0 |          2 |         16 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/emojiPicker/emojiSubGroup/emojiSubGroup.tsx        | TypeScript React   |         24 |          0 |          3 |         27 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/likesWindow/likesWindow.styles.tsx                 | TypeScript React   |         89 |          0 |          3 |         92 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/likesWindow/likesWindow.tsx                        | TypeScript React   |         94 |          0 |          9 |        103 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/loading/loading.styles.tsx                         | TypeScript React   |         21 |          0 |          2 |         23 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/loading/loading.tsx                                | TypeScript React   |         19 |          0 |          3 |         22 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/miniCards/miniCard.styles.tsx                      | TypeScript React   |         23 |          0 |          2 |         25 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/miniCards/miniCard.tsx                             | TypeScript React   |         15 |          0 |          3 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/miniCards/movieMini/movieMini.styles.tsx           | TypeScript React   |         33 |          0 |          3 |         36 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/miniCards/movieMini/movieMini.tsx                  | TypeScript React   |        105 |          1 |          8 |        114 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/notFound/notFound.styles.tsx                       | TypeScript React   |         21 |          0 |          2 |         23 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/notFound/notFound.tsx                              | TypeScript React   |         38 |          0 |          5 |         43 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/popSlide/popSlide.styles.tsx                       | TypeScript React   |         65 |          0 |          2 |         67 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/popSlide/popSlide.tsx                              | TypeScript React   |        115 |          0 |          8 |        123 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/profileWindow/profileWindow.styles.tsx             | TypeScript React   |        195 |          0 |          6 |        201 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/profileWindow/profileWindow.tsx                    | TypeScript React   |        230 |          2 |         13 |        245 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/slider/slider.styles.tsx                           | TypeScript React   |         25 |          0 |          2 |         27 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/slider/slider.tsx                                  | TypeScript React   |         43 |          0 |          4 |         47 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/smileyWindow/smileyWindow.styles.tsx               | TypeScript React   |        113 |          0 |          2 |        115 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/smileyWindow/smileyWindow.tsx                      | TypeScript React   |        138 |          7 |          6 |        151 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/toast/toast.styles.tsx                             | TypeScript React   |         61 |          0 |          2 |         63 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/toast/toast.tsx                                    | TypeScript React   |         70 |          0 |          7 |         77 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/tooltip/tooltip.styles.tsx                         | TypeScript React   |         11 |          0 |          2 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/tooltip/tooltip.tsx                                | TypeScript React   |          1 |          0 |          1 |          2 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/components/tooltip/userTooltip.tsx                            | TypeScript React   |         10 |          0 |          3 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/constants.ts                                                  | TypeScript         |         21 |          0 |          4 |         25 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/chatBox/chatBox.styles.tsx                      | TypeScript React   |         74 |          0 |          5 |         79 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/chatBox/chatBox.tsx                             | TypeScript React   |        187 |          7 |         11 |        205 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/chatStats/chatStats.styles.tsx                  | TypeScript React   |        113 |          0 |          4 |        117 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/chatStats/chatStats.tsx                         | TypeScript React   |        176 |         14 |         15 |        205 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentButton/commentButton.styles.tsx          | TypeScript React   |         58 |          0 |          2 |         60 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentButton/commentButton.tsx                 | TypeScript React   |        111 |          9 |         10 |        130 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentCard/commentCard.styles.tsx              | TypeScript React   |          1 |          0 |          1 |          2 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentCard/commentCard.tsx                     | TypeScript React   |        203 |         10 |         15 |        228 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentInterface/commentInterface.styles.tsx    | TypeScript React   |        207 |          0 |          9 |        216 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/commentInterface/commentInterface.tsx           | TypeScript React   |        361 |         12 |         23 |        396 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/comments/comments.styles.tsx                    | TypeScript React   |         18 |          0 |          3 |         21 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/comments/comments.tsx                           | TypeScript React   |         56 |          0 |          4 |         60 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/contentScript.tsx                               | TypeScript React   |         81 |          1 |          8 |         90 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/contentScript.utils.tsx                         | TypeScript React   |        103 |          1 |         11 |        115 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/createChatWindow/chatWindow.styles.tsx          | TypeScript React   |          1 |          0 |          1 |          2 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/createChatWindow/chatWindow.tsx                 | TypeScript React   |         40 |          7 |          6 |         53 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/hooks/useAnimationFrame.ts                      | TypeScript         |         18 |          2 |          5 |         25 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/hooks/useFetchEmojis.ts                         | TypeScript         |         77 |          2 |          8 |         87 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/hooks/useIsMount.ts                             | TypeScript         |          8 |          0 |          2 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/hooks/useMouseMove.ts                           | TypeScript         |         13 |          0 |          4 |         17 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/index.tsx                                       | TypeScript React   |        155 |         16 |         14 |        185 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/likesView/likesView.styles.tsx                  | TypeScript React   |          2 |          0 |          2 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/likesView/likesView.tsx                         | TypeScript React   |          6 |          0 |          3 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/messageBox/messageBox.styles.tsx                | TypeScript React   |        107 |          0 |          8 |        115 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/messageBox/messageBox.tsx                       | TypeScript React   |        204 |         14 |          9 |        227 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/replyCard/replyCard.tsx                         | TypeScript React   |        181 |          9 |         13 |        203 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/replyWindow/replyWindow.styles.tsx              | TypeScript React   |         62 |          0 |          5 |         67 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/replyWindow/replyWindow.tsx                     | TypeScript React   |        124 |          1 |         10 |        135 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/start.tsx                                       | TypeScript React   |         93 |          8 |         11 |        112 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/videoStyles/videoStyles.styles.tsx              | TypeScript React   |         95 |          0 |          5 |        100 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/contentScript/videoStyles/videoStyles.tsx                     | TypeScript React   |        365 |         19 |         20 |        404 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/app/app.scss                             | SCSS               |          2 |          0 |          1 |          3 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/app/app.styles.tsx                       | TypeScript React   |         49 |          0 |          4 |         53 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/app/app.tsx                              | TypeScript React   |         70 |          1 |          8 |         79 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/header/header.styles.tsx                 | TypeScript React   |         25 |          1 |          4 |         30 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/header/header.tsx                        | TypeScript React   |         14 |          0 |          4 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/home/home.styles.tsx                     | TypeScript React   |         13 |          0 |          3 |         16 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/home/home.tsx                            | TypeScript React   |         36 |          0 |          5 |         41 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/login-after/loginAfter.tsx               | TypeScript React   |         71 |          4 |          6 |         81 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/login/login.styles.tsx                   | TypeScript React   |         28 |          0 |          3 |         31 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/login/login.tsx                          | TypeScript React   |         66 |          1 |          6 |         73 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/logout/logout.styles.tsx                 | TypeScript React   |        135 |          0 |         10 |        145 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/logout/logout.tsx                        | TypeScript React   |        195 |          0 |         11 |        206 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/sidebar/sidebar.styles.tsx               | TypeScript React   |         49 |          0 |          2 |         51 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/sidebar/sidebar.tsx                      | TypeScript React   |        108 |          0 |         11 |        119 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/stats/stats.styles.tsx                   | TypeScript React   |         16 |          0 |          2 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/stats/stats.tsx                          | TypeScript React   |         44 |          0 |          8 |         52 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/userNameEdit/userNameEdit.styles.tsx     | TypeScript React   |         62 |          0 |          2 |         64 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/components/userNameEdit/userNameEdit.tsx            | TypeScript React   |        125 |          1 |          7 |        133 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/options/options.tsx                                 | TypeScript React   |         12 |          0 |          2 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/popup/offsite/offsite.scss                          | SCSS               |          2 |          0 |          1 |          3 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/popup/offsite/offsite.styles.tsx                    | TypeScript React   |         15 |          0 |          2 |         17 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/popup/offsite/offsite.tsx                           | TypeScript React   |         92 |          0 |          7 |         99 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/extension/popup/popup.tsx                                     | TypeScript React   |         12 |          0 |          2 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/firebase.ts                                                   | TypeScript         |         15 |          0 |          3 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/generated/graphql.tsx                                         | TypeScript React   |      1,342 |          1 |        299 |      1,642 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/mutation/deleteComment.graphql               | GraphQL            |         10 |          0 |          1 |         11 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/mutation/insertComment.graphql               | GraphQL            |         13 |          0 |          1 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/mutation/setCommentLike.graphql              | GraphQL            |         24 |          0 |          1 |         25 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/query/getCommentLikes.graphql                | GraphQL            |         13 |          0 |          1 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/query/getCommentedUser.graphql               | GraphQL            |         13 |          0 |          1 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/subscriptions/commentLikes.graphql           | GraphQL            |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/comments/subscriptions/movieCommentsCount.graphql     | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/follow/mutations/toggleFollow.graphql                 | GraphQL            |          9 |          0 |          1 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/follow/query/amIFollowingThisUser.graphql             | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/follow/query/getFollowers.graphql                     | GraphQL            |         17 |          0 |          1 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/follow/query/getUserFollowStats.graphql               | GraphQL            |          6 |          0 |          1 |          7 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/fragments/fullUser.graphql                            | GraphQL            |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/fragments/movieStats.graphql                          | GraphQL            |          9 |          0 |          1 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/fragments/replyFragment.graphql                       | GraphQL            |         13 |          0 |          1 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/mutations/fetchNewComments.graphql             | GraphQL            |          8 |          0 |          1 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/mutations/getCommentsOfTheMovie.graphql        | GraphQL            |         22 |          0 |          1 |         23 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/mutations/insertMovie.graphql                  | GraphQL            |         10 |          0 |          1 |         11 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/mutations/updateMovieTitle.graphql             | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/queries/getLikesAndCommentCount.graphql        | GraphQL            |          6 |          0 |          1 |          7 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/queries/getMovie.graphql                       | GraphQL            |         11 |          0 |          1 |         12 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/queries/getMovieFavCount.graphql               | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/queries/getMovieLikes.graphql                  | GraphQL            |          8 |          0 |          1 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/movies/subscription/liksAndCommentCount.graphql       | GraphQL            |          6 |          0 |          1 |          7 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/mutation/deleteReply.graphql                  | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/mutation/insertReply.graphql                  | GraphQL            |          5 |          0 |          1 |          6 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/mutation/setReplyLike.graphql                 | GraphQL            |         21 |          0 |          1 |         22 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/query/getIsUserLikedReply.graphql             | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/query/getRepliedUser.graphql                  | GraphQL            |          5 |          0 |          1 |          6 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/query/getRepliesOfComment.graphql             | GraphQL            |          9 |          0 |          1 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/replies/query/getReplyLikes.graphql                   | GraphQL            |          8 |          0 |          1 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/addMovieIdToUserWatchList.graphql     | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/createUser.graphql                    | GraphQL            |         13 |          0 |          1 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/deleteUser.graphql                    | GraphQL            |          3 |          0 |          1 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/getNickNameSuggestions.graphql        | GraphQL            |          5 |          0 |          1 |          6 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/getUserByNickName.graphql             | GraphQL            |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/getUserMut.graphql                    | GraphQL            |          9 |          0 |          1 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/updateLikesAndFavorites.graphql       | GraphQL            |          9 |          0 |          1 |         10 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/mutations/updateUserNickName.graphql            | GraphQL            |         18 |          0 |          1 |         19 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getAllUsers.graphql                     | GraphQL            |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getOnlyMovieStats.graphql               | GraphQL            |          5 |          0 |          1 |          6 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getUser.graphql                         | GraphQL            |         12 |          0 |          1 |         13 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getUserComments.graphql                 | GraphQL            |         25 |          0 |          1 |         26 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getUserMovieStats.graphql               | GraphQL            |         19 |          0 |          1 |         20 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/graphql/users/queries/getUserStats.graphql                    | GraphQL            |         28 |          0 |          1 |         29 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/indexedDB/db.ts                                               | TypeScript         |         30 |          2 |          8 |         40 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/netflix-api/netflix.js                                        | JavaScript         |          2 |          0 |          1 |          3 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/netflix-api/netflix.ts                                        | TypeScript         |         13 |          0 |          5 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/optionsPage/header/header.styles.tsx                          | TypeScript React   |         16 |          0 |          2 |         18 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/optionsPage/header/header.tsx                                 | TypeScript React   |         12 |          0 |          3 |         15 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/optionsPage/optionsHome/optionsHome.styles.tsx                | TypeScript React   |         23 |          0 |          2 |         25 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/optionsPage/optionsHome/optionsHome.tsx                       | TypeScript React   |         11 |          0 |          3 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/react-app-env.d.ts                                            | TypeScript         |          4 |          0 |          0 |          4 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/actionTypes.ts                                          | TypeScript         |         17 |          1 |          3 |         21 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/hooks.tsx                                               | TypeScript React   |          5 |          1 |          3 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/reducer/rootReducer.ts                                  | TypeScript         |         25 |          1 |          6 |         32 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/comment/commentSlice.ts                          | TypeScript         |         99 |          0 |          4 |        103 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/loading/loadingSlice.ts                          | TypeScript         |         28 |          0 |          5 |         33 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/movie/movieSlice.ts                              | TypeScript         |        106 |         21 |          5 |        132 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/reply/replySlice.ts                              | TypeScript         |         68 |          0 |          5 |         73 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/settings/settingsSlice.tsx                       | TypeScript React   |         68 |          0 |          4 |         72 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/textArea/textAreaSlice.tsx                       | TypeScript React   |         34 |          0 |          4 |         38 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/toast/toastSlice.tsx                             | TypeScript React   |         24 |          0 |          4 |         28 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/slices/user/userSlice.ts                                | TypeScript         |         57 |          0 |          4 |         61 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/redux/store.ts                                                | TypeScript         |         20 |          2 |          4 |         26 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/reportWebVitals.js                                            | JavaScript         |         12 |          0 |          2 |         14 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/setupTests.js                                                 | JavaScript         |          1 |          4 |          1 |          6 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/static/manifest.json                                          | JSON               |         11 |         41 |          0 |         52 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/static/netflix.js                                             | JavaScript         |         22 |          0 |          2 |         24 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/static/qchat.js                                               | JavaScript         |         32 |          5 |          4 |         41 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/styles/keyframes.tsx                                          | TypeScript React   |         94 |          0 |          9 |        103 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/theme/globalStyles.ts                                         | TypeScript         |         13 |          0 |          3 |         16 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/theme/theme.ts                                                | TypeScript         |         18 |          0 |          2 |         20 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/types/DOMMessages.ts                                          | TypeScript         |          7 |          0 |          2 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/types/index.ts                                                | TypeScript         |          1 |          0 |          1 |          2 |
+| /Users/kishore/Documents/Github/QuietChat/extension/src/types/types.d.ts                                              | TypeScript         |         15 |          0 |          1 |         16 |
+| /Users/kishore/Documents/Github/QuietChat/extension/tsconfig.json                                                     | JSON with Comments |         26 |          0 |          1 |         27 |
+| /Users/kishore/Documents/Github/QuietChat/extension/webpack.common.js                                                 | JavaScript         |        114 |          0 |          3 |        117 |
+| /Users/kishore/Documents/Github/QuietChat/extension/webpack.dev.js                                                    | JavaScript         |          6 |          0 |          3 |          9 |
+| /Users/kishore/Documents/Github/QuietChat/extension/webpack.prod.js                                                   | JavaScript         |          5 |          0 |          3 |          8 |
+| Total                                                                                                                 |                    |     11,545 |        322 |      1,165 |     13,032 |
++-----------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

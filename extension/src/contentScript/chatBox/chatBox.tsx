@@ -167,7 +167,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       id='chat-box-container'
       className='chat-box-container'
       isTextAreaClicked={isTextAreaFocussed}>
-      {totalCommentsCount > pastLoadedCommentCount! ? (
+      {totalCommentsCount! > pastLoadedCommentCount! ? (
         <LoadMoreComments
           className='load-new'
           onClick={(e) => {
@@ -175,7 +175,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
             loadNewComments();
           }}>
           <p>
-            Show {totalCommentsCount - pastLoadedCommentCount!} new comments
+            Show {totalCommentsCount! - pastLoadedCommentCount!} new comments
           </p>
         </LoadMoreComments>
       ) : (

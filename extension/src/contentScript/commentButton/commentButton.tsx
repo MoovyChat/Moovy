@@ -1,9 +1,20 @@
+import { Movie, MovieFullInformation } from '../../Utils/interfaces';
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
+import {
+  sliceAddMovie,
+  sliceAddMovieName,
+} from '../../redux/slices/movie/movieSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useGetMovieQuery,
+  useInsertMovieInfoMutation,
+  useInsertMovieMutation,
+  useUpdateMovieTitleMutation,
+} from '../../generated/graphql';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
@@ -12,11 +23,10 @@ import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createRoot } from 'react-dom/client';
 import { getStoredCheckedStatus } from '../../Utils/storage';
-import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
 import { urqlClient } from '../../Utils/urqlClient';
-import { useUpdateMovieTitleMutation } from '../../generated/graphql';
+import { v4 } from 'uuid';
 import { withUrqlClient } from 'next-urql';
 
 const Loader = (chatElement: HTMLDivElement) => {
@@ -43,17 +53,24 @@ export const createChatWindow = (_chatWindowSize: string) => {
   Loader(chatElement);
 };
 
-const CommentButton = () => {
+type props = {
+  movieFetched: number;
+  setMovieFetched: any;
+};
+const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   // Redux: App selectors.
   // Settings > openChatWindow, smoothWidth, chatWindowSize
   // User > uid, name
   const openChatWindow = useAppSelector(
     (state) => state.settings.openChatWindow
   );
+
   const smoothWidth = useAppSelector((state) => state.settings.smoothWidth);
   const chatWindowSize = useAppSelector(
     (state) => state.settings.chatWindowSize
   );
+  const movieId = useAppSelector((state) => state.movie.id);
+
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -61,6 +78,15 @@ const CommentButton = () => {
   // isVisible is used to toggle chat icon visibility.
   const [isVisible, setIsVisible] = useState<boolean>(true);
 
+  // GraphQL
+  const [, insertMovieInfo] = useInsertMovieInfoMutation();
+  const [, insertMovie] = useInsertMovieMutation();
+  const stableDispatch = useCallback(
+    (args: any) => {
+      return dispatch(args);
+    },
+    [dispatch]
+  );
   useEffect(() => {
     // Listen for the activation of comment icon when user is logged in for the
     // first time when playing the video. TOGGLE COMMENT ICON
@@ -80,6 +106,114 @@ const CommentButton = () => {
     return () => {};
   }, [setIsVisible]);
 
+  useMemo(() => {
+    let count = 0;
+    let interval = setInterval(() => {
+      console.log(movieFetched);
+      if (movieFetched === 0 || movieFetched === 1) {
+        clearInterval(interval);
+        return;
+      }
+      count += 500;
+      if (count >= 5000) clearInterval(interval);
+      chrome.runtime.sendMessage(
+        { type: 'MOVIE_INFO', movieId },
+        function (response) {
+          if (movieFetched === 0 || movieFetched === 1) {
+            clearInterval(interval);
+            return;
+          }
+          console.log('RESPONSE FROM BACKGROUND', response.result);
+          let result: MovieFullInformation = response.result;
+          let type = result.type;
+          let uniqueId =
+            type !== 'movie' && result && result.seasons
+              ? result.seasons[0]?.episodes[0]?.id
+              : movieId;
+          // insert the same data to the movie and title.
+          insertMovieInfo({
+            options: {
+              id: uniqueId + '',
+              year: result.year,
+              runtime: result.runtime,
+              title: result.title!,
+              synopsis: result.synopsis!,
+              storyart: result.storyart!,
+              rating: result.rating!,
+              boxart: result.boxart!,
+              artwork: result.artwork!,
+              type: result.type!,
+              advisories: result.advisories!,
+            },
+          }).then(() => {
+            console.log(type);
+            if (type === 'movie') {
+              insertMovie({
+                options: {
+                  id: movieId,
+                  name: result.title!,
+                  season: '',
+                  stills: result.artwork!,
+                  synopsis: result.synopsis!,
+                  thumbs: result.boxart!,
+                  likesCount: 0,
+                  platformId: 1,
+                  runtime: result.runtime,
+                  titleId: uniqueId + '',
+                  year: result.year,
+                },
+              }).then((res) => {
+                if (res.error) console.log(res.error);
+                const _data = res.data;
+                if (_data) {
+                  const movieData = _data.insertMovie as Movie;
+                  stableDispatch(sliceAddMovie(movieData));
+                  setMovieFetched(1);
+                }
+              });
+              // TODO: Insert to redux.
+            } else {
+              let _seasons = result.seasons!;
+              _seasons.map((season) => {
+                const _episodes = season.episodes;
+                // TODO: Find the episode and insert to redux
+                _episodes.map((episode) => {
+                  insertMovie({
+                    options: {
+                      id: episode.id + '',
+                      name: episode.title!,
+                      season: season.title!,
+                      stills: episode.stills!,
+                      synopsis: episode.synopsis!,
+                      thumbs: episode.thumbs!,
+                      likesCount: 0,
+                      platformId: 1,
+                      runtime: episode.runtime,
+                      titleId: uniqueId + '',
+                      year: season.year,
+                    },
+                  }).then((res) => {
+                    const { error, data } = res;
+                    if (error) console.log(error);
+                    if (data) {
+                      const _data = data.insertMovie as Movie;
+                      if (_data.id === movieId) {
+                        stableDispatch(sliceAddMovie(_data));
+                        setMovieFetched(1);
+                      }
+                    }
+                  });
+                });
+              });
+            }
+          });
+          if (Object.keys(result).length > 1) clearInterval(interval);
+        }
+      );
+      () => clearInterval(interval);
+    }, 500);
+  }, [movieId, movieFetched, stableDispatch]);
+
   return (
     <div
       onClick={(e) => {
@@ -92,21 +226,18 @@ const CommentButton = () => {
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);
       }}>
-      {isVisible ? (
-        <CommentHeader
-          id='comment-header'
-          className='comment-header'
-          chatWindowSize={smoothWidth + ''}
-          openChatWindow={openChatWindow}>
-          {openChatWindow ? (
-            <MdChevronRight size={40} />
-          ) : (
-            <GoCommentDiscussion size={40} />
-          )}
-        </CommentHeader>
-      ) : (
-        <></>
-      )}
+      <CommentHeader
+        isVisible={isVisible}
+        id='comment-header'
+        className='comment-header'
+        chatWindowSize={smoothWidth + ''}
+        openChatWindow={openChatWindow}>
+        {openChatWindow ? (
+          <MdChevronRight size={40} />
+        ) : (
+          <GoCommentDiscussion size={40} />
+        )}
+      </CommentHeader>
     </div>
   );
 };

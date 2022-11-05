@@ -47,12 +47,11 @@ const ChatTitle = () => {
       mid: movieId,
       options: {},
     }).then((response) => {
-      console.log(response);
       const { data, error } = response;
       if (error) console.log(error);
       if (data && data.updateUserMovieStats) {
         const { favorite } = data.updateUserMovieStats;
-        if (favorite) setFav(favorite);
+        if (favorite !== null && favorite !== undefined) setFav(favorite);
       }
     });
   }, [userId, movieId]);
@@ -116,25 +115,30 @@ const ChatTitle = () => {
               message: '',
             };
             if (error) console.log(error);
-            const { favorite } = data?.updateUserMovieStats!;
-            setFav(favorite!);
-            if (fav) {
-              toastBody = {
-                icon: iconsEnum.REMOVE_FAVORITES,
-                message: 'Removed from favorites',
-              };
-              SetFavCount(favCount - 1);
-            } else {
-              toastBody = {
-                icon: iconsEnum.ADD_FAVORITES,
-                message: 'Added to favorites',
-              };
-              SetFavCount(favCount + 1);
+            console.log(data);
+            if (data && data.updateUserMovieStats) {
+              const { favorite } = data?.updateUserMovieStats!;
+              if (favorite !== null && favorite !== undefined) {
+                setFav(favorite);
+                if (!favorite) {
+                  toastBody = {
+                    icon: iconsEnum.REMOVE_FAVORITES,
+                    message: 'Removed from favorites',
+                  };
+                  SetFavCount(favCount - 1);
+                } else {
+                  toastBody = {
+                    icon: iconsEnum.ADD_FAVORITES,
+                    message: 'Added to favorites',
+                  };
+                  SetFavCount(favCount + 1);
+                }
+                batch(() => {
+                  dispatch(sliceSetToastVisible(true));
+                  dispatch(sliceSetToastBody(toastBody));
+                });
+              }
             }
-            batch(() => {
-              dispatch(sliceSetToastVisible(true));
-              dispatch(sliceSetToastBody(toastBody));
-            });
           });
         }}>
         <div className='fav-count'>

@@ -1,10 +1,5 @@
 mutation insertMovie($options: MovieInput!) {
   insertMovie(options: $options) {
-    id
-    name
-    platformId
-    likesCount
-    createdAt
-    updatedAt
+    ...FullMovie
   }
 }

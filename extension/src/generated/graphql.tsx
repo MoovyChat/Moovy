@@ -109,7 +109,14 @@ export type FullUserObject = {
 
 export type IsUserLikedObject = {
   __typename?: 'IsUserLikedObject';
+  id: Scalars['String'];
   isLiked?: Maybe<Scalars['Boolean']>;
+};
+
+export type LikeAndFav = {
+  __typename?: 'LikeAndFav';
+  favorite?: Maybe<Scalars['Boolean']>;
+  like?: Maybe<Scalars['Boolean']>;
 };
 
 export type LikedMovieObject = {
@@ -149,15 +156,29 @@ export type Movie = {
   likesCount: Scalars['Int'];
   name: Scalars['String'];
   platformId: Scalars['Int'];
+  runtime?: Maybe<Scalars['Int']>;
+  season?: Maybe<Scalars['String']>;
+  stills?: Maybe<Scalars['String']>;
+  synopsis?: Maybe<Scalars['String']>;
+  thumbs?: Maybe<Scalars['String']>;
+  titleId: Scalars['String'];
   updatedAt: Scalars['String'];
   viewsCount: Scalars['Int'];
+  year?: Maybe<Scalars['Int']>;
 };
 
 export type MovieInput = {
   id: Scalars['String'];
-  likesCount: Scalars['Int'];
+  likesCount?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
-  platformId: Scalars['Int'];
+  platformId?: InputMaybe<Scalars['Int']>;
+  runtime?: InputMaybe<Scalars['Int']>;
+  season: Scalars['String'];
+  stills: Scalars['String'];
+  synopsis: Scalars['String'];
+  thumbs: Scalars['String'];
+  titleId?: InputMaybe<Scalars['String']>;
+  year?: InputMaybe<Scalars['Int']>;
 };
 
 export type MovieStats = {
@@ -166,9 +187,9 @@ export type MovieStats = {
   deletedAt: Scalars['String'];
   favorite?: Maybe<Scalars['Boolean']>;
   like?: Maybe<Scalars['Boolean']>;
-  movieId: Scalars['String'];
+  movieId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['String'];
-  userId: Scalars['String'];
+  userId?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -189,14 +210,16 @@ export type Mutation = {
   insertComment?: Maybe<Comment>;
   insertMovie?: Maybe<Movie>;
   insertReply?: Maybe<Reply>;
+  insertTitle?: Maybe<Scalars['Boolean']>;
   login?: Maybe<UserResponse>;
   logout: Scalars['Boolean'];
   setCommentLike?: Maybe<CommentsStatsObject>;
   setReplyLike?: Maybe<ReplyStatsObject>;
   toggleFollow?: Maybe<Follow>;
   updateMovieTitle?: Maybe<Scalars['Boolean']>;
-  updateUserMovieStats?: Maybe<MovieStats>;
+  updateUserMovieStats?: Maybe<LikeAndFav>;
   updateUserNickName: NickNameResponse;
+  updateUserProfilePhoto: NickNameResponse;
 };
 
 
@@ -287,6 +310,11 @@ export type MutationInsertReplyArgs = {
 };
 
 
+export type MutationInsertTitleArgs = {
+  options: TitleOptions;
+};
+
+
 export type MutationLoginArgs = {
   uid: Scalars['String'];
 };
@@ -333,6 +361,12 @@ export type MutationUpdateUserNickNameArgs = {
   uid: Scalars['String'];
 };
 
+
+export type MutationUpdateUserProfilePhotoArgs = {
+  uid: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type NicKNameFormat = {
   __typename?: 'NicKNameFormat';
   name: Scalars['String'];
@@ -342,6 +376,19 @@ export type NickNameResponse = {
   __typename?: 'NickNameResponse';
   errors?: Maybe<Array<ErrorField>>;
   user?: Maybe<User>;
+};
+
+export type Notifications = {
+  __typename?: 'Notifications';
+  createdAt: Scalars['String'];
+  deletedAt: Scalars['String'];
+  fromUser: Scalars['String'];
+  fromUserPhotoUrl: Scalars['String'];
+  id: Scalars['String'];
+  isRead: Scalars['Boolean'];
+  message: Scalars['String'];
+  updatedAt: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type PaginatedMovieComments = {
@@ -357,6 +404,7 @@ export type PaginatedMovieComments = {
 export type PaginatedUserComments = {
   __typename?: 'PaginatedUserComments';
   comments: Array<Comment>;
+  id: Scalars['String'];
   user: User;
 };
 
@@ -380,16 +428,18 @@ export type Query = {
   getAllComments: Array<Comment>;
   getAllCommentsMadeByUser?: Maybe<Array<Comment>>;
   getAllMovies: Array<Movie>;
+  getAllNotifications: Array<Notifications>;
   getAllPlatforms: Array<Platform>;
   getAllReplies: Array<Reply>;
   getComment: Comment;
   getCommentLikes?: Maybe<CommentLikesObject>;
   getCommentedUser?: Maybe<User>;
+  getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
   getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
   getFollowers?: Maybe<FollowingUsers>;
   getIsUserLikedComment?: Maybe<IsUserLikedObject>;
   getIsUserLikedReply?: Maybe<Scalars['Boolean']>;
-  getMovie: Movie;
+  getMovie?: Maybe<Movie>;
   getMovieById: Platform;
   getMovieFavoriteCount?: Maybe<Scalars['Int']>;
   getMovieLikes?: Maybe<LikesObject>;
@@ -397,10 +447,13 @@ export type Query = {
   getOnlyUserMovieStats?: Maybe<MovieStats>;
   getRepliedUser?: Maybe<User>;
   getRepliesOfComment: RepliesObject;
+  getRepliesOfReply: RepliesObject;
   getReply?: Maybe<Reply>;
   getReplyLikes?: Maybe<ReplyLikesObject>;
+  getTitle?: Maybe<Title>;
   getUser?: Maybe<User>;
   getUserMovieStatus?: Maybe<FullUserMovieStats>;
+  getUserNotifications: Array<Notifications>;
   getUserStatistics?: Maybe<FullUserObject>;
   hello: Scalars['String'];
   me?: Maybe<User>;
@@ -425,6 +478,14 @@ export type QueryGetCommentLikesArgs = {
 
 export type QueryGetCommentedUserArgs = {
   cid: Scalars['String'];
+};
+
+
+export type QueryGetCommentsOfTheMovieArgs = {
+  limit: Scalars['Int'];
+  mid: Scalars['String'];
+  page?: InputMaybe<Scalars['Int']>;
+  time?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -493,6 +554,13 @@ export type QueryGetRepliesOfCommentArgs = {
 };
 
 
+export type QueryGetRepliesOfReplyArgs = {
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
+  rid: Scalars['String'];
+};
+
+
 export type QueryGetReplyArgs = {
   rid: Scalars['String'];
 };
@@ -503,6 +571,11 @@ export type QueryGetReplyLikesArgs = {
 };
 
 
+export type QueryGetTitleArgs = {
+  id: Scalars['String'];
+};
+
+
 export type QueryGetUserArgs = {
   uid: Scalars['String'];
 };
@@ -510,6 +583,11 @@ export type QueryGetUserArgs = {
 
 export type QueryGetUserMovieStatusArgs = {
   mid: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
+export type QueryGetUserNotificationsArgs = {
   uid: Scalars['String'];
 };
 
@@ -587,6 +665,38 @@ export type SubscriptionCommentLikesUpdateArgs = {
 
 export type SubscriptionReplyLikesUpdateArgs = {
   rid: Scalars['String'];
+};
+
+export type Title = {
+  __typename?: 'Title';
+  advisories?: Maybe<Array<Scalars['String']>>;
+  artwork?: Maybe<Scalars['String']>;
+  boxart?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  deletedAt: Scalars['String'];
+  id: Scalars['String'];
+  rating?: Maybe<Scalars['String']>;
+  runtime?: Maybe<Scalars['Int']>;
+  storyart?: Maybe<Scalars['String']>;
+  synopsis?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
+  year?: Maybe<Scalars['Int']>;
+};
+
+export type TitleOptions = {
+  advisories: Array<Scalars['String']>;
+  artwork: Scalars['String'];
+  boxart: Scalars['String'];
+  id: Scalars['String'];
+  rating: Scalars['String'];
+  runtime?: InputMaybe<Scalars['Int']>;
+  storyart: Scalars['String'];
+  synopsis: Scalars['String'];
+  title: Scalars['String'];
+  type: Scalars['String'];
+  year?: InputMaybe<Scalars['Int']>;
 };
 
 export type User = {
@@ -717,11 +827,20 @@ export type GetUserFollowStatsMutationVariables = Exact<{
 
 export type GetUserFollowStatsMutation = { __typename?: 'Mutation', getUserFollowStats?: { __typename?: 'UserFollowStats', followerCount?: number | null, followingCount?: number | null } | null };
 
+export type FullMovieFragment = { __typename?: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string };
+
 export type FullUserFragment = { __typename?: 'User', id: string, name: string, nickname: string, photoUrl: string, followerCount?: number | null, followingCount?: number | null, email: string, watchedMovies?: Array<string> | null, updatedAt: string, joinedAt: string };
 
-export type FullMovieStatsFragment = { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId: string, movieId: string, updatedAt: string, createdAt: string };
+export type FullMovieStatsFragment = { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId?: string | null, movieId?: string | null, updatedAt: string, createdAt: string };
 
 export type FullReplyFragment = { __typename?: 'Reply', id: string, commentedUserId: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, platformId: number, repliesCount?: number | null, likesCount?: number | null, createdAt: string, updatedAt: string };
+
+export type InsertMovieInfoMutationVariables = Exact<{
+  options: TitleOptions;
+}>;
+
+
+export type InsertMovieInfoMutation = { __typename?: 'Mutation', insertTitle?: boolean | null };
 
 export type FetchNewCommentsMutationVariables = Exact<{
   time: Scalars['String'];
@@ -746,7 +865,7 @@ export type InsertMovieMutationVariables = Exact<{
 }>;
 
 
-export type InsertMovieMutation = { __typename?: 'Mutation', insertMovie?: { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, createdAt: string, updatedAt: string } | null };
+export type InsertMovieMutation = { __typename?: 'Mutation', insertMovie?: { __typename?: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string } | null };
 
 export type UpdateMovieTitleMutationVariables = Exact<{
   name: Scalars['String'];
@@ -768,7 +887,7 @@ export type GetMovieQueryVariables = Exact<{
 }>;
 
 
-export type GetMovieQuery = { __typename?: 'Query', getMovie: { __typename?: 'Movie', id: string, name: string, platformId: number, likesCount: number, favCount: number, commentCount: number, viewsCount: number } };
+export type GetMovieQuery = { __typename?: 'Query', getMovie?: { __typename?: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string } | null };
 
 export type GetMovieFavCountQueryVariables = Exact<{
   mid: Scalars['String'];
@@ -894,7 +1013,7 @@ export type UpdateUserMovieStatusMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMovieStatusMutation = { __typename?: 'Mutation', updateUserMovieStats?: { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId: string, movieId: string, updatedAt: string, createdAt: string } | null };
+export type UpdateUserMovieStatusMutation = { __typename?: 'Mutation', updateUserMovieStats?: { __typename?: 'LikeAndFav', like?: boolean | null, favorite?: boolean | null } | null };
 
 export type UpdateUserNickNameMutationVariables = Exact<{
   uid: Scalars['String'];
@@ -915,7 +1034,7 @@ export type GetOnlyUserMovieStatsQueryVariables = Exact<{
 }>;
 
 
-export type GetOnlyUserMovieStatsQuery = { __typename?: 'Query', getOnlyUserMovieStats?: { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId: string, movieId: string, updatedAt: string, createdAt: string } | null };
+export type GetOnlyUserMovieStatsQuery = { __typename?: 'Query', getOnlyUserMovieStats?: { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId?: string | null, movieId?: string | null, updatedAt: string, createdAt: string } | null };
 
 export type GetUserQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -937,7 +1056,7 @@ export type GetUserMovieStatusQueryVariables = Exact<{
 }>;
 
 
-export type GetUserMovieStatusQuery = { __typename?: 'Query', getUserMovieStatus?: { __typename?: 'FullUserMovieStats', user: { __typename?: 'User', id: string, name: string, email: string, photoUrl: string, watchedMovies?: Array<string> | null }, movie: { __typename?: 'Movie', id: string, name: string, platformId: number }, movieStats?: { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId: string, movieId: string, updatedAt: string, createdAt: string } | null } | null };
+export type GetUserMovieStatusQuery = { __typename?: 'Query', getUserMovieStatus?: { __typename?: 'FullUserMovieStats', user: { __typename?: 'User', id: string, name: string, email: string, photoUrl: string, watchedMovies?: Array<string> | null }, movie: { __typename?: 'Movie', id: string, name: string, platformId: number }, movieStats?: { __typename?: 'MovieStats', like?: boolean | null, favorite?: boolean | null, userId?: string | null, movieId?: string | null, updatedAt: string, createdAt: string } | null } | null };
 
 export type GetUserStatsQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -946,6 +1065,23 @@ export type GetUserStatsQueryVariables = Exact<{
 
 export type GetUserStatsQuery = { __typename?: 'Query', getUserStatistics?: { __typename?: 'FullUserObject', totalComments?: number | null, totalLikes?: number | null, totalWatched?: number | null, user?: { __typename?: 'User', id: string, name: string, nickname: string, email: string, joinedAt: string, photoUrl: string, watchedMovies?: Array<string> | null } | null, favTitles?: Array<{ __typename?: 'FavMovieObject', favorite: boolean, movieName: string, movieId: string, userId: string }> | null, likedTitles?: Array<{ __typename?: 'LikedMovieObject', movieId: string, userId: string, like: boolean, movieName: string }> | null } | null };
 
+export const FullMovieFragmentDoc = gql`
+    fragment FullMovie on Movie {
+  id
+  name
+  runtime
+  platformId
+  createdAt
+  updatedAt
+  thumbs
+  season
+  likesCount
+  commentCount
+  viewsCount
+  favCount
+  titleId
+}
+    `;
 export const FullUserFragmentDoc = gql`
     fragment FullUser on User {
   id
@@ -1170,6 +1306,15 @@ export const GetUserFollowStatsDocument = gql`
 export function useGetUserFollowStatsMutation() {
   return Urql.useMutation<GetUserFollowStatsMutation, GetUserFollowStatsMutationVariables>(GetUserFollowStatsDocument);
 };
+export const InsertMovieInfoDocument = gql`
+    mutation insertMovieInfo($options: TitleOptions!) {
+  insertTitle(options: $options)
+}
+    `;
+
+export function useInsertMovieInfoMutation() {
+  return Urql.useMutation<InsertMovieInfoMutation, InsertMovieInfoMutationVariables>(InsertMovieInfoDocument);
+};
 export const FetchNewCommentsDocument = gql`
     mutation fetchNewComments($time: String!, $mid: String!) {
   fetchNewComments(time: $time, mid: $mid) {
@@ -1210,15 +1355,10 @@ export function useGetCommentsOfTheMovieMutation() {
 export const InsertMovieDocument = gql`
     mutation insertMovie($options: MovieInput!) {
   insertMovie(options: $options) {
-    id
-    name
-    platformId
-    likesCount
-    createdAt
-    updatedAt
+    ...FullMovie
   }
 }
-    `;
+    ${FullMovieFragmentDoc}`;
 
 export function useInsertMovieMutation() {
   return Urql.useMutation<InsertMovieMutation, InsertMovieMutationVariables>(InsertMovieDocument);
@@ -1245,18 +1385,12 @@ export function useGetMovieLikesAndCommentsCountQuery(options: Omit<Urql.UseQuer
   return Urql.useQuery<GetMovieLikesAndCommentsCountQuery, GetMovieLikesAndCommentsCountQueryVariables>({ query: GetMovieLikesAndCommentsCountDocument, ...options });
 };
 export const GetMovieDocument = gql`
-    query GetMovie($mid: String!) {
+    query getMovie($mid: String!) {
   getMovie(mid: $mid) {
-    id
-    name
-    platformId
-    likesCount
-    favCount
-    commentCount
-    viewsCount
+    ...FullMovie
   }
 }
-    `;
+    ${FullMovieFragmentDoc}`;
 
 export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
@@ -1471,10 +1605,11 @@ export function useGetUserMutMutation() {
 export const UpdateUserMovieStatusDocument = gql`
     mutation updateUserMovieStatus($options: UserMovieOptions!, $mid: String!, $uid: String!) {
   updateUserMovieStats(options: $options, mid: $mid, uid: $uid) {
-    ...FullMovieStats
+    like
+    favorite
   }
 }
-    ${FullMovieStatsFragmentDoc}`;
+    `;
 
 export function useUpdateUserMovieStatusMutation() {
   return Urql.useMutation<UpdateUserMovieStatusMutation, UpdateUserMovieStatusMutationVariables>(UpdateUserMovieStatusDocument);

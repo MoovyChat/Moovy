@@ -238,7 +238,7 @@ const CommentInterface: React.FC<props> = ({
           }`
         );
         isComment &&
-          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount - 1));
+          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount! - 1));
         batch(() => {
           dispatch(sliceSetToastVisible(true));
           dispatch(
