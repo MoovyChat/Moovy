@@ -1,4 +1,5 @@
 fragment FullNotification on Notifications {
+  __typename
   id
   userId
   message

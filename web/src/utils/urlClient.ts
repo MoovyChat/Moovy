@@ -1,6 +1,10 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
-import { logOutChanges, loginChanges } from './cacheExchanges';
+import {
+  logOutChanges,
+  loginChanges,
+  setCommentLikeChanges,
+} from './cacheExchanges';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
@@ -20,6 +24,7 @@ const cache: Partial<CacheExchangeOpts> = {
     Mutation: {
       login: loginChanges,
       logout: logOutChanges,
+      setCommentLike: setCommentLikeChanges,
     },
   },
 };

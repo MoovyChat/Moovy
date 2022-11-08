@@ -1,7 +1,8 @@
 import { Comment, Movie } from '../../utils/interfaces';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useGetCommentsOfTheMovieMutation,
+  useGetCommentsOfTheMovieQQuery,
   useGetMovieQuery,
 } from '../../generated/graphql';
 
@@ -25,9 +26,19 @@ const MovieThread = () => {
   const [valid, setValid] = useState<boolean>(false);
   const [movieInfo, setMovieInfo] = useState<Movie>();
   const [, getMovieComments] = useGetCommentsOfTheMovieMutation();
+
   const [comments, setComments] = useState<Comment[]>();
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
+  const [getCommentsOfTheMovie] = useGetCommentsOfTheMovieQQuery({
+    variables: {
+      limit: limit,
+      mid: id!,
+      page: page,
+      time: '1667087054660',
+    },
+    pause: isServer(),
+  });
   // Check if the movie Id is valid.
   useEffect(() => {
     if (!id) {
@@ -45,7 +56,7 @@ const MovieThread = () => {
   });
 
   // Set Movie Data.
-  useEffect(() => {
+  useMemo(() => {
     const { data, error, fetching } = movieData;
     if (error) console.log(error);
     if (!fetching && data) {
@@ -55,21 +66,21 @@ const MovieThread = () => {
   }, [movieData]);
 
   // Set Movie Comments
-  useEffect(() => {
-    getMovieComments({
-      limit: limit,
-      mid: id!,
-      page: page,
-      time: new Date().getTime().toString(),
-    }).then((res) => {
-      const b = res.data?.getCommentsOfTheMovie;
-      const _lastPage = b?.lastPage;
+  useMemo(() => {
+    const { data, fetching, error } = getCommentsOfTheMovie;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getCommentsOfTheMovie;
+      const _lastPage = data.getCommentsOfTheMovie?.lastPage;
       setLastPage(_lastPage!);
-      const _cmt = b?.comments as Comment[];
-      if (comments) setComments(_.concat(comments, _cmt));
-      else setComments(_cmt);
-    });
-  }, [id, page]);
+      const _comments = _data?.comments! as Comment[];
+      if (comments) {
+        let newComments = _.concat(comments, _comments);
+        let filtered = _.uniqBy(newComments, 'id');
+        setComments(filtered);
+      } else setComments(_comments);
+    }
+  }, [getCommentsOfTheMovie]);
 
   return (
     <div>

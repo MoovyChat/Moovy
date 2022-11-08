@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { Comment } from '../../utils/interfaces';
-import CommentCard from '../../components/comment-card/commentCard';
 import CommentGroup from './commentGroup';
 import { CommentParent } from './comments.styles';
-import { MdSort } from 'react-icons/md';
-import { Outlet } from 'react-router-dom';
+import Loading from '../loading/loading';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
@@ -40,24 +38,30 @@ const Comments = () => {
   }, [fetching, data, error]);
   return (
     <CommentParent>
-      <div className='heading-container'>
-        <div className='heading'>Comments</div>
-        {/* <div className='sort'>
+      {fetching ? (
+        <Loading />
+      ) : (
+        <Fragment>
+          <div className='heading-container'>
+            <div className='heading'>Comments</div>
+            {/* <div className='sort'>
           <span>Sort</span> <MdSort size={20} />
         </div> */}
-      </div>
-      <div className='child'>
-        {comments &&
-          Object.keys(comments).map((child) => (
-            <CommentGroup
-              movieId={child}
-              comments={comments[child]}
-              key={child}
-            />
-          ))}
-      </div>
+          </div>
+          <div className='child'>
+            {comments &&
+              Object.keys(comments).map((child) => (
+                <CommentGroup
+                  movieId={child}
+                  comments={comments[child]}
+                  key={child}
+                />
+              ))}
+          </div>
+        </Fragment>
+      )}
     </CommentParent>
   );
 };
 
-export default withUrqlClient(urqlClient)(Comments);
+export default withUrqlClient(urqlClient, { ssr: true })(Comments);

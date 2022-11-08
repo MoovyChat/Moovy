@@ -1,4 +1,5 @@
 fragment FullUser on User {
+  __typename
   id
   email
   name

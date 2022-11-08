@@ -62,7 +62,7 @@ export interface Notifications {
   message: string;
   fromUser: string;
   fromUserPhotoUrl: string;
-  isRead: string;
+  isRead: boolean;
   createdAt: string;
   updatedAt: string;
 }

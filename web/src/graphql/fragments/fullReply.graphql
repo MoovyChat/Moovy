@@ -1,4 +1,5 @@
 fragment FullReply on Reply {
+  __typename
   id
   message
   movieId

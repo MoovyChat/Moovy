@@ -1,5 +1,6 @@
 query getCommentsOfTheUser($uid: String!) {
   getCommentsOfTheUser(uid: $uid) {
+    id
     user {
       id
       name

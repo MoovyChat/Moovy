@@ -1,14 +1,18 @@
 import { CardParent, ReplyWindow } from './commentCard.styles';
 import { Comment, Reply, User } from '../../utils/interfaces';
 import {
+  MdFavorite,
+  MdOutlineFavoriteBorder,
   MdOutlineModeComment,
   MdOutlineSubdirectoryArrowRight,
 } from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { getFormattedNumber, getTimeFrame } from '../../utils/helpers';
 import {
+  useGetIsUserLikedCommentQuery,
   useGetRepliesOfCommentQuery,
   useGetUserQuery,
+  useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
 import { IoMdHeartEmpty } from 'react-icons/io';
@@ -37,6 +41,8 @@ const CommentCard: React.FC<props> = ({ comment }) => {
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [showR, setShowR] = useState<boolean>(false);
   const [replies, setReplies] = useState<Reply[]>();
+  const [like, setLike] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
   const [userInfo] = useGetUserQuery({
     variables: { uid: commentedUserId },
     pause: isSameUserAsLoggedIn && isServer(),
@@ -45,6 +51,13 @@ const CommentCard: React.FC<props> = ({ comment }) => {
     variables: { cid: comment.id, limit: 5, page: page },
     pause: isServer(),
   });
+  const [isUserLiked] = useGetIsUserLikedCommentQuery({
+    variables: {
+      uid: loggedInUser.id,
+      cid: comment.id,
+    },
+  });
+  const [, setCommentLike] = useSetCommentLikeMutation();
 
   const showReplies: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -54,6 +67,22 @@ const CommentCard: React.FC<props> = ({ comment }) => {
   const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     navigate(`/comment/${comment.id}`);
+  };
+
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+    e.stopPropagation();
+    setLike(!like);
+    like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
+    const res = await setCommentLike({
+      uid: loggedInUser.id,
+      cid: comment.id,
+      like: !like,
+      mid: movieId,
+    });
+    const { data, error } = res;
+    if (error) console.log(error);
+    const _like = data?.setCommentLike?.likeStatus.like!;
+    setLike(_like);
   };
 
   // Get user info.
@@ -80,6 +109,18 @@ const CommentCard: React.FC<props> = ({ comment }) => {
       setLastPage(_lastPage);
     }
   }, [replyInfo]);
+
+  // Is user liked comment query.
+  useEffect(() => {
+    const { error, data, fetching } = isUserLiked;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = isUserLiked.data;
+      const _liked = _data?.getIsUserLikedComment?.isLiked!;
+      setLike(_liked);
+    }
+  }, [isUserLiked]);
+
   return (
     <CardParent showReplies={showR} onClick={goToComment}>
       <div className='content'>
@@ -101,11 +142,13 @@ const CommentCard: React.FC<props> = ({ comment }) => {
         </div>
         <div className='options'>
           <div className='likes c'>
-            <span className='count'>
-              {getFormattedNumber(comment.likesCount!)}
-            </span>
-            <span className='icon'>
-              <IoMdHeartEmpty size={20} />
+            <span className='count'>{getFormattedNumber(likeCount)}</span>
+            <span className='icon' onClick={updateLike}>
+              {like ? (
+                <MdFavorite size={20} fill='#ff005d' />
+              ) : (
+                <MdOutlineFavoriteBorder size={20} />
+              )}
             </span>
           </div>
           <div className='likes c'>
