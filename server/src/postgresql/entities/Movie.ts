@@ -17,6 +17,7 @@ import { Platform } from './Platform';
 import { Reply } from './Reply';
 import { Title } from './Title';
 import { User } from './User';
+import { Visited } from './visited';
 
 @ObjectType()
 @Entity()
@@ -76,6 +77,9 @@ export class Movie extends BaseEntity {
   @Field()
   @Column()
   titleId!: string;
+
+  @OneToMany(() => Visited, (visit) => visit.movie)
+  visited: Visited[];
 
   @ManyToOne(() => Title, (info) => info.movie)
   title: Title;

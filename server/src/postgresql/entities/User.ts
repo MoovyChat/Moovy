@@ -18,6 +18,7 @@ import { MovieStats } from './MovieStats';
 import { Notifications } from './Notifications';
 import { Reply } from './Reply';
 import { ReplyStats } from './ReplyStats';
+import { Visited } from './visited';
 
 @ObjectType()
 @Entity()
@@ -53,6 +54,9 @@ export class User extends BaseEntity {
   @Field(() => [String], { nullable: true })
   @Column({ type: 'text', array: true, default: [] })
   watchedMovies?: string[];
+
+  @OneToMany(() => Visited, (visit) => visit.user)
+  visited: Visited[];
 
   @OneToMany(() => Follow, (follow) => follow.follower)
   followers: Follow[];
