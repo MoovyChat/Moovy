@@ -1,4 +1,4 @@
-query getMovieLikesAndCommentsCount($mid: String!) {
+query GetMovieLikesAndCommentsCount($mid: String!) {
   getMovieLikesAndCommentsCount(mid: $mid) {
     likesCount
     commentsCount

@@ -1,19 +1,17 @@
 import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { RecentEmoji, db } from '../../indexedDB/db';
+import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { Emoji } from 'emojibase';
 import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
-import { colorLog } from '../../Utils/utilities';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 const SmileyWindow = () => {
   const iconSize = 30;
-  const [frequentEmojis, setFrequent] = useState<any[]>([]);
+  const [frequentEmojis, setFrequent] = useState<FrequentEmoji[]>([]);
   const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
     (state) => state.textArea.wordSuggestions
@@ -69,7 +67,7 @@ const SmileyWindow = () => {
                     <div
                       id='text-focus'
                       className='word'
-                      key={key}
+                      key={word}
                       onClick={handleWord}>
                       {word}
                     </div>
@@ -81,9 +79,11 @@ const SmileyWindow = () => {
               <div className='section'>
                 <div className='title'>Recently used</div>
                 <div className='emojis'>
-                  {recentEmojis.map((emoji, key) => (
-                    <div className='emoji-child'>
-                      <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                  {recentEmojis.map((emoji) => (
+                    <div className='emoji-child recent' key={emoji.id}>
+                      <EmojiButton
+                        key={emoji.id}
+                        emoji={emoji.emoji}></EmojiButton>
                     </div>
                   ))}
                 </div>
@@ -93,9 +93,11 @@ const SmileyWindow = () => {
               <div className='section'>
                 <div className='title'>Frequently used</div>
                 <div className='emojis'>
-                  {frequentEmojis.map((emoji, key) => (
-                    <div className='emoji-child'>
-                      <EmojiButton key={key} emoji={emoji.emoji}></EmojiButton>
+                  {frequentEmojis.map((emoji) => (
+                    <div className='emoji-child frequent' key={emoji.id}>
+                      <EmojiButton
+                        key={emoji.id}
+                        emoji={emoji.emoji}></EmojiButton>
                     </div>
                   ))}
                 </div>

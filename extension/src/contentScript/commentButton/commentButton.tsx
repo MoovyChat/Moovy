@@ -1,81 +1,44 @@
-import 'cqfill';
-
-import {
-  AnyVariables,
-  DebugEventArg,
-  Operation,
-  OperationResult,
-  Provider,
-  cacheExchange,
-  createClient,
-  dedupExchange,
-  defaultExchanges,
-  fetchExchange,
-  subscriptionExchange,
-} from 'urql';
+import { Movie, MovieFullInformation } from '../../Utils/interfaces';
 import {
   getPlayerViewElement,
   getVideoTitleFromNetflixWatch,
 } from '../contentScript.utils';
+import {
+  sliceAddMovie,
+  sliceAddMovieName,
+} from '../../redux/slices/movie/movieSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useGetMovieQuery,
+  useInsertMovieInfoMutation,
+  useInsertMovieMutation,
+  useInsertVisitedMutation,
+  useUpdateMovieTitleMutation,
+} from '../../generated/graphql';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Source } from 'wonka';
-import { colorLog } from '../../Utils/utilities';
 import { createRoot } from 'react-dom/client';
-import { createClient as createWSClient } from 'graphql-ws';
 import { getStoredCheckedStatus } from '../../Utils/storage';
-import { persistedFetchExchange } from '@urql/exchange-persisted-fetch';
-import { retryExchange } from '@urql/exchange-retry';
-import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
-import { useUpdateMovieTitleMutation } from '../../generated/graphql';
+import { urqlClient } from '../../Utils/urqlClient';
+import { v4 } from 'uuid';
+import { withUrqlClient } from 'next-urql';
 
-const wsClient = createWSClient({
-  url: 'ws://localhost:4000/graphql',
-});
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
-  const client = createClient({
-    url: 'http://localhost:4000/graphql',
-    exchanges: [
-      ...defaultExchanges,
-      dedupExchange,
-      subscriptionExchange({
-        forwardSubscription: (operation) => ({
-          subscribe: (sink) => ({
-            unsubscribe: wsClient.subscribe(operation, sink),
-          }),
-        }),
-      }),
-      persistedFetchExchange({
-        preferGetForPersistedQueries: true,
-      }),
-      retryExchange({
-        retryIf: (error) => {
-          return !!(error.graphQLErrors.length > 0 || error.networkError);
-        },
-      }),
-      fetchExchange,
-    ],
-    requestPolicy: 'cache-and-network',
-  });
   const existingChatWindow = document.getElementsByClassName('chat-interface');
   if (playerElement !== null && !existingChatWindow[0]) {
-    colorLog('Creating new chat window');
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
-      <Provider value={client}>
-        <ReduxProvider store={store}>
-          <ChatWindow />
-        </ReduxProvider>
-      </Provider>
+      <ReduxProvider store={store}>
+        <ChatWindow />
+      </ReduxProvider>
     );
   }
 };
@@ -91,31 +54,62 @@ export const createChatWindow = (_chatWindowSize: string) => {
   Loader(chatElement);
 };
 
-const CommentButton = () => {
+type props = {
+  movieFetched: number;
+  setMovieFetched: any;
+};
+const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   // Redux: App selectors.
   // Settings > openChatWindow, smoothWidth, chatWindowSize
   // User > uid, name
-  const movieId = useAppSelector((state) => state.movie.mid);
-  const movieName = useAppSelector((state) => state.movie.name);
   const openChatWindow = useAppSelector(
     (state) => state.settings.openChatWindow
   );
+
   const smoothWidth = useAppSelector((state) => state.settings.smoothWidth);
   const chatWindowSize = useAppSelector(
     (state) => state.settings.chatWindowSize
   );
-  const currentPage = useAppSelector((state) => state.movie.currentPage);
-  const lastPage = useAppSelector((state) => state.movie.lastPage);
-
-  // GraphQL: updateMovie and movieComments hooks.
-  const [updateMovieStatus, updateMovieTitle] = useUpdateMovieTitleMutation();
-
+  const movieId = useAppSelector((state) => state.movie.id);
+  const userId = useAppSelector((state) => state.user.id);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
   // React: useState React hook.
   // isVisible is used to toggle chat icon visibility.
   const [isVisible, setIsVisible] = useState<boolean>(true);
+
+  // GraphQL
+  const [, insertMovieInfo] = useInsertMovieInfoMutation();
+  const [, insertMovie] = useInsertMovieMutation();
+  const [, insertVisited] = useInsertVisitedMutation();
+  const stableDispatch = useCallback(
+    (args: any) => {
+      return dispatch(args);
+    },
+    [dispatch]
+  );
+
+  // Logs user view history.
+  useEffect(() => {
+    let sessionId = v4();
+    let visitInterval = setInterval(() => {
+      insertVisited({
+        uid: userId,
+        mid: movieId,
+        insertVisitedId: sessionId,
+        time: 5,
+      }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          const _data = data.insertVisited;
+          console.log(_data);
+        }
+      });
+    }, 300000);
+    () => clearInterval(visitInterval);
+  }, [userId, movieId]);
 
   useEffect(() => {
     // Listen for the activation of comment icon when user is logged in for the
@@ -136,24 +130,113 @@ const CommentButton = () => {
     return () => {};
   }, [setIsVisible]);
 
-  useEffect(() => {
-    // Adding the Interval to grab the video title from DOM
+  useMemo(() => {
+    let count = 0;
     let interval = setInterval(() => {
-      let title = getVideoTitleFromNetflixWatch();
-      if (title) {
-        // Update movie name in the database only if the name is not available.
-        if (!movieName && !updateMovieStatus.fetching) {
-          updateMovieTitle({ mid: movieId, name: title }).then((res: any) => {
-            dispatch(sliceAddMovieName({ movieId, title }));
-            clearInterval(interval);
-          });
-        }
+      if (movieFetched === 0 || movieFetched === 1) {
+        clearInterval(interval);
+        return;
       }
-    }, 100);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [dispatch, movieId, movieName, updateMovieStatus]);
+      count += 500;
+      if (count >= 5000) clearInterval(interval);
+      chrome.runtime.sendMessage(
+        { type: 'MOVIE_INFO', movieId },
+        function (response) {
+          if (movieFetched === 0 || movieFetched === 1) {
+            clearInterval(interval);
+            return;
+          }
+          console.log('RESPONSE FROM BACKGROUND', response.result);
+          let result: MovieFullInformation = response.result;
+          if (result !== null) clearInterval(interval);
+          let type = result.type;
+          let uniqueId =
+            type !== 'movie' && result && result.seasons
+              ? result.seasons[0]?.episodes[0]?.id
+              : movieId;
+          // insert the same data to the movie and title.
+          insertMovieInfo({
+            options: {
+              id: uniqueId + '',
+              year: result.year,
+              runtime: result.runtime,
+              title: result.title!,
+              synopsis: result.synopsis!,
+              storyart: result.storyart!,
+              rating: result.rating!,
+              boxart: result.boxart!,
+              artwork: result.artwork!,
+              type: result.type!,
+              advisories: result.advisories!,
+            },
+          }).then(() => {
+            console.log(type);
+            if (type === 'movie') {
+              insertMovie({
+                options: {
+                  id: movieId,
+                  name: result.title!,
+                  season: '',
+                  stills: result.artwork!,
+                  synopsis: result.synopsis!,
+                  thumbs: result.boxart!,
+                  likesCount: 0,
+                  platformId: 1,
+                  runtime: result.runtime,
+                  titleId: uniqueId + '',
+                  year: result.year,
+                },
+              }).then((res) => {
+                if (res.error) console.log(res.error);
+                const _data = res.data;
+                if (_data) {
+                  const movieData = _data.insertMovie as Movie;
+                  stableDispatch(sliceAddMovie(movieData));
+                  setMovieFetched(1);
+                }
+              });
+              // TODO: Insert to redux.
+            } else {
+              let _seasons = result.seasons!;
+              _seasons.map((season) => {
+                const _episodes = season.episodes;
+                // TODO: Find the episode and insert to redux
+                _episodes.map((episode) => {
+                  insertMovie({
+                    options: {
+                      id: episode.id + '',
+                      name: episode.title!,
+                      season: season.title!,
+                      stills: episode.stills!,
+                      synopsis: episode.synopsis!,
+                      thumbs: episode.thumbs!,
+                      likesCount: 0,
+                      platformId: 1,
+                      runtime: episode.runtime,
+                      titleId: uniqueId + '',
+                      year: season.year,
+                    },
+                  }).then((res) => {
+                    const { error, data } = res;
+                    if (error) console.log(error);
+                    if (data) {
+                      const _data = data.insertMovie as Movie;
+                      if (_data.id === movieId) {
+                        stableDispatch(sliceAddMovie(_data));
+                        setMovieFetched(1);
+                      }
+                    }
+                  });
+                });
+              });
+            }
+          });
+          if (Object.keys(result).length > 1) clearInterval(interval);
+        }
+      );
+      () => clearInterval(interval);
+    }, 500);
+  }, [movieId, movieFetched]);
 
   return (
     <div
@@ -162,26 +245,23 @@ const CommentButton = () => {
         setTimeout(() => {
           let nComments = document.getElementById('NComments');
           if (nComments === null) {
-            createChatWindow(chatWindowSize);
             dispatch(sliceSetIsOpenChatWindow(true));
+            createChatWindow(chatWindowSize);
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);
       }}>
-      {isVisible ? (
-        <CommentHeader
-          id='comment-header'
-          className='comment-header'
-          chatWindowSize={smoothWidth + ''}
-          openChatWindow={openChatWindow}>
-          {openChatWindow ? (
-            <MdChevronRight size={40} />
-          ) : (
-            <GoCommentDiscussion size={40} />
-          )}
-        </CommentHeader>
-      ) : (
-        <></>
-      )}
+      <CommentHeader
+        isVisible={isVisible}
+        id='comment-header'
+        className='comment-header'
+        chatWindowSize={smoothWidth + ''}
+        openChatWindow={openChatWindow}>
+        {openChatWindow ? (
+          <MdChevronRight size={40} />
+        ) : (
+          <GoCommentDiscussion size={40} />
+        )}
+      </CommentHeader>
     </div>
   );
 };

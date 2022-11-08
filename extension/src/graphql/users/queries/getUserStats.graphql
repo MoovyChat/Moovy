@@ -1,7 +1,7 @@
 query getUserStats($uid: String!) {
   getUserStatistics(uid: $uid) {
     user {
-      uid
+      id
       name
       nickname
       email
@@ -12,12 +12,12 @@ query getUserStats($uid: String!) {
     favTitles {
       favorite
       movieName
-      movieMid
-      userUid
+      movieId
+      userId
     }
     likedTitles {
-      movieMid
-      userUid
+      movieId
+      userId
       like
       movieName
     }

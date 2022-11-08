@@ -3,6 +3,7 @@ import styled from 'styled-components';
 type props = {
   chatWindowSize: string;
   openChatWindow: boolean;
+  isVisible?: boolean;
 };
 export const CommentHeader = styled.div<props>`
   position: fixed;
@@ -11,7 +12,7 @@ export const CommentHeader = styled.div<props>`
   height: 70px;
   width: 70px;
   cursor: pointer;
-  display: flex;
+  display: ${(p) => (p.isVisible ? 'flex' : 'none')};
   justify-content: center;
   z-index: 99999;
   align-items: center;

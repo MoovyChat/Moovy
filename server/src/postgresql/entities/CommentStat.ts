@@ -27,15 +27,15 @@ export class CommentStats extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  commentCid!: string;
+  commentId!: string;
 
   @Field(() => String)
   @Column()
-  movieMid!: string;
+  movieId!: string;
 
   @Field(() => String)
   @Column()
-  userUid!: string;
+  userId!: string;
 
   @ManyToOne(() => Comment, (comment) => comment.commentStats)
   comment: Comment;

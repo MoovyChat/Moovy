@@ -17,7 +17,7 @@ const App: React.FC = () => {
     photoUrl: '',
     name: '',
     email: '',
-    uid: '',
+    id: '',
     nickname: '',
     comments: [],
     replies: [],
@@ -57,7 +57,7 @@ const App: React.FC = () => {
       <AnimatePresence>
         {sideOpen && (
           <SideBarOpen exit={{ opacity: 1 }}>
-            <Stats className='stats' uid={user.uid} />
+            <Stats className='stats' uid={user.id} />
             <Sidebar className='side' mid={mid} />
           </SideBarOpen>
         )}

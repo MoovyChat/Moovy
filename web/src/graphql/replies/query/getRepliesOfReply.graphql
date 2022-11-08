@@ -1,0 +1,9 @@
+query getRepliesOfReply($limit: Int!, $rid: String!) {
+  getRepliesOfReply(limit: $limit, rid: $rid) {
+    replies {
+      ...FullReply
+    }
+    repliesCount
+    lastPage
+  }
+}

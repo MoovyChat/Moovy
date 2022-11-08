@@ -38,12 +38,18 @@ import { WithOutLoginWindow } from '../login/login.styles';
 import constants from '../../../constants';
 
 const signOut = async (setUser: (user: User) => void) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    console.log(tabs);
+    chrome.tabs.sendMessage(tabs[0].id!, { type: 'LOGOUT' }, (response) => {
+      console.log(response, response?.data);
+    });
+  });
   let removeUser: User = {
     name: '',
     email: '',
     photoUrl: '',
     nickname: '',
-    uid: '',
+    id: '',
     comments: [],
     replies: [],
     watchedMovies: [],
@@ -52,12 +58,6 @@ const signOut = async (setUser: (user: User) => void) => {
   };
   setStoredUserLoginDetails(removeUser).then(() => {
     setUser(removeUser);
-  });
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    console.log(tabs[0].id);
-    chrome.tabs.sendMessage(tabs[0].id!, { type: 'logout' }, (response) => {
-      console.log(response, response?.data);
-    });
   });
 };
 
@@ -85,7 +85,7 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
   useEffect(() => {
-    if (user && user.nickname === user.uid) {
+    if (user && user.nickname === user.id) {
       setShowNickNameEdit(true);
     }
   }, [user]);

@@ -3,17 +3,12 @@ import React, {
   Dispatch,
   FocusEventHandler,
   KeyboardEventHandler,
-  SetStateAction,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
-import {
-  colorLog,
-  getFormattedWordsArray,
-  isNumber,
-} from '../../Utils/utilities';
+import { colorLog, getFormattedWordsArray } from '../../Utils/utilities';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
@@ -26,14 +21,14 @@ import { AnyAction } from 'redux';
 import _ from 'lodash';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
-  user: User | undefined;
   postComment: (
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
-    movieId: string,
     replyWindowResponse: any,
     setReplyClickResponse: (e: any) => void
   ) => Promise<void>;
@@ -41,14 +36,13 @@ type props = {
   setReplyClickResponse: (e: any) => void;
 };
 const ChatArea: React.FC<props> = ({
-  user,
   postComment,
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
   const searchAPI =
     'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
-
+  const user = useAppSelector((state) => state.user);
   const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
   const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const text = useAppSelector((state) => state.textArea.text);
@@ -58,7 +52,7 @@ const ChatArea: React.FC<props> = ({
   const isTextAreaClicked = useAppSelector(
     (state) => state.textArea.isTextAreaClicked
   );
-  const movieId = useAppSelector((state) => state.movie.mid);
+  const movieId = useAppSelector((state) => state.movie.id);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -130,13 +124,7 @@ const ChatArea: React.FC<props> = ({
       e.isPropagationStopped();
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      postComment(
-        user,
-        dispatch,
-        movieId,
-        replyWindowResponse,
-        setReplyClickResponse
-      );
+      postComment(user, dispatch, replyWindowResponse, setReplyClickResponse);
     } else if (
       (e.key >= 'a' && e.key <= 'z') ||
       (e.key >= 'A' && e.key <= 'Z')
@@ -268,4 +256,4 @@ const ChatArea: React.FC<props> = ({
   );
 };
 
-export default ChatArea;
+export default withUrqlClient(urqlClient)(ChatArea);

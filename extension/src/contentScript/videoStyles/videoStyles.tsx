@@ -1,5 +1,6 @@
 import {
   BoxShadows,
+  CustomBorder,
   FilterView,
   Section,
   VideoParent,
@@ -15,8 +16,8 @@ import {
 
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { GiCheckMark } from 'react-icons/gi';
+import { MdCancel } from 'react-icons/md';
 import Slider from '../../components/slider/slider';
-import { colorLog } from '../../Utils/utilities';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
@@ -132,7 +133,7 @@ const VideoStyles = () => {
   const borders: borderType[] = [
     {
       title: 'default',
-      color: 'black',
+      color: 'none',
     },
     {
       title: 'white',
@@ -382,19 +383,42 @@ const VideoStyles = () => {
         </div>
       </Section>
       <Section className='options'>
-        <div className='title'>Borders</div>
+        <div className='title'>Ambience</div>
         <div className='borders'>
           {borders.map((border) => {
-            return (
-              <BoxShadows
-                color={border.color}
-                key={border.title}
+            if (border.title === 'default') {
+              <MdCancel
+                size={20}
                 onClick={() => {
                   addBorder(border);
                 }}
-              />
-            );
+              />;
+            } else
+              return (
+                <BoxShadows
+                  color={border.color}
+                  key={border.title}
+                  onClick={() => {
+                    addBorder(border);
+                  }}
+                />
+              );
           })}
+          <CustomBorder>
+            <input
+              type='color'
+              id='color-picker'
+              name='color-picker'
+              onChange={(e) => {
+                e.stopPropagation();
+                let border: borderType = {
+                  title: 'custom',
+                  color: e.target.value,
+                };
+                addBorder(border);
+              }}
+            />
+          </CustomBorder>
         </div>
       </Section>
     </VideoParent>

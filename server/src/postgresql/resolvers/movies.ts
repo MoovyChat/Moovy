@@ -23,12 +23,26 @@ import { LIKES_AND_COMMENT } from '../../constants';
 @InputType()
 class MovieInput {
   @Field()
-  mid: string;
+  id: string;
   @Field()
   name: string;
-  @Field(() => [String])
-  likes: string[];
-  @Field(() => Int)
+  @Field()
+  synopsis: string;
+  @Field()
+  stills: string;
+  @Field()
+  thumbs: string;
+  @Field()
+  season: string;
+  @Field(() => Int, { defaultValue: 0 })
+  year: number;
+  @Field(() => Int, { defaultValue: 0 })
+  runtime: number;
+  @Field({ nullable: true })
+  titleId: string;
+  @Field(() => Int, { defaultValue: 0 })
+  likesCount: number;
+  @Field(() => Int, { defaultValue: 1 })
   platformId!: number;
 }
 
@@ -51,7 +65,7 @@ class PaginatedMovieComments {
 @ObjectType()
 export class LikesObject {
   @Field(() => String)
-  movieId: string;
+  id: string;
   @Field(() => [User], { defaultValue: [] })
   likes: User[];
   @Field(() => Int)
@@ -74,6 +88,7 @@ export class MovieResolver {
     return Movie.find();
   }
 
+  @Query(() => PaginatedMovieComments, { nullable: true })
   @Mutation(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
     @Arg('mid') mid: string,
@@ -81,11 +96,11 @@ export class MovieResolver {
     @Arg('time', () => String, { nullable: true }) time: string | null,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
-    const totalCommentCount = await Comment.count({ where: { movieMid: mid } });
+    const totalCommentCount = await Comment.count({ where: { movieId: mid } });
     const query = await conn
       .getRepository(Comment)
       .createQueryBuilder('comment')
-      .where('comment.movieMid = :mid', { mid });
+      .where('comment.movieId = :mid', { mid });
     if (time && time !== '') {
       query.andWhere('comment.createdAt < :time', {
         time: new Date(parseInt(time)),
@@ -99,7 +114,7 @@ export class MovieResolver {
       .getMany();
     // const commentsLimit = Math.min(limit, 25);
     // const commentsLimitPlusOne = limit + 1;
-    const movie = await Movie.findOne({ where: { mid } });
+    const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error('Movie not found');
     return {
       movie,
@@ -117,14 +132,21 @@ export class MovieResolver {
     @Arg('time') time: string
   ): Promise<Comment[]> {
     const comments = await Comment.find({
-      where: { movieMid: mid, createdAt: MoreThan(new Date(parseInt(time))) },
+      where: { movieId: mid, createdAt: MoreThan(new Date(parseInt(time))) },
     });
     return comments;
   }
 
-  @Query(() => Movie)
+  @Query(() => Movie, { nullable: true })
   getMovie(@Arg('mid') mid: string): Promise<Movie | null> {
-    return Movie.findOne({ where: { mid } });
+    return Movie.findOne({ where: { id: mid } });
+  }
+
+  @Query(() => Movie, { nullable: true })
+  async getMovieById(@Arg('mid') mid: string): Promise<Movie | null> {
+    const movie = await Movie.findOne({ where: { id: mid } });
+    if (!movie) throw new Error(`Movie not found: ${mid}`);
+    return movie;
   }
 
   @Query(() => LikesAndComment, { nullable: true })
@@ -132,17 +154,9 @@ export class MovieResolver {
     @Arg('mid') mid: string,
     @PubSub() pubSub: PubSubEngine
   ): Promise<LikesAndComment> {
-    const likesCount = await conn
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
-        mid,
-      })
-      .where('stats.like = :like', { like: true })
-      .getCount();
-    const commentsCount = await Comment.count({
-      where: { movieMid: mid },
-    });
+    const movie = await Movie.findOne({ where: { id: mid } });
+    const likesCount = movie?.likesCount!;
+    const commentsCount = movie?.commentCount!;
     const payload: LikesAndComment = { likesCount, commentsCount };
     await pubSub.publish(LIKES_AND_COMMENT, payload);
     return payload;
@@ -150,32 +164,26 @@ export class MovieResolver {
 
   @Query(() => LikesObject, { nullable: true })
   async getMovieLikes(@Arg('mid') mid: string): Promise<LikesObject> {
-    const userLikes = await conn
+    const qb = await conn
       .getRepository(User)
       .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
+      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid,
       })
       .where('stats.like = :like', { like: true })
       .getMany();
     const result = {
-      movieId: mid,
-      likes: userLikes,
-      likesCount: userLikes.length,
+      id: mid,
+      likes: qb,
+      likesCount: qb.length,
     };
     return result;
   }
 
   @Query(() => Int, { nullable: true })
   async getMovieFavoriteCount(@Arg('mid') mid: string): Promise<number> {
-    return await conn
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieMid = :mid', {
-        mid,
-      })
-      .where('stats.favorite = :favorite', { favorite: true })
-      .getCount();
+    const movie = await Movie.findOne({ where: { id: mid } });
+    return movie?.favCount!;
   }
 
   @Mutation(() => Boolean, { nullable: true })
@@ -187,7 +195,7 @@ export class MovieResolver {
       .createQueryBuilder()
       .update(Movie)
       .set({ name })
-      .where('mid = :mid', { mid })
+      .where('id = :mid', { mid })
       .execute();
     if (res && res.affected && res.affected > 0) return true;
     return false;
@@ -195,8 +203,14 @@ export class MovieResolver {
 
   @Mutation(() => Movie, { nullable: true })
   async insertMovie(@Arg('options') options: MovieInput) {
+    try {
+      parseInt(options.id);
+    } catch {
+      throw new Error('Invalid movie id');
+    }
     // Check if the movie already exists.
-    const m = await conn.getRepository(Movie).findOneBy({ mid: options.mid });
+    const m = await conn.getRepository(Movie).findOneBy({ id: options.id });
+
     if (m) return m;
     else {
       let movie;
@@ -207,9 +221,16 @@ export class MovieResolver {
           .into(Movie)
           .values([
             {
-              mid: options.mid,
+              id: options.id,
               name: options.name,
-              likes: options.likes,
+              titleId: options.titleId,
+              year: options.year,
+              season: options.season,
+              stills: options.stills,
+              thumbs: options.thumbs,
+              synopsis: options.synopsis,
+              runtime: options.runtime,
+              likesCount: options.likesCount,
               platformId: options.platformId,
             },
           ])

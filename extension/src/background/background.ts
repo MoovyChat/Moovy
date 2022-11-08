@@ -1,23 +1,128 @@
 import {
+  EpisodeInfo,
+  MovieFullInformation,
+  SeasonInfo,
+  User,
+} from '../Utils/interfaces';
+import {
+  getDomain,
+  getIdFromNetflixURL,
+} from '../contentScript/contentScript.utils';
+import {
   getStoredUserLoginDetails,
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
-import { User } from '../Utils/interfaces';
-import { getIdFromNetflixURL } from '../contentScript/contentScript.utils';
+import { domains } from '../constants';
 
-chrome.runtime.onInstalled.addListener(async () => {
+const setCookieForWebPage = async () => {
+  // const user = await getStoredUserLoginDetails();
+  // if (!user) return;
+  // const userId = user.id;
+  // chrome.cookies.set(
+  //   {
+  //     name: 'userId',
+  //     url: 'http://localhost:3000/',
+  //     value: userId,
+  //   },
+  //   (cookie) => {
+  //     console.log(JSON.stringify(cookie));
+  //     console.log(chrome.extension.lastError);
+  //     console.log(chrome.runtime.lastError);
+  //   }
+  // );
+};
+
+const injectScriptsOnReload = async () => {
   for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
     for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        files: ['index.js', 'netflix.js'],
-      });
+      const url = tab.url!;
+      const _url = getDomain(url);
+      switch (_url) {
+        case domains.NETFLIX:
+          console.log('INJECTED');
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            files: ['netflix.js'],
+          });
+          break;
+        case domains.LOCALHOST:
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            files: ['qchat.js'],
+          });
+          break;
+      }
     }
   }
+};
+
+chrome.runtime.onInstalled.addListener(async () => {
+  injectScriptsOnReload();
 });
 
-var test = (time: string) => {
+var getMovieInfo = (movieId: string) => {
+  let netflixApi = (window as any).netflix;
+  // let videoState = netflixApi.appContext?.getPlayerApp().getState();
+  let api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
+  let videoMetaData = api?.getVideoMetadataByVideoId(movieId);
+  let videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
+  let _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
+  let _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
+  let metaData = videoMetaData?._metadata?.video;
+  let mainYear = metaData.year;
+  let mainRunTime = metaData.runtime;
+  let mainTitleType: string = metaData?.type;
+  let mainTitle: string = metaData?.title;
+  let artwork: string = metaData?.artwork[0]?.url;
+  let boxart: string = metaData?.boxart[0]?.url;
+  let storyart: string = metaData?.storyart[0]?.url;
+  let rating: string = metaData?.rating;
+  let synopsis: string = metaData?.synopsis;
+  let _seasons: any[] = videoMetaData?._seasons;
+  let _finalSeasonValue: SeasonInfo[] | null = [];
+  if (_seasons) {
+    _finalSeasonValue = _seasons.map((s) => {
+      let _seasonInfo = s?._season;
+      let title = _seasonInfo?.title;
+      let year = _seasonInfo?.year;
+      let _episodes: any[] = s._episodes;
+      let episodeReturnvalue = _episodes.map((e) => {
+        let episodeInfo: EpisodeInfo = {
+          id: e?._video?.id,
+          title: e?._video?.title,
+          thumbs: e?._video?.thumbs[0]?.url,
+          stills: e?._video?.stills[0]?.url,
+          runtime: e?._video?.runtime,
+          synopsis: e?._video?.synopsis,
+        };
+        return episodeInfo;
+      });
+      let seasonInfo: SeasonInfo = {
+        year,
+        title,
+        episodes: episodeReturnvalue,
+      };
+      return seasonInfo;
+    });
+  }
+  let finalResult: MovieFullInformation = {
+    type: mainTitleType,
+    title: mainTitle,
+    synopsis,
+    storyart,
+    rating,
+    boxart,
+    artwork,
+    year: mainYear,
+    runtime: mainRunTime,
+    advisories: _advisories,
+    seasons: _finalSeasonValue,
+  };
+  return finalResult;
+};
+
+var timeSkipForNetflix = (time: string) => {
   // Conversion of time to milliseconds
   if (time !== '') {
     let timeArray = time.split(':');
@@ -35,7 +140,8 @@ var test = (time: string) => {
     let totalSeconds = hours * 3600 + minutes * 60 + seconds;
     let timeInMS = totalSeconds * 1000;
 
-    let netflixApi = window.netflix;
+    let netflixApi = (window as any).netflix;
+    console.log(window);
     let videoPlayer =
       netflixApi?.appContext?.state.playerApp.getAPI().videoPlayer;
     if (videoPlayer) {
@@ -61,7 +167,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabId, allFrames: true },
-        func: test,
+        func: timeSkipForNetflix,
         args: [msg.time],
         world: 'MAIN',
       },
@@ -74,13 +180,15 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   }
 });
 
+// When the extension in installed.
 chrome.runtime.onInstalled.addListener(() => {
+  setCookieForWebPage();
   let user: User = {
     name: '',
     email: '',
     photoUrl: '',
     nickname: '',
-    uid: '',
+    id: '',
     comments: [],
     replies: [],
     joinedAt: '0',
@@ -88,34 +196,42 @@ chrome.runtime.onInstalled.addListener(() => {
     favorites: [],
   };
   setStoredUserLoginDetails(user);
+  console.log('ON INSTALLED');
 });
 
 // Listen to the url change and 'strictly' for update the icons and popup page.
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, async (tab) => {
-    if (tab.url?.match('https://www.netflix.com/watch/*')) {
-      // Change Icon when the url is visited.
-
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Changing the pop up html
-      chrome.action.setPopup({ popup: 'popup.html' });
-    } else {
-      // Change icon when url is not visited.
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Change the pop up html
-      chrome.action.setPopup({ popup: 'offsite.html' });
+    const url = await tab.url!;
+    const domain = getDomain(url);
+    switch (domain) {
+      case domains.LOCALHOST:
+      case domains.NETFLIX:
+        // Change Icon when the url is visited.
+        // injectScriptsOnReload();
+        console.log('ON ACTIVATED');
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Changing the pop up html
+        chrome.action.setPopup({ popup: 'popup.html' });
+        break;
+      default:
+        // Change icon when url is not visited.
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Change the pop up html
+        chrome.action.setPopup({ popup: 'offsite.html' });
+        break;
     }
   });
 });
@@ -125,22 +241,21 @@ let updateListener = function listener(
   changeInfo: chrome.tabs.TabChangeInfo,
   tab: chrome.tabs.Tab
 ) {
-  console.log('CHANGED -> ', changeInfo.url);
-
+  console.log('CHANGED -> ', changeInfo);
+  if (
+    (changeInfo.status === 'complete' &&
+      getDomain(tab.url!) === domains.LOCALHOST) ||
+    domains.NETFLIX
+  ) {
+    // injectScriptsOnReload();
+  }
+  let domain = getDomain(changeInfo.url!);
   // read changeInfo data and do something with it (like read the url)
-  if (changeInfo.url) {
-    if (
-      changeInfo.url.match(
-        'https://www.netflix.com/watch/*' ||
-          'http://www.netflix.com/watch/*' ||
-          'https://www.netflix.com' ||
-          'http://www.netflix.com'
-      )
-    ) {
-      chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        console.log(tabs[0].url);
-        console.log(tabs[0].id);
-        let activeTab = tabs[0];
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    let activeTab = tabs[0];
+    switch (domain) {
+      case domains.LOCALHOST:
+      case domains.NETFLIX:
         chrome.tabs.sendMessage(
           activeTab.id!,
           { type: 'REFRESH_SCRIPT', msg: 'Hi from background script' },
@@ -148,29 +263,29 @@ let updateListener = function listener(
             console.log(res);
           }
         );
-      });
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Changing the pop up html
-      chrome.action.setPopup({ popup: 'popup.html' });
-    } else {
-      // Change icon when url is not visited.
-      chrome.action.setIcon({
-        path: {
-          '16': 'qc_16.png',
-          '48': 'qc_48.png',
-          '128': 'qc_128.png',
-        },
-      });
-      // Change the pop up html
-      chrome.action.setPopup({ popup: 'offsite.html' });
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Changing the pop up html
+        chrome.action.setPopup({ popup: 'popup.html' });
+        break;
+      default:
+        // Change icon when url is not visited.
+        chrome.action.setIcon({
+          path: {
+            '16': 'qc_16.png',
+            '48': 'qc_48.png',
+            '128': 'qc_128.png',
+          },
+        });
+        // Change the pop up html
+        chrome.action.setPopup({ popup: 'offsite.html' });
     }
-  }
+  });
 };
 
 // Condition is for when user is already loggedIn.
@@ -179,8 +294,26 @@ let updateListener = function listener(
 chrome.tabs.onCreated.addListener(() => {
   chrome.tabs.onUpdated.addListener(updateListener);
 });
-chrome.tabs.onUpdated.addListener(updateListener);
-
+// chrome.tabs.onUpdated.addListener(updateListener);
+chrome.tabs.onUpdated.addListener((_a, changeInfo, tab) => {
+  injectScriptsOnReload();
+  let domain = getDomain(changeInfo.url!);
+  // read changeInfo data and do something with it (like read the url)
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    let activeTab = tabs[0];
+    if (domain === domains.NETFLIX) {
+      let movieId = getIdFromNetflixURL(changeInfo.url!);
+      chrome.tabs.sendMessage(
+        activeTab.id!,
+        { type: 'RESET_MOVIE_ID', movieId },
+        (res) => {
+          console.log(res);
+        }
+      );
+    }
+  });
+});
+// Listeners
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'NEED_ID') {
     chrome.tabs.query(
@@ -192,24 +325,52 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         var tab = tabs[0];
         var url = tab.url;
         const id = getIdFromNetflixURL(url!);
+        if (id === '') return;
         setTimeout(function () {
           sendResponse({ id: id });
         }, 1);
       }
     );
+    return true;
+  } else if (request.type === 'MOVIE_INFO') {
+    if (sender.tab) {
+      const tabId = sender.tab?.id!;
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabId, allFrames: true },
+          func: getMovieInfo,
+          args: [request.movieId],
+          world: 'MAIN',
+        },
+        (e) => {
+          let result = e[0].result;
+          sendResponse({ result });
+        }
+      );
+    }
+    return true;
   }
-  return true;
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // From content script
-  if (sender.tab && request.type === 'GET_USER') {
-    getStoredUserLoginDetails().then((res) => {
-      sendResponse(res);
-    });
-  } else {
-    if (sender.tab && request.type === 'test') {
-      sendResponse('TEST OK!');
+  if (sender.tab) {
+    switch (request.type) {
+      case 'GET_USER':
+        getStoredUserLoginDetails().then((res) => {
+          sendResponse(res);
+        });
+        break;
+      case 'DELETE_COOKIE':
+        if (sender.tab && request.type === 'DELETE_COOKIE') {
+          chrome.cookies.getAll({}, function (cookies) {
+            console.log('@getCookies. Cookies found ' + cookies.length);
+            cookies.forEach(function (cookie) {
+              console.log('[COOKIE] => ' + JSON.stringify(cookie));
+            });
+          });
+        }
+        break;
     }
   }
 });

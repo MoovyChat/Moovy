@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { StatsWindow } from './stats.styles';
+import { urqlClient } from '../../../Utils/urqlClient';
 import { useGetUserMutMutation } from '../../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   className: string;
@@ -46,4 +48,4 @@ const Stats: React.FC<props> = ({ className, uid }) => {
   );
 };
 
-export default Stats;
+export default withUrqlClient(urqlClient)(Stats);

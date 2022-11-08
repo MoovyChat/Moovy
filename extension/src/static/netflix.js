@@ -3,7 +3,6 @@ var getReactNode = (root) => {
     return null;
   }
   var keys = Object.keys(root);
-  console.log(keys);
   var key = null;
   for (var i = 0; i < keys.length; i++) {
     if (keys[i].startsWith('__reactInternalInstance')) {

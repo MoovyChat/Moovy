@@ -5,10 +5,10 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 
 import { Movie } from './Movie';
 import { User } from './User';
@@ -16,10 +16,6 @@ import { User } from './User';
 @ObjectType()
 @Entity()
 export class MovieStats extends BaseEntity {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_movie_stats_id' })
-  @Field(() => Int)
-  id!: number;
-
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @Column({ default: false })
   like?: boolean;
@@ -28,13 +24,13 @@ export class MovieStats extends BaseEntity {
   @Column({ default: false })
   favorite?: boolean;
 
-  @Field(() => String)
-  @Column()
-  movieMid!: string;
+  @Field(() => String, { nullable: true })
+  @PrimaryColumn()
+  movieId!: string;
 
-  @Field(() => String)
-  @Column()
-  userUid!: string;
+  @Field(() => String, { nullable: true })
+  @PrimaryColumn()
+  userId!: string;
 
   @ManyToOne(() => User, (user) => user.movieStats)
   user: User;

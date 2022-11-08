@@ -15,26 +15,77 @@ import { Comment } from './Comment';
 import { MovieStats } from './MovieStats';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
+import { Title } from './Title';
 import { User } from './User';
+import { Visited } from './visited';
 
 @ObjectType()
 @Entity()
 export class Movie extends BaseEntity {
   @PrimaryColumn({ primaryKeyConstraintName: 'pk_movie_id' })
   @Field(() => String)
-  mid!: string;
+  id!: string;
 
   @Field(() => String)
   @Column()
   name!: string;
 
-  @Field(() => [String])
-  @Column({ type: 'text', array: true })
-  likes: string[];
+  @Field(() => String, { nullable: true })
+  @Column()
+  synopsis?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  stills: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  thumbs: string;
+
+  @Field(() => String, { nullable: true })
+  @Column()
+  season: string;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column()
+  year: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @Column()
+  runtime: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  commentCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  viewsCount: number;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  favCount: number;
 
   @Field(() => Int)
   @Column({ type: 'int', default: 0 })
   platformId!: number;
+
+  @Field()
+  @Column()
+  titleId!: string;
+
+  @OneToMany(() => Visited, (visit) => visit.movie)
+  visited: Visited[];
+
+  @ManyToOne(() => Title, (info) => info.movie)
+  title: Title;
+
+  @ManyToOne(() => User, (user) => user.movies)
+  viewedUsers: User[];
 
   @OneToMany(() => Comment, (comment) => comment.movie)
   comments: Comment[];
@@ -44,9 +95,6 @@ export class Movie extends BaseEntity {
 
   @OneToMany(() => MovieStats, (stats) => stats.movie)
   movieStats: MovieStats[];
-
-  @ManyToOne(() => User, (user) => user.movies)
-  viewedUsers: User[];
 
   @ManyToOne(() => Platform, (platform) => platform.movies)
   platform: Platform;

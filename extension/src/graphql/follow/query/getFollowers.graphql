@@ -1,13 +1,13 @@
 query getFollowers($uid: String!) {
   getFollowers(uid: $uid) {
     user {
-      uid
+      id
       name
       nickname
       photoUrl
     }
     followers {
-      uid
+      id
       nickname
       photoUrl
       joinedAt

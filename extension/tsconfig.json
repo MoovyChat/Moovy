@@ -17,5 +17,10 @@
     "noEmit": false,
     "jsx": "react-jsx"
   },
-  "include": ["src", "firebase.ts", "src/contentScript/contentScript.js"]
+  "include": [
+    "src",
+    "firebase.ts",
+    "src/contentScript/contentScript.js",
+    "src/components/emojiPicker/.tsx"
+  ]
 }

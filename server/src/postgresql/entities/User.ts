@@ -15,15 +15,17 @@ import { CommentStats } from './CommentStat';
 import { Follow } from './Follow';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
+import { Notifications } from './Notifications';
 import { Reply } from './Reply';
 import { ReplyStats } from './ReplyStats';
+import { Visited } from './visited';
 
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
   @PrimaryColumn({ primaryKeyConstraintName: 'pk_user_id' })
   @Field(() => String)
-  uid: string;
+  id: string;
 
   @Field(() => String)
   @Column()
@@ -53,6 +55,9 @@ export class User extends BaseEntity {
   @Column({ type: 'text', array: true, default: [] })
   watchedMovies?: string[];
 
+  @OneToMany(() => Visited, (visit) => visit.user)
+  visited: Visited[];
+
   @OneToMany(() => Follow, (follow) => follow.follower)
   followers: Follow[];
 
@@ -70,6 +75,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];
+
+  @OneToMany(() => Notifications, (Notifications) => Notifications.user)
+  notifications: Notification[];
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];

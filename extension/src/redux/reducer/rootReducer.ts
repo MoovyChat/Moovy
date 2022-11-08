@@ -17,7 +17,7 @@ const persistConfig = {
 
 // const persistedSettingsReducer = persistReducer(persistConfig, settingsReducer);
 
-const rootReducer = {
+export const rootReducer = {
   movie: movieReducer,
   user: userReducer,
   comments: commentReducer,

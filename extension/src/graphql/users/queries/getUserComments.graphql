@@ -1,7 +1,7 @@
 query getUserComments($uid: String!) {
   getCommentsOfTheUser(uid: $uid) {
     user {
-      uid
+      id
       name
       email
       photoUrl
@@ -11,12 +11,12 @@ query getUserComments($uid: String!) {
       joinedAt
     }
     comments {
-      cid
-      commentedUserUid
+      id
+      commentedUserId
       message
       likesCount
       repliesCount
-      movieMid
+      movieId
       platformId
       createdAt
       updatedAt

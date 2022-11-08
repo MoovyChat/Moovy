@@ -6,8 +6,10 @@ import React, { useEffect, useState } from 'react';
 import { Like } from '../../../contentScript/commentInterface/commentInterface.styles';
 import MiniCard from '../miniCard';
 import { colorLog } from '../../../Utils/utilities';
+import { urqlClient } from '../../../Utils/urqlClient';
 import { useAppSelector } from '../../../redux/hooks';
 import { useUpdateUserMovieStatusMutation } from '../../../generated/graphql';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   title: string;
@@ -42,7 +44,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
   // Set the like and favorite on Initial load.
   useEffect(() => {
     updateUserLikeFavorite({
-      uid: user.uid,
+      uid: user.id,
       mid: id,
       options: {},
     }).then((response) => {
@@ -56,7 +58,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
   const LikeAndFav = (type: string, value: boolean) => {
     const options = type === 'like' ? { like: value } : { favorite: value };
     updateUserLikeFavorite({
-      uid: user.uid,
+      uid: user.id,
       mid: id,
       options,
     }).then((res) => {
@@ -108,4 +110,4 @@ const MovieMini: React.FC<props> = ({ title, id }) => {
   );
 };
 
-export default MovieMini;
+export default withUrqlClient(urqlClient)(MovieMini);

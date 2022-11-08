@@ -1,6 +1,7 @@
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
 import React, { Dispatch, useEffect, useState } from 'react';
+import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -14,26 +15,24 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieLikesQuery,
   useMovieCommentsUpdateSubscription,
-  useMovieStatusSubscribeSubscription,
+  useMovieStatusUpdateSubscription,
   useUpdateUserMovieStatusMutation,
 } from '../../generated/graphql';
 
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MdOutlineWbSunny } from 'react-icons/md';
-import { colorLog } from '../../Utils/utilities';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { globalUIStyles } from '../../Utils/interfaces';
+import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
-type props = {
-  viewStyles: boolean;
-  setViewStyles: Dispatch<any>;
-};
+type props = {};
 
 // Component: Displays the likes. comments count of the movie and provides the
 // edit nick name option and paint features.
-const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
+const ChatStats: React.FC<props> = () => {
   let icon_Size = 20;
 
   // Redux: App selector hooks.
@@ -44,41 +43,35 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   );
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
-  const [movieLikesSub] = useMovieStatusSubscribeSubscription();
+  const [movieLikesSub] = useMovieStatusUpdateSubscription();
   // GraphQL
   const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const [likesQuery, _lq] = useGetMovieLikesQuery({
     variables: {
-      mid: movie.mid,
+      mid: movie.id,
     },
   });
   const [commentsUpdateStatus] = useMovieCommentsUpdateSubscription();
   // React: useState hooks.
+  const [nickname, setNickName] = useState<string>(user.nickname);
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const [favCount, setFavCount] = useState<number>(0);
+  // TODO: Comments + replies count
   const [repliesCount, setRepliesCount] = useState<number>(0);
-  const [uiStyles, setGlobalStyles] = useState<globalUIStyles>();
-  const [pageError, setPageError] = useState<string>('');
   const [themeToggled, setThemeToggled] = useState<number>(0);
   const theme = useAppSelector((state) => state.settings.theme);
-  // Set the like and favorite on Initial load.
-  useEffect(() => {
-    updateUserLikeFavorite({
-      uid: user.uid,
-      mid: movie.mid,
-      options: {},
-    }).then((response) => {
-      const { data, error } = response;
-      if (error) colorLog(error);
-      const { like } = data?.updateUserMovieStats!;
-      if (like) setLike(like);
-    });
-  }, []);
 
-  useEffect(() => {
-    colorLog('chatStats.tsx');
-  }, []);
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (!sender.tab && request.type === 'EDIT_NICK_NAME') {
+      const editedNickName = request.name;
+      dispatch(sliceAddUserNickName(editedNickName));
+      setNickName(editedNickName);
+      sendResponse({
+        data: 'Request fulfilled',
+      });
+    }
+    return true;
+  });
 
   // Get Likes Data on Initial Load.
   useEffect(() => {
@@ -86,6 +79,12 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
     const likesFetching = likesQuery.fetching;
     if (!likesFetching && likesData) {
       const _lc = likesData.getMovieLikes?.likesCount;
+      const likes = likesData.getMovieLikes?.likes;
+      if (likes) {
+        const found = likes.map((l) => l.id === user.id);
+        if (found.length > 0) setLike(true);
+        else setLike(false);
+      }
       if (_lc) setLikesCount(_lc);
     }
   }, [likesQuery]);
@@ -103,29 +102,14 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   useEffect(() => {
     const { data, error, fetching } = commentsUpdateStatus;
     if (error) {
-      setPageError(`${error.response}: ${error.message} `);
+      console.log(error);
     } else {
-      setPageError('');
       if (!fetching && data) {
-        dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
+        if (data.movieCommentsUpdate)
+          dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
       }
     }
   }, [commentsUpdateStatus]);
-
-  // Gets the stored global UI styles.
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [uiStyles]);
-
-  // Get the comments, likes, replies count.
-  // TODO: Get the stats from the database..
-  useEffect(() => {
-    if (movie) {
-      // setCommentCount(movieInfo.commentsCount);
-      // setRepliesCount(movieInfo.repliesCount!);
-    }
-    return () => {};
-  }, []);
 
   // Text area: Stops the propagation of the keys.
   useEffect(() => {
@@ -150,17 +134,13 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
 
   // GraphQL: Toggle like of the movie.
   const toggleLike = () => {
+    setLike(!like);
     updateUserLikeFavorite({
-      uid: user?.uid,
-      mid: movie.mid,
+      uid: user?.id,
+      mid: movie.id,
       options: {
         like: !like,
       },
-    }).then((res) => {
-      const { data, error } = res;
-      if (error) colorLog(error);
-      const isLike = data?.updateUserMovieStats!.like!;
-      setLike(isLike);
     });
   };
 
@@ -173,7 +153,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
             e.stopPropagation();
             toggleLike();
           }}>
-          <span>{likesCount}</span>
+          <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
             <AiFillLike className='icon' size={icon_Size} />
           ) : (
@@ -181,7 +161,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
           )}
         </div>
         <div className='comment'>
-          <span>{commentsCount}</span>
+          <span>{getFormattedNumber(commentsCount!)}</span>
           <BiComment size={icon_Size} />
         </div>
         <div
@@ -204,7 +184,7 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
         </div>
       </div>
       <div className='user' onClick={changeNickName}>
-        <h4>{user.nickname}</h4>
+        <h4>{nickname ? nickname : user.nickname}</h4>
         <BiEdit size={icon_Size} />
       </div>
       <div
@@ -220,4 +200,4 @@ const ChatStats: React.FC<props> = ({ setViewStyles, viewStyles }) => {
   );
 };
 
-export default ChatStats;
+export default withUrqlClient(urqlClient)(ChatStats);

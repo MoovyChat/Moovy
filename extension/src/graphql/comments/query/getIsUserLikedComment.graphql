@@ -1,3 +1,0 @@
-query getIsUserLikedComment($uid: String!, $cid: String!) {
-  getIsUserLikedComment(uid: $uid, cid: $cid)
-}

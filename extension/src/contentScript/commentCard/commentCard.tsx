@@ -1,41 +1,33 @@
-import { CommentInfo, User, textMap } from '../../Utils/interfaces';
-import React, {
-  Dispatch,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
+import { User, textMap } from '../../Utils/interfaces';
 import {
   colorLog,
   getFormattedWordsArray,
   getTimeFrame,
 } from '../../Utils/utilities';
-import {
-  sliceAddToLikes,
-  sliceRemoveFromLikes,
-} from '../../redux/slices/comment/commentSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useCommentLikesSubscription,
   useGetCommentLikesQuery,
   useGetCommentedUserQuery,
-  useGetIsUserLikedCommentQuery,
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
-import { AnyAction } from 'redux';
+import { COMMENT } from '../../redux/actionTypes';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
+import { urqlClient } from '../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface props {
   comment: any;
   responseFromReplyWindow: (comment: any) => void;
   type: string;
   className: any;
+  cardRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const CommentCard: React.FC<props> = ({
@@ -44,12 +36,13 @@ const CommentCard: React.FC<props> = ({
   type,
   className,
 }) => {
-  const { cid, message, createdAt } = comment;
+  const { id, message, createdAt } = comment;
   const [commentedUser, _q] = useGetCommentedUserQuery({
-    variables: { cid: cid! },
+    variables: { cid: id! },
   });
-  const uid = useAppSelector((state) => state.user.uid);
-  const mid = useAppSelector((state) => state.movie.mid);
+  const user = useAppSelector((state) => state.user);
+  const uid = useAppSelector((state) => state.user.id);
+  const mid = useAppSelector((state) => state.movie.id);
   const [time, setTime] = useState<string>('');
   const [likedUsers, setLikedUser] = useState<User[]>([]);
   const [like, setLike] = useState<boolean>(false);
@@ -58,28 +51,18 @@ const CommentCard: React.FC<props> = ({
   const [likesCount, setLikesCount] = useState<number>(0);
   const dispatch = useAppDispatch();
   const [_likeRes, setCommentLike] = useSetCommentLikeMutation();
-  const [userLikeInfo, _isUserLiked] = useGetIsUserLikedCommentQuery({
-    variables: {
-      cid: cid!,
-      uid,
-    },
-  });
 
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
-      cid: cid!,
+      cid: id!,
     },
   });
 
   const [commentLikesSub] = useCommentLikesSubscription({
     variables: {
-      cid: cid!,
+      cid: id!,
     },
   });
-
-  useEffect(() => {
-    colorLog('commentCard.tsx');
-  }, []);
 
   useEffect(() => {
     const { data, fetching, error } = commentLikeCountQuery;
@@ -87,20 +70,19 @@ const CommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
-      dispatch(sliceAddToLikes({ _users, cid }));
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
+      const findCurrentUser = _users?.find((u) => u.id === uid);
+      if (findCurrentUser) setLike(true);
+      else setLike(false);
       setLikedUser(_users!);
       setLikesCount(_count);
     }
   }, [commentLikeCountQuery.fetching]);
-
-  useEffect(() => {
-    const { fetching, error, data } = userLikeInfo;
-    if (error) colorLog(error);
-    if (!fetching && data) {
-      const isLike = data.getIsUserLikedComment!;
-      setLike(isLike);
-    }
-  }, [userLikeInfo.fetching]);
 
   //Set Comment likes count
   useEffect(() => {
@@ -109,12 +91,16 @@ const CommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const commentLikesCount = data.commentLikesUpdate?.likesCount;
       setLikesCount(commentLikesCount!);
-      const commentLikes = data.commentLikesUpdate?.likes;
-      colorLog('sub', commentLikes);
-      dispatch(sliceAddToLikes({ commentLikes, cid }));
-      setLikedUser(commentLikes);
+      const _users = data.commentLikesUpdate?.likes;
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
+      setLikedUser(_users);
     }
-  }, [commentLikesSub]);
+  }, [commentLikesSub.fetching]);
 
   useEffect(() => {
     let interval: any;
@@ -130,7 +116,7 @@ const CommentCard: React.FC<props> = ({
   }, [createdAt, time]);
 
   // Set commented user info.
-  useEffect(() => {
+  useMemo(() => {
     let { data, fetching, error } = commentedUser;
     if (error) colorLog(error);
     if (!fetching && data) {
@@ -142,9 +128,8 @@ const CommentCard: React.FC<props> = ({
   }, [commentedUser]);
 
   // (Spoiler) Converting message to messageArray
-  useEffect(() => {
+  useMemo(() => {
     let msgArray: textMap[] = [];
-    let isFinal: boolean = false;
     if (message) {
       let msg: string = message;
       let finalEnd = 0;
@@ -201,18 +186,25 @@ const CommentCard: React.FC<props> = ({
   const subjectLike = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     if (type === 'comment') {
+      // Instant update to user.
+      setLike(!like);
+      setLikedUser(
+        like ? likedUsers.filter((u) => u.id !== uid) : [...likedUsers, user]
+      );
+      setLikesCount(like ? likesCount - 1 : likesCount + 1);
+      // Deal with backend
+      console.log('CommentCard: ', id);
       setCommentLike({
-        cid: cid!,
+        cid: id!,
         uid,
         mid,
         like: !like,
       }).then((res) => {
         const { error, data } = res;
         if (error) colorLog(error);
-        setLike(data?.getCommentStats?.like!);
+        console.log(res);
+        setLike(data?.setCommentLike?.likeStatus?.like!);
       });
-    } else if (type === 'reply') {
-      // TODO: Update the reply in database.
     }
   };
   return (
@@ -232,4 +224,4 @@ const CommentCard: React.FC<props> = ({
   );
 };
 
-export default CommentCard;
+export default withUrqlClient(urqlClient)(CommentCard);

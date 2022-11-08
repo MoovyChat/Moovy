@@ -1,7 +1,21 @@
-mutation setReplyLike($like: Boolean!, $rid: String!, $uid: String!) {
-  getReplyStats(like: $like, rid: $rid, uid: $uid) {
-    id
-    like
-    userUid
+mutation SetReplyLike(
+  $like: Boolean!
+  $mid: String!
+  $rid: String!
+  $uid: String!
+) {
+  setReplyLike(like: $like, mid: $mid, rid: $rid, uid: $uid) {
+    user {
+      ...FullUser
+    }
+    likeStatus {
+      id
+      movieId
+      replyId
+      like
+      updatedAt
+      userId
+      createdAt
+    }
   }
 }

@@ -1,6 +1,6 @@
 query getCommentedUser($cid: String!) {
   getCommentedUser(cid: $cid) {
-    uid
+    id
     name
     photoUrl
     email

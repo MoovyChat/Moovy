@@ -4,10 +4,13 @@ import { FollowResolver } from './resolvers/follows';
 import { HelloResolver } from './resolvers/hello';
 import { MovieResolver } from './resolvers/movies';
 import { MovieStatsResolver } from './resolvers/movieStats';
+import { NotificationsResolver } from './resolvers/notifications';
 import { PlatformResolver } from './resolvers/platforms';
 import { ReplyResolver } from './resolvers/replies';
 import { ReplyStatsResolver } from './resolvers/replyStats';
+import { TitleResolver } from './resolvers/movieInfo';
 import { UserResolver } from './resolvers/users';
+import { VisitedResolver } from './resolvers/visited';
 
 export const resolvers = [
   HelloResolver,
@@ -20,4 +23,7 @@ export const resolvers = [
   ReplyResolver,
   ReplyStatsResolver,
   FollowResolver,
+  NotificationsResolver,
+  TitleResolver,
+  VisitedResolver,
 ];

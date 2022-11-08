@@ -1,58 +1,79 @@
 import { getStoredFilterValues, getStoredVideoFilters } from '../Utils/storage';
 
+import { domains } from '../constants';
 import { filterType } from '../Utils/interfaces';
+
+type NotPresentStrategy = 'error' | 'ignore';
+
+export function getElementByDataUIA(tag: string): HTMLElement;
+export function getElementByDataUIA(
+  tag: string,
+  IfNotPresent: 'error'
+): HTMLElement;
+export function getElementByDataUIA(
+  tag: string,
+  IfNotPresent: 'ignore'
+): HTMLElement | null;
+export function getElementByDataUIA(
+  tag: string,
+  IfNotPresent?: NotPresentStrategy
+) {
+  const element = document.querySelector(`[data-uia=${tag}]`);
+  if (IfNotPresent === 'error' && !element) {
+    return;
+  }
+  return element;
+}
 
 export const getVideoTitleFromNetflixWatch = () => {
   let video_title = '';
+  let completeText: string[] = [];
+  let mergedText = '';
   // Check if the data-uia is loaded.
-  if (document.querySelectorAll('[data-uia]')) {
-    // Get all selectors from the query
-    const dataSelectors = document.querySelectorAll('[data-uia]');
-    // Loop through all the selectors and find the 'video-title' attribute
-    dataSelectors.forEach((value, index) => {
-      if (
-        value.textContent &&
-        value.getAttribute('data-uia') === 'video-title'
-      ) {
-        let completeText: string[] = [];
-        let mergedText = '';
-        value.childNodes.forEach((child) => {
-          completeText.push(child.textContent!);
-        });
-        mergedText = completeText.join(' ');
-        if (video_title === '' || video_title === null)
-          video_title = mergedText || value.textContent!;
-      }
-    });
-  }
+  const videoTitleElement = getElementByDataUIA('video-title');
+  if (!videoTitleElement) return;
+  videoTitleElement.childNodes.forEach((child) => {
+    completeText.push(child.textContent!);
+  });
+  mergedText = completeText.join(' ');
+  if (video_title === '' || video_title === null)
+    video_title = mergedText || videoTitleElement.textContent!;
   return video_title;
 };
 
 export const getIdFromNetflixURL = (url: string): string => {
-  let urlPath = url.split('?')[0];
+  const regex = /((http|https):\/\/)(www.netflix.com\/watch\/)(\d*)/gm;
+  let m;
+  let matchedGroup = '';
+  while ((m = regex.exec(url)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    // The result can be accessed through the `m`-variable.
+    m.forEach((match, groupIndex) => {
+      console.log(`Found match, group ${groupIndex}: ${match}`);
+      if (groupIndex === 4) {
+        matchedGroup = match;
+      }
+    });
+  }
   console.log(
     '%c[qchat]',
     'color: #00d9ff',
     'Retrieved movie id',
-    urlPath.split('watch/')[1]
+    matchedGroup
   );
-  return urlPath.split('watch/')[1];
+  return matchedGroup ? matchedGroup! : '';
 };
 
 export const getDomain = (url: string) => {
-  let result = '';
-  let domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im;
-  let match: RegExpMatchArray | null;
-  if ((match = url.match(domainRegex))) {
-    result = match[1];
-    if ((match = result.match(/^[^\.]+\.(.+\..+)$/))) {
-      result = match[1];
-    }
-  }
-  return result;
+  let _url = new URL(url);
+  return _url.hostname;
 };
 
-export const removeNodeFromDom = (nodeId: string) => {
+export const removeNodeFromDomById = (nodeId: string) => {
   if (!nodeId) return;
   let node = document.getElementById(nodeId) as Node;
   let nodeParent = node?.parentNode;

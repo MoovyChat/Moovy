@@ -1,0 +1,12 @@
+fragment FullComment on Comment {
+  __typename
+  id
+  commentedUserId
+  message
+  likesCount
+  repliesCount
+  movieId
+  platformId
+  createdAt
+  updatedAt
+}

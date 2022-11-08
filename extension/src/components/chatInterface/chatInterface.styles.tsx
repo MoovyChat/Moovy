@@ -9,13 +9,34 @@ export const TextAreaContainer = styled.div`
   margin-top: 15px;
 `;
 
-export const Perimeter = styled.div`
-  height: 100%;
+type perimeterProps = {
+  chatWindowSize: string;
+  openChatWindow: boolean;
+  thumbs: string;
+};
+export const Perimeter = styled.div<perimeterProps>`
   position: fixed;
+  height: 100%;
+  width: 100%;
   display: flex;
   right: 0;
   bottom: 0;
   top: 0;
+  transition: max-width 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  background-image: url(${(p) => p.thumbs});
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  ::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(11px);
+    z-index: -1;
+    background: ${(p) => p.theme.body};
+    opacity: 0.7;
+  }
 `;
 
 export const DragBar = styled.div`
@@ -29,17 +50,17 @@ export const DragBar = styled.div`
 `;
 
 type chatWindowProps = {
-  width: string;
   openChatWindow: boolean;
+  windowOpened: boolean;
+  chatWindowSize: string;
 };
 export const ChatWindowParent = styled.div<chatWindowProps>`
   height: 100%;
-  position: relative;
-  display: ${(p) => (p.openChatWindow ? 'flex' : 'none')};
   width: 100%;
+  position: relative;
+  display: ${(p) => (p.windowOpened ? 'flex' : 'none')};
   flex-direction: column;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
-
   .chat-box-container {
     height: 100%;
     margin: 5px auto;
@@ -53,105 +74,6 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
   // exit to
   &.fade-exit-active {
     opacity: 0;
-  }
-
-  @keyframes openToLeft {
-    0% {
-      width: 0%;
-      opacity: 0;
-    }
-    90% {
-      opacity: 0.7;
-    }
-    100% {
-      width: ${(p) => p.width}%;
-      opacity: 1;
-    }
-  }
-
-  @keyframes closeToRight {
-    0% {
-      width: ${(p) => p.width}%;
-      opacity: 1;
-    }
-    100% {
-      width: 0%;
-      opacity: 0;
-    }
-  }
-`;
-
-export const ChatTitle = styled.div`
-  opacity: 1;
-  text-align: center;
-  font-size: 1.3em;
-  word-wrap: break-word;
-  font-weight: bold;
-  font-family: 'Lexend', sans-serif;
-  padding: 20px 10px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 2fr 6fr 2fr;
-  grid-template-rows: 1fr;
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
-  .logo {
-    grid-area: 1 / 1 / 2 / 2;
-    background: url('https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    width: 25px;
-    height: 25px;
-  }
-  .title {
-    grid-area: 1 / 2 / 2 / 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .icon {
-    grid-area: 1 / 3 / 2 / 4;
-    margin-left: 5px;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    display: -webkit-inline-box;
-
-    .fav-count {
-      max-width: 0px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      .box {
-        position: relative;
-        width: 25px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-    .star {
-      :hover {
-        animation: ${rotate} 1s ease-in-out reverse;
-        transform: scale(1.05);
-      }
-      :active {
-        transform: scale(0.95);
-      }
-    }
-    :hover {
-      cursor: pointer;
-      filter: drop-shadow(0 0 1px ${(p) => p.theme.text});
-      box-shadow: inset 0 0 1px ${(p) => p.theme.text};
-      border-radius: 10px;
-      .fav-count {
-        max-width: 30px;
-        color: ${(p) => p.theme.text};
-        transition: all 1s linear;
-      }
-    }
   }
 `;
 

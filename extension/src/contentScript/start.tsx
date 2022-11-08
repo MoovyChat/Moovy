@@ -1,23 +1,25 @@
-import { Movie, User } from '../Utils/interfaces';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   sliceAddMovie,
   sliceAddMovieId,
-  sliceAddMovieName,
 } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser, sliceResetUser } from '../redux/slices/user/userSlice';
 import {
-  useAddMovieIdToUserWatchListMutation,
-  useGetUserQuery,
-  useInsertMovieMutation,
-} from '../generated/graphql';
+  sliceResetSettings,
+  sliceSetSmoothWidth,
+} from '../redux/slices/settings/settingsSlice';
+import { useGetMovieQuery, useGetUserQuery } from '../generated/graphql';
 
+import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
+import { User } from '../Utils/interfaces';
 import { colorLog } from '../Utils/utilities';
-import { sliceResetComments } from '../redux/slices/comment/commentSlice';
+import { isNumber } from '../constants';
+import { sliceComment } from '../redux/slices/comment/commentSlice';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
-import { sliceResetSettings } from '../redux/slices/settings/settingsSlice';
+import { urqlClient } from '../Utils/urqlClient';
 import { useAppDispatch } from '../redux/hooks';
+import { withUrqlClient } from 'next-urql';
 
 interface props {
   video_id: string;
@@ -28,10 +30,11 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   const [user, setUser] = useState<User>();
   const dispatch = useAppDispatch();
   const [{ data, error, fetching }, _] = useGetUserQuery({
-    variables: { uid: userDetails.uid },
+    variables: { uid: userDetails.id },
   });
-  const [_movieInsertStatus, insertMovie] = useInsertMovieMutation();
-  const [_status, addMovieIdToUser] = useAddMovieIdToUserWatchListMutation();
+  const [movieId, setMovieId] = useState<string>(video_id);
+  const [getMovieInfo] = useGetMovieQuery({ variables: { mid: movieId } });
+  const [movieFetched, setMovieFetched] = useState<number>(0);
 
   const stableDispatch = useCallback(
     (args: any) => {
@@ -40,74 +43,70 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     [dispatch]
   );
 
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('START.TSX', request);
+    if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
+      if (isNumber(movieId)) {
+        setMovieId(request.movieId);
+        console.log({ movieId, video_id });
+        dispatch(sliceSetSmoothWidth(0));
+      }
+      sendResponse({
+        data: 'Movie ID got reset',
+      });
+    }
+    return true;
+  });
+
   useEffect(() => {
-    colorLog('"Start" component started');
+    colorLog('"Start" component initiated');
     colorLog('Cleared Redux storage');
     // Clear redux cache.
     dispatch(sliceResetUser());
-    dispatch(sliceResetComments());
+    dispatch(sliceComment({ type: COMMENT.RESET }));
     dispatch(sliceResetReply());
     dispatch(sliceResetSettings());
-  }, []);
+  }, [movieId]);
 
   useEffect(() => {
     if (error) colorLog(error);
     if (!fetching && data) {
       let u = data.getUser as User;
-      colorLog(u);
       setUser(u);
       stableDispatch(sliceAddUser(u));
     }
     return () => {};
   }, [stableDispatch, fetching, data, error]);
 
-  //Add the movie to the user watch list and increase count.
-  useEffect(() => {
-    // Insert the movie into the database.
-    // If the movie is already exist in database, stored movie will be returned
-    // instead.
-    const movieStatus = insertMovie({
-      options: {
-        mid: video_id,
-        name: '',
-        likes: [],
-        platformId: 1,
-      },
-    });
-    movieStatus.then(async (res) => {
-      // Add movie id to the user's watched list.
-      await addMovieIdToUser({
-        mid: video_id,
-        uid: user?.uid! || data?.getUser?.uid!,
-      });
-      let sqlData = res.data?.insertMovie;
-      let toRedux: Movie = {
-        mid: sqlData?.mid!,
-        likes: sqlData?.likes!,
-        likesCount: sqlData?.likes!.length || 0,
-        name: sqlData?.name!,
-        commentsLoadedCount: 0,
-        totalCommentsCountOfMovie: 0,
-        createdAt: sqlData?.createdAt,
-        platformId: sqlData?.platformId,
-        updatedAt: sqlData?.updatedAt,
-        totalRepliesCountOfMovie: 0,
-      };
-      // Set the movie details to the redux.
-      stableDispatch(sliceAddMovie(toRedux));
-    });
-    return () => {};
-  }, [user?.uid!, video_id, data?.getUser?.uid!, stableDispatch]);
+  useMemo(() => {
+    let { data, error, fetching } = getMovieInfo;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getMovie;
+      console.log(_data);
+      if (_data) {
+        dispatch(sliceAddMovie(_data));
+        setMovieFetched(1);
+      } else {
+        setMovieFetched(2);
+      }
+    }
+  }, [getMovieInfo, stableDispatch]);
 
   useEffect(() => {
-    //Redux: Clear movie name
-    stableDispatch(sliceAddMovieName(''));
     //Redux: Add new movie id
-    stableDispatch(sliceAddMovieId(video_id));
+    stableDispatch(sliceAddMovieId(movieId));
     return () => {};
-  }, [stableDispatch, video_id]);
+  }, [stableDispatch, movieId]);
 
-  return user?.uid ? <CommentButton /> : <></>;
+  return user?.id && movieId ? (
+    <CommentButton
+      movieFetched={movieFetched}
+      setMovieFetched={setMovieFetched}
+    />
+  ) : (
+    <></>
+  );
 };
 
-export default Start;
+export default withUrqlClient(urqlClient)(Start);

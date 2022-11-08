@@ -7,16 +7,15 @@ import {
 import { User } from '../../../Utils/interfaces';
 import { UserCredential } from 'firebase/auth';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
+import { urqlClient } from '../../../Utils/urqlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface loginAfterProps {
   setUser: (user: User) => void;
   userFromAuth: UserCredential;
 }
 
-export const LoginAfter: React.FC<loginAfterProps> = ({
-  setUser,
-  userFromAuth,
-}) => {
+const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
   const setUserToStore = (user: User, setUser: (user: User) => void) => {
     // Store it in the Chrome storage.
     setStoredUserLoginDetails(user).then(() => {
@@ -35,8 +34,6 @@ export const LoginAfter: React.FC<loginAfterProps> = ({
   });
   useEffect(() => {
     if (!fetching && !error) {
-      console.log('data', data, fetching);
-      //   setUser(userFromAuth.user);
       if (!fetching) {
         const { uid, email, displayName, photoURL } = userFromAuth.user;
         let user: User = {
@@ -44,7 +41,7 @@ export const LoginAfter: React.FC<loginAfterProps> = ({
           email: email!,
           photoUrl: photoURL!,
           nickname: uid,
-          uid: uid,
+          id: uid,
         };
         // User doesn't exist in the database yet.
         if (data!.getUser === null) {
@@ -79,3 +76,5 @@ export const LoginAfter: React.FC<loginAfterProps> = ({
 
   return <div style={{ color: 'white' }}>Singing In</div>;
 };
+
+export default withUrqlClient(urqlClient)(LoginAfter);

@@ -15,3 +15,12 @@ export const textMapTypes = {
   SPOILER: 'spoiler',
 };
 export default constants;
+
+export const isServerSide = () => typeof window === 'undefined';
+
+export const domains = {
+  NETFLIX: 'www.netflix.com',
+  LOCALHOST: 'localhost',
+};
+
+export const isNumber = (x: string) => /\d/.test(x);

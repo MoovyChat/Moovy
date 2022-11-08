@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 export interface User {
-  uid: string;
+  id: string;
   name: string;
   email?: string;
   nickname: string;
@@ -28,17 +28,18 @@ interface timeMsgObj {
   [key: string]: timeMessage[];
 }
 export interface Movie {
-  mid: string;
+  id: string;
   name: string;
   platformId?: number;
-  likes: string[];
-  totalCommentsCountOfMovie: number;
-  commentsLoadedCount: number;
-  totalRepliesCountOfMovie: number;
+  totalCommentsCountOfMovie?: number;
+  commentsLoadedCount?: number;
+  totalRepliesCountOfMovie?: number;
   newlyLoadedCommentTimeStamp?: string;
   lastPage?: number;
   currentPage?: number;
-  likesCount: number;
+  likesCount?: number;
+  commentCount?: number;
+  viewsCount?: number;
   createdAt?: any;
   favCount?: number;
   updatedAt?: any;
@@ -46,38 +47,43 @@ export interface Movie {
   initialLoadedTimeStamp?: string;
   pastLoadedCount?: number;
   loadNew?: number;
+  runtime?: number | null | undefined;
+  thumbs?: string | null | undefined;
+  season?: string | null | undefined;
+  titleId?: string | null | undefined;
+  fetched?: boolean;
 }
 
+export interface CommonInfo {
+  id?: string;
+}
 export interface CommentInfo {
-  cid?: string;
+  id: string;
   commentedUserId?: string;
-  message?: string;
-  likesCount?: any;
-  likes?: [];
-  replies?: any[];
-  repliesCount?: number;
-  movieId?: string;
-  platformId?: number;
+  message: string;
+  likesCount: any;
+  likes: any[];
+  repliesCount: number;
+  isReplyWindowOpen?: boolean;
+  movieId: string;
+  page?: number;
+  lastPage?: number;
+  parentCommentId?: string;
+  parentReplyId?: string;
+  platformId: number;
   createdAt?: any;
   updatedAt?: any;
   __typename?: any;
 }
 
-export interface ReplyInfo {
-  rid?: string;
-  repliedUserUid: string;
-  parentCommentCid: string;
-  parentReplyRid?: string;
-  movieMid: string;
-  platformId: number;
-  message: string;
-  likesCount: number;
-  likes?: [];
-  replies?: any[];
-  createdAt?: any;
-  updatedAt?: any;
-  __typename?: any;
+export interface _users {
+  __typename?: 'User' | undefined;
+  id: string;
+  name: string;
+  nickname: string;
+  photoUrl: string;
 }
+
 export interface filterType {
   title: string;
   filter?: string;
@@ -138,4 +144,32 @@ export interface loadingInterface {
 export interface borderType {
   title: string;
   color: string;
+}
+
+export interface EpisodeInfo {
+  id: number;
+  title: string;
+  synopsis: string;
+  stills: string;
+  thumbs: string;
+  runtime: number;
+}
+
+export interface SeasonInfo {
+  title: string;
+  year: number;
+  episodes: EpisodeInfo[];
+}
+export interface MovieFullInformation {
+  title?: string;
+  type?: string;
+  artwork?: string;
+  boxart?: string;
+  storyart?: string;
+  rating?: string;
+  synopsis?: string;
+  advisories?: string[];
+  runtime?: number;
+  year?: number;
+  seasons: SeasonInfo[] | null;
 }

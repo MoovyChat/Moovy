@@ -1,13 +1,24 @@
 mutation setCommentLike(
   $like: Boolean!
+  $mid: String!
   $cid: String!
   $uid: String!
-  $mid: String!
 ) {
-  getCommentStats(like: $like, cid: $cid, uid: $uid, mid: $mid) {
-    id
-    like
-    movieMid
-    commentCid
+  setCommentLike(like: $like, mid: $mid, cid: $cid, uid: $uid) {
+    user {
+      id
+      name
+      nickname
+      followerCount
+      followingCount
+      photoUrl
+    }
+    likeStatus {
+      id
+      like
+      movieId
+      commentId
+      userId
+    }
   }
 }

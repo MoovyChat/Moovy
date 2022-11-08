@@ -1,7 +1,7 @@
 query getCommentLikes($cid: String!) {
   getCommentLikes(cid: $cid) {
     likes {
-      uid
+      id
       name
       nickname
       photoUrl

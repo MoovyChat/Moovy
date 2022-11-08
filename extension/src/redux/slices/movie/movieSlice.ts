@@ -4,9 +4,8 @@ import { colorLog } from '../../../Utils/utilities';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const movieState: Movie = {
-  mid: '',
+  id: '',
   name: '',
-  likes: [],
   platformId: 1,
   totalCommentsCountOfMovie: 0,
   commentsLoadedCount: 0,
@@ -19,37 +18,57 @@ export const movieState: Movie = {
   pastLoadedCount: 0,
   newlyLoadedCommentTimeStamp: '', // For loading new comments...'
   loadNew: 0,
+  viewsCount: 0,
+  commentCount: 0,
+  runtime: 0,
+  thumbs: '',
+  season: '',
+  titleId: '',
+  fetched: false,
 };
 
 const MovieSlice = createSlice({
   name: 'movie',
   initialState: movieState,
   reducers: {
-    sliceAddMovie: (state, action) => {
-      const { payload } = action;
-      state.mid = payload.mid;
-      state.likes = payload.likes;
-      state.name = payload.name;
-      state.totalCommentsCountOfMovie = payload.totalCommentsCountOfMovie;
-      state.commentsLoadedCount = payload.commentsLoadedCount;
-      state.likesCount = payload.likesCount;
-      state.totalRepliesCountOfMovie = payload.totalRepliesCountOfMovie;
+    sliceAddMovie: (state, action: { payload: Movie }) => {
+      let movieObject: Movie = action.payload;
+      return {
+        ...state,
+        commentCount: movieObject.commentCount,
+        favCount: movieObject.favCount,
+        id: movieObject.id,
+        likesCount: movieObject.likesCount,
+        name: movieObject.name,
+        platformId: movieObject.platformId,
+        runtime: movieObject.runtime,
+        season: movieObject.season,
+        thumbs: movieObject.thumbs,
+        titleId: movieObject.titleId,
+        viewsCount: movieObject.viewsCount,
+        totalCommentsCountOfMovie: movieObject.commentCount,
+      };
     },
     sliceAddMovieId: (state, action) => {
-      state.mid = action.payload;
+      state.id = action.payload;
     },
     sliceAddMovieName: (state, action) => {
       const { video_id, title } = action.payload;
-      if (state.mid === video_id) state.name = title;
-      else colorLog('Wrong movie id');
+      if (state.id === video_id) state.name = title;
+      else
+        colorLog(
+          `sliceAddMovieName: Wrong movie id -> stateId: ${state.id} | videoId: ${video_id}`
+        );
     },
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
-      return { ...state, totalCommentsCountOfMovie: action.payload };
+      return { ...state, totalCommentsCountOfMovie: action.payload || 0 };
     },
     sliceSetCommentsLoadedCount: (state, action) => {
       return {
         ...state,
-        commentsLoadedCount: state.commentsLoadedCount + action.payload,
+        commentsLoadedCount: state.commentsLoadedCount
+          ? state.commentsLoadedCount + action.payload
+          : 0,
       };
     },
     sliceSetLikesCount: (state, action) => {
@@ -81,6 +100,9 @@ const MovieSlice = createSlice({
     },
     sliceSetFavCount: (state, action) => {
       return { ...state, favCount: action.payload };
+    },
+    sliceSetFetched: (state, action: { payload: boolean }) => {
+      return { ...state, fetched: true };
     },
     sliceResetMovie: () => {
       return movieState;
@@ -116,6 +138,7 @@ export const {
   sliceSetPastLoadedCount,
   sliceAddMovieName,
   sliceSetLoadNew,
+  sliceSetFetched,
   sliceSetTotalCommentsOfTheMovie,
   sliceSetCommentsLoadedCount,
   sliceSetLikesCount,

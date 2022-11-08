@@ -1,6 +1,6 @@
 mutation getUserByNickName($nickname: String!) {
   getUserByNickName(nickname: $nickname) {
-    uid
+    id
     name
     nickname
     photoUrl

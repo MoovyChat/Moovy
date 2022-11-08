@@ -1,6 +1,6 @@
+import { COMMENT } from '../../actionTypes';
 import { CommentInfo } from '../../../Utils/interfaces';
 import _ from 'lodash';
-import { colorLog } from '../../../Utils/utilities';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const commentState = {
@@ -11,93 +11,92 @@ const CommentSlice = createSlice({
   name: 'comments',
   initialState: commentState,
   reducers: {
-    sliceAddComment: (state, action) => {
-      const { payload } = action;
-      const { comments } = state;
-      state.comments = [payload, ...comments];
-    },
-    sliceDeleteComment: (state, action) => {
-      const { comments } = state;
-      let refreshedComments = comments.filter(
-        (comment) => comment.cid !== action.payload
-      );
-      return {
-        ...state,
-        comments: refreshedComments,
-      };
-    },
-    sliceSetRepliesCount: (state, action) => {
-      const { cid, count } = action.payload;
-      const newComments = state.comments.map((cmt) =>
-        cmt.cid === cid ? { ...cmt, repliesCount: count } : cmt
-      );
-      return { ...state, comments: newComments };
-    },
-    sliceIncrementReplyCount: (state, action) => {
-      const cid = action.payload;
-      const newComments = state.comments.map((cmt) =>
-        cmt.cid === cid ? { ...cmt, likesCount: cmt.likesCount + 1 } : cmt
-      );
-      return { ...state, comments: newComments };
-    },
-    sliceAddAllComments: (state, action) => {
-      let newComments = _.concat(state.comments, action.payload);
-      let removeDuplicates = _.uniqBy(newComments, 'cid');
-      return { ...state, comments: removeDuplicates };
-    },
-    sliceAddCommentsAtFirst: (state, action) => {
-      let newComments = _.concat(action.payload, state.comments);
-      let removeDuplicates = _.uniqBy(newComments, 'cid');
-      return { ...state, comments: removeDuplicates };
-    },
-    sliceUpdateRepliesInComments: (state, action) => {
-      const { parent, rid } = action.payload;
-      state.comments = state.comments.map((comment) => {
-        if (comment.cid === parent) {
-          let updatedReplies = [...comment?.replies!, rid];
-          return {
-            ...comment,
-            replies: updatedReplies,
-          } as CommentInfo;
-        } else return comment as CommentInfo;
-      }) as CommentInfo[];
-    },
-    sliceAddToLikes: (state, action) => {
-      const { commentLikes, cid } = action.payload;
-      state.comments = state.comments.map((comment) =>
-        comment.cid === cid ? { ...comment, likes: commentLikes } : comment
-      );
-    },
-    sliceRemoveFromLikes: (state, action) => {
-      const { commentId, userId } = action.payload;
-      state.comments = state.comments.map((comment) => {
-        if (comment.cid === commentId) {
-          let UpdatedLikeArray = comment?.likes!.filter(
-            (like) => like !== userId
+    sliceComment: (state, action) => {
+      const { payload, type } = action.payload;
+      switch (type) {
+        case COMMENT.ADD_COMMENT:
+          return { ...state, comments: [payload, ...state.comments] };
+        case COMMENT.DELETE_COMMENT:
+          let newComments = state.comments.filter(
+            (comment) => comment.id !== payload
           );
-          return {
-            ...comment,
-            likes: UpdatedLikeArray,
-          } as CommentInfo;
-        } else return comment as CommentInfo;
-      }) as CommentInfo[];
+          return { ...state, comments: newComments };
+        case COMMENT.TOGGLE_REPLY_WINDOW:
+          const _newComments = state.comments.map((c) =>
+            c.id === payload.id ? { ...c, isReplyWindowOpen: payload.value } : c
+          );
+          return { ...state, comments: _newComments };
+        case COMMENT.SET_REPLY_COUNT:
+          const nc = state.comments.map((cmt) =>
+            cmt.id === payload.id
+              ? { ...cmt, repliesCount: payload.count }
+              : cmt
+          );
+          return { ...state, comments: nc };
+        case COMMENT.INCREMENT_REPLY_COUNT:
+          const { id } = payload;
+          const nc3 = state.comments.map((cmt) =>
+            cmt.id === id ? { ...cmt, likesCount: cmt.likesCount + 1 } : cmt
+          );
+          return { ...state, comments: nc3 };
+        case COMMENT.ADD_ALL_COMMENTS:
+          let nc4 = _.concat(state.comments, payload as CommentInfo[]);
+          let removeDuplicates = _.uniqBy(nc4, 'id');
+          return { ...state, comments: removeDuplicates };
+        case COMMENT.ADD_COMMENTS_FIRST:
+          let nc5 = _.concat(payload as CommentInfo[], state.comments);
+          let rd = _.uniqBy(nc5, 'id');
+          return { ...state, comments: rd };
+        case COMMENT.ADD_TO_COMMENT_LIKES:
+          const { _users } = payload;
+          const nc7 = state.comments.map((comment) =>
+            comment.id === payload.id ? { ...comment, likes: _users } : comment
+          );
+          return { ...state, comments: nc7 };
+        case COMMENT.REMOVE_FROM_COMMENT_LIKES:
+          const { commentId, userId } = payload;
+          const nc6 = state.comments.map((comment) => {
+            if (comment.id === commentId) {
+              let UpdatedLikeArray = comment?.likes!.filter(
+                (like) => like !== userId
+              );
+              return {
+                ...comment,
+                likes: UpdatedLikeArray,
+              } as CommentInfo;
+            } else return comment as CommentInfo;
+          }) as CommentInfo[];
+          return { ...state, comment: nc6 };
+        case COMMENT.RESET:
+          return commentState;
+        default:
+          return state;
+      }
     },
-    sliceResetComments: () => {
-      return commentState;
+    sliceSetCurrentPage: (
+      state,
+      action: { payload: { page: number; id: string } }
+    ) => {
+      const { page, id } = action.payload;
+      let newComments = state.comments.map((c) =>
+        c.id === id ? { ...c, page } : c
+      );
+      return { ...state, comments: newComments };
+    },
+    sliceSetLastPage: (
+      state,
+      action: { payload: { lastPage: number; id: string } }
+    ) => {
+      const { lastPage, id } = action.payload;
+      let newComments = state.comments.map((c) =>
+        c.id === id ? { ...c, lastPage } : c
+      );
+      return { ...state, comments: newComments };
+      return state;
     },
   },
 });
 
-export const {
-  sliceAddComment,
-  sliceAddCommentsAtFirst,
-  sliceIncrementReplyCount,
-  sliceSetRepliesCount,
-  sliceDeleteComment,
-  sliceAddAllComments,
-  sliceAddToLikes,
-  sliceRemoveFromLikes,
-  sliceUpdateRepliesInComments,
-  sliceResetComments,
-} = CommentSlice.actions;
+export const { sliceComment, sliceSetCurrentPage, sliceSetLastPage } =
+  CommentSlice.actions;
 export default CommentSlice.reducer;

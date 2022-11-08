@@ -11,13 +11,15 @@ import { MdOutlineAccountCircle } from 'react-icons/md';
 import NotFound from '../notFound/notFound';
 import { ProfileImage } from '../profileWindow/profileWindow.styles';
 import { User } from '../../Utils/interfaces';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
 };
 const UserTile: React.FC<props> = ({ user }) => {
-  const uid = useAppSelector((state) => state.user.uid);
+  const uid = useAppSelector((state) => state.user.id);
   const [userFollowingCount, setFollowingCount] = useState<number>(0);
   const [userFollowerCount, setFollowerCount] = useState<number>(0);
   const [isFollow, setIsFollowing] = useState<boolean>(false);
@@ -26,16 +28,16 @@ const UserTile: React.FC<props> = ({ user }) => {
   const [_userFollowStat, getUserFollowStat] = useGetUserFollowStatsMutation();
 
   useEffect(() => {
-    getFollowData({ uid, fid: user.uid! }).then((res) => {
+    getFollowData({ uid, fid: user.id! }).then((res) => {
       const { data, error } = res;
-      colorLog(error);
+      if (error) colorLog(error);
       const isF = data?.amIFollowingThisUser;
       setIsFollowing(isF!);
     });
   }, []);
 
   useEffect(() => {
-    getUserFollowStat({ uid: user.uid }).then((res) => {
+    getUserFollowStat({ uid: user.id }).then((res) => {
       const { data, error } = res;
       if (error) colorLog(error);
       if (data) {
@@ -47,7 +49,7 @@ const UserTile: React.FC<props> = ({ user }) => {
   }, []);
 
   return (
-    <LikesUserView key={user?.uid} className='likes-card'>
+    <LikesUserView key={user?.id} className='likes-card'>
       <div className='first'>
         <div className='child'>
           <div className='pic'>
@@ -97,4 +99,4 @@ const LikesWindow = () => {
   );
 };
 
-export default LikesWindow;
+export default withUrqlClient(urqlClient)(LikesWindow);

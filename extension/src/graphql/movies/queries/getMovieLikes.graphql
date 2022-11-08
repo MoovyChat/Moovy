@@ -1,11 +1,7 @@
 query getMovieLikes($mid: String!) {
   getMovieLikes(mid: $mid) {
     likes {
-      uid
-      name
-      nickname
-      email
-      watchedMovies
+      ...FullUser
     }
     likesCount
   }

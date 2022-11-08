@@ -1,6 +1,6 @@
 mutation CreateUser($options: UserInput!) {
   createUser(options: $options) {
-    uid
+    id
     email
     nickname
     name

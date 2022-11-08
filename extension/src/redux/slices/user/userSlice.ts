@@ -2,7 +2,7 @@ import { User } from '../../../Utils/interfaces';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const userState: User = {
-  uid: '',
+  id: '',
   name: '',
   email: '',
   nickname: '',
@@ -21,7 +21,7 @@ const userSlice = createSlice({
       return action.payload;
     },
     sliceAddUserId: (state, action) => {
-      state.uid = action.payload;
+      state.id = action.payload;
     },
     sliceAddUserName: (state, action) => {
       state.name = action.payload;

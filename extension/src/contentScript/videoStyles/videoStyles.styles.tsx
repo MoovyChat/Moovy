@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-export const VideoParent = styled.div``;
+export const VideoParent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+`;
 
 export const Section = styled.div`
   padding: 20px 5px;
@@ -90,5 +95,26 @@ export const BoxShadows = styled.div<shadowProps>`
 
   :active {
     transform: scale(1);
+  }
+`;
+
+export const CustomBorder = styled.div`
+  position: relative;
+  align-self: center;
+  border-radius: 50%;
+  display: flex;
+  width: 20px;
+  margin: 10px;
+  border: 1px solid #363537;
+  height: 20px;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  input {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    top: -10px;
+    left: -10px;
   }
 `;

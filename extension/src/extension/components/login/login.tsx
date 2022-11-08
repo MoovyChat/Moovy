@@ -7,7 +7,7 @@ import {
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
-import { LoginAfter } from '../login-after/loginAfter';
+import LoginAfter from '../login-after/loginAfter';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
 import constants from '../../../constants';

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
+import { Movie } from './Movie';
 import { Reply } from './Reply';
 import { User } from './User';
 
@@ -26,11 +27,15 @@ export class ReplyStats extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  replyRid!: string;
+  replyId!: string;
 
   @Field(() => String)
   @Column()
-  userUid!: string;
+  movieId!: string;
+
+  @Field(() => String)
+  @Column()
+  userId!: string;
 
   @ManyToOne(() => Reply, (reply) => reply.replyStats)
   reply: Reply;
@@ -40,6 +45,9 @@ export class ReplyStats extends BaseEntity {
     (user) => user.movieStats || user.commentStats || user.replyStats
   )
   user: User;
+
+  @ManyToOne(() => Movie, (movie) => movie.movieStats)
+  movie: Movie;
 
   @Field(() => String)
   @CreateDateColumn()

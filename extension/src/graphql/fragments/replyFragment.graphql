@@ -1,0 +1,13 @@
+fragment FullReply on Reply {
+  id
+  commentedUserId
+  message
+  movieId
+  parentCommentId
+  parentReplyId
+  platformId
+  repliesCount
+  likesCount
+  createdAt
+  updatedAt
+}
