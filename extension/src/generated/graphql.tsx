@@ -211,6 +211,7 @@ export type Mutation = {
   insertMovie?: Maybe<Movie>;
   insertReply?: Maybe<Reply>;
   insertTitle?: Maybe<Scalars['Boolean']>;
+  insertVisited?: Maybe<Visited>;
   login?: Maybe<UserResponse>;
   logout: Scalars['Boolean'];
   setCommentLike?: Maybe<CommentsStatsObject>;
@@ -312,6 +313,14 @@ export type MutationInsertReplyArgs = {
 
 export type MutationInsertTitleArgs = {
   options: TitleOptions;
+};
+
+
+export type MutationInsertVisitedArgs = {
+  id: Scalars['String'];
+  mid: Scalars['String'];
+  time: Scalars['Float'];
+  uid: Scalars['String'];
 };
 
 
@@ -431,6 +440,7 @@ export type Query = {
   getAllNotifications: Array<Notifications>;
   getAllPlatforms: Array<Platform>;
   getAllReplies: Array<Reply>;
+  getAllVisited: Array<Visited>;
   getComment: Comment;
   getCommentLikes?: Maybe<CommentLikesObject>;
   getCommentedUser?: Maybe<User>;
@@ -737,6 +747,17 @@ export type UserResponse = {
   __typename?: 'UserResponse';
   error?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
+};
+
+export type Visited = {
+  __typename?: 'Visited';
+  createdAt: Scalars['String'];
+  deletedAt: Scalars['String'];
+  history: Array<Scalars['String']>;
+  movieId: Scalars['String'];
+  updatedAt: Scalars['String'];
+  userId: Scalars['String'];
+  visitCount?: Maybe<Scalars['Int']>;
 };
 
 export type ReplyLikesObject = {
@@ -1064,6 +1085,16 @@ export type GetUserStatsQueryVariables = Exact<{
 
 
 export type GetUserStatsQuery = { __typename?: 'Query', getUserStatistics?: { __typename?: 'FullUserObject', totalComments?: number | null, totalLikes?: number | null, totalWatched?: number | null, user?: { __typename?: 'User', id: string, name: string, nickname: string, email: string, joinedAt: string, photoUrl: string, watchedMovies?: Array<string> | null } | null, favTitles?: Array<{ __typename?: 'FavMovieObject', favorite: boolean, movieName: string, movieId: string, userId: string }> | null, likedTitles?: Array<{ __typename?: 'LikedMovieObject', movieId: string, userId: string, like: boolean, movieName: string }> | null } | null };
+
+export type InsertVisitedMutationVariables = Exact<{
+  time: Scalars['Float'];
+  insertVisitedId: Scalars['String'];
+  mid: Scalars['String'];
+  uid: Scalars['String'];
+}>;
+
+
+export type InsertVisitedMutation = { __typename?: 'Mutation', insertVisited?: { __typename?: 'Visited', userId: string, movieId: string, history: Array<string>, visitCount?: number | null } | null };
 
 export const FullMovieFragmentDoc = gql`
     fragment FullMovie on Movie {
@@ -1774,4 +1805,18 @@ export const GetUserStatsDocument = gql`
 
 export function useGetUserStatsQuery(options: Omit<Urql.UseQueryArgs<GetUserStatsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetUserStatsQuery, GetUserStatsQueryVariables>({ query: GetUserStatsDocument, ...options });
+};
+export const InsertVisitedDocument = gql`
+    mutation insertVisited($time: Float!, $insertVisitedId: String!, $mid: String!, $uid: String!) {
+  insertVisited(time: $time, id: $insertVisitedId, mid: $mid, uid: $uid) {
+    userId
+    movieId
+    history
+    visitCount
+  }
+}
+    `;
+
+export function useInsertVisitedMutation() {
+  return Urql.useMutation<InsertVisitedMutation, InsertVisitedMutationVariables>(InsertVisitedDocument);
 };

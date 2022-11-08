@@ -42,15 +42,30 @@ export const getVideoTitleFromNetflixWatch = () => {
 };
 
 export const getIdFromNetflixURL = (url: string): string => {
-  let _url = new URL(url);
-  let isNetflix = _url.hostname === domains.NETFLIX;
-  let pathName = _url.pathname;
-  let watchId = pathName.split('/').pop();
-  console.log('WATCH ID: ' + watchId);
-  let urlPath = url.split('?')[0];
-  isNetflix &&
-    console.log('%c[qchat]', 'color: #00d9ff', 'Retrieved movie id', watchId);
-  return isNetflix ? watchId! : '';
+  const regex = /((http|https):\/\/)(www.netflix.com\/watch\/)(\d*)/gm;
+  let m;
+  let matchedGroup = '';
+  while ((m = regex.exec(url)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    // The result can be accessed through the `m`-variable.
+    m.forEach((match, groupIndex) => {
+      console.log(`Found match, group ${groupIndex}: ${match}`);
+      if (groupIndex === 4) {
+        matchedGroup = match;
+      }
+    });
+  }
+  console.log(
+    '%c[qchat]',
+    'color: #00d9ff',
+    'Retrieved movie id',
+    matchedGroup
+  );
+  return matchedGroup ? matchedGroup! : '';
 };
 
 export const getDomain = (url: string) => {

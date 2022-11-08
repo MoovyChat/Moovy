@@ -118,7 +118,8 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
 
       batch(() => {
         // Redux: Add total comment count of the movie.
-        _dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
+        if (totalCommentsCount)
+          _dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
         // Redux: Add the initial 25 comments of the movie.
         _dispatch(
           sliceComment({

@@ -40,6 +40,7 @@ const injectScriptsOnReload = async () => {
       const _url = getDomain(url);
       switch (_url) {
         case domains.NETFLIX:
+          console.log('INJECTED');
           chrome.scripting.executeScript({
             target: { tabId: tab.id! },
             files: ['netflix.js'],
@@ -179,6 +180,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   }
 });
 
+// When the extension in installed.
 chrome.runtime.onInstalled.addListener(() => {
   setCookieForWebPage();
   let user: User = {
@@ -194,6 +196,7 @@ chrome.runtime.onInstalled.addListener(() => {
     favorites: [],
   };
   setStoredUserLoginDetails(user);
+  console.log('ON INSTALLED');
 });
 
 // Listen to the url change and 'strictly' for update the icons and popup page.
@@ -205,7 +208,8 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
       case domains.LOCALHOST:
       case domains.NETFLIX:
         // Change Icon when the url is visited.
-        injectScriptsOnReload();
+        // injectScriptsOnReload();
+        console.log('ON ACTIVATED');
         chrome.action.setIcon({
           path: {
             '16': 'qc_16.png',
@@ -243,7 +247,7 @@ let updateListener = function listener(
       getDomain(tab.url!) === domains.LOCALHOST) ||
     domains.NETFLIX
   ) {
-    injectScriptsOnReload();
+    // injectScriptsOnReload();
   }
   let domain = getDomain(changeInfo.url!);
   // read changeInfo data and do something with it (like read the url)
@@ -290,8 +294,25 @@ let updateListener = function listener(
 chrome.tabs.onCreated.addListener(() => {
   chrome.tabs.onUpdated.addListener(updateListener);
 });
-chrome.tabs.onUpdated.addListener(updateListener);
-
+// chrome.tabs.onUpdated.addListener(updateListener);
+chrome.tabs.onUpdated.addListener((_a, changeInfo, tab) => {
+  injectScriptsOnReload();
+  let domain = getDomain(changeInfo.url!);
+  // read changeInfo data and do something with it (like read the url)
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    let activeTab = tabs[0];
+    if (domain === domains.NETFLIX) {
+      let movieId = getIdFromNetflixURL(changeInfo.url!);
+      chrome.tabs.sendMessage(
+        activeTab.id!,
+        { type: 'RESET_MOVIE_ID', movieId },
+        (res) => {
+          console.log(res);
+        }
+      );
+    }
+  });
+});
 // Listeners
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'NEED_ID') {
@@ -339,9 +360,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         getStoredUserLoginDetails().then((res) => {
           sendResponse(res);
         });
-        break;
-      case 'test':
-        sendResponse('TEST OK!');
         break;
       case 'DELETE_COOKIE':
         if (sender.tab && request.type === 'DELETE_COOKIE') {

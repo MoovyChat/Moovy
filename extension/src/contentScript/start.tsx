@@ -1,25 +1,22 @@
-import { Movie, MovieFullInformation, User } from '../Utils/interfaces';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   sliceAddMovie,
   sliceAddMovieId,
-  sliceSetFetched,
 } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser, sliceResetUser } from '../redux/slices/user/userSlice';
 import {
-  useAddMovieIdToUserWatchListMutation,
-  useGetMovieQuery,
-  useGetUserQuery,
-  useInsertMovieMutation,
-} from '../generated/graphql';
+  sliceResetSettings,
+  sliceSetSmoothWidth,
+} from '../redux/slices/settings/settingsSlice';
+import { useGetMovieQuery, useGetUserQuery } from '../generated/graphql';
 
 import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
-import { batch } from 'react-redux';
+import { User } from '../Utils/interfaces';
 import { colorLog } from '../Utils/utilities';
+import { isNumber } from '../constants';
 import { sliceComment } from '../redux/slices/comment/commentSlice';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
-import { sliceResetSettings } from '../redux/slices/settings/settingsSlice';
 import { urqlClient } from '../Utils/urqlClient';
 import { useAppDispatch } from '../redux/hooks';
 import { withUrqlClient } from 'next-urql';
@@ -35,14 +32,31 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   const [{ data, error, fetching }, _] = useGetUserQuery({
     variables: { uid: userDetails.id },
   });
-  const [getMovieInfo] = useGetMovieQuery({ variables: { mid: video_id } });
+  const [movieId, setMovieId] = useState<string>(video_id);
+  const [getMovieInfo] = useGetMovieQuery({ variables: { mid: movieId } });
   const [movieFetched, setMovieFetched] = useState<number>(0);
+
   const stableDispatch = useCallback(
     (args: any) => {
       return dispatch(args);
     },
     [dispatch]
   );
+
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('START.TSX', request);
+    if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
+      if (isNumber(movieId)) {
+        setMovieId(request.movieId);
+        console.log({ movieId, video_id });
+        dispatch(sliceSetSmoothWidth(0));
+      }
+      sendResponse({
+        data: 'Movie ID got reset',
+      });
+    }
+    return true;
+  });
 
   useEffect(() => {
     colorLog('"Start" component initiated');
@@ -52,7 +66,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     dispatch(sliceComment({ type: COMMENT.RESET }));
     dispatch(sliceResetReply());
     dispatch(sliceResetSettings());
-  }, []);
+  }, [movieId]);
 
   useEffect(() => {
     if (error) colorLog(error);
@@ -81,11 +95,11 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
 
   useEffect(() => {
     //Redux: Add new movie id
-    stableDispatch(sliceAddMovieId(video_id));
+    stableDispatch(sliceAddMovieId(movieId));
     return () => {};
-  }, [stableDispatch, video_id]);
+  }, [stableDispatch, movieId]);
 
-  return user?.id ? (
+  return user?.id && movieId ? (
     <CommentButton
       movieFetched={movieFetched}
       setMovieFetched={setMovieFetched}

@@ -22,3 +22,5 @@ export const domains = {
   NETFLIX: 'www.netflix.com',
   LOCALHOST: 'localhost',
 };
+
+export const isNumber = (x: string) => /\d/.test(x);

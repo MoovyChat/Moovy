@@ -31,9 +31,23 @@ const MovieSlice = createSlice({
   name: 'movie',
   initialState: movieState,
   reducers: {
-    sliceAddMovie: (_state, action: { payload: Movie }) => {
+    sliceAddMovie: (state, action: { payload: Movie }) => {
       let movieObject: Movie = action.payload;
-      return { ...movieObject, fetched: true };
+      return {
+        ...state,
+        commentCount: movieObject.commentCount,
+        favCount: movieObject.favCount,
+        id: movieObject.id,
+        likesCount: movieObject.likesCount,
+        name: movieObject.name,
+        platformId: movieObject.platformId,
+        runtime: movieObject.runtime,
+        season: movieObject.season,
+        thumbs: movieObject.thumbs,
+        titleId: movieObject.titleId,
+        viewsCount: movieObject.viewsCount,
+        totalCommentsCountOfMovie: movieObject.commentCount,
+      };
     },
     sliceAddMovieId: (state, action) => {
       state.id = action.payload;
@@ -47,12 +61,14 @@ const MovieSlice = createSlice({
         );
     },
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
-      return { ...state, totalCommentsCountOfMovie: action.payload };
+      return { ...state, totalCommentsCountOfMovie: action.payload || 0 };
     },
     sliceSetCommentsLoadedCount: (state, action) => {
       return {
         ...state,
-        commentsLoadedCount: state.commentsLoadedCount + action.payload,
+        commentsLoadedCount: state.commentsLoadedCount
+          ? state.commentsLoadedCount + action.payload
+          : 0,
       };
     },
     sliceSetLikesCount: (state, action) => {

@@ -1,14 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChatInterface from '../../components/chatInterface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
-import { getPlayerViewElement } from '../contentScript.utils';
-import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
+import { useAppSelector } from '../../redux/hooks';
 import useFetchEmojis from '../hooks/useFetchEmojis';
-import { useMousePosition } from '../hooks/useMouseMove';
 
 // Chat window component -> Renders ChatInterface component.
 const ChatWindow = () => {

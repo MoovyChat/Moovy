@@ -13,6 +13,7 @@ import {
   useGetMovieQuery,
   useInsertMovieInfoMutation,
   useInsertMovieMutation,
+  useInsertVisitedMutation,
   useUpdateMovieTitleMutation,
 } from '../../generated/graphql';
 
@@ -70,7 +71,7 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
     (state) => state.settings.chatWindowSize
   );
   const movieId = useAppSelector((state) => state.movie.id);
-
+  const userId = useAppSelector((state) => state.user.id);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -81,12 +82,35 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   // GraphQL
   const [, insertMovieInfo] = useInsertMovieInfoMutation();
   const [, insertMovie] = useInsertMovieMutation();
+  const [, insertVisited] = useInsertVisitedMutation();
   const stableDispatch = useCallback(
     (args: any) => {
       return dispatch(args);
     },
     [dispatch]
   );
+
+  // Logs user view history.
+  useEffect(() => {
+    let sessionId = v4();
+    let visitInterval = setInterval(() => {
+      insertVisited({
+        uid: userId,
+        mid: movieId,
+        insertVisitedId: sessionId,
+        time: 5,
+      }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          const _data = data.insertVisited;
+          console.log(_data);
+        }
+      });
+    }, 300000);
+    () => clearInterval(visitInterval);
+  }, [userId, movieId]);
+
   useEffect(() => {
     // Listen for the activation of comment icon when user is logged in for the
     // first time when playing the video. TOGGLE COMMENT ICON
@@ -109,7 +133,6 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   useMemo(() => {
     let count = 0;
     let interval = setInterval(() => {
-      console.log(movieFetched);
       if (movieFetched === 0 || movieFetched === 1) {
         clearInterval(interval);
         return;
@@ -125,6 +148,7 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
           }
           console.log('RESPONSE FROM BACKGROUND', response.result);
           let result: MovieFullInformation = response.result;
+          if (result !== null) clearInterval(interval);
           let type = result.type;
           let uniqueId =
             type !== 'movie' && result && result.seasons
@@ -212,7 +236,7 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
       );
       () => clearInterval(interval);
     }, 500);
-  }, [movieId, movieFetched, stableDispatch]);
+  }, [movieId, movieFetched]);
 
   return (
     <div

@@ -75,7 +75,6 @@ const ChatInterface: React.FC<props> = ({
 
   // Set the response to the global text area.
   const responseFromReplyWindow = (comment: CommentInfo) => {
-    console.log(comment);
     setReplyClickResponse(comment);
   };
 

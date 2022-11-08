@@ -1,0 +1,13 @@
+mutation insertVisited(
+  $time: Float!
+  $insertVisitedId: String!
+  $mid: String!
+  $uid: String!
+) {
+  insertVisited(time: $time, id: $insertVisitedId, mid: $mid, uid: $uid) {
+    userId
+    movieId
+    history
+    visitCount
+  }
+}
