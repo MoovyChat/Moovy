@@ -3,49 +3,55 @@ import {
   CustomBorder,
   FilterView,
   OptionGroup,
-  Section,
   VideoParent,
 } from './videoStyles.styles';
 import {
-  MdCancel,
-  MdFilterAlt,
-  MdKeyboardArrowDown,
-  MdKeyboardArrowUp,
-} from 'react-icons/md';
-import React, { ChangeEventHandler, useEffect, useState } from 'react';
-import { addBorder, applyFilter } from './videoStyles.help';
+  ChangeEventHandler,
+  FocusEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { MdAdd, MdFilterAlt, MdOutlineWbIridescent } from 'react-icons/md';
+import { addBorder, applyFilter, borders, filters } from './videoStyles.help';
 import {
   borderType,
   filterType,
   videoFilterSettings,
 } from '../../Utils/interfaces';
 import {
+  getStoredCustomBorders,
   getStoredFilterValues,
+  getStoredIsBorderOpen,
   getStoredIsFilterOpen,
   getStoredResizeValue,
   getStoredVideoFilters,
+  setStoredCustomBorder,
   setStoredFilterValues,
+  setStoredIsBorderOpen,
   setStoredIsFilterOpen,
   setStoredResizeValue,
   setStoredVideoFilters,
 } from '../../Utils/storage';
 
-import { AiFillCloseCircle } from 'react-icons/ai';
-import { GiCheckMark } from 'react-icons/gi';
 import Slider from '../../components/slider/slider';
 import _ from 'lodash';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
+import { title } from 'process';
 import { useAppDispatch } from '../../redux/hooks';
 
 const VideoStyles = () => {
   const dispatch = useAppDispatch();
+  const colorRef = useRef<HTMLInputElement>(null);
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const [canvas, setCanvas] = useState<HTMLElement>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
   const [screenSize, setScreenSize] = useState<string>('100');
   const [openFilterSection, setOpenFilterSection] = useState<boolean>(false);
+  const [openBorderSection, setOpenBorderSection] = useState<boolean>(false);
+  const [customBorders, setCustomBorders] = useState<borderType[]>([]);
   const [filterValues, setFilterValues] = useState<any>({
     blur: '0',
     contrast: '1',
@@ -56,130 +62,19 @@ const VideoStyles = () => {
     saturate: '100',
     hue: '0',
   });
-  const samplePhotoUrl =
-    'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1';
-  const filters: filterType[] = [
-    {
-      title: 'default',
-      filter: 'none',
-      isSelected: true,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'grayscale',
-      min: 0,
-      max: 2,
-      step: 0.05,
-      defaultValue: 0,
-      sampleFilter: 'grayScale(2)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'contrast',
-      min: 0.5,
-      max: 2,
-      step: 0.07,
-      defaultValue: 1,
-      sampleFilter: 'contrast(1.75)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'blur',
-      min: 0,
-      max: 40,
-      step: 0.5,
-      sampleFilter: 'blur(6px)',
-      defaultValue: 0,
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'brightness',
-      min: 0.5,
-      max: 2,
-      step: 0.05,
-      defaultValue: 1,
-      sampleFilter: 'brightness(1.75)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'invert',
-      min: 0,
-      max: 1,
-      step: 0.1,
-      defaultValue: 0,
-      sampleFilter: 'invert(1)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'sepia',
-      min: 0,
-      max: 100,
-      step: 1,
-      defaultValue: 0,
-      sampleFilter: 'sepia(60)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'saturate',
-      min: 0,
-      max: 100,
-      step: 1,
-      defaultValue: 100,
-      sampleFilter: 'saturate(50)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-    {
-      title: 'hue',
-      min: 0,
-      max: 1,
-      step: 0.01,
-      defaultValue: 0,
-      sampleFilter: 'hue-rotate(0.5turn)',
-      isSelected: false,
-      url: samplePhotoUrl,
-    },
-  ];
-
-  const borders: borderType[] = [
-    {
-      title: 'default',
-      color: 'none',
-    },
-    {
-      title: 'white',
-      color: 'white',
-    },
-    {
-      title: 'red',
-      color: 'red',
-    },
-    {
-      title: 'blue',
-      color: 'blue',
-    },
-    {
-      title: 'green',
-      color: 'green',
-    },
-    {
-      title: 'sky',
-      color: '#00efff',
-    },
-  ];
 
   useEffect(() => {
     // Get stored is Filter open boolean value.
     getStoredIsFilterOpen().then((res) => setOpenFilterSection(res));
 
+    // Get stored is border open boolean value.
+    getStoredIsBorderOpen().then((res) => setOpenBorderSection(res));
+
     // Get selected filters from the local storage.
     getStoredVideoFilters().then((filters) => setSelectedFilters(filters));
+
+    // Get Custom borders.
+    getStoredCustomBorders().then((cb) => setCustomBorders(cb));
 
     // Get stored resize value.
     getStoredResizeValue().then((res) => {
@@ -238,32 +133,6 @@ const VideoStyles = () => {
   useEffect(() => {
     applyFilter(selectedFilters, filterValues, videoElem);
   }, [filterValues]);
-
-  // Apply the filters.
-  // const applyFilter = () => {
-  //   let filterText = selectedFilters
-  //     .map((f) => {
-  //       switch (f.title) {
-  //         case 'grayscale':
-  //         case 'contrast':
-  //         case 'brightness':
-  //         case 'invert':
-  //           return `${f.title}(${filterValues[f.title]})`;
-  //         case 'blur':
-  //           return `${f.title}(${filterValues[f.title]}px)`;
-  //         case 'sepia':
-  //         case 'saturate':
-  //           return `${f.title}(${filterValues[f.title]}%)`;
-  //         case 'hue':
-  //           return `hue-rotate(${filterValues.hue}turn)`;
-  //         default:
-  //           break;
-  //       }
-  //     })
-  //     .join(' ');
-  //   setStoredFilterValues(filterValues);
-  //   if (videoElem) videoElem.style['filter'] = filterText;
-  // };
 
   // On change filter values.
   const onChangeFilterValues: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -331,6 +200,21 @@ const VideoStyles = () => {
     setScreenSize(filter.defaultValue + '');
     dispatch(sliceSetVideoSize(filter.defaultValue));
   };
+
+  const onColorBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
+    let border: borderType = {
+      color: e.target.value,
+      title: e.target.value,
+    };
+    setStoredCustomBorder(border);
+    setCustomBorders((current) => {
+      let newBorders = [border, ...current];
+      let uniqBorders = _.uniqBy(newBorders, 'color');
+      if (uniqBorders.length > 10) uniqBorders.pop();
+      return uniqBorders;
+    });
+  };
+
   return (
     <VideoParent>
       <OptionGroup expandGroup={openFilterSection}>
@@ -403,45 +287,97 @@ const VideoStyles = () => {
           )}
         </div>
       </OptionGroup>
-      <Section className='options'>
-        <div className='title'>Ambience</div>
-        <div className='borders'>
-          {borders.map((border) => {
-            if (border.title === 'default') {
-              <MdCancel
-                size={20}
-                onClick={() => {
-                  addBorder(canvas, screenSize, border);
+      <OptionGroup expandGroup={openBorderSection}>
+        <div className='title'>
+          <div className='name'>
+            <div className='name-icon'>
+              <MdOutlineWbIridescent />
+            </div>
+            <label>Ambience</label>
+          </div>
+          <div className='edge'>
+            <div className='checkBox'>
+              <input
+                type='checkbox'
+                id='toggle-border'
+                checked={openBorderSection}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (e.target.checked) {
+                    setStoredIsBorderOpen(true);
+                    setOpenBorderSection(true);
+                  } else {
+                    addBorder(canvas, screenSize, borders[0]);
+                    setStoredIsBorderOpen(false);
+                    setOpenBorderSection(false);
+                  }
                 }}
-              />;
-            } else
-              return (
-                <BoxShadows
-                  color={border.color}
-                  key={border.title}
-                  onClick={() => {
-                    addBorder(canvas, screenSize, border);
-                  }}
-                />
-              );
-          })}
-          <CustomBorder>
-            <input
-              type='color'
-              id='color-picker'
-              name='color-picker'
-              onChange={(e) => {
-                e.stopPropagation();
-                let border: borderType = {
-                  title: 'custom',
-                  color: e.target.value,
-                };
-                addBorder(canvas, screenSize, border);
-              }}
-            />
-          </CustomBorder>
+              />
+              <label htmlFor='toggle-border'></label>
+            </div>
+          </div>
         </div>
-      </Section>
+        <div className='options'>
+          <div className='ready'>
+            <label>Available</label>
+            <div className='border-list'>
+              {borders.map((border) => {
+                return (
+                  border.title !== 'default' && (
+                    <BoxShadows
+                      className='option'
+                      color={border.color}
+                      key={border.title}
+                      onClick={() => {
+                        addBorder(canvas, screenSize, border);
+                      }}
+                    />
+                  )
+                );
+              })}
+            </div>
+          </div>
+          <div className='ready'>
+            <label>Custom</label>
+            <div className='border-list'>
+              <div className='custom-option'>
+                <CustomBorder>
+                  <input
+                    type='color'
+                    id='color-picker'
+                    name='color-picker'
+                    onBlur={onColorBlurHandler}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      let border: borderType = {
+                        title: 'custom',
+                        color: e.target.value,
+                      };
+                      addBorder(canvas, screenSize, border);
+                    }}
+                  />
+                  <MdAdd size={20} className='icon' />
+                </CustomBorder>
+              </div>
+              {customBorders.map((border) => {
+                return (
+                  border.title !== 'default' && (
+                    <div className='custom-option'>
+                      <BoxShadows
+                        color={border.color}
+                        key={border.title}
+                        onClick={() => {
+                          addBorder(canvas, screenSize, border);
+                        }}
+                      />
+                    </div>
+                  )
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </OptionGroup>
     </VideoParent>
   );
 };

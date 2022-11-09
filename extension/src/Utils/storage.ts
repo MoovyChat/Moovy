@@ -6,6 +6,7 @@ import {
   videoFilterSettings,
 } from './interfaces';
 
+import _ from 'lodash';
 import { defaultUIValues } from './defaultValues';
 
 // Used to communicate data between popup and content script
@@ -16,9 +17,11 @@ export interface LocalStorage {
   pause?: boolean;
   checked?: boolean;
   isFilterOn?: boolean;
+  isBorderOn?: boolean;
   filters?: filterType[];
   filterText?: string;
   border?: borderType;
+  customBorders?: borderType[];
   filterValues?: videoFilterSettings;
   uiStyles?: globalUIStyles;
   chatIconPosition?: string;
@@ -82,6 +85,26 @@ export function getStoredIsFilterOpen(): Promise<boolean> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.isFilterOn ?? false);
+    });
+  });
+}
+
+export function setStoredIsBorderOpen(isBorderOn: boolean): Promise<void> {
+  const vals: LocalStorage = {
+    isBorderOn,
+  };
+  return new Promise((resolve) => {
+    chrome.storage.local.set(vals, () => {
+      resolve();
+    });
+  });
+}
+
+export function getStoredIsBorderOpen(): Promise<boolean> {
+  const keys: LocalStorageKeys[] = ['isBorderOn'];
+  return new Promise((resolve) => {
+    chrome.storage.local.get(keys, (res) => {
+      resolve(res.isBorderOn ?? false);
     });
   });
 }
@@ -222,6 +245,34 @@ export function getStoredBorder(): Promise<borderType> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.border ?? {});
+    });
+  });
+}
+
+export async function setStoredCustomBorder(border: borderType): Promise<void> {
+  const customBorders = await getStoredCustomBorders();
+  let newBorders = [border, ...customBorders];
+  let uniqBorders = [
+    ...new Map(newBorders.map((item) => [item['color'], item])).values(),
+  ];
+  if (uniqBorders.length > 10) {
+    uniqBorders.pop();
+  }
+  const vals: LocalStorage = {
+    customBorders: uniqBorders,
+  };
+  return new Promise((resolve) => {
+    chrome.storage.local.set(vals, () => {
+      resolve();
+    });
+  });
+}
+
+export function getStoredCustomBorders(): Promise<borderType[]> {
+  const keys: LocalStorageKeys[] = ['customBorders'];
+  return new Promise((resolve) => {
+    chrome.storage.local.get(keys, (res) => {
+      resolve(res.customBorders ?? []);
     });
   });
 }

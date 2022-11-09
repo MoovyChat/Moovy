@@ -1,6 +1,124 @@
 import { borderType, filterType } from '../../Utils/interfaces';
 import { setStoredBorder, setStoredFilterValues } from '../../Utils/storage';
 
+const samplePhotoUrl =
+  'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1';
+export const filters: filterType[] = [
+  {
+    title: 'default',
+    filter: 'none',
+    isSelected: true,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'grayscale',
+    min: 0,
+    max: 2,
+    step: 0.05,
+    defaultValue: 0,
+    sampleFilter: 'grayScale(2)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'contrast',
+    min: 0.5,
+    max: 2,
+    step: 0.07,
+    defaultValue: 1,
+    sampleFilter: 'contrast(1.75)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'blur',
+    min: 0,
+    max: 40,
+    step: 0.5,
+    sampleFilter: 'blur(6px)',
+    defaultValue: 0,
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'brightness',
+    min: 0.5,
+    max: 2,
+    step: 0.05,
+    defaultValue: 1,
+    sampleFilter: 'brightness(1.75)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'invert',
+    min: 0,
+    max: 1,
+    step: 0.1,
+    defaultValue: 0,
+    sampleFilter: 'invert(1)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'sepia',
+    min: 0,
+    max: 100,
+    step: 1,
+    defaultValue: 0,
+    sampleFilter: 'sepia(60)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'saturate',
+    min: 0,
+    max: 100,
+    step: 1,
+    defaultValue: 100,
+    sampleFilter: 'saturate(50)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'hue',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    defaultValue: 0,
+    sampleFilter: 'hue-rotate(0.5turn)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+];
+
+export const borders: borderType[] = [
+  {
+    title: 'default',
+    color: 'none',
+  },
+  {
+    title: 'white',
+    color: 'white',
+  },
+  {
+    title: 'red',
+    color: 'red',
+  },
+  {
+    title: 'blue',
+    color: 'blue',
+  },
+  {
+    title: 'green',
+    color: 'green',
+  },
+  {
+    title: 'sky',
+    color: '#00efff',
+  },
+];
+
 // Apply the filters.
 export const applyFilter = (
   selectedFilters: filterType[],
