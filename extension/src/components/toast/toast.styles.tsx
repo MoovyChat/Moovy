@@ -18,12 +18,12 @@ export const ToastParent = styled.div<props>`
   align-items: center;
   overflow: hidden;
   border-radius: 50px;
-  color: ${(p) => p.theme.body};
+  color: ${(p) => p.theme.chatBody};
   font-size: 1.2em;
   font-weight: 600;
   background: linear-gradient(
-    ${(p) => p.theme.text} 0%,
-    ${(p) => p.theme.text} ${(p) => 100 - p.progress}%,
+    ${(p) => p.theme.chatText} 0%,
+    ${(p) => p.theme.chatText} ${(p) => 100 - p.progress}%,
     red ${(p) => 100 - p.progress}%,
     red ${(p) => p.progress}%,
     red 100%

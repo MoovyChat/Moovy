@@ -1,23 +1,24 @@
 import React, { useEffect, useRef } from 'react';
+
 import { BiReset } from 'react-icons/bi';
-import { filterType } from '../../Utils/interfaces';
 import { SliderParent } from './slider.styles';
+import { filterType } from '../../Utils/interfaces';
 
 type props = {
   filter: filterType;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   reset: (f: filterType) => void;
-  rangeValue: string;
+  rangeValue: string | undefined;
 };
 const Slider: React.FC<props> = ({ filter, onChange, reset, rangeValue }) => {
   let rangeRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
-    rangeRef.current!.value = rangeValue;
+    rangeRef.current!.value = rangeValue ? rangeValue : '0';
   }, [rangeValue]);
 
   return (
     <SliderParent>
-      <div className='title'>{filter.title}</div>
+      <div className='slider-title'>{filter.title}</div>
       <div className='slider'>
         <input
           type='range'

@@ -22,6 +22,7 @@ import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
+import VideoStyles from '../videoStyles/videoStyles';
 import { createRoot } from 'react-dom/client';
 import { getStoredCheckedStatus } from '../../Utils/storage';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';

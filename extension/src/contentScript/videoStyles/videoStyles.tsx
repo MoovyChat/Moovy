@@ -2,22 +2,38 @@ import {
   BoxShadows,
   CustomBorder,
   FilterView,
+  OptionGroup,
   Section,
   VideoParent,
 } from './videoStyles.styles';
+import {
+  MdCancel,
+  MdFilterAlt,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+} from 'react-icons/md';
 import React, { ChangeEventHandler, useEffect, useState } from 'react';
-import { borderType, filterType } from '../../Utils/interfaces';
+import { addBorder, applyFilter } from './videoStyles.help';
+import {
+  borderType,
+  filterType,
+  videoFilterSettings,
+} from '../../Utils/interfaces';
 import {
   getStoredFilterValues,
+  getStoredIsFilterOpen,
+  getStoredResizeValue,
   getStoredVideoFilters,
   setStoredFilterValues,
+  setStoredIsFilterOpen,
+  setStoredResizeValue,
   setStoredVideoFilters,
 } from '../../Utils/storage';
 
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { GiCheckMark } from 'react-icons/gi';
-import { MdCancel } from 'react-icons/md';
 import Slider from '../../components/slider/slider';
+import _ from 'lodash';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
@@ -29,6 +45,7 @@ const VideoStyles = () => {
   const [canvas, setCanvas] = useState<HTMLElement>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
   const [screenSize, setScreenSize] = useState<string>('100');
+  const [openFilterSection, setOpenFilterSection] = useState<boolean>(false);
   const [filterValues, setFilterValues] = useState<any>({
     blur: '0',
     contrast: '1',
@@ -40,7 +57,7 @@ const VideoStyles = () => {
     hue: '0',
   });
   const samplePhotoUrl =
-    'https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/TomandJerryTitleCardc.jpg/220px-TomandJerryTitleCardc.jpg';
+    'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1';
   const filters: filterType[] = [
     {
       title: 'default',
@@ -158,14 +175,24 @@ const VideoStyles = () => {
   ];
 
   useEffect(() => {
+    // Get stored is Filter open boolean value.
+    getStoredIsFilterOpen().then((res) => setOpenFilterSection(res));
+
     // Get selected filters from the local storage.
     getStoredVideoFilters().then((filters) => setSelectedFilters(filters));
 
+    // Get stored resize value.
+    getStoredResizeValue().then((res) => {
+      setScreenSize(res);
+      dispatch(sliceSetVideoSize(res));
+    });
+
     // Set filter values from storage
-    getStoredFilterValues().then((filterVal) => {
+    getStoredFilterValues().then((filterVal: videoFilterSettings) => {
+      console.log({ filterValues, filterVal });
       if (filterVal) setFilterValues(filterVal);
     });
-  });
+  }, []);
 
   // Grab the video player when the component is initiated.
   useEffect(() => {
@@ -188,8 +215,10 @@ const VideoStyles = () => {
     } else {
       let findIndex = selectedFilters.find((f) => f.title === filter.title);
       if (findIndex === undefined) {
+        filter.isSelected = true;
         setSelectedFilters([...selectedFilters, filter]);
         setStoredVideoFilters([...selectedFilters, filter]);
+        console.log(selectedFilters);
       }
     }
   };
@@ -199,78 +228,59 @@ const VideoStyles = () => {
     let selectedFilterRemove = selectedFilters.filter(
       (f) => f.title !== filter.title
     );
+    filter.isSelected = false;
     setSelectedFilters(selectedFilterRemove);
     setStoredVideoFilters(selectedFilterRemove);
-    applyFilter();
-  };
-
-  // Add the border to the video parent.
-  const addBorder = (border: borderType) => {
-    if (!canvas) return;
-
-    if (border.title === 'default') {
-      canvas.style.cssText = `
-        position: absolute;
-        margin: auto;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width:${parseInt(screenSize) + 2}%;
-        height:${parseInt(screenSize) + 2}%;
-        overflow: hidden;
-      `;
-    } else {
-      canvas.style.cssText += `
-        position: absolute;
-        margin: auto;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width:${parseInt(screenSize) - 2}%;
-        height:${parseInt(screenSize) - 2}%;
-        overflow: hidden;
-        box-shadow: 0px 0px 25px ${border.color};
-      `;
-    }
+    applyFilter(selectedFilters, filterValues, videoElem);
   };
 
   // Apply filter whenever filter values changes.
   useEffect(() => {
-    applyFilter();
+    applyFilter(selectedFilters, filterValues, videoElem);
   }, [filterValues]);
 
   // Apply the filters.
-  const applyFilter = () => {
-    let filterText = selectedFilters
-      .map((f) => {
-        switch (f.title) {
-          case 'grayscale':
-          case 'contrast':
-          case 'brightness':
-          case 'invert':
-            return `${f.title}(${filterValues[f.title]})`;
-          case 'blur':
-            return `${f.title}(${filterValues[f.title]}px)`;
-          case 'sepia':
-          case 'saturate':
-            return `${f.title}(${filterValues[f.title]}%)`;
-          case 'hue':
-            return `hue-rotate(${filterValues.hue}turn)`;
-          default:
-            break;
-        }
-      })
-      .join(' ');
-    setStoredFilterValues(filterValues);
-    if (videoElem) videoElem.style['filter'] = filterText;
-  };
+  // const applyFilter = () => {
+  //   let filterText = selectedFilters
+  //     .map((f) => {
+  //       switch (f.title) {
+  //         case 'grayscale':
+  //         case 'contrast':
+  //         case 'brightness':
+  //         case 'invert':
+  //           return `${f.title}(${filterValues[f.title]})`;
+  //         case 'blur':
+  //           return `${f.title}(${filterValues[f.title]}px)`;
+  //         case 'sepia':
+  //         case 'saturate':
+  //           return `${f.title}(${filterValues[f.title]}%)`;
+  //         case 'hue':
+  //           return `hue-rotate(${filterValues.hue}turn)`;
+  //         default:
+  //           break;
+  //       }
+  //     })
+  //     .join(' ');
+  //   setStoredFilterValues(filterValues);
+  //   if (videoElem) videoElem.style['filter'] = filterText;
+  // };
 
   // On change filter values.
   const onChangeFilterValues: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setFilterValues({ ...filterValues, [e.target.name]: e.target.value + '' });
-    applyFilter();
+    let filterName = e.target.name;
+    let filter = filters.find((f) => f.title === filterName);
+    if (filter) {
+      if (filter.defaultValue + '' === e.target.value) {
+        removeFilter(filter);
+      } else setFilter(filter);
+    }
+    let newFilterValues = {
+      ...filterValues,
+      [e.target.name]: e.target.value + '',
+    };
+    setFilterValues(newFilterValues);
+    setStoredFilterValues(newFilterValues);
+    applyFilter(selectedFilters, filterValues, videoElem);
   };
 
   // Reset all filter values.
@@ -279,7 +289,8 @@ const VideoStyles = () => {
       ...filterValues,
       [filter.title]: filter.defaultValue + '',
     });
-    applyFilter();
+    removeFilter(filter);
+    applyFilter(selectedFilters, filterValues, videoElem);
   };
 
   // Custom resize filter.
@@ -295,20 +306,12 @@ const VideoStyles = () => {
   let onChangeScreenSize: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
     setScreenSize(e.target.value);
+    setStoredResizeValue(e.target.value);
     dispatch(sliceSetVideoSize(e.target.value));
   };
 
   // Update the canvas when the screenSize is changed.
   useEffect(() => {
-    let videoElements = document.getElementsByTagName('video');
-    if (videoElements.length > 0) {
-      let videoElem = videoElements[0];
-      // if (videoElem)
-      //   videoElem.style.cssText = `
-      //   height: 100%;
-      //   width: 100%;
-      // `;
-    }
     if (canvas) {
       canvas.style.cssText += `
         position: absolute;
@@ -330,58 +333,76 @@ const VideoStyles = () => {
   };
   return (
     <VideoParent>
-      <Section className='sliders'>
-        <div className='title'>Controls</div>
-        <Slider
-          key={resizeFilter.title}
-          filter={resizeFilter}
-          onChange={onChangeScreenSize}
-          reset={(filter) => resetScreenSize(filter)}
-          rangeValue={screenSize}
-        />
-        {selectedFilters.map((filter) => {
-          return (
-            <Slider
-              key={filter.title}
-              filter={filter}
-              onChange={onChangeFilterValues}
-              reset={(filter) => resetFilter(filter)}
-              rangeValue={filterValues[filter.title]}
-            />
-          );
-        })}
-      </Section>
-      <Section className='options'>
-        <div className='title'>Filters</div>
-        <div className='filters'>
-          {filters.map((filter, index) => (
-            <FilterView
-              filter={filter.sampleFilter}
-              key={index}
-              onClick={(e) => {
-                e.stopPropagation();
-                setFilter(filter);
-              }}>
-              <div className='photo'>
-                <img src={filter.url} alt={filter.title} />
-                {selectedFilters.find((f) => f.title === filter.title) ? (
-                  <div
-                    className='layover'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFilter(filter);
-                    }}>
-                    <GiCheckMark size={30} />
-                  </div>
-                ) : (
-                  <React.Fragment></React.Fragment>
-                )}
-              </div>
-              <div className='title'>{filter.title}</div>
-            </FilterView>
-          ))}
+      <OptionGroup expandGroup={openFilterSection}>
+        <div className='title'>
+          <div className='name'>
+            <div className='name-icon'>
+              <MdFilterAlt />
+            </div>
+            <label>Filters</label>
+          </div>
+          <div className='edge'>
+            <div className='checkBox'>
+              <input
+                type='checkbox'
+                id='toggle'
+                checked={openFilterSection}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (e.target.checked) {
+                    setStoredIsFilterOpen(true);
+                    setOpenFilterSection(true);
+                  } else {
+                    setFilter(filters[0]);
+                    setOpenFilterSection(false);
+                    setStoredIsFilterOpen(false);
+                  }
+                }}
+              />
+              <label htmlFor='toggle'></label>
+            </div>
+          </div>
         </div>
-      </Section>
+        <div className='options'>
+          <FilterView filter={resizeFilter.title} className='option'>
+            <div className='photo'>
+              <img src={filters[0].url} alt={filters[0].title} />
+            </div>
+            <Slider
+              key={resizeFilter.title}
+              filter={resizeFilter}
+              onChange={onChangeScreenSize}
+              reset={(filter) => resetScreenSize(filter)}
+              rangeValue={screenSize}
+            />
+          </FilterView>
+          {filters.map(
+            (filter, index) =>
+              filter.title !== 'default' && (
+                <FilterView
+                  selected={
+                    selectedFilters.find((f) => f.title === filter.title)
+                      ? true
+                      : false
+                  }
+                  className='option'
+                  filter={filter.sampleFilter}
+                  key={index}>
+                  <div className='photo'>
+                    <img src={filter.url} alt={filter.title} />
+                  </div>
+                  <Slider
+                    key={filter.title}
+                    filter={filter}
+                    onChange={onChangeFilterValues}
+                    reset={(filter) => resetFilter(filter)}
+                    rangeValue={filterValues[filter.title]}
+                  />
+                </FilterView>
+              )
+          )}
+        </div>
+      </OptionGroup>
       <Section className='options'>
         <div className='title'>Ambience</div>
         <div className='borders'>
@@ -390,7 +411,7 @@ const VideoStyles = () => {
               <MdCancel
                 size={20}
                 onClick={() => {
-                  addBorder(border);
+                  addBorder(canvas, screenSize, border);
                 }}
               />;
             } else
@@ -399,7 +420,7 @@ const VideoStyles = () => {
                   color={border.color}
                   key={border.title}
                   onClick={() => {
-                    addBorder(border);
+                    addBorder(canvas, screenSize, border);
                   }}
                 />
               );
@@ -415,7 +436,7 @@ const VideoStyles = () => {
                   title: 'custom',
                   color: e.target.value,
                 };
-                addBorder(border);
+                addBorder(canvas, screenSize, border);
               }}
             />
           </CustomBorder>

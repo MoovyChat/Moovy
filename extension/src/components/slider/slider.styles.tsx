@@ -2,16 +2,15 @@ import styled from 'styled-components';
 
 export const SliderParent = styled.div`
   width: 100%;
-  padding: 5px 2px;
-  border-radius: 5px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  .title {
+  .slider-title {
     min-width: 20%;
-    text-align: center;
+    flex: 1 1 10%;
+    text-transform: capitalize;
   }
   .slider {
+    flex: 1 1 80%;
     input {
       accent-color: #ff005d;
     }
@@ -19,6 +18,7 @@ export const SliderParent = styled.div`
   .value {
     min-width: 10%;
     font-weight: 800;
+    flex: 1 1 10%;
     :hover {
       cursor: pointer;
     }

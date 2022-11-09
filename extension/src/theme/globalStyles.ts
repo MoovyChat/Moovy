@@ -6,10 +6,7 @@ type GlobalThemeProps = {
 };
 
 export const GlobalStyles = createGlobalStyle`
-  body {
-    background: ${({ theme }: GlobalThemeProps) => theme.body};
-    color: ${({ theme }: GlobalThemeProps) => theme.text};
-    font-family: Tahoma, Helvetica, Arial, Roboto, sans-serif;
+  body{
     transition: all 0.50s linear;
   }
 `;

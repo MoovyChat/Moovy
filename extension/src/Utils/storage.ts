@@ -1,11 +1,12 @@
-import { defaultUIValues } from './defaultValues';
 import {
   User,
-  filterType,
   borderType,
-  videoFilterSettings,
+  filterType,
   globalUIStyles,
+  videoFilterSettings,
 } from './interfaces';
+
+import { defaultUIValues } from './defaultValues';
 
 // Used to communicate data between popup and content script
 export interface LocalStorage {
@@ -14,12 +15,14 @@ export interface LocalStorage {
   volume?: boolean;
   pause?: boolean;
   checked?: boolean;
+  isFilterOn?: boolean;
   filters?: filterType[];
   filterText?: string;
   border?: borderType;
   filterValues?: videoFilterSettings;
   uiStyles?: globalUIStyles;
   chatIconPosition?: string;
+  resizeValue?: string;
 }
 export type LocalStorageKeys = keyof LocalStorage;
 
@@ -63,6 +66,26 @@ export function getStoredWatchedTitles(): Promise<string> {
   });
 }
 
+export function setStoredIsFilterOpen(isFilterOn: boolean): Promise<void> {
+  const vals: LocalStorage = {
+    isFilterOn,
+  };
+  return new Promise((resolve) => {
+    chrome.storage.local.set(vals, () => {
+      resolve();
+    });
+  });
+}
+
+export function getStoredIsFilterOpen(): Promise<boolean> {
+  const keys: LocalStorageKeys[] = ['isFilterOn'];
+  return new Promise((resolve) => {
+    chrome.storage.local.get(keys, (res) => {
+      resolve(res.isFilterOn ?? false);
+    });
+  });
+}
+
 export function setStoredVolumeStatus(volume: boolean): Promise<void> {
   const vals: LocalStorage = {
     volume,
@@ -99,6 +122,26 @@ export function getStoredPauseStatus(): Promise<boolean> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.pause ?? false);
+    });
+  });
+}
+
+export function setStoredResizeValue(resizeValue: string): Promise<void> {
+  const vals: LocalStorage = {
+    resizeValue,
+  };
+  return new Promise((resolve) => {
+    chrome.storage.local.set(vals, () => {
+      resolve();
+    });
+  });
+}
+
+export function getStoredResizeValue(): Promise<string> {
+  const keys: LocalStorageKeys[] = ['resizeValue'];
+  return new Promise((resolve) => {
+    chrome.storage.local.get(keys, (res) => {
+      resolve(res.resizeValue ?? '100');
     });
   });
 }
@@ -178,7 +221,7 @@ export function getStoredBorder(): Promise<borderType> {
   const keys: LocalStorageKeys[] = ['border'];
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
-      resolve(res.borderType ?? {});
+      resolve(res.border ?? {});
     });
   });
 }
@@ -197,7 +240,7 @@ export function setStoredFilterValues(
 }
 
 export function getStoredFilterValues(): Promise<videoFilterSettings> {
-  const keys: LocalStorageKeys[] = ['border'];
+  const keys: LocalStorageKeys[] = ['filterValues'];
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.filterValues ?? undefined);

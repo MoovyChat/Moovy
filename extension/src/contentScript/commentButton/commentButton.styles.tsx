@@ -6,6 +6,12 @@ type props = {
   isVisible?: boolean;
 };
 export const CommentHeader = styled.div<props>`
+  .videoStyles {
+    display: none;
+    visibility: hidden;
+    overflow: hidden;
+  }
+
   position: fixed;
   right: ${(p) => p.chatWindowSize}%;
   top: 180px;
