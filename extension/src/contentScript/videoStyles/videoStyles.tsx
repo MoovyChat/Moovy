@@ -196,9 +196,10 @@ const VideoStyles = () => {
     }
   }, [screenSize]);
 
-  let resetScreenSize = (filter: filterType) => {
-    setScreenSize(filter.defaultValue + '');
-    dispatch(sliceSetVideoSize(filter.defaultValue));
+  let resetScreenSize = (value: string) => {
+    setScreenSize(value);
+    dispatch(sliceSetVideoSize(value));
+    setStoredResizeValue(value);
   };
 
   const onColorBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
@@ -240,6 +241,7 @@ const VideoStyles = () => {
                     setFilter(filters[0]);
                     setOpenFilterSection(false);
                     setStoredIsFilterOpen(false);
+                    resetScreenSize('100');
                   }
                 }}
               />
@@ -256,7 +258,7 @@ const VideoStyles = () => {
               key={resizeFilter.title}
               filter={resizeFilter}
               onChange={onChangeScreenSize}
-              reset={(filter) => resetScreenSize(filter)}
+              reset={(filter) => resetScreenSize(filter.defaultValue + '')}
               rangeValue={screenSize}
             />
           </FilterView>
