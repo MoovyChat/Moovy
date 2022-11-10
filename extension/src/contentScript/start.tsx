@@ -69,18 +69,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
       // Get stored resize value.
       getStoredResizeValue().then((res) => {
         dispatch(sliceSetVideoSize(res));
-        if (canvas) {
-          canvas.style.cssText += `
-        position: absolute;
-        margin: auto;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        text-align: center;
-        width: ${res}%;
-        height:${res}%;
-      `;
+        if (canvas && res !== '100') {
           getStoredBorder().then((border) => {
             addBorder(canvas, res, border);
           });

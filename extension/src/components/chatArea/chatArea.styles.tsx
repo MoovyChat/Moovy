@@ -33,11 +33,11 @@ export const ChatAreaParent = styled.textarea<props>`
   height: ${(p) => p.textAreaHeight}px !important;
   z-index: 9;
   color: rgba(0, 0, 0, 0.001);
-  caret-color: ${(p) => p.theme.text};
+  caret-color: ${(p) => p.theme.chatText};
 
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
-    opacity: 0.6; /* Firefox */
+    opacity: 0.5; /* Firefox */
   }
 `;
 
@@ -49,6 +49,9 @@ export const Parent = styled.div<props>`
     position: absolute;
     top: 0;
     left: 0;
+    .basic {
+      white-space: pre-line;
+    }
     ${textAreaMixin()} .time,
     .user {
       ${commentStyleMixin()}

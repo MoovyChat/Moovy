@@ -13,7 +13,7 @@ export const movieState: Movie = {
   favCount: 0,
   totalRepliesCountOfMovie: 0,
   fetchingComments: false,
-  lastPage: 0,
+  lastPage: 1,
   currentPage: 1,
   pastLoadedCount: 0,
   newlyLoadedCommentTimeStamp: '', // For loading new comments...'
