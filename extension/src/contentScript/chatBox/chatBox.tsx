@@ -106,7 +106,10 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       const totalCommentCount = data?.getCommentsOfTheMovie?.totalCommentCount!;
       if (currentPage === 1) {
         const pastLoadedCount = data?.getCommentsOfTheMovie?.pastLoadedCount!;
-        const lastPage = data?.getCommentsOfTheMovie?.lastPage!;
+        const lastPage =
+          data && data.getCommentsOfTheMovie
+            ? data.getCommentsOfTheMovie.lastPage!
+            : 1;
         _dispatch(
           sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString())
         );

@@ -73,6 +73,10 @@ const ChatStats: React.FC<props> = () => {
     return true;
   });
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   // Get Likes Data on Initial Load.
   useEffect(() => {
     const likesData = likesQuery.data;

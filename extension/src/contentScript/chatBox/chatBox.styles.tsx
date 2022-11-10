@@ -19,13 +19,14 @@ export const ChatBoxContainer = styled.div<props>`
 `;
 
 export const ShowMoreComments = styled.div`
-  color: #909090;
+  color: #767676;
   padding: 10px;
   width: 100%;
   text-align: center;
   cursor: pointer;
+  font-weight: 800;
   :hover {
-    color: white;
+    color: ${({ theme }) => theme.chatText};
     transform: scale(1.05);
   }
   :active {

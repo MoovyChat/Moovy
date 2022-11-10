@@ -192,6 +192,7 @@ const ChatInterface: React.FC<props> = ({
 
   return (
     <Perimeter
+      className='chat-perimeter'
       thumbs={thumbs}
       ref={divRef}
       chatWindowSize={chatWindowSize}

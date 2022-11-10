@@ -44,7 +44,8 @@ export const initiateContentScript = async () => {
       const boot = createRoot(reactApp);
 
       const userDetails = await getStoredUserLoginDetails();
-      if (!userDetails) {
+      console.log('Checking content script');
+      if (userDetails.id === '') {
         colorLog('user not found! terminating the app');
         return;
       }
@@ -57,7 +58,6 @@ export const initiateContentScript = async () => {
           <Provider value={client}>
             <ReduxProvider store={store}>
               <Start video_id={movieId} userDetails={userDetails} />
-              );
             </ReduxProvider>
           </Provider>
         );
