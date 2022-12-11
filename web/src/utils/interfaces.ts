@@ -12,6 +12,13 @@ export interface User {
   __typename?: 'User' | undefined;
 }
 
+export interface Profile {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+}
+
 export interface Comment {
   __typename?: 'Comment';
   commentedUserId: string;

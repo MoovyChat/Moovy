@@ -1,14 +1,15 @@
-import { Comment, Movie } from '../../utils/interfaces';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Movie,
   useGetCommentsOfTheMovieMutation,
   useGetCommentsOfTheMovieQQuery,
   useGetMovieQuery,
 } from '../../generated/graphql';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import { Comment } from '../../utils/interfaces';
 import CommentCard from '../../components/comment-card/commentCard';
-import MovieCard from '../../components/movieCard/movieCard';
+import MovieCard from '../../components/movie-card/movieCard';
 import { MovieThreadParent } from './movieThread.styled';
 import NotFound from '../notFound/notFound';
 import _ from 'lodash';
@@ -25,7 +26,6 @@ const MovieThread = () => {
   const limit = 10;
   const [valid, setValid] = useState<boolean>(false);
   const [movieInfo, setMovieInfo] = useState<Movie>();
-  const [, getMovieComments] = useGetCommentsOfTheMovieMutation();
 
   const [comments, setComments] = useState<Comment[]>();
   const [page, setPage] = useState<number>(1);
@@ -35,7 +35,6 @@ const MovieThread = () => {
       limit: limit,
       mid: id!,
       page: page,
-      time: '1667087054660',
     },
     pause: isServer(),
   });
@@ -68,6 +67,7 @@ const MovieThread = () => {
   // Set Movie Comments
   useMemo(() => {
     const { data, fetching, error } = getCommentsOfTheMovie;
+    console.log(getCommentsOfTheMovie);
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getCommentsOfTheMovie;
@@ -89,11 +89,11 @@ const MovieThread = () => {
           <ChildHeader text='Movie' className='movie-header' />
           <div className='movie-container'>
             <div className='thread-movie'>
-              <MovieCard movie={movieInfo} />
+              <MovieCard movie={movieInfo!} />
             </div>
             <div className='thread-comments'>
               {comments?.map((cmt) => (
-                <CommentCard comment={cmt} key={cmt.id} />
+                <CommentCard comment={cmt} key={cmt.id} isMain={true} />
               ))}
               {page !== lastPage && (
                 <div

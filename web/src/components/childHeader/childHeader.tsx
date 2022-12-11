@@ -18,7 +18,7 @@ const ChildHeader: React.FC<props> = ({ text, className }) => {
   return (
     <ChildHeaderStyles className={className}>
       <div className='back-button' onClick={backButtonHandler}>
-        <MdKeyboardBackspace size={35} />
+        <MdKeyboardBackspace size={30} />
       </div>
       <HeaderText className='header-text'>{text}</HeaderText>
     </ChildHeaderStyles>

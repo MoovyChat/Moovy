@@ -32,6 +32,12 @@ export const CommentParent = styled.div`
     ::-webkit-scrollbar {
       display: none; /* Safari and Chrome */
     }
+    .extra {
+      display: flex;
+      max-height: 120px;
+      justify-content: center;
+      align-items: center;
+    }
   }
 `;
 

@@ -23,7 +23,7 @@ export const darkTheme: ThemeProps = {
 };
 
 export const lightThemeForHome: ThemeProps = {
-  body: '#fefefe',
+  body: 'linear-gradient(62deg, #cbc9c9 60%, #6fa3c1 100%);',
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: '#ffffff',
@@ -31,10 +31,10 @@ export const lightThemeForHome: ThemeProps = {
   trendingTiles: '#e2e2e2',
 };
 export const darkThemeForHome: ThemeProps = {
-  body: '#000',
+  body: 'linear-gradient(62deg, #000000 42%, #32075a 100%);',
   text: '#FAFAFA',
   toggleBorder: '#6B8096',
-  background: '#000000',
+  background: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   movieHeader: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   trendingTiles: '#131313',
 };

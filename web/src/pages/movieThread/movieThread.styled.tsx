@@ -10,7 +10,7 @@ export const MovieThreadParent = styled.div`
   position: absolute;
   .movie-container {
     position: absolute;
-    top: 14%;
+    top: 7%;
     height: 86%;
     width: 100%;
     .thread-movie {
@@ -18,7 +18,7 @@ export const MovieThreadParent = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 10%;
+      height: auto;
       width: 100%;
       overflow: hidden;
     }
@@ -29,7 +29,7 @@ export const MovieThreadParent = styled.div`
       height: calc(100% - 100px);
       margin-left: auto;
       margin-right: auto;
-      width: 99%;
+      width: 90%;
       font-weight: 700;
       overflow-y: scroll;
       .show-more {
@@ -56,7 +56,6 @@ export const MovieThreadParent = styled.div`
   @media (max-width: 500px) {
     .movie-container {
       .thread-movie {
-        height: 13%;
         padding-bottom: 6px;
       }
       .thread-comments {

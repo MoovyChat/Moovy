@@ -104,6 +104,18 @@ export const getDateFormat = (time: string | undefined) => {
   return intlFormat.toString();
 };
 
+// Date format: DD MMM YYYY
+export const getShortDateFormat = (time: string | undefined) => {
+  if (!time) return;
+  let intTime = parseInt(time);
+  let intlFormat = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(intTime);
+  return intlFormat.toString();
+};
+
 export const isImageURLValid = async (url: string) => {
   const img = new Image();
   img.src = url;

@@ -5,6 +5,7 @@ query getCommentsOfTheMovieQ(
   $time: String
 ) {
   getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
+    id
     movie {
       id
       name

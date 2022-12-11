@@ -2,11 +2,19 @@ fragment FullMovie on Movie {
   __typename
   id
   name
+  runtime
   platformId
-  likesCount
-  favCount
-  commentCount
-  viewsCount
   createdAt
   updatedAt
+  thumbs
+  season
+  likesCount
+  commentCount
+  viewsCount
+  favCount
+  titleId
+  parentTitleName
+  stills
+  synopsis
+  year
 }

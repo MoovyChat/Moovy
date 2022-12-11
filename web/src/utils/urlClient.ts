@@ -1,10 +1,12 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
-import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
+  commentLikeChanges,
   logOutChanges,
   loginChanges,
+  replyLikeChanges,
   setCommentLikeChanges,
 } from './cacheExchanges';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
@@ -14,17 +16,13 @@ const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
 });
 const cache: Partial<CacheExchangeOpts> = {
-  keys: {
-    LikesObject: (data) => data.id as string,
-    CommentLikesObject: (data) => data.id as string,
-    RepliesObject: (data) => data.id as string,
-    replyLikesObject: (data) => data.id as string,
-  },
+  keys: {},
   updates: {
     Mutation: {
       login: loginChanges,
       logout: logOutChanges,
-      setCommentLike: setCommentLikeChanges,
+      setCommentLike: commentLikeChanges,
+      setReplyLike: replyLikeChanges,
     },
   },
 };

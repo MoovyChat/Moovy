@@ -21,4 +21,5 @@ export const textMapTypes = {
 
 export const popupStates = {
   IMAGE_POP_UP: 'IMAGE_POP_UP',
+  EDIT_PROFILE: 'EDIT_PROFILE',
 };

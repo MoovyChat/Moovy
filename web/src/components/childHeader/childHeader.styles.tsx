@@ -2,11 +2,10 @@ import styled from 'styled-components';
 
 export const ChildHeaderStyles = styled.div`
   position: absolute;
-  top: 5%;
+  top: 2%;
   display: flex;
   align-items: center;
   width: 100%;
-  padding-left: 20px;
   .back-button {
     display: flex;
     justify-content: center;
@@ -21,5 +20,9 @@ export const ChildHeaderStyles = styled.div`
     :active {
       background-color: #ffffffa2;
     }
+  }
+  .header-text {
+    font-size: 1.1rem;
+    margin-left: 10px;
   }
 `;

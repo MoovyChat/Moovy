@@ -5,6 +5,7 @@ import {
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../imageChanger/imageChanger';
 import NotFound from '../../pages/notFound/notFound';
 import { PopupParent } from './popup.styles';
@@ -35,6 +36,8 @@ const Popup = () => {
     switch (selectedElemFromRedux) {
       case popupStates.IMAGE_POP_UP:
         return <ImageChanger />;
+      case popupStates.EDIT_PROFILE:
+        return <EditProfile />;
       default:
         return <NotFound />;
     }

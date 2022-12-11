@@ -9,7 +9,7 @@ export const PopupParent = styled.div`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  background-color: ${(p) => p.theme.background};
+  background: ${(p) => p.theme.body};
   z-index: 8;
   flex-direction: column;
   padding: 20px 0;

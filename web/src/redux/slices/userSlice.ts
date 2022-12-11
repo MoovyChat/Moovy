@@ -22,8 +22,14 @@ const UserSlice = createSlice({
     sliceSetUser: (state, action: { payload: User; type: string }) => {
       return action.payload;
     },
+    sliceSetUserNickName: (
+      state,
+      action: { payload: string; type: string }
+    ) => {
+      return { ...state, nickname: action.payload };
+    },
   },
 });
 
-export const { sliceSetUser } = UserSlice.actions;
+export const { sliceSetUser, sliceSetUserNickName } = UserSlice.actions;
 export default UserSlice.reducer;
