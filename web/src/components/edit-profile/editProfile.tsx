@@ -1,3 +1,5 @@
+import { MdError, MdReportGmailerrorred } from 'react-icons/md';
+import { Profile, useUpdateProfileMutation } from '../../generated/graphql';
 import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import {
   sliceSetIsPopupOpened,
@@ -11,9 +13,8 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EditProfileParent } from './editProfile.styles';
 import { FaUserEdit } from 'react-icons/fa';
-import { Profile } from '../../generated/graphql';
+import Loading from '../../pages/loading/loading';
 import ProfileTextBox from '../../pages/profile/profileTextBox';
-import { User } from '../../utils/interfaces';
 import { batch } from 'react-redux';
 import { sliceSetUserNickName } from '../../redux/slices/userSlice';
 
@@ -29,7 +30,10 @@ const EditProfile = () => {
   const [tempProfile, setTempProfile] = useState<Profile>(profile);
   const [nickname, setNickname] = useState<string>(user.nickname);
   const dispatch = useAppDispatch();
+  const [saving, setSaving] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
+  const [, updateProfile] = useUpdateProfileMutation();
   const [errors, setErrors] = useState<ErrorIn>({
     nickname: '',
     firstname: '',
@@ -68,10 +72,50 @@ const EditProfile = () => {
       setErrors((err) => ({ ...err, nickname: '' }));
     }
   }, [tempProfile, nickname, setErrors, setHasError]);
+
   const updateValues: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
-    dispatch(sliceSetUserNickName(nickname));
-    dispatch(sliceSetProfile(tempProfile));
+    setSaving(() => true);
+    updateProfile({
+      options: {
+        uid: user.id,
+        nickname: nickname,
+        lastname: tempProfile.lastname,
+        gender: tempProfile.gender as string,
+        firstname: tempProfile.firstname,
+        dob: tempProfile.dob as string,
+        bio: tempProfile.bio as string,
+      },
+    })
+      .then((res) => {
+        const { data, error } = res;
+        console.log(data, error);
+        if (error?.message) {
+          setSaving(() => false);
+          console.log(
+            error.message,
+            error.name,
+            error.graphQLErrors,
+            error.networkError,
+            error.response
+          );
+          setServerError(error.message);
+          return;
+        }
+        batch(() => {
+          dispatch(sliceSetUserNickName(nickname));
+          dispatch(sliceSetProfile(data?.upsertProfile as Profile));
+          setTempProfile(data?.upsertProfile as Profile);
+          dispatch(sliceSetIsPopupOpened(false));
+          dispatch(sliceSetSelectedElement(''));
+        });
+        setSaving(() => false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setHasError(true);
+        return <pre>error</pre>;
+      });
   };
   const setValue = (key: string, value: string) => {
     if (key === 'nickname') {
@@ -87,6 +131,32 @@ const EditProfile = () => {
       dispatch(sliceSetSelectedElement(''));
     });
   };
+  if (saving)
+    return (
+      <EditProfileParent hasError={false}>
+        <Loading />
+      </EditProfileParent>
+    );
+  if (serverError)
+    return (
+      <EditProfileParent hasError={true}>
+        <div id='title'>Server Error</div>
+        <div
+          id='title'
+          style={{
+            fontSize: '2.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px 30px',
+            borderRadius: '50%',
+            boxShadow: '0 0 5px',
+          }}>
+          <MdReportGmailerrorred fill='red' />
+          <span>400</span>
+        </div>
+        <div id='title'>{serverError}</div>
+      </EditProfileParent>
+    );
   return (
     <EditProfileParent hasError={hasError}>
       <div id='title'>
@@ -132,6 +202,7 @@ const EditProfile = () => {
           keyItem='dob'
           value={tempProfile.dob as string}
           setValue={setValue}
+          error='none'
         />
       </div>
       <div className='gender ext'>
@@ -142,6 +213,16 @@ const EditProfile = () => {
           value={tempProfile.gender as string}
           setValue={setValue}
           error={errors!.gender}
+        />
+      </div>
+      <div className='gender ext'>
+        <ProfileTextBox
+          title='Bio'
+          type='textarea'
+          keyItem='bio'
+          value={tempProfile.bio as string}
+          setValue={setValue}
+          error='none'
         />
       </div>
       <div className='ext'>

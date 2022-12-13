@@ -6,7 +6,7 @@ export async function canvasPreview(
   image: HTMLImageElement,
   canvas: HTMLCanvasElement,
   crop: PixelCrop,
-  scale = 1,
+  scale: number,
   rotate = 0
 ) {
   const ctx = canvas.getContext('2d');
@@ -22,7 +22,6 @@ export async function canvasPreview(
   // size the image back down if you want to download/upload and be
   // true to the images natural size.
   const pixelRatio = window.devicePixelRatio;
-  // const pixelRatio = 1
 
   canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
   canvas.height = Math.floor(crop.height * scaleY * pixelRatio);

@@ -6,6 +6,7 @@ import {
 import {
   Movie,
   Title,
+  User,
   useGetMovieQuery,
   useGetTitleInfoMutation,
   useGetUserQuery,
@@ -16,7 +17,6 @@ import { getFormattedNumber, getTimeFrame } from '../../utils/helpers';
 import { CardParent } from './commentCard.styles';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
-import { User } from '../../utils/interfaces';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';

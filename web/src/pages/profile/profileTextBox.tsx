@@ -19,9 +19,9 @@ const ProfileTextBox: React.FC<props> = ({
 }) => {
   return (
     <ProfileTextBoxParent error={error}>
-      <div className='title'>{error ? error : title}</div>
+      <div className='title'>{error && error !== 'none' ? error : title}</div>
       <div className='in'>
-        {type !== 'select' ? (
+        {type === 'text' || type === 'date' ? (
           <input
             type={type}
             name={title}
@@ -29,6 +29,16 @@ const ProfileTextBox: React.FC<props> = ({
             value={value}
             maxLength={25}
             minLength={2}
+            onChange={(e) => {
+              e.stopPropagation();
+              setValue(keyItem!, e.target.value);
+            }}
+          />
+        ) : type === 'textarea' ? (
+          <textarea
+            id={title}
+            value={value}
+            maxLength={100}
             onChange={(e) => {
               e.stopPropagation();
               setValue(keyItem!, e.target.value);

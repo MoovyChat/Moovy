@@ -4,34 +4,14 @@ query getUserMiniProfile($uid: String!) {
     followers {
       followerCount
       followers {
-        id
-        joinedAt
-        name
-        nickname
-        photoUrl
-        updatedAt
-        watchedMovies
-        deletedAt
-        email
-        followerCount
-        followingCount
+        ...FullUser
       }
       id
     }
     following {
       followingCount
       following {
-        deletedAt
-        email
-        followerCount
-        followingCount
-        id
-        joinedAt
-        name
-        nickname
-        photoUrl
-        updatedAt
-        watchedMovies
+        ...FullUser
       }
       id
     }

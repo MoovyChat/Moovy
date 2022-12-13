@@ -1,16 +1,17 @@
 import {
   Movie,
   Title,
+  User,
   useGetRepliedUserQuery,
   useGetRepliesOfReplyQuery,
   useGetReplyQuery,
   useGetTitleInfoMutation,
 } from '../../generated/graphql';
-import { Reply, User } from '../../utils/interfaces';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import CommentTemplate from './commentTemplate';
+import { Reply } from '../../utils/interfaces';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { withUrqlClient } from 'next-urql';

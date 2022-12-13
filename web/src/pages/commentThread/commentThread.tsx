@@ -1,10 +1,11 @@
-import { Comment, Reply, User } from '../../utils/interfaces';
-import { useEffect, useRef, useState } from 'react';
+import { Comment, Reply } from '../../utils/interfaces';
 import {
+  User,
   useGetCommentQuery,
   useGetCommentedUserQuery,
   useGetRepliesOfCommentQuery,
 } from '../../generated/graphql';
+import { useEffect, useRef, useState } from 'react';
 
 import CommentTemplate from './commentTemplate';
 import { isServer } from '../../constants';

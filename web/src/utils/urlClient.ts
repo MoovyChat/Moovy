@@ -3,6 +3,7 @@ import {
   commentLikeChanges,
   logOutChanges,
   loginChanges,
+  profileUpdateChanges,
   replyLikeChanges,
   setCommentLikeChanges,
 } from './cacheExchanges';
@@ -23,6 +24,7 @@ const cache: Partial<CacheExchangeOpts> = {
       logout: logOutChanges,
       setCommentLike: commentLikeChanges,
       setReplyLike: replyLikeChanges,
+      upsertProfile: profileUpdateChanges,
     },
   },
 };

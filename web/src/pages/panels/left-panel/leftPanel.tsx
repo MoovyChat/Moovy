@@ -8,6 +8,7 @@ import {
   MdOutlinePersonOutline,
   MdOutlineReply,
   MdOutlineWbSunny,
+  MdStorage,
 } from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
@@ -80,11 +81,14 @@ const LeftPanel: React.FC<props> = ({ className }) => {
         </NavLink>
         <NavLink to='/trending' className='option' onClick={linkClickHandler}>
           <div className='icon'>
-            <MdLocalFireDepartment size={iconSize} />
+            <MdStorage size={iconSize} />
           </div>
-          <div className='text'>Trending</div>
+          <div className='text'>Catalog</div>
         </NavLink>
-        <NavLink to='/profile' className='option' onClick={linkClickHandler}>
+        <NavLink
+          to={`/profile/${user.id}`}
+          className='option'
+          onClick={linkClickHandler}>
           <div className='icon'>
             <MdOutlinePersonOutline size={iconSize} />
           </div>

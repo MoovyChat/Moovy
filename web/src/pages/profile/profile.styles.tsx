@@ -100,11 +100,22 @@ export const ProfileParent = styled.div`
         align-items: flex-start;
         margin-left: 10px;
         .name {
-          font-size: 20px;
-          font-weight: bold;
           display: flex;
           justify-content: center;
           align-items: center;
+          font-size: 15px;
+          .main {
+            font-weight: bold;
+          }
+          .us {
+            opacity: 0.7;
+            font-weight: 600;
+            margin-left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+          }
           .i {
             margin-left: 5px;
             cursor: pointer;
@@ -129,6 +140,49 @@ export const ProfileParent = styled.div`
       }
     }
   }
+
+  @media (max-width: 600px) {
+    .top {
+      flex: 1 1 0%;
+      .cover-photo {
+        height: 100px;
+      }
+      .change-background {
+        top: 60px;
+        font-size: 10px;
+        padding: 0px 8px;
+        height: 30px;
+      }
+      .user-photo {
+        top: 60px;
+        left: 20px;
+        ::before {
+          top: -3px;
+          left: -3px;
+          width: 96px;
+          height: 96px;
+        }
+        .user-container {
+          width: 90px;
+          height: 90px;
+        }
+        .user-info {
+          margin-left: 5px;
+          .name {
+            font-size: 12px;
+          }
+          .time {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 376px) {
+    .top {
+      flex: 1 1 14%;
+    }
+  }
 `;
 
 export const SubGroups = styled.div`
@@ -139,10 +193,42 @@ export const SubGroups = styled.div`
   width: 100%;
   justify-content: space-evenly;
   align-items: center;
-  overflow: auto;
+  .pro {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    height: 140px;
+    width: 99%;
+    font-size: 0.9rem;
+    .block {
+      display: flex;
+      padding: 5px;
+      font-weight: 600;
+      opacity: 0.8;
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1 1 10%;
+      }
+      .info {
+        flex: 1 1 90%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-wrap: break-word;
+        word-break: break-all;
+        ::first-letter {
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
   .follow {
     position: absolute;
-    top: 0;
+    top: 150px;
     left: 0;
     height: 100px;
     display: flex;
@@ -174,7 +260,7 @@ export const SubGroups = styled.div`
   }
   .con {
     position: absolute;
-    top: 120px;
+    top: 260px;
     .box {
       display: flex;
       flex-direction: column;
@@ -199,6 +285,37 @@ export const SubGroups = styled.div`
       }
     }
   }
+
+  @media (max-height: 550px) {
+    flex: 1 1 45%;
+    .pro {
+      font-size: 0.6rem;
+      .block {
+        padding: 2px;
+        .icon {
+          svg {
+            height: 20px;
+            width: 20px;
+          }
+        }
+      }
+    }
+    .follow {
+      top: 80px;
+    }
+    .con {
+      top: 200px;
+    }
+  }
+`;
+
+export const NoTitle = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-weight: 600;
+  padding: 10px;
+  margin-bottom: 20px;
 `;
 
 type tbProps = {
@@ -218,7 +335,7 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     justify-content: flex-end;
     padding-right: 10px;
     align-items: center;
-    color: ${(p) => (p.error ? 'red' : p.theme.text)};
+    color: ${(p) => (p.error && p.error !== 'none' ? 'red' : p.theme.text)};
   }
   .in {
     flex: 1 1 50%;
@@ -226,7 +343,9 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     justify-content: center;
     align-items: center;
     input,
-    select {
+    select,
+    textarea {
+      font-family: inherit;
       width: 100%;
       padding: 10px;
       color: ${(p) => p.theme.text};
@@ -250,9 +369,19 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     align-items: center;
     .light {
       border-radius: 50%;
-      background-color: ${(p) => (p.error === '' ? '#00ff00' : '#ff0000')};
+      background-color: ${(p) =>
+        p.error === 'none'
+          ? '#43586b'
+          : p.error === ''
+          ? '#00ff00'
+          : '#ff0000'};
       box-shadow: 0 0 15px 6px
-          ${(p) => (p.error === '' ? '#00ff00' : '#ff0000')},
+          ${(p) =>
+            p.error === 'none'
+              ? '#43586b'
+              : p.error === ''
+              ? '#00ff00'
+              : '#ff0000'},
         inset 0 0 4px black;
       height: 15px;
       width: 15px;

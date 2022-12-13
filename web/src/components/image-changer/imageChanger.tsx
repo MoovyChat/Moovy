@@ -1,41 +1,36 @@
 import { DisplayImage, ImageChangerParent } from './imageChanger.styles';
-import {
-  MdErrorOutline,
-  MdInfoOutline,
-  MdLink,
-  MdUploadFile,
-} from 'react-icons/md';
+import { MdInfoOutline, MdLink, MdUploadFile } from 'react-icons/md';
 import React, {
   ChangeEventHandler,
-  MouseEvent,
   MouseEventHandler,
   useRef,
   useState,
 } from 'react';
-import ReactCrop, {
-  Crop,
-  PixelCrop,
-  centerCrop,
-  makeAspectCrop,
-} from 'react-image-crop';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useSaveProfilePictureMutation,
+  useUpdateUserBgMutation,
+} from '../../generated/graphql';
 
 import ImageCrop from '../image-crop/imageCrop';
+import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
 import { batch } from 'react-redux';
 import { imgPreview } from '../image-crop/imagePreview';
 import { isImageURLValid } from '../../utils/helpers';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
-import { useSaveProfilePictureMutation } from '../../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
-const ImageChanger = () => {
+type props = {
+  type: string;
+};
+const ImageChanger: React.FC<props> = ({ type }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const storage = getStorage();
   const imageRef = useRef<HTMLImageElement>(null);
@@ -47,6 +42,7 @@ const ImageChanger = () => {
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [, saveProfilePhoto] = useSaveProfilePictureMutation();
+  const [, saveBg] = useUpdateUserBgMutation();
 
   // Image saving states
   const [saved, setSaved] = useState<boolean>(false);
@@ -67,7 +63,7 @@ const ImageChanger = () => {
     e.stopPropagation();
     setSaveClicked(true);
     setSaved(false);
-    const storageRef = ref(storage, user.id);
+    const storageRef = ref(storage, user.id + '-' + type);
     let result: any;
     setError('Uploading image. Please stay on this page.');
     if (selectedOption === 'fromLocal') {
@@ -81,20 +77,33 @@ const ImageChanger = () => {
       const _snapshot = await uploadBytes(storageRef, blob);
       const urlSnapShot = await getDownloadURL(storageRef);
       // Saves the URL to the database.
-      result = await saveProfilePhoto({ url: urlSnapShot, uid: user.id });
+      if (type === 'pfp')
+        result = await saveProfilePhoto({ url: urlSnapShot, uid: user.id });
+      else result = await saveBg({ url: urlSnapShot, uid: user.id });
     } else {
-      result = await saveProfilePhoto({ url, uid: user.id });
+      if (type === 'pfp')
+        result = await saveProfilePhoto({ url, uid: user.id });
+      else result = await saveBg({ url, uid: user.id });
     }
     // Saves the URL to the database.
     const { error, data } = result;
     if (error) console.log(error);
     if (!error) {
-      const _data = data?.updateUserProfilePhoto.user;
-      const _errors = data?.updateUserProfilePhoto.errors;
-      if (_errors) console.log(_errors);
-      if (_errors) return;
-      if (_data === null || _data === undefined) return;
-      dispatch(sliceSetUser(_data));
+      if (type === 'pfp') {
+        const _data = data?.updateUserProfilePhoto.user;
+        const _errors = data?.updateUserProfilePhoto.errors;
+        if (_errors) console.log(_errors);
+        if (_errors) return;
+        if (_data === null || _data === undefined) return;
+        dispatch(sliceSetUser(_data));
+      } else {
+        const _data = data?.updateUserBg.user;
+        const _errors = data?.updateUserBg.errors;
+        if (_errors) console.log(_errors);
+        if (_errors) return;
+        if (_data === null || _data === undefined) return;
+        dispatch(sliceSetUser(_data));
+      }
       setError('Profile pic updated successfully');
       setSaved(true);
     }
@@ -190,11 +199,21 @@ const ImageChanger = () => {
         <div className='display-container'>
           {!!url &&
             (selectedOption === 'fromLocal' ? (
-              <ImageCrop
-                url={url}
-                setCompletedCrop={setCompletedCrop}
-                imageRef={imageRef}
-              />
+              type === 'pfp' ? (
+                <ImageCrop
+                  url={url}
+                  setCompletedCrop={setCompletedCrop}
+                  imageRef={imageRef}
+                  aspect={1}
+                />
+              ) : (
+                <ImageCrop
+                  url={url}
+                  setCompletedCrop={setCompletedCrop}
+                  imageRef={imageRef}
+                  aspect={1.77}
+                />
+              )
             ) : (
               <img alt='image-crop' src={url} ref={imageRef} />
             ))}

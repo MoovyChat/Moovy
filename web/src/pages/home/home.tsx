@@ -34,7 +34,7 @@ const Home = () => {
           <CenterPanel className='center'></CenterPanel>
           <RightPanel className='right'></RightPanel>
         </PanelsParent>
-        {isPopupOpen && <Popup />}
+        <Popup />
       </HomeParent>
     </ThemeProvider>
   );

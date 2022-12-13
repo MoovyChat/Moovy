@@ -9,13 +9,13 @@ import {
 import App from './pages/app/app';
 import CommentThread from './pages/commentThread/commentThread';
 import Comments from './pages/comments/comments';
+import DifferentProfile from './pages/profile/differentProfile';
 import Favorites from './pages/favorites/favorites';
 import Feed from './pages/feed/feed';
 import Home from './pages/home/home';
 import MovieThread from './pages/movieThread/movieThread';
 import NotFound from './pages/notFound/notFound';
 import Notifications from './pages/notifications/NotificationsModule';
-import ProfileComponent from './pages/profile/profileComponent';
 import Replies from './pages/comments/replies';
 import ReplyThread from './pages/commentThread/replyThread';
 import Trending from './pages/trending/trending';
@@ -117,7 +117,9 @@ const HomeRouter = () => {
           <Route path='notifications' element={<Notifications />} />
           <Route path='favorites' element={<Favorites />} />
           <Route path='trending' element={<Trending />} />
-          <Route path='profile' element={<ProfileComponent />} />
+          <Route path='profile' element={<DifferentProfile />}>
+            <Route path=':id' element={<DifferentProfile />} />
+          </Route>
           <Route path='movie' element={<MovieThread />}>
             <Route path=':id' element={<MovieThread />} />
           </Route>

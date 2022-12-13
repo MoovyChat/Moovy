@@ -6,12 +6,15 @@ import {
   GetIsUserLikedCommentQuery,
   GetReplyLikesDocument,
   GetReplyLikesQuery,
+  GetUserMiniProfileDocument,
+  GetUserMiniProfileQuery,
   LoginMutation,
   LogoutMutation,
   MeDocument,
   MeQuery,
   SetCommentLikeMutation,
   SetReplyLikeMutation,
+  UpdateProfileMutation,
 } from '../generated/graphql';
 
 export const loginChanges = (
@@ -152,6 +155,44 @@ export const replyLikeChanges = (
                   : oldLikedUsers?.filter((u) => u.id !== user.id),
               },
             };
+            return newData;
+          }
+        );
+      }
+    });
+};
+
+export const profileUpdateChanges = (
+  _result: UpdateProfileMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  let argsOptions = args.options as any;
+  cache
+    .inspectFields('Query')
+    .filter((field) => field.fieldName === 'getFullUserProfile')
+    .forEach((field) => {
+      if (argsOptions?.uid === field?.arguments?.uid) {
+        cache.updateQuery(
+          {
+            query: GetUserMiniProfileDocument,
+            variables: field.arguments,
+          },
+          (data: GetUserMiniProfileQuery | null) => {
+            if (!data) {
+              console.log('Data is null, returning');
+              return null;
+            }
+            const subData = data.getFullUserProfile;
+            const newData: GetUserMiniProfileQuery = {
+              ...data,
+              getFullUserProfile: {
+                ...subData!,
+                profile: _result.upsertProfile,
+              },
+            };
+            console.log(newData);
             return newData;
           }
         );

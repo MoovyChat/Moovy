@@ -49,4 +49,43 @@ export const LeftParent = styled.div`
       color: gold;
     }
   }
+
+  @media (max-height: 700px) {
+    .profile {
+      width: 70px;
+      height: 70px;
+      margin: 20% 0;
+    }
+  }
+
+  @media (max-height: 550px) {
+    .profile {
+      display: none;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+
+      height: 100%;
+      overflow: auto;
+      .option {
+        .icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex: 1 0 30%;
+          svg {
+            height: 20px;
+            width: 20px;
+          }
+        }
+        .text {
+          flex: 1 0 80%;
+          font-size: 0.7rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
 `;

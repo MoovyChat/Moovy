@@ -1,22 +1,9 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  nickname: string;
-  photoUrl: string;
-  watchedMovies?: string[] | null | undefined;
-  followingCount?: number | null | undefined;
-  followerCount?: number | null | undefined;
-  joinedAt?: string;
-  updatedAt?: string;
-  __typename?: 'User' | undefined;
-}
-
 export interface Profile {
   firstName: string;
   lastName: string;
   dob: string;
   gender: string;
+  bio?: string;
 }
 
 export interface Comment {

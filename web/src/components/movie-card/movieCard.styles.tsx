@@ -13,6 +13,7 @@ export const MovieCardParent = styled.div<props>`
   background-image: url(${(p) => p.bg});
   background-size: cover;
   background-repeat: no-repeat;
+  cursor: pointer;
   .container {
     display: flex;
     justify-content: center;

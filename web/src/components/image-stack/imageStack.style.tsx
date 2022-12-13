@@ -5,6 +5,7 @@ export const ImageStackParent = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  position: relative;
   .gp {
     position: relative;
     display: flex;
@@ -12,11 +13,20 @@ export const ImageStackParent = styled.div`
     align-items: center;
     width: 40%;
     height: 50px;
+
+    :hover {
+      .two {
+        left: 45px;
+      }
+
+      .three {
+        left: 90px;
+      }
+    }
     .profile-box {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      overflow: hidden;
       border: 2px solid;
       img {
         width: 100%;
@@ -31,6 +41,11 @@ export const ImageStackParent = styled.div`
       top: 3px;
       left: 0px;
       z-index: 2;
+      transition: all 0.4s;
+      :hover {
+        cursor: pointer;
+        box-shadow: 0 0 5px 5px, inset 0 0 5px 5px;
+      }
     }
     .two {
       z-index: 1;
@@ -47,5 +62,9 @@ export const ImageStackParent = styled.div`
     font-size: 13px;
     font-weight: 600;
     float: right;
+    :hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 `;

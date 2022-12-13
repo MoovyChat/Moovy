@@ -1,6 +1,5 @@
-query users  {
+query users {
   users {
     id
   }
 }
-

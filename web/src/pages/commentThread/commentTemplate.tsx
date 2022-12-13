@@ -12,6 +12,7 @@ import {
 import {
   Movie,
   Title,
+  User,
   useGetMovieQuery,
   useGetTitleInfoMutation,
 } from '../../generated/graphql';
@@ -22,11 +23,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Reply, User } from '../../utils/interfaces';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
+import { Reply } from '../../utils/interfaces';
 import ReplyCard from '../../components/comment-card/replyCard';
 import { getDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
