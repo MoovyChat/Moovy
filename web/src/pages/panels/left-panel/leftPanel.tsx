@@ -1,16 +1,15 @@
 import {
   MdDynamicFeed,
   MdFavorite,
-  MdLocalFireDepartment,
+  MdModeComment,
   MdNightlight,
-  MdOutlineModeComment,
-  MdOutlineNotificationsActive,
-  MdOutlinePersonOutline,
+  MdNotificationsActive,
   MdOutlineReply,
   MdOutlineWbSunny,
+  MdPerson,
   MdStorage,
 } from 'react-icons/md';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import {
   sliceSetIsPopupOpened,
@@ -20,6 +19,7 @@ import {
 import { LeftParent } from './leftPanel.styles';
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
+import { User } from '../../../generated/graphql';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
@@ -43,12 +43,11 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   const iconSize = 30;
   // log changed data
   useEffect(() => {
-    console.log(user);
+    // console.log(user.photoUrl);
   }, [user.photoUrl]);
 
   useEffect(() => {
     function handleOutSideClick(event: any) {
-      console.log(ref, event.target, ref.current?.contains(event.target));
       if (ref && !ref.current?.contains(event.target)) {
         dispatch(sliceSetNavBar(false));
       }
@@ -70,44 +69,47 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   return (
     <LeftParent className={className} ref={ref}>
       <div className='profile'>
-        <ProfilePic src={user.photoUrl!}></ProfilePic>
+        <ProfilePic
+          src={user?.photoUrl!}
+          user={user as User}
+          tooltip={true}></ProfilePic>
       </div>
       <div className='options'>
         <NavLink to='/' className='option' end onClick={linkClickHandler}>
-          <div className='icon'>
+          <div className='icon feed'>
             <MdDynamicFeed size={iconSize} />
           </div>
           <div className='text'>Feed</div>
         </NavLink>
-        <NavLink to='/trending' className='option' onClick={linkClickHandler}>
-          <div className='icon'>
+        <NavLink to='/catalog' className='option' onClick={linkClickHandler}>
+          <div className='icon catalog'>
             <MdStorage size={iconSize} />
           </div>
           <div className='text'>Catalog</div>
         </NavLink>
         <NavLink
-          to={`/profile/${user.id}`}
+          to={`/profile/${user.nickname}`}
           className='option'
           onClick={linkClickHandler}>
-          <div className='icon'>
-            <MdOutlinePersonOutline size={iconSize} />
+          <div className='icon p'>
+            <MdPerson size={iconSize} />
           </div>
           <div className='text'>Profile</div>
         </NavLink>
         <NavLink to='/favorites' className='option' onClick={linkClickHandler}>
-          <div className='icon'>
+          <div className='icon favorites'>
             <MdFavorite size={iconSize} />
           </div>
           <div className='text'>Favorites</div>
         </NavLink>
         <NavLink to='/comments' className='option' onClick={linkClickHandler}>
-          <div className='icon'>
-            <MdOutlineModeComment size={iconSize} />
+          <div className='icon comments'>
+            <MdModeComment size={iconSize} />
           </div>
           <div className='text'>Comments</div>
         </NavLink>
         <NavLink to='/replies' className='option' onClick={linkClickHandler}>
-          <div className='icon'>
+          <div className='icon replies'>
             <MdOutlineReply size={iconSize} />
           </div>
           <div className='text'>Replies</div>
@@ -116,8 +118,8 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           to='/notifications'
           className='option'
           onClick={linkClickHandler}>
-          <div className='icon'>
-            <MdOutlineNotificationsActive size={iconSize} />
+          <div className='icon notifications'>
+            <MdNotificationsActive size={iconSize} />
           </div>
           <div className='text'>Notifications</div>
         </NavLink>

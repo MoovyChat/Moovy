@@ -11,7 +11,7 @@ const NotificationCard: React.FC<props> = ({ notification }) => {
   return (
     <NotificationCardParent isRead={notification.isRead}>
       <div className='profile-pic'>
-        <ProfilePic src={notification.fromUserPhotoUrl} />
+        <ProfilePic src={notification.fromUserPhotoUrl} tooltip={true} />
       </div>
       <div className='message'>
         {!notification.isRead && <span className='new'>New</span>}

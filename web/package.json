@@ -27,6 +27,7 @@
     "@urql/exchange-graphcache": "^5.0.2",
     "@urql/exchange-retry": "^1.0.0",
     "chrome": "^0.1.0",
+    "classnames": "^2.3.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "firebase": "^9.12.1",
     "graphql": "^16.6.0",
@@ -42,6 +43,7 @@
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
+    "react-viewport-list": "^6.3.0-beta.0",
     "redux": "^4.2.0",
     "redux-batched-subscribe": "^0.1.6",
     "redux-logger": "^3.0.6",
@@ -87,6 +89,7 @@
     "@graphql-codegen/typescript-operations": "^2.5.4",
     "@graphql-codegen/typescript-react-query": "^4.0.2",
     "@graphql-codegen/typescript-urql": "^3.7.1",
+    "@types/classnames": "^2.3.1",
     "@types/react-transition-group": "^4.4.5",
     "@types/redux-persist": "^4.3.1"
   }

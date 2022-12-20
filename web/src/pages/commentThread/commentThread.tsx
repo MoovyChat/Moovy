@@ -5,7 +5,7 @@ import {
   useGetCommentedUserQuery,
   useGetRepliesOfCommentQuery,
 } from '../../generated/graphql';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import CommentTemplate from './commentTemplate';
 import { isServer } from '../../constants';
@@ -28,7 +28,7 @@ const CommentThread = () => {
   const [commentHeight, setCommentHeight] = useState<number>(0);
   const [replies, setReplies] = useState<Reply[]>();
 
-  useEffect(() => {
+  useMemo(() => {
     const { data, fetching, error } = commentQueyResults;
     if (error) console.log(error);
     if (!fetching && data) {
@@ -36,7 +36,8 @@ const CommentThread = () => {
       setComment(_data);
     }
   }, [commentQueyResults]);
-  useEffect(() => {
+
+  useMemo(() => {
     const { data, error, fetching } = commentedQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
@@ -44,6 +45,7 @@ const CommentThread = () => {
       userRef.current = _data;
     }
   }, [commentedQueryResult]);
+
   const [repliesQueryResult] = useGetRepliesOfCommentQuery({
     variables: {
       cid: id!,
@@ -51,7 +53,7 @@ const CommentThread = () => {
     },
   });
   // Get replies.
-  useEffect(() => {
+  useMemo(() => {
     const { data, error, fetching } = repliesQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {

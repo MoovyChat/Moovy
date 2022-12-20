@@ -15,6 +15,7 @@ import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { getFormattedNumber, getTimeFrame } from '../../utils/helpers';
 
 import { CardParent } from './commentCard.styles';
+import Loading from '../../pages/loading/loading';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import { isServer } from '../../constants';
@@ -123,6 +124,17 @@ const CardTemplate: React.FC<props> = ({
       userRef.current = _user;
     }
   }, [userRef.current]);
+  if (movieDetails.fetching)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Loading />
+      </div>
+    );
   return (
     <CardParent
       onClick={goToComment}
@@ -160,6 +172,10 @@ const CardTemplate: React.FC<props> = ({
                   ? loggedInUser.photoUrl!
                   : userRef.current?.photoUrl!
               }
+              user={
+                isSameUserAsLoggedIn ? loggedInUser : (userRef.current as User)
+              }
+              tooltip={true}
             />
           </div>
         </div>
@@ -183,6 +199,7 @@ const CardTemplate: React.FC<props> = ({
                       onMouseLeave={onTitleLeave}
                       onClick={(e) => {
                         e.stopPropagation();
+                        navigate(`/show/${titleRef?.current?.id}`);
                       }}>
                       {titleRef.current?.title} {movieRef.current?.season}
                     </div>

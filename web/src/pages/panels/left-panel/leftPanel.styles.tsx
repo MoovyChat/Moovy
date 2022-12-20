@@ -31,7 +31,7 @@ export const LeftParent = styled.div`
       color: inherit;
       text-decoration: none;
       :hover {
-        background-color: #ff0044;
+        background-color: ${(p) => p.theme.hoverColor};
         cursor: pointer;
       }
       .icon {
@@ -46,7 +46,50 @@ export const LeftParent = styled.div`
       }
     }
     .active {
-      color: gold;
+      .icon {
+        svg {
+          height: 35px;
+          width: 35px;
+        }
+      }
+      .icon.feed {
+        svg {
+          fill: red;
+        }
+      }
+      .icon.catalog {
+        svg {
+          fill: #ff7b00;
+        }
+      }
+      .icon.p {
+        svg {
+          fill: #3db847;
+        }
+      }
+      .icon.favorites {
+        svg {
+          fill: #ff0000;
+        }
+      }
+      .icon.comments {
+        svg {
+          fill: #00e5ff;
+        }
+      }
+      .icon.replies {
+        svg {
+          fill: #478887;
+        }
+      }
+      .icon.notifications {
+        svg {
+          fill: #426bda;
+        }
+      }
+      .text {
+        font-size: 1.1rem;
+      }
     }
   }
 

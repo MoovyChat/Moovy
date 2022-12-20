@@ -48,7 +48,7 @@ export const CommentThreadParent = styled.div<props>`
     .inner {
       position: relative;
       width: 100%;
-      height: 90vh;
+      height: 86vh;
       overflow: auto;
       .comment-usr-detail {
         display: flex;
@@ -249,7 +249,6 @@ export const StyledButton = styled.div<ButtonProps>`
 `;
 
 export const HeaderText = styled.div`
-  font-size: 1.4em;
-  margin-left: 30px;
+  font-size: 1em;
   font-weight: 700;
 `;

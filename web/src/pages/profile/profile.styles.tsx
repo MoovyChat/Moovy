@@ -12,7 +12,7 @@ export const ProfileParent = styled.div`
   .top {
     position: relative;
     width: 100%;
-    flex: 1 1 40%;
+    flex: 1 1 45%;
     overflow: hidden;
     .cover-photo {
       width: 100%;
@@ -59,6 +59,7 @@ export const ProfileParent = styled.div`
       display: flex;
       top: 160px;
       left: 50px;
+      width: calc(100% - 50px);
       ::before {
         content: '';
         position: absolute;
@@ -94,11 +95,13 @@ export const ProfileParent = styled.div`
         }
       }
       .user-info {
+        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-start;
         margin-left: 10px;
+        width: 80%;
         .name {
           display: flex;
           justify-content: center;
@@ -136,6 +139,25 @@ export const ProfileParent = styled.div`
           font-size: 14px;
           font-weight: 550;
           opacity: 0.6;
+        }
+        .follow {
+          position: absolute;
+          right: 10px;
+          bottom: 10px;
+          padding: 7px 15px;
+          border-radius: 15px;
+          background: ${(p) => p.theme.body};
+          font-weight: 600;
+          font-size: 0.9em;
+          box-shadow: 0 0 5px;
+          transition: all 0.2s;
+          cursor: pointer;
+          :hover {
+            transform: scale(1.1);
+          }
+          :active {
+            transform: scale(1);
+          }
         }
       }
     }
@@ -188,7 +210,7 @@ export const ProfileParent = styled.div`
 export const SubGroups = styled.div`
   position: relative;
   display: flex;
-  flex: 1 1 60%;
+  flex: 1 1 55%;
   flex-direction: column;
   width: 100%;
   justify-content: space-evenly;
@@ -197,7 +219,7 @@ export const SubGroups = styled.div`
     position: absolute;
     display: flex;
     flex-direction: column;
-    top: 0;
+    top: 0px;
     left: 0;
     height: 140px;
     width: 99%;

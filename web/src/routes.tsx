@@ -7,6 +7,7 @@ import {
 } from './generated/graphql';
 
 import App from './pages/app/app';
+import Catalog from './pages/catalog/catalog';
 import CommentThread from './pages/commentThread/commentThread';
 import Comments from './pages/comments/comments';
 import DifferentProfile from './pages/profile/differentProfile';
@@ -14,11 +15,14 @@ import Favorites from './pages/favorites/favorites';
 import Feed from './pages/feed/feed';
 import Home from './pages/home/home';
 import MovieThread from './pages/movieThread/movieThread';
+import MoviesCatalog from './pages/catalog/moviesCatalog';
 import NotFound from './pages/notFound/notFound';
 import Notifications from './pages/notifications/NotificationsModule';
 import Replies from './pages/comments/replies';
 import ReplyThread from './pages/commentThread/replyThread';
-import Trending from './pages/trending/trending';
+import ShowsCatalog from './pages/catalog/showsCatalog';
+import ShowsThread from './pages/shows-thread/showsThread';
+import Trending from './pages/catalog/catalog';
 import _ from 'lodash';
 import { isServer } from './constants';
 import { urqlClient } from './utils/urlClient';
@@ -116,12 +120,22 @@ const HomeRouter = () => {
           />
           <Route path='notifications' element={<Notifications />} />
           <Route path='favorites' element={<Favorites />} />
-          <Route path='trending' element={<Trending />} />
+          <Route path='catalog' element={<Catalog />}>
+            <Route path='' index element={<MoviesCatalog />} />
+            <Route path='shows' element={<ShowsCatalog />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
           <Route path='profile' element={<DifferentProfile />}>
             <Route path=':id' element={<DifferentProfile />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
+          <Route path='show' element={<ShowsThread />}>
+            <Route path=':id' element={<ShowsThread />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='movie' element={<MovieThread />}>
             <Route path=':id' element={<MovieThread />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='*' element={<NotFound />} />
         </Route>

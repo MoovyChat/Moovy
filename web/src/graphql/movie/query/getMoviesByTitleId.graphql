@@ -1,0 +1,5 @@
+query getMoviesByTitleId($tid: String!) {
+  getMoviesByTitleId(tid: $tid) {
+    ...FullMovie
+  }
+}

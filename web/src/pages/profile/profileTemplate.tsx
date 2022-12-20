@@ -5,6 +5,8 @@ import {
   Profile,
   User,
   useGetUserMiniProfileQuery,
+  useIsFollowingUserQuery,
+  useToggleFollowMutation,
 } from '../../generated/graphql';
 import {
   MdCameraAlt,
@@ -17,13 +19,16 @@ import {
 import {
   MouseEventHandler,
   UIEventHandler,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import { NoTitle, ProfileParent, SubGroups } from './profile.styles';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import ChildHeader from '../../components/childHeader/childHeader';
 import ImageStack from '../../components/image-stack/imageStack';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
@@ -35,6 +40,7 @@ import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 
 type props = {
   user: User;
+  currentUser: User;
   bgChangeHandler?: MouseEventHandler<HTMLDivElement>;
   profilePicChangeHandler?: MouseEventHandler<HTMLDivElement>;
   editProfileHandler?: MouseEventHandler<HTMLSpanElement>;
@@ -46,6 +52,7 @@ const ProfileTemplate: React.FC<props> = ({
   profilePicChangeHandler,
   editProfileHandler,
   isDifferentUser,
+  currentUser,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const profileFromRedux = useAppSelector((state) => state.profile);
@@ -56,7 +63,11 @@ const ProfileTemplate: React.FC<props> = ({
   const [likedMovies, setLikedMovies] = useState<Movie[]>([]);
   const [visitedMovies, setVisitedMovies] = useState<Movie[]>([]);
   const dispatch = useAppDispatch();
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [dobInTime, setDOBInTime] = useState<string>('');
+  const [scrollValue, setScrollValue] = useState<number>(0);
+
+  const [, toggleFollow] = useToggleFollowMutation();
 
   const [miniProfile] = useGetUserMiniProfileQuery({
     variables: {
@@ -67,7 +78,24 @@ const ProfileTemplate: React.FC<props> = ({
       : isServer() && _.isEqual(profile, profileFromRedux),
   });
 
-  useEffect(() => {
+  const [amIFollowingUser] = useIsFollowingUserQuery({
+    variables: { uid: currentUser.id, fid: user.id },
+    pause: isDifferentUser
+      ? isServer()
+      : isServer() && _.isEqual(profile, profileFromRedux),
+  });
+
+  useMemo(() => {
+    const { data, error, fetching } = amIFollowingUser;
+    if (error) console.log(error);
+    console.log(data);
+    if (!fetching && data) {
+      const _data = data.isFollowingUser as boolean;
+      setIsFollowing(() => _data);
+    }
+  }, [amIFollowingUser]);
+
+  useMemo(() => {
     if (!profile) return;
     if (!profile.dob) setDOBInTime('');
     let UTCTimeString = (profile.dob as string).split('-').join('/');
@@ -76,7 +104,6 @@ const ProfileTemplate: React.FC<props> = ({
     );
     if (dobTimeString) setDOBInTime(dobTimeString);
   }, [profile?.dob]);
-  let profileScrollKey = 'profileScroll';
 
   useEffect(() => {
     const { error, data, fetching } = miniProfile;
@@ -98,15 +125,24 @@ const ProfileTemplate: React.FC<props> = ({
       setVisitedMovies(_visitedMoviesData);
     }
   }, [miniProfile.fetching, user.id]);
+
   const profileScrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
     if (ref && ref.current) {
-      if (ref.current.scrollTop > 50)
-        sessionStorage.setItem(
-          profileScrollKey,
-          ref.current.scrollTop.toString()
-        );
+      const scrollValue = ref.current!.scrollTop;
+      setScrollValue(() => scrollValue);
     }
   };
+
+  const toggleFollowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    setIsFollowing(!isFollowing);
+    toggleFollow({
+      uid: currentUser.id,
+      followingId: user.id,
+      follow: !isFollowing,
+    });
+  };
+
   if (miniProfile.fetching) {
     <div
       style={{
@@ -119,8 +155,12 @@ const ProfileTemplate: React.FC<props> = ({
       <Loading />
     </div>;
   }
+
+  let headerTitle = scrollValue > 40 ? `${user?.nickname}` : 'Profile';
+  let followStatus = isFollowing ? 'Following' : 'Follow';
   return (
     <ProfileParent ref={ref} onScroll={profileScrollHandler}>
+      <ChildHeader text={headerTitle} className='comment-header' />
       <div className='top'>
         <div className='cover-photo'>
           <img
@@ -140,7 +180,11 @@ const ProfileTemplate: React.FC<props> = ({
         )}
         <div className='user-photo'>
           <div className='user-container'>
-            <ProfilePic src={user.photoUrl!} />
+            <ProfilePic
+              src={user.photoUrl!}
+              user={user as User}
+              tooltip={true}
+            />
             {!isDifferentUser && (
               <div className='edit' onClick={profilePicChangeHandler}>
                 <MdCameraAlt size={25} />
@@ -162,6 +206,11 @@ const ProfileTemplate: React.FC<props> = ({
             <div className='time'>
               Joined on {getShortDateFormat(user?.joinedAt as string)}
             </div>
+            {isDifferentUser && (
+              <div className='follow' onClick={toggleFollowHandler}>
+                {followStatus}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -174,7 +223,9 @@ const ProfileTemplate: React.FC<props> = ({
               <div className='icon'>
                 <MdOutlineCake size={25} />
               </div>
-              <div className='info'>{dobInTime}</div>
+              <div className='info'>
+                {dobInTime === '' ? 'Not Specified' : dobInTime}
+              </div>
             </div>
 
             {profile && profile.gender && (
@@ -187,8 +238,10 @@ const ProfileTemplate: React.FC<props> = ({
                   )}
                 </div>
                 <div className='info'>
-                  {profile.gender.charAt(0).toUpperCase() +
-                    profile.gender.slice(1)}
+                  {profile && profile.gender
+                    ? profile.gender.charAt(0).toUpperCase() +
+                      profile.gender.slice(1)
+                    : 'Not Specified'}
                 </div>
               </div>
             )}
@@ -196,7 +249,9 @@ const ProfileTemplate: React.FC<props> = ({
               <div className='icon'>
                 <MdOutlineContacts size={25} />
               </div>
-              <div className='info'>{profile?.bio}</div>
+              <div className='info'>
+                {profile && profile.bio ? profile.bio : 'Not Specified'}
+              </div>
             </div>
           </div>
           <div className='follow'>
@@ -204,6 +259,7 @@ const ProfileTemplate: React.FC<props> = ({
               <div className='fd'>Followers</div>
               <div className='pd'>
                 <ImageStack
+                  user={user}
                   followers={follower?.followers as User[]}
                   count={user.followerCount ? user.followerCount : 0}
                 />
@@ -213,6 +269,7 @@ const ProfileTemplate: React.FC<props> = ({
               <div className='fd'>Following</div>
               <div className='pd'>
                 <ImageStack
+                  user={user}
                   following={following?.following as User[]}
                   count={user.followingCount ? user.followingCount : 0}
                 />
@@ -230,7 +287,7 @@ const ProfileTemplate: React.FC<props> = ({
               {visitedMovies.length > 0 ? (
                 <div className='bd'>
                   {visitedMovies.map((movie) => (
-                    <div>
+                    <div key={movie.id}>
                       <MovieCard movie={movie} />
                     </div>
                   ))}
@@ -247,7 +304,7 @@ const ProfileTemplate: React.FC<props> = ({
               {favMovies.length > 0 ? (
                 <div className='bd'>
                   {favMovies.map((movie) => (
-                    <div>
+                    <div key={movie.id}>
                       <MovieCard movie={movie} />
                     </div>
                   ))}
@@ -264,7 +321,7 @@ const ProfileTemplate: React.FC<props> = ({
               {likedMovies.length > 0 ? (
                 <div className='bd'>
                   {likedMovies.map((movie) => (
-                    <div>
+                    <div key={movie.id}>
                       <MovieCard movie={movie} />
                     </div>
                   ))}

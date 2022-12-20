@@ -1,6 +1,10 @@
 import { Outlet, useParams } from 'react-router-dom';
 import React, { MouseEventHandler, useEffect, useRef } from 'react';
-import { User, useGetUserQuery } from '../../generated/graphql';
+import {
+  User,
+  useGetUserByNickNameQuery,
+  useGetUserQuery,
+} from '../../generated/graphql';
 import { isServer, popupStates } from '../../constants';
 import {
   sliceSetIsPopupOpened,
@@ -9,6 +13,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import Loading from '../loading/loading';
+import NotFound from '../notFound/notFound';
 import ProfileTemplate from './profileTemplate';
 import { batch } from 'react-redux';
 
@@ -17,9 +22,9 @@ const DifferentProfile = () => {
   let user = useRef<User | null>(null);
   const userFromRedux = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const isSameUser = id !== userFromRedux.id;
-  const [{ error, fetching, data }] = useGetUserQuery({
-    variables: { uid: id! },
+  const isSameUser = id !== userFromRedux.nickname;
+  const [{ error, fetching, data }] = useGetUserByNickNameQuery({
+    variables: { nickname: id! },
     pause: isServer(),
   });
 
@@ -48,10 +53,10 @@ const DifferentProfile = () => {
 
   useEffect(() => {
     if (error) console.log(error);
-    user.current = data?.getUser as User;
+    user.current = data?.getUserByUserName as User;
   }, [fetching, id]);
 
-  if (fetching || !user)
+  if (fetching)
     <div
       style={{
         display: 'flex',
@@ -62,12 +67,16 @@ const DifferentProfile = () => {
       }}>
       <Loading />
     </div>;
+  if (user.current === null) {
+    return <NotFound />;
+  }
   return (
     <React.Fragment>
       {user && user.current && (
         <ProfileTemplate
           isDifferentUser={isSameUser}
           user={user.current}
+          currentUser={userFromRedux}
           profilePicChangeHandler={profilePicChangeHandler}
           bgChangeHandler={bgChangeHandler}
           editProfileHandler={editProfileHandler}

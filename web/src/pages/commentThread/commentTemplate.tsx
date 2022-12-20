@@ -1,14 +1,5 @@
-import {
-  CommentThreadParent,
-  HeaderText,
-  StyledButton,
-} from './commentThread.styles';
-import {
-  MdFavoriteBorder,
-  MdKeyboardBackspace,
-  MdOutlineMoreHoriz,
-  MdReply,
-} from 'react-icons/md';
+import { CommentThreadParent, StyledButton } from './commentThread.styles';
+import { MdFavoriteBorder, MdOutlineMoreHoriz, MdReply } from 'react-icons/md';
 import {
   Movie,
   Title,
@@ -25,6 +16,7 @@ import React, {
 } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import CommentButton from '../../components/comment-button/commentButton';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
 import { Reply } from '../../utils/interfaces';
@@ -117,7 +109,11 @@ const CommentTemplate: React.FC<props> = ({
           <div className='comment-usr-detail'>
             <div className='user-container'>
               <div className='user'>
-                <ProfilePic src={userRef.current?.photoUrl!} />
+                <ProfilePic
+                  src={userRef.current?.photoUrl!}
+                  user={userRef.current as User}
+                  tooltip={true}
+                />
               </div>
               <div className='name'>{userRef.current?.nickname}</div>
             </div>
@@ -150,6 +146,7 @@ const CommentTemplate: React.FC<props> = ({
                   onMouseLeave={onTitleLeave}
                   onClick={(e) => {
                     e.stopPropagation();
+                    navigate(`/show/${titleRef?.current?.id}`);
                   }}>
                   {titleRef.current?.title} {movieRef.current?.season}
                 </div>
@@ -224,6 +221,7 @@ const CommentTemplate: React.FC<props> = ({
           </div>
         </div>
       </div>
+      <CommentButton type='comment' data={comment} />
     </CommentThreadParent>
   );
 };

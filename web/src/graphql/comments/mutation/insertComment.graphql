@@ -1,0 +1,5 @@
+mutation insertComment($options: CommentInput!) {
+  insertComment(options: $options) {
+    ...FullComment
+  }
+}

@@ -1,21 +1,37 @@
 import { DIRECTION, TOOLTIP } from '../../utils/enums';
-import { Follow, User } from '../../generated/graphql';
-import { Outlet, useNavigate } from 'react-router-dom';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
+import {
+  User,
+  useGetFollowersMutation,
+  useGetFollowingsMutation,
+} from '../../generated/graphql';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetPopupData,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
 
 import { ImageStackParent } from './imageStack.style';
 import { LOGIN } from '../tooltip/constants';
 import Tooltip from '../tooltip/tooltip';
+import { batch } from 'react-redux';
+import { popupStates } from '../../constants';
+import { useAppDispatch } from '../../redux/hooks';
+import { useNavigate } from 'react-router-dom';
 
 type props = {
+  user: User;
   followers?: User[];
   following?: User[];
   count: number;
 };
-const ImageStack: React.FC<props> = ({ followers, following, count }) => {
+const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
   const navigate = useNavigate();
   let [users, setUsers] = useState<User[]>([]);
   let [isFollowerSection, setIsFollowerSection] = useState<boolean>(false);
+  const [, getFollowers] = useGetFollowersMutation();
+  const [, getFollowing] = useGetFollowingsMutation();
+  const dispatch = useAppDispatch();
   const redirectToUserProfile = (id: string) => {
     navigate(`/profile/${id}`);
   };
@@ -33,9 +49,38 @@ const ImageStack: React.FC<props> = ({ followers, following, count }) => {
     ? `${count} followers`
     : `${count} following`;
 
-  let defaultText = isFollowerSection
-    ? `No followers`
-    : `You are not following anyone`;
+  const showFollows: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    if (isFollowerSection) {
+      getFollowers({ uid: user.id }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          const _data = data?.getFollowers?.followers;
+          batch(() => {
+            dispatch(sliceSetIsPopupOpened(true));
+            dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+            dispatch(sliceSetPopupData(_data));
+          });
+        }
+      });
+    } else {
+      getFollowing({ uid: user.id }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          const _data = data?.getFollowings?.followings;
+          batch(() => {
+            dispatch(sliceSetIsPopupOpened(true));
+            dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+            dispatch(sliceSetPopupData(_data));
+          });
+        }
+      });
+    }
+  };
+
+  let defaultText = isFollowerSection ? `No followers` : `0 following`;
   return (
     <ImageStackParent>
       <div className='gp'>
@@ -52,7 +97,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count }) => {
                 alt='profile'
                 onClick={(e) => {
                   e.stopPropagation();
-                  redirectToUserProfile(users[0].id);
+                  redirectToUserProfile(users[0].nickname);
                 }}
               />
             </Tooltip>
@@ -75,7 +120,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count }) => {
                 alt='profile'
                 onClick={(e) => {
                   e.stopPropagation();
-                  redirectToUserProfile(users[1].id);
+                  redirectToUserProfile(users[1].nickname);
                 }}
               />
             </Tooltip>
@@ -98,7 +143,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count }) => {
                 alt='profile'
                 onClick={(e) => {
                   e.stopPropagation();
-                  redirectToUserProfile(users[2].id);
+                  redirectToUserProfile(users[2].nickname);
                 }}
               />
             </Tooltip>
@@ -110,7 +155,9 @@ const ImageStack: React.FC<props> = ({ followers, following, count }) => {
           )}
         </div>
       </div>
-      <div className='count'>{count <= 0 ? defaultText : countText}</div>
+      <div className='count' onClick={showFollows}>
+        {count <= 0 ? defaultText : countText}
+      </div>
     </ImageStackParent>
   );
 };

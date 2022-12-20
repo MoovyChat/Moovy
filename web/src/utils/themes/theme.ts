@@ -5,6 +5,7 @@ export interface ThemeProps {
   toggleBorder: string;
   movieHeader?: string;
   trendingTiles?: string;
+  hoverColor?: string;
 }
 
 export const lightTheme: ThemeProps = {
@@ -29,6 +30,7 @@ export const lightThemeForHome: ThemeProps = {
   background: '#ffffff',
   movieHeader: 'linear-gradient(to right, #e11f1f, #e3c9fe, #f07878)',
   trendingTiles: '#e2e2e2',
+  hoverColor: '#6fa3c1',
 };
 export const darkThemeForHome: ThemeProps = {
   body: 'linear-gradient(62deg, #000000 42%, #32075a 100%);',
@@ -37,4 +39,5 @@ export const darkThemeForHome: ThemeProps = {
   background: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   movieHeader: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   trendingTiles: '#131313',
+  hoverColor: '#32075a',
 };

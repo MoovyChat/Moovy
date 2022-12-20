@@ -2,7 +2,7 @@ import { User } from '../../../../generated/graphql';
 import styled from 'styled-components';
 
 type props = {
-  user: User;
+  bg?: string;
 };
 export const UserTipParent = styled.div<props>`
   display: flex;
@@ -14,7 +14,7 @@ export const UserTipParent = styled.div<props>`
   border-radius: 10px;
   overflow: hidden;
   transition: all 0.5s;
-  background-image: url(${(p) => p.user.bg});
+  background-image: url(${(p) => p.bg});
   background-size: cover;
   background-repeat: no-repeat;
   .container {

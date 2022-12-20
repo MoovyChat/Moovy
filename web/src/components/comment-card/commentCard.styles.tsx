@@ -62,7 +62,7 @@ export const CardParent = styled.div<props>`
   }
   .content {
     display: flex;
-    width: 90%;
+    width: 95%;
     align-items: center;
     .user-pic {
       max-width: 50px;
@@ -71,15 +71,15 @@ export const CardParent = styled.div<props>`
       justify-content: center;
       align-items: center;
       .pic-container {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         display: flex;
         flex-direction: column;
       }
     }
     .message {
       display: block;
-      padding-left: 10px;
+      padding-left: 15px;
       width: calc(100% - 50px);
       flex-direction: column;
       justify-content: center;
@@ -154,7 +154,8 @@ export const CardParent = styled.div<props>`
         }
       }
       .msg {
-        font-size: 0.8em;
+        font-size: 1em;
+        font-weight: 400;
         padding: 2px 0;
         font-weight: normal;
         overflow: auto;

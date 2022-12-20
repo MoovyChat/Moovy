@@ -1,23 +1,31 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
 import {
   commentLikeChanges,
+  insertCommentChanges,
+  insertReplyChanges,
   logOutChanges,
   loginChanges,
   profileUpdateChanges,
   replyLikeChanges,
-  setCommentLikeChanges,
+  toggleFollowChanges,
 } from './cacheExchanges';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
+import { pagePagination } from './resolvers';
 import { retryExchange } from '@urql/exchange-retry';
 
 const wsClient = createWSClient({
   url: 'ws://localhost:4000/graphql',
 });
 const cache: Partial<CacheExchangeOpts> = {
-  keys: {},
+  keys: {
+    CommentLikesObject: () => null,
+    replyLikesObject: () => null,
+    Visited: () => null,
+    Profile: () => null,
+  },
   updates: {
     Mutation: {
       login: loginChanges,
@@ -25,6 +33,14 @@ const cache: Partial<CacheExchangeOpts> = {
       setCommentLike: commentLikeChanges,
       setReplyLike: replyLikeChanges,
       upsertProfile: profileUpdateChanges,
+      insertComment: insertCommentChanges,
+      insertReply: insertReplyChanges,
+      toggleFollow: toggleFollowChanges,
+    },
+  },
+  resolvers: {
+    Query: {
+      getCommentsOfTheMovie: pagePagination(),
     },
   },
 };

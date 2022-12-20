@@ -1,0 +1,16 @@
+query getPaginatedTitles(
+  $limit: Int!
+  $page: Int
+  $asc: Boolean
+  $type: String
+) {
+  getPaginatedTitles(limit: $limit, page: $page, ASC: $asc, type: $type) {
+    hasMoreTitles
+    id
+    lastPage
+    totalTitleCount
+    titles {
+      ...FullTitle
+    }
+  }
+}

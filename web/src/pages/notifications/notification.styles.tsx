@@ -21,9 +21,12 @@ export const NotificationParent = styled.div`
   }
   .notifications {
     width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
+    overflow: auto;
   }
 `;
 
@@ -48,7 +51,7 @@ export const NotificationCardParent = styled.div<cardProps>`
   }
   .message {
     position: absolute;
-    left: 100px;
+    left: 80px;
     width: 70%;
     font-weight: 500;
     line-height: 16px;

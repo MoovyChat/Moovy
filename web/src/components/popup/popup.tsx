@@ -7,12 +7,14 @@ import {
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import AddComment from '../add-comment/addComment';
 import { CSSTransition } from 'react-transition-group';
 import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../image-changer/imageChanger';
 import Loading from '../../pages/loading/loading';
 import NotFound from '../../pages/notFound/notFound';
 import { PopupParent } from './popup.styles';
+import ShowFollow from '../show-follow/showFollow';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 
@@ -45,6 +47,12 @@ const Popup = () => {
         return <EditProfile />;
       case popupStates.BG_POP_UP:
         return <ImageChanger type='bg' />;
+      case popupStates.ADD_COMMENT:
+        return <AddComment type='movie' />;
+      case popupStates.ADD_REPLY:
+        return <AddComment type='comment' />;
+      case popupStates.OPEN_FOLLOW:
+        return <ShowFollow />;
       default:
         return <div></div>;
     }

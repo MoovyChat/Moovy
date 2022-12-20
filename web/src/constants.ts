@@ -23,4 +23,15 @@ export const popupStates = {
   IMAGE_POP_UP: 'IMAGE_POP_UP',
   BG_POP_UP: 'BACKGROUND_CHANGE',
   EDIT_PROFILE: 'EDIT_PROFILE',
+  ADD_COMMENT: 'ADD_COMMENT',
+  ADD_REPLY: 'ADD_REPLY',
+  OPEN_FOLLOW: 'OPEN_FOLLOW',
+};
+
+export const Fonts = {
+  Prompt: 'Prompt',
+  Hanken: 'Hanken Grotesk',
+  Caveat: 'Caveat',
+  Lora: 'Lora',
+  Libra: 'Libre Franklin',
 };

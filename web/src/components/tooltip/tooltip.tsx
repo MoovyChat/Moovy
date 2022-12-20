@@ -25,6 +25,14 @@ const Tooltip: React.FC<props> = ({
   data,
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
+  const [touch, setTouch] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      setTouch(true);
+    } else setTouch(false);
+  }, []);
+
   const SelectedElement = useCallback(() => {
     switch (message) {
       case TOOLTIP.USER:
@@ -43,9 +51,11 @@ const Tooltip: React.FC<props> = ({
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}>
       <div className='component'>{children}</div>
-      <div className={`tooltip ${dir || DIRECTION.BOTTOM}`}>
-        <SelectedElement />
-      </div>
+      {!touch && (
+        <div className={`tooltip ${dir || DIRECTION.BOTTOM}`}>
+          <SelectedElement />
+        </div>
+      )}
     </ToolTipParent>
   );
 };

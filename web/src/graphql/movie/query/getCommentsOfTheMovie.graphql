@@ -13,6 +13,7 @@ query getCommentsOfTheMovieQ(
     lastPage
     totalCommentCount
     pastLoadedCount
+    hasMoreComments
     comments {
       ...FullComment
     }

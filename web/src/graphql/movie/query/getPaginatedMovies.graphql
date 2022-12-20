@@ -1,0 +1,11 @@
+query getPaginatedMovies($limit: Int!, $page: Int, $asc: Boolean) {
+  getPaginatedMovies(limit: $limit, page: $page, ASC: $asc) {
+    hasMoreTitles
+    id
+    lastPage
+    totalTitleCount
+    titles {
+      ...FullTitle
+    }
+  }
+}
