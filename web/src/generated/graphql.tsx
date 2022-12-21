@@ -18,6 +18,7 @@ export type Scalars = {
 export type Comment = {
   __typename?: 'Comment';
   commentedUserId: Scalars['String'];
+  commentedUserName: Scalars['String'];
   createdAt: Scalars['String'];
   deletedAt?: Maybe<Scalars['String']>;
   id: Scalars['String'];
@@ -31,6 +32,7 @@ export type Comment = {
 
 export type CommentInput = {
   commentedUserId: Scalars['String'];
+  commentedUserName: Scalars['String'];
   likesCount: Scalars['Int'];
   message: Scalars['String'];
   movieId: Scalars['String'];
@@ -502,6 +504,16 @@ export type PaginatedMovieComments = {
   totalCommentCount: Scalars['Int'];
 };
 
+export type PaginatedMovies = {
+  __typename?: 'PaginatedMovies';
+  hasMoreTitles?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+  lastPage?: Maybe<Scalars['Int']>;
+  movieCount?: Maybe<Scalars['Int']>;
+  movies?: Maybe<Array<Movie>>;
+  page?: Maybe<Scalars['Int']>;
+};
+
 export type PaginatedTitles = {
   __typename?: 'PaginatedTitles';
   hasMoreTitles: Scalars['Boolean'];
@@ -583,7 +595,7 @@ export type Query = {
   getMovieFavoriteCount?: Maybe<Scalars['Int']>;
   getMovieLikes?: Maybe<LikesObject>;
   getMovieLikesAndCommentsCount?: Maybe<LikesAndComment>;
-  getMoviesByTitleId?: Maybe<Array<Movie>>;
+  getMoviesByTitleId?: Maybe<PaginatedMovies>;
   getOnlyUserMovieStats?: Maybe<MovieStats>;
   getPaginatedMovies?: Maybe<PaginatedTitles>;
   getPaginatedShows?: Maybe<PaginatedTitles>;
@@ -689,6 +701,8 @@ export type QueryGetMovieLikesAndCommentsCountArgs = {
 
 
 export type QueryGetMoviesByTitleIdArgs = {
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
   tid: Scalars['String'];
 };
 
@@ -811,6 +825,7 @@ export type RepliesObject = {
 export type Reply = {
   __typename?: 'Reply';
   commentedUserId: Scalars['String'];
+  commentedUserName: Scalars['String'];
   createdAt: Scalars['String'];
   deletedAt?: Maybe<Scalars['String']>;
   id: Scalars['String'];
@@ -818,6 +833,7 @@ export type Reply = {
   message: Scalars['String'];
   movieId: Scalars['String'];
   parentCommentId: Scalars['String'];
+  parentRepliedUser?: Maybe<Scalars['String']>;
   parentReplyId?: Maybe<Scalars['String']>;
   platformId: Scalars['Int'];
   repliesCount?: Maybe<Scalars['Int']>;
@@ -826,10 +842,12 @@ export type Reply = {
 
 export type ReplyInput = {
   commentedUserId: Scalars['String'];
+  commentedUserName: Scalars['String'];
   likesCount: Scalars['Int'];
   message: Scalars['String'];
   movieId: Scalars['String'];
   parentCommentId: Scalars['String'];
+  parentRepliedUser: Scalars['String'];
   parentReplyId: Scalars['String'];
   platformId: Scalars['Int'];
   repliesCount: Scalars['Int'];
@@ -979,7 +997,7 @@ export type InsertCommentMutationVariables = Exact<{
 }>;
 
 
-export type InsertCommentMutation = { __typename?: 'Mutation', insertComment?: { __typename: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } | null };
+export type InsertCommentMutation = { __typename?: 'Mutation', insertComment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } | null };
 
 export type SetCommentLikeMutationVariables = Exact<{
   like: Scalars['Boolean'];
@@ -996,7 +1014,7 @@ export type GetCommentQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentQuery = { __typename?: 'Query', getComment: { __typename: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } };
+export type GetCommentQuery = { __typename?: 'Query', getComment: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } };
 
 export type GetCommentLikesQueryVariables = Exact<{
   cid: Scalars['String'];
@@ -1015,13 +1033,13 @@ export type GetIsUserLikedCommentQuery = { __typename?: 'Query', getIsUserLikedC
 
 export type FullTitleFragment = { __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, deletedAt?: string | null, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, updatedAt: string, year?: number | null };
 
-export type FullCommentFragment = { __typename: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string };
+export type FullCommentFragment = { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string };
 
 export type FullMovieFragment = { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null };
 
 export type FullNotificationFragment = { __typename: 'Notifications', id: string, userId: string, message: string, fromUser: string, fromUserPhotoUrl: string, isRead: boolean, createdAt: string, updatedAt: string };
 
-export type FullReplyFragment = { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
+export type FullReplyFragment = { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
 
 export type FullUserFragment = { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null };
 
@@ -1040,7 +1058,7 @@ export type GetCommentsOfTheMovieQQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsOfTheMovieQQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', id: string, lastPage: number, totalCommentCount: number, pastLoadedCount: number, hasMoreComments: boolean, movie: { __typename?: 'Movie', id: string, name: string }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetCommentsOfTheMovieQQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', id: string, lastPage: number, totalCommentCount: number, pastLoadedCount: number, hasMoreComments: boolean, movie: { __typename?: 'Movie', id: string, name: string }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
 
 export type GetMovieQueryVariables = Exact<{
   mid: Scalars['String'];
@@ -1050,11 +1068,13 @@ export type GetMovieQueryVariables = Exact<{
 export type GetMovieQuery = { __typename?: 'Query', getMovie?: { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null } | null };
 
 export type GetMoviesByTitleIdQueryVariables = Exact<{
+  limit: Scalars['Int'];
   tid: Scalars['String'];
+  page?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetMoviesByTitleIdQuery = { __typename?: 'Query', getMoviesByTitleId?: Array<{ __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null }> | null };
+export type GetMoviesByTitleIdQuery = { __typename?: 'Query', getMoviesByTitleId?: { __typename?: 'PaginatedMovies', hasMoreTitles?: boolean | null, id: string, lastPage?: number | null, page?: number | null, movieCount?: number | null, movies?: Array<{ __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null }> | null } | null };
 
 export type GetPaginatedMoviesQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1103,7 +1123,7 @@ export type InsertReplyMutationVariables = Exact<{
 }>;
 
 
-export type InsertReplyMutation = { __typename?: 'Mutation', insertReply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null };
+export type InsertReplyMutation = { __typename?: 'Mutation', insertReply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null };
 
 export type SetReplyLikeMutationVariables = Exact<{
   like: Scalars['Boolean'];
@@ -1129,7 +1149,7 @@ export type GetRepliesOfCommentQueryVariables = Exact<{
 }>;
 
 
-export type GetRepliesOfCommentQuery = { __typename?: 'Query', getRepliesOfComment: { __typename: 'RepliesObject', id: string, repliesCount: number, lastPage: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
+export type GetRepliesOfCommentQuery = { __typename?: 'Query', getRepliesOfComment: { __typename: 'RepliesObject', id: string, repliesCount: number, lastPage: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
 
 export type GetRepliesOfReplyQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1137,14 +1157,14 @@ export type GetRepliesOfReplyQueryVariables = Exact<{
 }>;
 
 
-export type GetRepliesOfReplyQuery = { __typename?: 'Query', getRepliesOfReply: { __typename?: 'RepliesObject', id: string, repliesCount: number, lastPage: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
+export type GetRepliesOfReplyQuery = { __typename?: 'Query', getRepliesOfReply: { __typename?: 'RepliesObject', id: string, repliesCount: number, lastPage: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
 
 export type GetReplyQueryVariables = Exact<{
   rid: Scalars['String'];
 }>;
 
 
-export type GetReplyQuery = { __typename?: 'Query', getReply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null };
+export type GetReplyQuery = { __typename?: 'Query', getReply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null };
 
 export type GetReplyLikesQueryVariables = Exact<{
   rid: Scalars['String'];
@@ -1268,7 +1288,7 @@ export type GetCommentsOfTheUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser?: { __typename?: 'PaginatedUserComments', id: string, totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser?: { __typename?: 'PaginatedUserComments', id: string, totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
 
 export type GetRepliesOfTheUserQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1279,7 +1299,7 @@ export type GetRepliesOfTheUserQueryVariables = Exact<{
 }>;
 
 
-export type GetRepliesOfTheUserQuery = { __typename?: 'Query', getRepliesOfTheUser?: { __typename?: 'PaginatedUserReplies', id: string, totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetRepliesOfTheUserQuery = { __typename?: 'Query', getRepliesOfTheUser?: { __typename?: 'PaginatedUserReplies', id: string, totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName: string, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } | null };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1309,6 +1329,7 @@ export const FullCommentFragmentDoc = gql`
   __typename
   id
   commentedUserId
+  commentedUserName
   message
   likesCount
   repliesCount
@@ -1360,6 +1381,8 @@ export const FullReplyFragmentDoc = gql`
   message
   movieId
   parentCommentId
+  commentedUserName
+  parentRepliedUser
   parentReplyId
   commentedUserId
   likesCount
@@ -1515,9 +1538,16 @@ export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVa
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
 };
 export const GetMoviesByTitleIdDocument = gql`
-    query getMoviesByTitleId($tid: String!) {
-  getMoviesByTitleId(tid: $tid) {
-    ...FullMovie
+    query GetMoviesByTitleId($limit: Int!, $tid: String!, $page: Int) {
+  getMoviesByTitleId(limit: $limit, tid: $tid, page: $page) {
+    hasMoreTitles
+    id
+    lastPage
+    page
+    movieCount
+    movies {
+      ...FullMovie
+    }
   }
 }
     ${FullMovieFragmentDoc}`;

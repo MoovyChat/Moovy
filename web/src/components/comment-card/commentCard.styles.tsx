@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components';
 
-import { expandDown } from '../../utils/keyframes';
+export const commentStyleMixin = () => css`
+  mix-blend-mode: difference;
+  color: #ffa1a1;
+`;
 
 type props = {
   isReply?: boolean;
@@ -18,10 +21,11 @@ export const CardParent = styled.div<props>`
   justify-content: space-evenly;
   align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
   padding: 6px 0px;
-  margin: 7px 0px;
-  border: 1px solid;
+  /* margin: 7px 0px; */
+  border: 0.5px solid;
+  background-color: transparent;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   cursor: pointer;
   :first-child {
     margin-top: 10px;
@@ -32,7 +36,6 @@ export const CardParent = styled.div<props>`
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000000;
     opacity: 0.5;
     cursor: pointer;
     filter: blur(1px);
@@ -63,13 +66,12 @@ export const CardParent = styled.div<props>`
   .content {
     display: flex;
     width: 95%;
-    align-items: center;
+    align-items: flex-start;
     .user-pic {
       max-width: 50px;
       height: 100%;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      margin-top: 5px;
       .pic-container {
         width: 40px;
         height: 40px;
@@ -103,7 +105,17 @@ export const CardParent = styled.div<props>`
             margin-left: 5px;
           }
         }
-
+        .isReply {
+          font-weight: 400;
+          font-size: 0.7em;
+          .ru {
+            color: #00ff99;
+            font-weight: 600;
+            :hover {
+              text-decoration: underline;
+            }
+          }
+        }
         .movie {
           display: flex;
           font-size: 0.5rem;
@@ -162,6 +174,16 @@ export const CardParent = styled.div<props>`
         height: 180px;
         max-height: ${(p) => (p.isHover ? '180px' : '30px')};
         transition: max-height 1s;
+        white-space: pre-line;
+        .time,
+        .user {
+          ${commentStyleMixin()};
+          :hover {
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+          }
+        }
       }
     }
   }
@@ -225,14 +247,23 @@ export const MovieInfoParent = styled.div`
   .title {
     font-size: 1.1rem;
     font-weight: 700;
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
   .parent {
     font-size: 0.6rem;
     font-weight: 600;
     margin: 4px 0;
+    :hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
   .group {
     display: flex;
+    flex-wrap: wrap;
     .year,
     .runtime {
       padding: 5px 10px;
@@ -280,5 +311,19 @@ export const MovieInfoParent = styled.div`
         align-items: center;
       }
     }
+  }
+`;
+
+export const SpoilerTag = styled.span`
+  filter: blur(2px);
+  background-color: red;
+  color: white;
+  transition: filter 0.2s linear;
+  margin: 0 5px;
+  border-radius: 5px;
+  padding: 1px 4px;
+  cursor: pointer;
+  :hover {
+    filter: none;
   }
 `;

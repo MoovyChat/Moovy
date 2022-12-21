@@ -79,7 +79,7 @@ const HomeRouter = () => {
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
-    if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
       if (page !== lastPage) {
         setPage((page) => page + 1);
       }

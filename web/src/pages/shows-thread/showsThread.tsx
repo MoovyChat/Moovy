@@ -4,12 +4,13 @@ import {
   useGetMoviesByTitleIdQuery,
   useGetTitleQuery,
 } from '../../generated/graphql';
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
+import ViewportList from 'react-viewport-list';
 import _ from 'lodash';
 import { isServer } from '../../constants';
 import { title } from 'process';
@@ -19,14 +20,19 @@ import { useParams } from 'react-router-dom';
 const ShowsThread = () => {
   useIsAuth();
   const { id } = useParams();
+
+  const listRef = useRef<any>(null);
+  const parentRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<Title | null>(null);
-  const moviesRef = useRef<Movie[] | null>(null);
+  const [movies, setMovies] = useState<Movie[] | null>(null);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
   const [titleInfo] = useGetTitleQuery({
     variables: { getTitleId: id! },
     pause: isServer(),
   });
-  const [movies] = useGetMoviesByTitleIdQuery({
-    variables: { tid: id! },
+  const [getMovies] = useGetMoviesByTitleIdQuery({
+    variables: { tid: id!, page: page, limit: 10 },
     pause: isServer(),
   });
 
@@ -38,15 +44,24 @@ const ShowsThread = () => {
     }
   }, [titleInfo.fetching]);
   useMemo(() => {
-    const { data, error, fetching } = movies;
+    const { data, error, fetching } = getMovies;
     if (error) return console.error(error);
     if (!fetching && data) {
-      moviesRef.current = data.getMoviesByTitleId as Movie[];
-      moviesRef.current = _.orderBy(moviesRef.current, 'id');
+      const paginatedMovies = data.getMoviesByTitleId?.movies!;
+      const p = data.getMoviesByTitleId?.page!;
+      const lastPage = data.getMoviesByTitleId?.lastPage!;
+      let orderedMovies = _.chain(movies)
+        .concat(paginatedMovies)
+        .orderBy('id')
+        .uniq()
+        .value();
+      setMovies(orderedMovies as Movie[]);
+      setPage(() => p);
+      setLastPage(lastPage);
     }
-  }, [movies.fetching]);
+  }, [getMovies.fetching, page]);
 
-  if (movies.fetching || titleInfo.fetching) {
+  if (getMovies.fetching || titleInfo.fetching) {
     <div
       style={{
         display: 'flex',
@@ -68,12 +83,27 @@ const ShowsThread = () => {
           <div className='title-text'>{titleRef.current?.title}</div>
         </StyledTitleHeader>
       </ChildHeader>
-      <div className='movies-container'>
-        {moviesRef.current?.map((movie) => (
-          <div className='movie'>
-            <MovieCard movie={movie} />
+      <div className='movies-container' ref={parentRef}>
+        {movies && (
+          <ViewportList ref={listRef} viewportRef={parentRef} items={movies}>
+            {(movie, index) => {
+              if (movie)
+                return (
+                  <div className='movie'>
+                    <MovieCard movie={movie} />
+                  </div>
+                );
+              else <React.Fragment></React.Fragment>;
+            }}
+          </ViewportList>
+        )}
+        {page < lastPage && (
+          <div
+            className='show-more'
+            onClick={() => setPage((page) => page + 1)}>
+            Show more titles
           </div>
-        ))}
+        )}
       </div>
     </ShowThreadParent>
   );

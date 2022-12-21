@@ -283,6 +283,7 @@ export const SubGroups = styled.div`
   .con {
     position: absolute;
     top: 260px;
+    width: 100%;
     .box {
       display: flex;
       flex-direction: column;
@@ -295,6 +296,7 @@ export const SubGroups = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
         .sm {
           font-size: 0.6rem;
           :hover {

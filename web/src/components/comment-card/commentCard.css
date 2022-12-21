@@ -1,0 +1,17 @@
+.comment-enter {
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}
+.comment-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.comment-exit {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.comment-exit-active {
+  background-color: #ff005d;
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}

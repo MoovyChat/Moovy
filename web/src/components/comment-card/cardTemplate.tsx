@@ -1,3 +1,6 @@
+import './commentCard.css';
+
+import { CardParent, SpoilerTag } from './commentCard.styles';
 import {
   MdFavorite,
   MdOutlineFavoriteBorder,
@@ -11,14 +14,26 @@ import {
   useGetTitleInfoMutation,
   useGetUserQuery,
 } from '../../generated/graphql';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import { getFormattedNumber, getTimeFrame } from '../../utils/helpers';
+import React, {
+  MouseEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  getFormattedNumber,
+  getFormattedWordsArray,
+  getTimeFrame,
+} from '../../utils/helpers';
+import { isServer, textMapTypes } from '../../constants';
 
-import { CardParent } from './commentCard.styles';
+import { CSSTransition } from 'react-transition-group';
 import Loading from '../../pages/loading/loading';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
-import { isServer } from '../../constants';
+import _ from 'lodash';
+import { textMap } from '../../utils/interfaces';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,17 +55,21 @@ const CardTemplate: React.FC<props> = ({
   isMain,
 }) => {
   const navigate = useNavigate();
+  const mounted = useRef<boolean>(false);
   const movieId = comment.movieId;
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
   const commentedUserId = comment.commentedUserId;
+  const [mArray, setMessageArray] = useState<textMap[]>([]);
   const loggedInUser = useAppSelector((state) => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
   const movieRef = useRef<Movie | null>(null);
   const titleRef = useRef<Title | null>(null);
   const userRef = useRef<User | null>(null);
   let episodeEntered = useRef<boolean>(false);
+  const commentRef = useRef<HTMLDivElement | null>(null);
   let titleEntered = useRef<boolean>(false);
+  const isReply = !isNaN(parseInt(comment.parentCommentId));
   let timeout = 1000;
   const [userInfo] = useGetUserQuery({
     variables: { uid: commentedUserId },
@@ -65,6 +84,15 @@ const CardTemplate: React.FC<props> = ({
   });
 
   const [, getTitleInfo] = useGetTitleInfoMutation();
+
+  // Check if the component is mounted or not for animation purposes.
+  useEffect(() => {
+    mounted.current = true;
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -124,6 +152,50 @@ const CardTemplate: React.FC<props> = ({
       userRef.current = _user;
     }
   }, [userRef.current]);
+
+  useMemo(() => {
+    const { message } = comment;
+    let msgArray: textMap[] = [];
+    if (message) {
+      let msg: string = message;
+      let finalEnd = 0;
+      let index = 0;
+      while (index < msg.length) {
+        let remaining: string = msg.substring(index, msg.length);
+        let l = remaining.indexOf('<s>');
+        let r = remaining.indexOf('</s>');
+        if (l === -1) break;
+        if (r === -1) break;
+        if (l > r) break;
+        if (l > 0) {
+          // non-spoiler.
+          let text = remaining.substring(0, l);
+          let res = getFormattedWordsArray(text);
+          msgArray = _.concat(msgArray, res);
+        }
+        if (l < r) {
+          let spoilerObj: textMap = {
+            type: textMapTypes.SPOILER,
+            message: remaining.substring(l + 3, r),
+          };
+          msgArray.push(spoilerObj);
+        }
+        index += r + 4;
+        if (index <= msg.length) finalEnd = index;
+        // Both non-spoiler and spoiler are pushed into the array until 'r'
+      }
+      // End of loop
+      if (finalEnd !== msg.length && finalEnd < msg.length) {
+        // Final non-spoiler.
+        let finalPhrase: string = msg.substring(finalEnd, msg.length);
+        let res = getFormattedWordsArray(finalPhrase);
+        msgArray = _.concat(msgArray, res);
+      }
+    }
+
+    setMessageArray(msgArray);
+  }, [comment.message]);
+
   if (movieDetails.fetching)
     return (
       <div
@@ -136,122 +208,162 @@ const CardTemplate: React.FC<props> = ({
       </div>
     );
   return (
-    <CardParent
-      onClick={goToComment}
-      showEpisodeInfo={showEpisodeInfo}
-      showTitleInfo={showTitleInfo}
-      episodePoster={movieRef.current?.stills}
-      titlePoster={titleRef.current?.artwork}
-      isHover={showEpisodeInfo || showTitleInfo}>
-      <div className='bg'>
-        {!isMain && showEpisodeInfo ? (
-          <img
-            key='episode'
-            src={movieRef.current?.stills as string}
-            alt='background-image'
-          />
-        ) : !isMain && showTitleInfo ? (
-          <img
-            key='title'
-            src={titleRef.current?.artwork as string}
-            alt='background-image'
-          />
-        ) : (
-          <img
-            src='https://png.pngtree.com/thumb_back/fh260/background/20210316/pngtree-black-abstract-fluorescent-line-background-image_587942.jpg'
-            alt='background-image'
-          />
-        )}
-      </div>
-      <div className='content'>
-        <div className='user-pic'>
-          <div className='pic-container'>
-            <ProfilePic
-              src={
-                isSameUserAsLoggedIn
-                  ? loggedInUser.photoUrl!
-                  : userRef.current?.photoUrl!
-              }
-              user={
-                isSameUserAsLoggedIn ? loggedInUser : (userRef.current as User)
-              }
-              tooltip={true}
+    <CSSTransition
+      in={mounted.current}
+      classNames='comment'
+      timeout={300}
+      nodeRef={commentRef}>
+      <CardParent
+        onClick={goToComment}
+        showEpisodeInfo={showEpisodeInfo}
+        showTitleInfo={showTitleInfo}
+        episodePoster={movieRef.current?.stills}
+        titlePoster={titleRef.current?.artwork}
+        isHover={showEpisodeInfo || showTitleInfo}>
+        <div className='bg'>
+          {!isMain && showEpisodeInfo ? (
+            <img
+              key='episode'
+              src={movieRef.current?.stills as string}
+              alt='background-image'
             />
-          </div>
+          ) : !isMain && showTitleInfo ? (
+            <img
+              key='title'
+              src={titleRef.current?.artwork as string}
+              alt='background-image'
+            />
+          ) : (
+            <></>
+          )}
         </div>
-        <div className='message'>
-          <div className='username'>
-            <div className='container'>
-              <div className='user'>
-                {isSameUserAsLoggedIn
-                  ? loggedInUser.nickname
-                  : userRef.current?.nickname}
-              </div>
-              <div className='time'>{getTimeFrame(comment.createdAt)}</div>
+        <div className='content'>
+          <div className='user-pic'>
+            <div className='pic-container'>
+              <ProfilePic
+                src={
+                  isSameUserAsLoggedIn
+                    ? loggedInUser.photoUrl!
+                    : userRef.current?.photoUrl!
+                }
+                user={
+                  isSameUserAsLoggedIn
+                    ? loggedInUser
+                    : (userRef.current as User)
+                }
+                tooltip={true}
+              />
             </div>
-            {!isMain && (
-              <div className='movie'>
-                {titleRef && titleRef.current?.type === 'show' && (
-                  <React.Fragment>
-                    <div
-                      className='name title'
-                      onMouseEnter={onTitleEnter}
-                      onMouseLeave={onTitleLeave}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/show/${titleRef?.current?.id}`);
-                      }}>
-                      {titleRef.current?.title} {movieRef.current?.season}
-                    </div>
-                  </React.Fragment>
-                )}
-                <div
-                  className='name episode'
-                  onMouseEnter={onEpisodeEnter}
-                  onMouseLeave={onEpisodeLeave}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/movie/${movieRef?.current?.id}`);
-                  }}>
-                  {movieRef.current?.name}
+          </div>
+          <div className='message'>
+            <div className='username'>
+              <div className='container'>
+                <div className='user'>
+                  {isSameUserAsLoggedIn
+                    ? loggedInUser.nickname
+                    : userRef.current?.nickname}
                 </div>
+                <div className='time'>{getTimeFrame(comment.createdAt)}</div>
               </div>
-            )}
-          </div>
-          <div className='msg'>
-            {!isMain && showEpisodeInfo ? (
-              <MovieInfo movie={movieRef.current!} />
-            ) : !isMain && showTitleInfo ? (
-              <MovieInfo title={titleRef.current!} />
-            ) : (
-              `${comment.message}`
-            )}
-          </div>
-        </div>
-      </div>
-      {!showEpisodeInfo && !showTitleInfo && (
-        <div className='options'>
-          <div className='likes c'>
-            <span className='icon' onClick={updateLike}>
-              {like ? (
-                <MdFavorite size={20} fill='#ff005d' />
-              ) : (
-                <MdOutlineFavoriteBorder size={20} />
+              {isReply && (
+                <div className='isReply'>
+                  <span>Replying to</span>{' '}
+                  <span
+                    className='ru'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/profile/${comment.parentRepliedUser}`);
+                    }}>
+                    @{comment.parentRepliedUser}
+                  </span>
+                </div>
               )}
-            </span>
-            <span className='count'>{getFormattedNumber(likeCount)} Likes</span>
-          </div>
-          <div className='likes c'>
-            <span className='icon'>
-              <MdOutlineModeComment size={20} />
-            </span>
-            <span className='count'>
-              {getFormattedNumber(comment.repliesCount!)} Replies
-            </span>
+              {!isMain && (
+                <div className='movie'>
+                  {titleRef && titleRef.current?.type === 'show' && (
+                    <React.Fragment>
+                      <div
+                        className='name title'
+                        onMouseEnter={onTitleEnter}
+                        onMouseLeave={onTitleLeave}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/show/${titleRef?.current?.id}`);
+                        }}>
+                        {titleRef.current?.title} {movieRef.current?.season}
+                      </div>
+                    </React.Fragment>
+                  )}
+                  <div
+                    className='name episode'
+                    onMouseEnter={onEpisodeEnter}
+                    onMouseLeave={onEpisodeLeave}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/movie/${movieRef?.current?.id}`);
+                    }}>
+                    {movieRef.current?.name}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className='msg'>
+              {!isMain && showEpisodeInfo ? (
+                <MovieInfo movie={movieRef.current!} />
+              ) : !isMain && showTitleInfo ? (
+                <MovieInfo title={titleRef.current!} />
+              ) : (
+                <>
+                  {mArray.map((msg: textMap, index) =>
+                    msg.type === textMapTypes.SPOILER ? (
+                      <SpoilerTag key={index}>{msg.message}</SpoilerTag>
+                    ) : (
+                      <React.Fragment key={index}>
+                        <span
+                          key={index}
+                          className={msg.type}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (msg.type === 'user') {
+                              navigate(`/profile/${msg.message.slice(1)}`);
+                            }
+                          }}>
+                          {msg.message + ' '}
+                        </span>
+                      </React.Fragment>
+                    )
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
-      )}
-    </CardParent>
+        {!showEpisodeInfo && !showTitleInfo && (
+          <div className='options'>
+            <div className='likes c'>
+              <span className='icon' onClick={updateLike}>
+                {like ? (
+                  <MdFavorite size={20} fill='#ff005d' />
+                ) : (
+                  <MdOutlineFavoriteBorder size={20} />
+                )}
+              </span>
+              <span className='count'>
+                {getFormattedNumber(likeCount)} Likes
+              </span>
+            </div>
+            <div className='likes c'>
+              <span className='icon'>
+                <MdOutlineModeComment size={20} />
+              </span>
+              <span className='count'>
+                {getFormattedNumber(comment.repliesCount!)} Replies
+              </span>
+            </div>
+          </div>
+        )}
+      </CardParent>
+    </CSSTransition>
   );
 };
 

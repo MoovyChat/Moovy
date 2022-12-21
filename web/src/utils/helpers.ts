@@ -45,44 +45,6 @@ export const isNumber = (c: string) => {
   else return true;
 };
 
-export const getFormattedWordsArray = (
-  text: string,
-  place: string,
-  dispatch: Dispatch<any>,
-  userId: string,
-  commentTimeStamp: number
-): textMap[] => {
-  return text
-    .trim()
-    .split(' ')
-    .map((word) => {
-      if (word.startsWith('@')) {
-        return { message: word, type: textMapTypes.USER };
-      } else if (word.includes(':')) {
-        let words = word.split(':');
-        let hours = words.length === 3 ? words[0] : '0';
-        let minutes = hours !== '0' ? words[1] : words[0];
-        let seconds = hours !== '0' ? words[2] : words[1];
-        if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
-          if (place === msgPlace.COMMENT_CARD) {
-            // let timeMsgObj: timeMessage = {
-            //   madeBy: userId,
-            //   message: text,
-            //   time: word,
-            //   timeStamp: commentTimeStamp,
-            // };
-            // dispatch(sliceAddTimeMessages(timeMsgObj));
-          }
-          return { message: word, type: textMapTypes.TIME };
-        } else {
-          return { message: word, type: textMapTypes.BASIC };
-        }
-      } else {
-        return { message: word, type: textMapTypes.BASIC };
-      }
-    });
-};
-
 export const colorLog = (...args: any) => {
   console.log(`%c[qchat]`, 'color: #00d9ff', ...args);
 };
@@ -122,5 +84,25 @@ export const isImageURLValid = async (url: string) => {
   return new Promise((resolve) => {
     img.onerror = () => resolve(false);
     img.onload = () => resolve(true);
+  });
+};
+
+export const getFormattedWordsArray = (text: string): textMap[] => {
+  return text.split(' ').map((word) => {
+    if (word.startsWith('@')) {
+      return { message: word, type: textMapTypes.USER };
+    } else if (word.includes(':')) {
+      let words = word.split(':');
+      let hours = words.length === 3 ? words[0] : '0';
+      let minutes = hours !== '0' ? words[1] : words[0];
+      let seconds = hours !== '0' ? words[2] : words[1];
+      if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
+        return { message: word, type: textMapTypes.TIME };
+      } else {
+        return { message: word, type: textMapTypes.BASIC };
+      }
+    } else {
+      return { message: word, type: textMapTypes.BASIC };
+    }
   });
 };

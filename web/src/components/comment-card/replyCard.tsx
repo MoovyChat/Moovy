@@ -1,7 +1,8 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
+  User,
   useGetReplyLikesQuery,
-  useSetCommentLikeMutation,
+  useGetUserQuery,
   useSetReplyLikeMutation,
 } from '../../generated/graphql';
 

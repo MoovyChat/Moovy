@@ -1,18 +1,35 @@
 import { MdChatBubbleOutline, MdFavorite, MdVisibility } from 'react-icons/md';
 import { Movie, Title } from '../../generated/graphql';
+import React, { MouseEventHandler } from 'react';
 
 import { MovieInfoParent } from './commentCard.styles';
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type props = {
   movie?: Movie;
   title?: Title;
 };
 const MovieInfo: React.FC<props> = ({ movie, title }) => {
+  const navigate = useNavigate();
+  const parentClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    if (movie) navigate(`/show/${movie.titleId!}`);
+  };
+  const titleClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    if (title) navigate(`/movie/${title.id!}`);
+    else navigate(`/movie/${movie?.id!}`);
+  };
   return (
     <MovieInfoParent>
-      <div className='title'>{movie ? movie.name : title?.title}</div>
-      {movie && <div className='parent'>{movie?.parentTitleName}</div>}
+      <div className='title' onClick={titleClickHandler}>
+        {movie ? movie.name : title?.title}
+      </div>
+      {movie && (
+        <div className='parent' onClick={parentClickHandler}>
+          {movie?.parentTitleName}
+        </div>
+      )}
       <div className='group'>
         {movie ? (
           <React.Fragment>

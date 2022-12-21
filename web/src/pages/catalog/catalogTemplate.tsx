@@ -9,6 +9,21 @@ type props = {
   titles: Title[] | null;
 };
 const CatalogTemplate: React.FC<props> = ({ parentRef, titles }) => {
+  if (titles!.length <= 0)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontWeight: '600',
+        }}>
+        Catalog is empty
+      </div>
+    );
+
   return (
     <CatalogParent ref={parentRef}>
       {titles &&

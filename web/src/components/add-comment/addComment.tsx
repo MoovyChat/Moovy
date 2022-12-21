@@ -36,13 +36,13 @@ const AddComment: React.FC<props> = ({ type }) => {
   const [text, setText] = useState<string>('');
   let popupData = useAppSelector((state) => state.popup.popupData);
   const [movieInfo, setMovieInfo] = useState<Movie>();
-  const [comment, setComment] = useState<Comment>();
+  const [comment, setComment] = useState<Comment | Reply>();
   const dispatch = useAppDispatch();
   const [commentInserted, setCommentInserted] = useState<number>(0);
 
   useEffect(() => {
     if (type === 'movie') setMovieInfo(popupData as Movie);
-    else setComment(popupData as Comment);
+    else setComment(popupData as any);
   }, [type]);
 
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -64,6 +64,7 @@ const AddComment: React.FC<props> = ({ type }) => {
       insertComment({
         options: {
           commentedUserId: user.id,
+          commentedUserName: user.nickname,
           likesCount: 0,
           message: text,
           movieId: movieInfo?.id!,
@@ -90,16 +91,20 @@ const AddComment: React.FC<props> = ({ type }) => {
       setCommentInserted(1);
       let commentData = comment as Reply;
       let parentComment = commentData.parentCommentId as string;
+      console.log(commentData);
       insertReply({
         options: {
           commentedUserId: user.id,
+          commentedUserName: user.nickname as string,
           likesCount: 0,
           message: text,
           movieId: commentData?.movieId!,
           platformId: 1,
           repliesCount: 0,
-          parentCommentId:
-            parentComment === null ? commentData.id : parentComment,
+          parentRepliedUser: commentData?.commentedUserName,
+          parentCommentId: isNaN(parseInt(parentComment))
+            ? commentData.id
+            : parentComment,
           parentReplyId: commentData.id,
         },
       }).then((res) => {

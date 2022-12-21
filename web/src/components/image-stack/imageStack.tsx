@@ -57,10 +57,14 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
         if (error) console.log(error);
         if (data) {
           const _data = data?.getFollowers?.followers;
+          const _sentData = {
+            data: _data,
+            type: 'Followers',
+          };
           batch(() => {
             dispatch(sliceSetIsPopupOpened(true));
             dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
-            dispatch(sliceSetPopupData(_data));
+            dispatch(sliceSetPopupData(_sentData));
           });
         }
       });
@@ -70,10 +74,14 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
         if (error) console.log(error);
         if (data) {
           const _data = data?.getFollowings?.followings;
+          const _sentData = {
+            data: _data,
+            type: 'Following',
+          };
           batch(() => {
             dispatch(sliceSetIsPopupOpened(true));
             dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
-            dispatch(sliceSetPopupData(_data));
+            dispatch(sliceSetPopupData(_sentData));
           });
         }
       });

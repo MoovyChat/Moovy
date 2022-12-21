@@ -49,6 +49,8 @@ export const CatalogContainer = styled.div<containerProps>`
   }
   .content {
     overflow: auto;
+    height: 100%;
+    width: 100%;
   }
 `;
 

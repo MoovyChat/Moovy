@@ -1,5 +1,12 @@
-query getMoviesByTitleId($tid: String!) {
-  getMoviesByTitleId(tid: $tid) {
-    ...FullMovie
+query GetMoviesByTitleId($limit: Int!, $tid: String!, $page: Int) {
+  getMoviesByTitleId(limit: $limit, tid: $tid, page: $page) {
+    hasMoreTitles
+    id
+    lastPage
+    page
+    movieCount
+    movies {
+      ...FullMovie
+    }
   }
 }

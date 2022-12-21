@@ -20,7 +20,8 @@ import { useNavigate } from 'react-router-dom';
 
 const ShowFollow = () => {
   const popup = useAppSelector((state) => state.popup);
-  const users = popup.popupData as User[];
+  const users = (popup.popupData as any).data as User[];
+  const type = (popup.popupData as any).type;
   const dispatch = useAppDispatch();
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -33,7 +34,9 @@ const ShowFollow = () => {
   return (
     <ShowFollowParent>
       <div className='follow-head'>
-        <span>{users.length} follower(s)</span>
+        <span>
+          {users.length} {type}
+        </span>
         <div className='close' onClick={closeHandler}>
           <MdClose size={25} />
         </div>
