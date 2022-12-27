@@ -1,6 +1,8 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
 import {
   commentLikeChanges,
+  deleteCommentChanges,
+  deleteReplyChanges,
   insertCommentChanges,
   insertReplyChanges,
   logOutChanges,
@@ -10,10 +12,15 @@ import {
   toggleFollowChanges,
 } from './cacheExchanges';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+import {
+  movieCommentsResolver,
+  repliesResolver,
+  userCommentsResolver,
+  userRepliesResolver,
+} from './resolvers';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
-import { pagePagination } from './resolvers';
 import { retryExchange } from '@urql/exchange-retry';
 
 const wsClient = createWSClient({
@@ -21,8 +28,13 @@ const wsClient = createWSClient({
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
+    PaginatedMovieComments: () => null,
+    PaginatedUserComments: () => null,
+    RepliesObject: () => null,
+    PaginatedUserReplies: () => null,
     CommentLikesObject: () => null,
     replyLikesObject: () => null,
+    SearchObject: () => null,
     Visited: () => null,
     Profile: () => null,
   },
@@ -36,11 +48,17 @@ const cache: Partial<CacheExchangeOpts> = {
       insertComment: insertCommentChanges,
       insertReply: insertReplyChanges,
       toggleFollow: toggleFollowChanges,
+      deleteComment: deleteCommentChanges,
+      deleteReply: deleteReplyChanges,
     },
   },
   resolvers: {
     Query: {
-      getCommentsOfTheMovie: pagePagination(),
+      getCommentsOfTheMovie: movieCommentsResolver(),
+      getCommentsOfTheUser: userCommentsResolver(),
+      getRepliesOfTheUser: userRepliesResolver(),
+      getRepliesOfComment: repliesResolver(),
+      getRepliesOfReply: repliesResolver(),
     },
   },
 };

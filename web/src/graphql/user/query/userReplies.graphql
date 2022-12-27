@@ -12,7 +12,6 @@ query getRepliesOfTheUser(
     page: $page
     time: $time
   ) {
-    id
     user {
       ...FullUser
     }

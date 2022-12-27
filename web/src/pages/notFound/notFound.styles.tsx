@@ -8,6 +8,10 @@ export const NotFoundParent = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
+  img {
+    position: absolute;
+    bottom: 0;
+  }
   ::before {
     content: '';
     background-image: url(https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1);

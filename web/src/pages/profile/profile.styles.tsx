@@ -14,13 +14,20 @@ export const ProfileParent = styled.div`
     width: 100%;
     flex: 1 1 45%;
     overflow: hidden;
+    :hover {
+      transition: all 0.5s;
+      .cover-photo {
+        box-shadow: 0 0 15px;
+      }
+    }
     .cover-photo {
       width: 100%;
       position: absolute;
       top: 4px;
       height: 200px;
-      z-index: -2;
+      z-index: -1;
       box-shadow: 0 0 10px;
+
       img {
         width: 100%;
         height: 100%;
@@ -42,7 +49,7 @@ export const ProfileParent = styled.div`
       line-height: 16px;
       width: auto;
       height: 40px;
-      z-index: 0;
+      z-index: 1;
       .add-cover {
         font-weight: 600;
         color: #050505;
@@ -296,9 +303,10 @@ export const SubGroups = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 100%;
+        width: 97%;
         .sm {
           font-size: 0.6rem;
+          margin-right: 10px;
           :hover {
             cursor: pointer;
             text-decoration: underline;

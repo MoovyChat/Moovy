@@ -40,6 +40,10 @@ export const StyledTitleHeader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  .watch-video {
+    margin-left: 40px;
+  }
   .title-image {
     height: 50px;
     width: 50px;

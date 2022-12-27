@@ -5,6 +5,9 @@ type props = {
   titleBg?: string;
   showEpisodeInfo?: boolean;
   showTitleInfo?: boolean;
+  isReply?: boolean;
+  cardHeight?: string;
+  showMore?: boolean;
 };
 export const CommentThreadParent = styled.div<props>`
   display: flex;
@@ -37,9 +40,18 @@ export const CommentThreadParent = styled.div<props>`
       }
     }
   }
+  .parent-container {
+    position: absolute;
+    top: 10%;
+    display: flex;
+    width: 90%;
+    height: auto;
+    overflow: auto;
+    flex-direction: column;
+  }
   .comment-container {
     position: absolute;
-    top: 8%;
+    top: ${(p) => (p.isReply ? '27%' : '8%')};
     display: flex;
     width: 90%;
     height: auto;
@@ -53,7 +65,7 @@ export const CommentThreadParent = styled.div<props>`
       .comment-usr-detail {
         display: flex;
         align-items: center;
-        height: 20%;
+        height: 17%;
         .user-container {
           display: flex;
           width: 50%;
@@ -88,6 +100,67 @@ export const CommentThreadParent = styled.div<props>`
             margin-right: 20px;
             width: 30px;
             height: 30px;
+            position: relative;
+            .option-icon {
+              width: 30px;
+              height: 30px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border-radius: 50%;
+            }
+            .option-window {
+              position: absolute;
+              z-index: 10;
+              width: 180px;
+              height: 200px;
+              top: 45px;
+              right: 0px;
+              border-radius: 10px;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              font-size: 0.8em;
+              align-items: center;
+              box-shadow: 0px 0px 5px, 0px 0px 3px 1px;
+              background: ${(p) => p.theme.body};
+              .opo {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 0;
+                width: 98%;
+                .opo-icon {
+                  flex: 1 1 20%;
+                  display: flex;
+                  justify-content: flex-end;
+                  align-items: center;
+                }
+                .opo-text {
+                  flex: 1 1 80%;
+                }
+                :hover {
+                  background-color: ${(p) => p.theme.hoverColor};
+                  color: white;
+                }
+              }
+              .delete {
+                color: #f8021f;
+              }
+              ::before {
+                content: ' ';
+                position: absolute;
+                top: -6px;
+                right: 10px;
+                width: 0;
+                height: 0;
+                pointer-events: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-bottom: 5px solid;
+              }
+            }
             :hover {
               cursor: pointer;
               background-color: #ffffff2c;
@@ -101,14 +174,24 @@ export const CommentThreadParent = styled.div<props>`
       }
 
       .comment-usr-msg {
-        padding: 10px 0;
         padding-left: 20px;
-        max-height: 60%;
+        /* max-height: 60%; */
         .cm-us-xt {
           width: 100%;
-          height: 100%;
-          font-size: 2em;
-          padding-bottom: 3px;
+          font-size: 1.3em;
+          padding-bottom: 10px;
+          max-height: ${(p) => (p.showMore ? p.cardHeight : '200px')};
+          overflow: hidden;
+          transition: all 0.4s;
+          white-space: pre-line;
+        }
+        .show-more {
+          font-weight: 600;
+          font-size: 12px;
+          color: ${(p) => p.theme.mention};
+          text-decoration: underline;
+          margin-bottom: 10px;
+          cursor: pointer;
         }
       }
       .comment-usr-time {
@@ -127,19 +210,51 @@ export const CommentThreadParent = styled.div<props>`
         margin: 10px 0;
         .cus {
           display: flex;
-          flex: 1 0 50%;
           justify-content: center;
-          padding: 10px 0;
-          .cmt-txt {
+          align-items: center;
+          padding: 5px 10px;
+          margin: 5px 0;
+          .icon {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 40%;
-            font-size: 0.8em;
-            .count {
-              width: 15px;
+            border-radius: 18px 0 0 18px;
+            box-shadow: 0 0 2px;
+            cursor: pointer;
+            padding: 2px 10px 2px 10px;
+            :hover {
+              background-color: ${(p) =>
+                p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
             }
-            .txt {
+            :active {
+              background-color: ${(p) =>
+                p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+            }
+          }
+          .count {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75em;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 0 18px 18px 0;
+            box-shadow: 0 0 2px;
+            cursor: pointer;
+            :hover {
+              background-color: ${(p) =>
+                p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
+            }
+            :active {
+              background-color: ${(p) =>
+                p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+            }
+          }
+        }
+        .likes {
+          svg {
+            :hover {
+              color: red;
             }
           }
         }
@@ -165,8 +280,8 @@ export const CommentThreadParent = styled.div<props>`
           }
         }
         .title {
-          background-color: #c2c92c;
-          color: black;
+          background-color: #2c4bc9;
+          color: white;
           margin-right: 6px;
           :hover {
             text-decoration: underline;
@@ -227,6 +342,13 @@ export const CommentThreadParent = styled.div<props>`
         width: 100%;
         height: auto;
         overflow: auto;
+        .no-data {
+          width: 80%;
+          text-align: center;
+          margin: 60px;
+          font-size: 1.1em;
+          font-weight: 500;
+        }
       }
     }
   }
@@ -234,6 +356,7 @@ export const CommentThreadParent = styled.div<props>`
 
 type ButtonProps = {
   color: string;
+  isFollowingUser?: boolean;
 };
 export const StyledButton = styled.div<ButtonProps>`
   padding: 10px 20px;
@@ -244,7 +367,9 @@ export const StyledButton = styled.div<ButtonProps>`
   background-color: ${(p) => p.color};
   :hover {
     cursor: pointer;
-    background-color: ${(p) => p.color};
+    background-color: ${(p) => (p.isFollowingUser ? 'transparent' : p.color)};
+    box-shadow: ${(p) => p.isFollowingUser && 'inset 0 0 2px red'};
+    color: ${(p) => p.isFollowingUser && 'red'};
   }
 `;
 

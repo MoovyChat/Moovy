@@ -1,9 +1,9 @@
 import {
   Movie,
-  PaginatedMovieComments,
   useGetCommentsOfTheMovieQQuery,
   useGetMovieQuery,
 } from '../../generated/graphql';
+import { MovieThreadParent, StyledHeader } from './movieThread.styled';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
@@ -12,8 +12,8 @@ import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
-import { MovieThreadParent } from './movieThread.styled';
 import NotFound from '../notFound/notFound';
+import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
 import { isNumber } from '../../utils/helpers';
 import { isServer } from '../../constants';
@@ -29,7 +29,6 @@ const MovieThread = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [valid, setValid] = useState<boolean>(false);
   const [movieInfo, setMovieInfo] = useState<Movie>();
-  const [comments, setComments] = useState<Comment[]>([]);
   const [page, setPage] = useState<number>(1);
   const [pageCount, setPageCount] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -66,7 +65,7 @@ const MovieThread = () => {
     if (error) console.log(error);
     if (!fetching && data) {
       const a = data.getMovie as Movie;
-      setMovieInfo(a);
+      setMovieInfo(() => a);
     }
   }, [movieData]);
 
@@ -76,18 +75,9 @@ const MovieThread = () => {
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getCommentsOfTheMovie!;
-      if (_data.id !== id) {
-        setComments([]);
-        return;
-      } else {
-        const _lastPage = _data.lastPage;
-        setLastPage(() => _lastPage!);
-        setHasMore(() => _data.hasMoreComments);
-        const _comments = _data.comments! as Comment[];
-        setComments((com) => {
-          return _.chain(com).concat(_comments).uniqBy('id').value();
-        });
-      }
+      const _lastPage = _data.lastPage;
+      setLastPage(() => _lastPage!);
+      setHasMore(() => _data.hasMoreComments);
     }
   }, [getCommentsOfTheMovie, page]);
 
@@ -97,33 +87,35 @@ const MovieThread = () => {
     setScrollValue(scrollValue);
   };
   let headerTitle = scrollValue > 40 ? `${movieInfo?.name}` : 'Movie';
-  if (getCommentsOfTheMovie.fetching)
-    return (
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Loading />
-      </div>
-    );
+  if (getCommentsOfTheMovie.fetching) return <Loading />;
+  if (!movieInfo) return <NotFound />;
+  const { comments } = getCommentsOfTheMovie.data?.getCommentsOfTheMovie!;
   return (
     <div>
       {valid ? (
         <MovieThreadParent onScroll={scrollHandler} ref={ref}>
-          <ChildHeader text={headerTitle} className='movie-header' />
+          <ChildHeader className='movie-header'>
+            <StyledHeader>
+              <span>{headerTitle}</span>
+              <WatchVideo
+                id={id}
+                platform='NETFLIX'
+                type='movie'
+                className='watch-video'
+              />
+            </StyledHeader>
+          </ChildHeader>
           <div className='movie-container'>
             <div className='thread-movie'>
               <MovieCard movie={movieInfo!} />
             </div>
             {comments && comments.length !== 0 ? (
               <div className='thread-comments'>
-                {comments?.map((cmt) => (
-                  <CommentCard comment={cmt} key={cmt.id} isMain={true} />
-                ))}
+                {getCommentsOfTheMovie?.data?.getCommentsOfTheMovie!.comments?.map(
+                  (cmt) => (
+                    <CommentCard comment={cmt} key={cmt.id} isMain={true} />
+                  )
+                )}
                 {hasMore && (
                   <div
                     className='show-more'

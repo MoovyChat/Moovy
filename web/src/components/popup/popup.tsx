@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import AddComment from '../add-comment/addComment';
 import { CSSTransition } from 'react-transition-group';
+import DeleteComment from '../delete-comment/deleteComment';
 import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../image-changer/imageChanger';
 import Loading from '../../pages/loading/loading';
@@ -25,20 +26,18 @@ const Popup = () => {
   const selectedElemFromRedux = useAppSelector(
     (state) => state.popup.selectedElement
   );
-  useEffect(() => {
-    function handleOutSideClick(event: any) {
-      if (ref && !ref.current?.contains(event.target)) {
-        batch(() => {
-          dispatch(sliceSetIsPopupOpened(false));
-          dispatch(sliceSetSelectedElement(''));
-        });
-      }
-    }
-    document.addEventListener('click', handleOutSideClick);
-    return () => {
+
+  function handleOutSideClick(event: any) {
+    if (ref && !ref.current?.contains(event.target)) {
+      batch(() => {
+        dispatch(sliceSetIsPopupOpened(false));
+        dispatch(sliceSetSelectedElement(''));
+      });
       document.removeEventListener('click', handleOutSideClick);
-    };
-  }, [ref]);
+    }
+  }
+  document.addEventListener('click', handleOutSideClick);
+
   const SelectedElement = useCallback(() => {
     switch (selectedElemFromRedux) {
       case popupStates.IMAGE_POP_UP:
@@ -53,6 +52,10 @@ const Popup = () => {
         return <AddComment type='comment' />;
       case popupStates.OPEN_FOLLOW:
         return <ShowFollow />;
+      case popupStates.DELETE_COMMENT:
+        return <DeleteComment type='comment' />;
+      case popupStates.DELETE_REPLY:
+        return <DeleteComment type='reply' />;
       default:
         return <div></div>;
     }

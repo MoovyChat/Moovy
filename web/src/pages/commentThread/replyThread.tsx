@@ -1,25 +1,42 @@
+import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
-  Movie,
-  Title,
   User,
   useGetRepliedUserQuery,
   useGetRepliesOfReplyQuery,
+  useGetReplyLikesQuery,
   useGetReplyQuery,
-  useGetTitleInfoMutation,
+  useSetReplyLikeMutation,
 } from '../../generated/graphql';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 import CommentTemplate from './commentTemplate';
+import Loading from '../loading/loading';
+import NotFound from '../notFound/notFound';
 import { Reply } from '../../utils/interfaces';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
+import { useAppSelector } from '../../redux/hooks';
+import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const ReplyThread = () => {
   const { id } = useParams();
   const userRef = useRef<User | null>(null);
-  const [commentQueyResults] = useGetReplyQuery({
+  const loggedInUser = useAppSelector((state) => state.user);
+  const [page, setPage] = useState<number>(1);
+  const [like, setLike] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [likedUsers, setLikedUsers] = useState<any[]>([]);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [replyLikeQuery, _executeQuery] = useGetReplyLikesQuery({
+    variables: {
+      rid: id!,
+    },
+    pause: isServer(),
+  });
+
+  const [, setReplyLike] = useSetReplyLikeMutation();
+
+  const [commentQueryResults] = useGetReplyQuery({
     variables: { rid: id! },
     pause: isServer(),
   });
@@ -30,23 +47,37 @@ const ReplyThread = () => {
   const [repliesQueryResult] = useGetRepliesOfReplyQuery({
     variables: {
       rid: id!,
-      limit: 10,
+      limit: 5,
+      page: page!,
     },
     pause: isServer(),
   });
 
   const [comment, setComment] = useState<Reply>();
-  const [replies, setReplies] = useState<Reply[]>();
+
+  useEffect(() => {
+    const { data, fetching, error } = replyLikeQuery;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _count = data.getReplyLikes?.likesCount!;
+      const _users = data.getReplyLikes?.likes;
+      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
+      if (findCurrentUser) setLike(true);
+      else setLike(false);
+      setLikedUsers(_users!);
+      setLikeCount(_count);
+    }
+  }, [replyLikeQuery.fetching]);
 
   // Get Reply data
   useEffect(() => {
-    const { data, fetching, error } = commentQueyResults;
+    const { data, fetching, error } = commentQueryResults;
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getReply as Reply;
-      setComment(_data);
+      setComment(() => _data);
     }
-  }, [commentQueyResults]);
+  }, [commentQueryResults]);
 
   // Get commented user data
   useEffect(() => {
@@ -61,20 +92,51 @@ const ReplyThread = () => {
   // Get replies.
   useEffect(() => {
     const { data, error, fetching } = repliesQueryResult;
-    console.log(repliesQueryResult);
     if (error) console.log(error);
     if (!fetching && data) {
-      const _repliesData = data.getRepliesOfReply.replies;
-      setReplies(_repliesData);
+      const _repliesLastPage = data.getRepliesOfReply.lastPage;
+      setLastPage(() => _repliesLastPage);
     }
   }, [repliesQueryResult]);
 
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+    e.stopPropagation();
+    setLike(!like);
+    like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
+    const res = await setReplyLike({
+      uid: loggedInUser.id,
+      rid: id!,
+      like: !like,
+      mid: comment?.movieId!,
+    });
+    const { data, error } = res;
+    if (error) console.log(error);
+    const _like = data?.setReplyLike?.likeStatus.like!;
+    setLike(_like);
+  };
+
+  if (commentQueryResults.fetching) return <Loading />;
+  if (!comment) return <NotFound />;
+
+  if (repliesQueryResult.fetching) return <Loading />;
+  const data = repliesQueryResult.data!;
+  const _data = data && data.getRepliesOfReply;
+  const replies = _data && _data.replies ? _data.replies : [];
+
   return (
     <CommentTemplate
-      type='Reply'
+      type='reply'
       userRef={userRef}
       comment={comment}
       replies={replies}
+      page={page}
+      setPage={setPage}
+      lastPage={lastPage}
+      like={like}
+      setLike={setLike}
+      likesCount={likeCount}
+      likedUsers={likedUsers}
+      updateLike={updateLike}
     />
   );
 };

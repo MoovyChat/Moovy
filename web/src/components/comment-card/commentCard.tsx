@@ -1,5 +1,6 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
+  useDeleteCommentMutation,
   useGetCommentLikesQuery,
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
@@ -23,7 +24,6 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
   const [likedUsers, setLikedUsers] = useState<any[]>([]);
-
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
       cid: comment.id!,
@@ -52,6 +52,15 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
     if (error) console.log(error);
     const _like = data?.setCommentLike?.likeStatus.like!;
     setLike(_like);
+    setLikedUsers((users) => {
+      let newUsers = [];
+      if (_like) {
+        newUsers = [...users, loggedInUser];
+      } else {
+        newUsers = users.filter((user) => user.id !== loggedInUser.id);
+      }
+      return newUsers;
+    });
   };
 
   useEffect(() => {
@@ -70,12 +79,14 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
 
   return (
     <CardTemplate
+      type='comment'
       isMain={isMain}
       updateLike={updateLike}
       likeCount={likeCount}
       like={like}
       goToComment={goToComment}
       comment={comment}
+      likedUsers={likedUsers}
     />
   );
 };

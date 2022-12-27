@@ -1,10 +1,16 @@
 import { Cache, ResolveInfo, Variables } from '@urql/exchange-graphcache';
 import {
   Comment,
+  DeleteCommentMutation,
+  DeleteReplyMutation,
+  GetCommentDocument,
   GetCommentLikesDocument,
   GetCommentLikesQuery,
+  GetCommentQuery,
   GetCommentsOfTheMovieQDocument,
   GetCommentsOfTheMovieQQuery,
+  GetCommentsOfTheUserDocument,
+  GetCommentsOfTheUserQuery,
   GetIsUserLikedCommentDocument,
   GetIsUserLikedCommentQuery,
   GetMovieDocument,
@@ -13,8 +19,10 @@ import {
   GetRepliesOfCommentQuery,
   GetRepliesOfReplyDocument,
   GetRepliesOfReplyQuery,
+  GetReplyDocument,
   GetReplyLikesDocument,
   GetReplyLikesQuery,
+  GetReplyQuery,
   GetUserByNickNameDocument,
   GetUserByNickNameQuery,
   GetUserMiniProfileDocument,
@@ -87,47 +95,72 @@ export const commentLikeChanges = (
   cache: Cache,
   info: ResolveInfo
 ) => {
-  const fields = cache
-    .inspectFields('Query')
-    .filter((field) => field.fieldName === 'getCommentLikes')
-    .forEach((field) => {
-      if (args.cid === field?.arguments?.cid) {
-        cache.updateQuery(
-          {
-            query: GetCommentLikesDocument,
-            variables: field.arguments,
+  const allFields = cache.inspectFields('Query');
+  const fieldsNames = {
+    getCommentLikes: 'getCommentLikes',
+    getComment: 'getComment',
+  };
+  const getCommentLikesFieldInfos = allFields.filter(
+    (info: any) => info.fieldName === fieldsNames.getCommentLikes
+  );
+  const getCommentFieldInfos = allFields.filter(
+    (info: any) => info.fieldName === fieldsNames.getComment
+  );
+  getCommentLikesFieldInfos.forEach((fieldInfo) => {
+    if (args.cid !== fieldInfo?.arguments?.cid) return;
+    cache.updateQuery(
+      { query: GetCommentLikesDocument, variables: fieldInfo.arguments },
+      (data: GetCommentLikesQuery | null) => {
+        if (!data) return null;
+        let childElem = data.getCommentLikes;
+        const oldLikesCount = childElem?.likesCount!;
+        const oldLikedUsers = childElem?.likes!;
+        const user = _result.setCommentLike?.user!;
+        const likeStatus = _result.setCommentLike?.likeStatus!;
+        const isLike = likeStatus?.like;
+        const newData = {
+          ...data,
+          getCommentLikes: {
+            ...childElem,
+            likesCount: isLike
+              ? oldLikesCount + 1
+              : oldLikesCount - 1 <= 0
+              ? 0
+              : oldLikesCount - 1,
+            likes: isLike
+              ? [...oldLikedUsers, user]
+              : oldLikedUsers?.filter((u) => u.id !== user.id),
           },
-          (data: GetCommentLikesQuery | null) => {
-            if (!data) {
-              console.log('Data is null, returning');
-              return null;
-            }
-            // When I click like button, I am getting the past data of liked
-            // users and likes count.
-            let childElem = data.getCommentLikes;
-            const oldLikesCount = childElem?.likesCount!;
-            const oldLikedUsers = childElem?.likes!;
-            // console.log('oldData', data);
-            // console.log('newResult', _result);
-            const user = _result.setCommentLike?.user!;
-            const likeStatus = _result.setCommentLike?.likeStatus!;
-            const isLike = likeStatus?.like;
-            const newData = {
-              ...data,
-              getCommentLikes: {
-                ...childElem,
-                likesCount: isLike ? oldLikesCount + 1 : oldLikesCount - 1,
-                likes: isLike
-                  ? [...oldLikedUsers, user]
-                  : oldLikedUsers?.filter((u) => u.id !== user.id),
-              },
-            };
-            // console.log('newData', newData);
-            return newData;
-          }
-        );
+        };
+        return newData;
       }
-    });
+    );
+  });
+  getCommentFieldInfos.forEach((fieldInfo) => {
+    if (args.cid !== fieldInfo?.arguments?.cid) return;
+    cache.updateQuery(
+      { query: GetCommentDocument, variables: fieldInfo.arguments },
+      (data: GetCommentQuery | null) => {
+        if (!data) return null;
+        let childElem = data.getComment!;
+        const oldLikesCount = childElem.likesCount!;
+        const likeStatus = _result.setCommentLike?.likeStatus!;
+        const isLike = likeStatus?.like;
+        const newData = {
+          ...data,
+          getComment: {
+            ...childElem,
+            likesCount: isLike
+              ? oldLikesCount + 1
+              : oldLikesCount - 1 <= 0
+              ? 0
+              : oldLikesCount - 1,
+          },
+        };
+        return newData;
+      }
+    );
+  });
 };
 
 export const replyLikeChanges = (
@@ -349,6 +382,67 @@ export const insertReplyChanges = (
       );
     }
   });
+
+  const getCommentFields = allFields.filter(
+    (field) => field.fieldName === 'getComment'
+  );
+  getCommentFields.forEach((field) => {
+    if (field.arguments?.cid! !== (args.options as any).parentCommentId)
+      return null;
+    cache.updateQuery(
+      {
+        query: GetCommentDocument,
+        variables: field.arguments,
+      },
+      (data: GetCommentQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getComment = data.getComment!;
+        const repliesCount = getComment.repliesCount!;
+        const newData: GetCommentQuery = {
+          ...data,
+          getComment: {
+            ...getComment,
+            repliesCount: repliesCount + 1,
+          },
+        };
+        return newData;
+      }
+    );
+  });
+
+  const getReplyFields = allFields.filter(
+    (field) => field.fieldName === 'getReply'
+  );
+
+  getReplyFields.forEach((field) => {
+    if (field.arguments?.rid! !== (args.options as any).parentReplyId)
+      return null;
+    cache.updateQuery(
+      {
+        query: GetReplyDocument,
+        variables: field.arguments,
+      },
+      (data: GetReplyQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getReply = data.getReply!;
+        const repliesCount = getReply.repliesCount!;
+        const newData: GetReplyQuery = {
+          ...data,
+          getReply: {
+            ...getReply,
+            repliesCount: repliesCount + 1,
+          },
+        };
+        return newData;
+      }
+    );
+  });
 };
 
 export const toggleFollowChanges = (
@@ -406,6 +500,8 @@ export const toggleFollowChanges = (
               followingCount:
                 _result.toggleFollow?.follows === true
                   ? followingCount + 1
+                  : followingCount - 1 <= 0
+                  ? 0
                   : followingCount - 1,
             },
           };
@@ -413,6 +509,257 @@ export const toggleFollowChanges = (
           return newData;
         }
       );
+    }
+  });
+};
+
+export const deleteCommentChanges = (
+  _result: DeleteCommentMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getCommentsOfTheUser: 'getCommentsOfTheUser',
+    getCommentsOfTheMovie: 'getCommentsOfTheMovie',
+    getMovie: 'getMovie',
+    getComment: 'getComment',
+  };
+  const getCommentsOfTheUserFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getCommentsOfTheUser
+  );
+  getCommentsOfTheUserFields.forEach((fieldInfo) => {
+    cache.updateQuery(
+      { query: GetCommentsOfTheUserDocument, variables: fieldInfo.arguments },
+      (data: GetCommentsOfTheUserQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getCommentsOfTheUser = data.getCommentsOfTheUser!;
+        const comments = getCommentsOfTheUser.comments!;
+        const totalCommentCount = getCommentsOfTheUser.totalCommentCount!;
+        const pastCount = getCommentsOfTheUser.pastCount!;
+        return {
+          ...data,
+          getCommentsOfTheUser: {
+            ...getCommentsOfTheUser,
+            comments: comments.filter((comment) => comment.id !== args.cid),
+            totalCommentCount:
+              totalCommentCount - 1 < 0 ? 0 : totalCommentCount - 1,
+            pastCount: pastCount - 1 < 0 ? 0 : pastCount - 1,
+          },
+        };
+      }
+    );
+  });
+  const getCommentsOfTheMovieFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getCommentsOfTheMovie
+  );
+  getCommentsOfTheMovieFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).mid !== args.mid) return null;
+    cache.updateQuery(
+      {
+        query: GetCommentsOfTheMovieQDocument,
+        variables: fieldInfo.arguments,
+      },
+      (data: GetCommentsOfTheMovieQQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getCommentsOfTheMovie = data.getCommentsOfTheMovie!;
+        const comments = getCommentsOfTheMovie.comments;
+        const totalCommentCount = getCommentsOfTheMovie.totalCommentCount!;
+        return {
+          ...data,
+          getCommentsOfTheMovie: {
+            ...getCommentsOfTheMovie,
+            comments: comments.filter((comment) => comment.id !== args.cid),
+            totalCommentCount:
+              totalCommentCount - 1 < 0 ? 0 : totalCommentCount - 1,
+          },
+        };
+      }
+    );
+  });
+  const getMovieFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getMovie
+  );
+  getMovieFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).mid !== args.mid) return null;
+    cache.updateQuery(
+      {
+        query: GetMovieDocument,
+        variables: fieldInfo.arguments,
+      },
+      (data: GetMovieQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getMovie = data.getMovie!;
+        const commentCount = getMovie.commentCount;
+        return {
+          ...data,
+          getMovie: {
+            ...getMovie,
+            commentCount: commentCount - 1 <= 0 ? 0 : commentCount - 1,
+          },
+        };
+      }
+    );
+  });
+  const getCommentFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getComment
+  );
+  getCommentFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).cid !== args.cid) return null;
+    cache.updateQuery(
+      {
+        query: GetCommentDocument,
+        variables: fieldInfo.arguments,
+      },
+      (data: GetCommentQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getComment = data.getComment!;
+        return {
+          ...data,
+          getComment: {
+            ...getComment,
+            message: '[Message is deleted]',
+          },
+        };
+      }
+    );
+  });
+};
+
+export const deleteReplyChanges = (
+  _result: DeleteReplyMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getRepliesOfComment: 'getRepliesOfComment',
+    getRepliesOfReply: 'getRepliesOfReply',
+    getMovie: 'getMovie',
+    getReply: 'getReply',
+  };
+
+  const getRepliesOfTheCommentFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getRepliesOfComment
+  );
+  getRepliesOfTheCommentFields.forEach((fieldInfo) => {
+    cache.updateQuery(
+      { query: GetRepliesOfCommentDocument, variables: fieldInfo.arguments },
+      (data: GetRepliesOfCommentQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getRepliesOfComment = data.getRepliesOfComment!;
+        const replies = getRepliesOfComment.replies!;
+        const repliesCount = getRepliesOfComment.repliesCount!;
+        return {
+          ...data,
+          getRepliesOfComment: {
+            ...getRepliesOfComment,
+            replies: replies.filter((reply) => reply.id !== args.rid),
+            repliesCount: repliesCount - 1 < 0 ? 0 : repliesCount - 1,
+          },
+        };
+      }
+    );
+  });
+  const getRepliesOfReplyFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getRepliesOfReply
+  );
+  getRepliesOfReplyFields.forEach((fieldInfo) => {
+    cache.updateQuery(
+      {
+        query: GetRepliesOfReplyDocument,
+        variables: fieldInfo.arguments,
+      },
+      (data: GetRepliesOfReplyQuery | null) => {
+        if (!data) {
+          console.log('Data is null, returning');
+          return null;
+        }
+        const getRepliesOfReply = data.getRepliesOfReply!;
+        const replies = getRepliesOfReply.replies;
+        const repliesCount = getRepliesOfReply.repliesCount!;
+        return {
+          ...data,
+          getRepliesOfReply: {
+            ...getRepliesOfReply,
+            replies: replies.filter((reply) => reply.id !== args.rid),
+            repliesCount: repliesCount - 1 < 0 ? 0 : repliesCount - 1,
+          },
+        };
+      }
+    );
+  });
+
+  const getReplyFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getReply
+  );
+  getReplyFields.forEach((fieldInfo) => {
+    const parentCommentId = _result.deleteReply?.parentCommentId!;
+    const parentReplyId = _result.deleteReply?.parentReplyId!;
+    const isComment = parentCommentId === parentReplyId;
+    if ((fieldInfo.arguments as any).rid === args.rid) {
+      cache.updateQuery(
+        {
+          query: GetReplyDocument,
+          variables: fieldInfo.arguments,
+        },
+        (data: GetReplyQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getReply = data.getReply!;
+          return {
+            ...data,
+            getReply: {
+              ...getReply,
+              message: '[Message is deleted]',
+            },
+          };
+        }
+      );
+    }
+    if (args.rid === _result.deleteReply?.id) {
+      if (!isComment) {
+        cache.updateQuery(
+          {
+            query: GetReplyDocument,
+            variables: { rid: parentReplyId },
+          },
+          (data: GetReplyQuery | null) => {
+            if (!data) {
+              console.log('Data is null, returning');
+              return null;
+            }
+            const getReply = data.getReply!;
+            const repliesCount = getReply.repliesCount!;
+            return {
+              ...data,
+              getReply: {
+                ...getReply,
+                repliesCount: repliesCount - 1 <= 0 ? 0 : repliesCount - 1,
+              },
+            };
+          }
+        );
+      }
     }
   });
 };

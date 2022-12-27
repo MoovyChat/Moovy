@@ -10,7 +10,13 @@ import {
   useInsertCommentMutation,
   useInsertReplyMutation,
 } from '../../generated/graphql';
-import { MdClose, MdModeComment } from 'react-icons/md';
+import {
+  MdClose,
+  MdCode,
+  MdEmojiEmotions,
+  MdModeComment,
+  MdSend,
+} from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
   sliceSetIsPopupOpened,
@@ -19,6 +25,9 @@ import {
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import { AiOutlineNumber } from 'react-icons/ai';
+import CommentCard from '../comment-card/commentCard';
+import MiniCommentCard from '../mini-comment-card/miniCommentCard';
 import MovieCard from '../movie-card/movieCard';
 import MovieChip from '../movie-chip/movieChip';
 import MovieInfo from '../comment-card/movieInfo';
@@ -42,7 +51,7 @@ const AddComment: React.FC<props> = ({ type }) => {
 
   useEffect(() => {
     if (type === 'movie') setMovieInfo(popupData as Movie);
-    else setComment(popupData as any);
+    else setComment(() => popupData as any);
   }, [type]);
 
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -91,7 +100,6 @@ const AddComment: React.FC<props> = ({ type }) => {
       setCommentInserted(1);
       let commentData = comment as Reply;
       let parentComment = commentData.parentCommentId as string;
-      console.log(commentData);
       insertReply({
         options: {
           commentedUserId: user.id,
@@ -151,15 +159,41 @@ const AddComment: React.FC<props> = ({ type }) => {
               }}></StyledTextArea>
             <StyledTextAreaBack ref={ref}>{text}</StyledTextAreaBack>
           </div>
+          <div className='options'>
+            <div className='chip'>
+              <div className='icon'>
+                <MdEmojiEmotions size={15} />
+              </div>
+              <div className='text'>Emoji</div>
+            </div>
+            <div className='chip'>
+              <div className='icon'>
+                <MdCode size={15} />
+              </div>
+              <div className='text'>Spoiler</div>
+            </div>
+            <div className='chip down'>
+              <div className='icon'>
+                <AiOutlineNumber size={15} />
+              </div>
+              <div className='text'>12/300</div>
+            </div>
+          </div>
+          {type === 'comment' && comment && comment.commentedUserId && (
+            <div className='comment'>
+              <MiniCommentCard comment={comment as any} />
+            </div>
+          )}
+
           <div className='title-details'>
-            <MovieChip name={movieInfo?.name!} />
+            {type === 'movie' && <MovieChip name={movieInfo?.name!} />}
             {commentInserted === 1 && <MovieChip name='Posting Comment' />}
             {commentInserted === 2 && <MovieChip name='Comment posted' />}
             {commentInserted === 3 && (
               <MovieChip name='Error posting comment' />
             )}
             <div className='post' onClick={postCommentHandler}>
-              Comment
+              <MdSend size={25} fill='white' />
             </div>
           </div>
         </div>

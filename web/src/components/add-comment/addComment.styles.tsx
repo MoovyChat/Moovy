@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 export const AddCommentParent = styled.div`
   position: relative;
   height: 50vh;
-  width: 100%;
+  width: 50vw;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -89,12 +89,11 @@ export const AddCommentParent = styled.div`
           display: flex;
           justify-content: center;
           align-items: center;
-          font-weight: 600;
-          bottom: 0;
+          bottom: 70px;
           right: 40px;
-          border-radius: 20px;
-          background-color: #a42525;
-          padding: 10px 15px;
+          border-radius: 50%;
+          background-color: #6d0e85;
+          padding: 10px;
           cursor: pointer;
           transition: all 0.2s;
 
@@ -108,12 +107,36 @@ export const AddCommentParent = styled.div`
           }
         }
       }
+      .options {
+        display: flex;
+        gap: 10px;
+        margin: 10px;
+        .down {
+          pointer-events: none;
+        }
+        .chip {
+          display: flex;
+          gap: 5px;
+          justify-content: center;
+          align-items: center;
+          background-color: #6d0e85;
+          .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .text {
+          }
+        }
+      }
+      .comment {
+        width: 80%;
+      }
     }
   }
   @media (max-width: 1000px) {
-    height: 100vh;
-    width: 100vw;
-    transform: translateX(-10px);
+    height: 98vh;
+    width: 98vw;
     .context {
       .comment-section {
         .title-details {
@@ -125,6 +148,7 @@ export const AddCommentParent = styled.div`
           align-items: center;
           .post {
             position: relative;
+            border-radius: 0px;
             display: flex;
             width: 60%;
             bottom: 0;

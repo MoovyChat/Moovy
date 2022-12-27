@@ -31,20 +31,19 @@ const ShowFollow = () => {
       dispatch(sliceSetPopupData(null));
     });
   };
+
   return (
     <ShowFollowParent>
       <div className='follow-head'>
         <span>
-          {users.length} {type}
+          {users && users.length > 0 ? users.length : 0} {type}
         </span>
         <div className='close' onClick={closeHandler}>
           <MdClose size={25} />
         </div>
       </div>
       <div className='users-container'>
-        {users.map((user) => (
-          <UserCard user={user} />
-        ))}
+        {users && users.map((user) => <UserCard user={user} />)}
       </div>
     </ShowFollowParent>
   );
@@ -99,7 +98,7 @@ const UserCard: React.FC<props> = ({ user }) => {
       }}>
       <div className='user-block'>
         <div className='pic-container'>
-          <ProfilePic src={user.photoUrl} tooltip={true} />
+          <ProfilePic src={user.photoUrl} tooltip={true} user={user} />
         </div>
         <div className='user-name'>{user.nickname}</div>
       </div>

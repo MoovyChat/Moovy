@@ -10,7 +10,8 @@ export const WelcomeParent = styled.div`
     display: flex;
     height: 90%;
     width: 100%;
-    font-family: 'Prompt', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     .pics {
       display: flex;
       position: relative;

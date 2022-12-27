@@ -12,7 +12,6 @@ query getCommentsOfTheUser(
     page: $page
     time: $time
   ) {
-    id
     user {
       ...FullUser
     }

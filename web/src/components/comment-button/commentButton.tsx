@@ -7,7 +7,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CommentIcon } from './commentButton.styles';
-import { MdAdd } from 'react-icons/md';
+import { MdReply } from 'react-icons/md';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 
@@ -39,7 +39,7 @@ const CommentButton: React.FC<props> = ({ type, data }) => {
   };
   return (
     <CommentIcon onClick={addCommentHandler} isOpen={isPopUpOpen}>
-      <MdAdd size={30} />
+      <MdReply size={30} />
     </CommentIcon>
   );
 };

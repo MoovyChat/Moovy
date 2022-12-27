@@ -1,8 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const commentStyleMixin = () => css`
-  mix-blend-mode: difference;
-  color: #ffa1a1;
+  color: ${(p) => p.theme.mention};
 `;
 
 type props = {
@@ -12,21 +11,23 @@ type props = {
   episodePoster?: any;
   titlePoster?: any;
   isHover?: boolean;
+  cardHeight?: string;
+  showMore?: boolean;
 };
 export const CardParent = styled.div<props>`
   display: flex;
   flex-direction: column;
   position: relative;
   width: 99.5%;
+  min-height: 120px;
   justify-content: space-evenly;
   align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
-  padding: 6px 0px;
-  /* margin: 7px 0px; */
-  border: 0.5px solid;
   background-color: transparent;
   overflow: hidden;
-  /* border-radius: 10px; */
+  margin: 10px 2px;
+  box-shadow: 0 0 10px black, inset 0 0 5px white;
   cursor: pointer;
+  font-size: 15px;
   :first-child {
     margin-top: 10px;
   }
@@ -36,10 +37,10 @@ export const CardParent = styled.div<props>`
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.5;
     cursor: pointer;
     filter: blur(1px);
     z-index: -1;
+    filter: blur(2px) brightness(0.8);
     img {
       width: 100%;
       height: 100%;
@@ -67,6 +68,7 @@ export const CardParent = styled.div<props>`
     display: flex;
     width: 95%;
     align-items: flex-start;
+    padding-top: 10px;
     .user-pic {
       max-width: 50px;
       height: 100%;
@@ -85,6 +87,13 @@ export const CardParent = styled.div<props>`
       width: calc(100% - 50px);
       flex-direction: column;
       justify-content: center;
+      padding-bottom: 10px;
+      .show-more {
+        font-weight: 600;
+        font-size: 12px;
+        color: ${(p) => p.theme.mention};
+        text-decoration: underline;
+      }
       .username {
         display: flex;
         flex-direction: column;
@@ -92,16 +101,15 @@ export const CardParent = styled.div<props>`
           display: flex;
           align-items: center;
           .user {
-            font-weight: 600;
-            font-size: 0.9em;
+            font-weight: 800;
           }
           .time {
             display: flex;
             justify-content: center;
             height: 80%;
             align-items: flex-end;
-            font-weight: 400;
-            font-size: 0.5em;
+            font-weight: 600;
+            font-size: 0.7em;
             margin-left: 5px;
           }
         }
@@ -109,7 +117,7 @@ export const CardParent = styled.div<props>`
           font-weight: 400;
           font-size: 0.7em;
           .ru {
-            color: #00ff99;
+            color: ${(p) => p.theme.mention};
             font-weight: 600;
             :hover {
               text-decoration: underline;
@@ -137,9 +145,9 @@ export const CardParent = styled.div<props>`
             }
           }
           .title {
-            background: linear-gradient(90deg, #f0fc00 50%, #c2c92c 0)
+            background: linear-gradient(90deg, #2c4bc9 50%, #445ec4 0)
               var(--_p, 100%) / 200% no-repeat;
-            color: black;
+            color: white;
             margin-right: 6px;
             transition: 1s;
             :hover {
@@ -151,9 +159,9 @@ export const CardParent = styled.div<props>`
             }
           }
           .episode {
-            background: linear-gradient(90deg, #1095c1 50%, #77acbd 0)
+            background: linear-gradient(90deg, #a42525 50%, #af540f 0)
               var(--_p, 100%) / 200% no-repeat;
-            color: black;
+            color: white;
             transition: 1s;
             :hover {
               --_p: 0%;
@@ -166,15 +174,15 @@ export const CardParent = styled.div<props>`
         }
       }
       .msg {
-        font-size: 1em;
-        font-weight: 400;
-        padding: 2px 0;
+        font-weight: 600;
         font-weight: normal;
-        overflow: auto;
-        height: 180px;
-        max-height: ${(p) => (p.isHover ? '180px' : '30px')};
-        transition: max-height 1s;
+        overflow: hidden;
+        max-height: ${(p) =>
+          p.showMore ? p.cardHeight : p.isHover ? '200px' : '100px'};
+        transition: max-height 0.5s;
         white-space: pre-line;
+        .message-box {
+        }
         .time,
         .user {
           ${commentStyleMixin()};
@@ -187,43 +195,85 @@ export const CardParent = styled.div<props>`
       }
     }
   }
-
+  @keyframes animateHeart {
+    0% {
+      transform: scale(0.2);
+    }
+    40% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
   .options {
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 100%;
     height: 100%;
+    padding-bottom: 10px;
+    font-weight: 600;
+    .delete {
+      color: #e80d2d;
+    }
+    .replies {
+      .icon {
+        :hover {
+          svg {
+          }
+        }
+      }
+    }
+    .likes {
+      .icon {
+        svg {
+          animation: animateHeart 0.3s linear forwards;
+          :hover {
+          }
+        }
+      }
+    }
     .c {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
-      height: 100%;
-      flex: 1 0 50%;
-      padding: 5px 0;
+      margin: 5px 0;
       .icon {
-        margin-right: 3px;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100%;
+        border-radius: 18px 0 0 18px;
+        box-shadow: 0 0 2px;
+        cursor: pointer;
+        padding: 2px 10px 2px 10px;
+        :hover {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
+        }
+        :active {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+        }
       }
       .count {
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-pack: center;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
         justify-content: center;
-        -webkit-align-items: center;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
         align-items: center;
-        width: 40%;
-        font-size: 0.8em;
+        font-size: 0.75em;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 0 18px 18px 0;
+        box-shadow: 0 0 2px;
+        cursor: pointer;
+        :hover {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
+        }
+        :active {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+        }
       }
     }
   }

@@ -15,13 +15,16 @@ import Favorites from './pages/favorites/favorites';
 import Feed from './pages/feed/feed';
 import Home from './pages/home/home';
 import MovieThread from './pages/movieThread/movieThread';
+import MovieThreadComponent from './pages/movieThread/movieThread.component';
 import MoviesCatalog from './pages/catalog/moviesCatalog';
 import NotFound from './pages/notFound/notFound';
 import Notifications from './pages/notifications/NotificationsModule';
+import ProfileComponent from './pages/profile/profile.component';
 import Replies from './pages/comments/replies';
 import ReplyThread from './pages/commentThread/replyThread';
 import ShowsCatalog from './pages/catalog/showsCatalog';
 import ShowsThread from './pages/shows-thread/showsThread';
+import ShowsThreadComponent from './pages/shows-thread/showsThreadParent.component';
 import Trending from './pages/catalog/catalog';
 import _ from 'lodash';
 import { isServer } from './constants';
@@ -30,76 +33,12 @@ import { useAppSelector } from './redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
 const HomeRouter = () => {
-  const user = useAppSelector((state) => state.user);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [replies, setReplies] = useState<Reply[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [replyPage, setReplyPage] = useState<number>(1);
-  const [lastPage, setLastPage] = useState<number>(1);
-  const [replyLastPage, setReplyLastPage] = useState<number>(1);
-  const [{ data, fetching, error }] = useGetCommentsOfTheUserQuery({
-    variables: { uid: user.id, limit: 15, page: page, asc: false },
-    pause: isServer(),
-  });
-
-  const [replyData] = useGetRepliesOfTheUserQuery({
-    variables: { uid: user.id, limit: 15, page: replyPage, asc: false },
-    pause: isServer(),
-  });
-
-  useEffect(() => {
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const allComments: Comment[] | undefined =
-        data.getCommentsOfTheUser?.comments;
-      let newComments = _.chain(comments)
-        .concat(allComments!)
-        .uniqBy('id')
-        .value();
-      setComments(newComments);
-      setLastPage(data?.getCommentsOfTheUser?.lastPage!);
-    }
-  }, [fetching, data, error]);
-
-  useEffect(() => {
-    const { data, error, fetching } = replyData;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const allReplies: Reply[] | undefined =
-        data.getRepliesOfTheUser?.comments;
-      let newReplies = _.chain(replies)
-        .concat(allReplies!)
-        .uniqBy('id')
-        .value();
-      setReplies(newReplies);
-      setReplyLastPage(data?.getRepliesOfTheUser?.lastPage!);
-    }
-  }, [replyData]);
-
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    const target = e.target as HTMLDivElement;
-    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      if (page !== lastPage) {
-        setPage((page) => page + 1);
-      }
-    }
-  };
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Home />}>
           <Route index element={<Feed />} />
-          <Route
-            path='comments'
-            element={
-              <Comments
-                comments={comments}
-                handleScroll={handleScroll}
-                fetching={fetching}
-              />
-            }
-          />
+          <Route path='comments' element={<Comments />} />
           <Route path='comment' element={<CommentThread />}>
             <Route path=':id' element={<CommentThread />} />
             <Route path='*' element={<NotFound />} />
@@ -108,16 +47,7 @@ const HomeRouter = () => {
             <Route path=':id' element={<ReplyThread />} />
             <Route path='*' element={<NotFound />} />
           </Route>
-          <Route
-            path='replies'
-            element={
-              <Replies
-                replies={replies}
-                handleScroll={handleScroll}
-                fetching={replyData.fetching}
-              />
-            }
-          />
+          <Route path='replies' element={<Replies />} />
           <Route path='notifications' element={<Notifications />} />
           <Route path='favorites' element={<Favorites />} />
           <Route path='catalog' element={<Catalog />}>
@@ -129,11 +59,11 @@ const HomeRouter = () => {
             <Route path=':id' element={<DifferentProfile />} />
             <Route path='*' element={<NotFound />} />
           </Route>
-          <Route path='show' element={<ShowsThread />}>
-            <Route path=':id' element={<ShowsThread />} />
+          <Route path='show' element={<ShowsThreadComponent />}>
+            <Route path=':id' index element={<ShowsThread />} />
             <Route path='*' element={<NotFound />} />
           </Route>
-          <Route path='movie' element={<MovieThread />}>
+          <Route path='movie' element={<MovieThreadComponent />}>
             <Route path=':id' element={<MovieThread />} />
             <Route path='*' element={<NotFound />} />
           </Route>

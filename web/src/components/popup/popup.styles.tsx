@@ -2,10 +2,11 @@ import styled from 'styled-components';
 
 export const PopupParent = styled.div`
   position: fixed;
-  width: 50vw;
+  min-width: 10vw;
+  min-height: 10vh;
   display: flex;
-  min-height: 50vh;
-  box-shadow: inset 0 0 10px, 0 0 10px;
+
+  box-shadow: 0px 0px 5px, 0px 0px 3px 1px;
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);

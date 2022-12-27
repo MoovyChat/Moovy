@@ -16,10 +16,9 @@ export const CommentIcon = styled.div<props>`
   background-color: #6d0e85;
   box-shadow: inset 0 0 7px black, 0 0 5px;
   cursor: pointer;
-  transform: ${(p) => (p.isOpen ? 'rotate(225deg)' : 'rotate(0deg)')};
   transition: all 0.4s;
   svg {
-    color: ${(p) => p.theme.background};
+    fill: white;
   }
   :hover {
     box-shadow: inset 0 0 5px black, 0 0 12px;

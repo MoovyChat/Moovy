@@ -1,7 +1,6 @@
 query getRepliesOfComment($limit: Int!, $cid: String!, $page: Int) {
   getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
     __typename
-    id
     repliesCount
     lastPage
     replies {

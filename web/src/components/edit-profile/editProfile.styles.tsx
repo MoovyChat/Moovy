@@ -9,8 +9,8 @@ export const EditProfileParent = styled.div<props>`
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  width: 100%;
-  height: 50vh;
+  min-width: 50vw;
+  min-height: 50vh;
   #title {
     font-size: 1rem;
     font-weight: bold;
@@ -47,6 +47,7 @@ export const EditProfileParent = styled.div<props>`
       letter-spacing: 1px;
       box-shadow: 0 0 5px;
       transition: 0.2s;
+      margin: 20px 0;
       :hover {
         cursor: pointer;
         box-shadow: 0 0 3px 1px ${(p) => p.theme.text}, inset 0 0 5px black;

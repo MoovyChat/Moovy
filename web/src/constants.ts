@@ -26,6 +26,8 @@ export const popupStates = {
   ADD_COMMENT: 'ADD_COMMENT',
   ADD_REPLY: 'ADD_REPLY',
   OPEN_FOLLOW: 'OPEN_FOLLOW',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  DELETE_REPLY: 'DELETE_REPLY',
 };
 
 export const Fonts = {

@@ -4,8 +4,8 @@ export const MovieThreadParent = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0px 10px;
-  width: 100%;
-  height: 100%;
+  width: 99%;
+  height: 99%;
   overflow: auto;
   position: absolute;
   .movie-container {
@@ -71,5 +71,13 @@ export const MovieThreadParent = styled.div`
       .thread-comments {
       }
     }
+  }
+`;
+
+export const StyledHeader = styled.div`
+  display: flex;
+  align-items: center;
+  .watch-video {
+    margin-left: 40px;
   }
 `;

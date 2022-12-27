@@ -111,7 +111,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
             </Tooltip>
           ) : (
             <img
-              src='https://previews.123rf.com/images/jemastock/jemastock1904/jemastock190439528/122931084-woman-smiling-abstract-cartoon-profile-over-floral-square-frame-vector-illustration-graphic-design.jpg'
+              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
               alt='profile'
             />
           )}
@@ -134,7 +134,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
             </Tooltip>
           ) : (
             <img
-              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Qd_6eOStzuACxdypRVIFykeevQjPb_KI2H3Nt_6YixKr_JWOtqw1QlxyRtoiVO9GDz0&usqp=CAU'
+              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
               alt='profile'
             />
           )}
@@ -157,7 +157,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
             </Tooltip>
           ) : (
             <img
-              src='https://thumbs.dreamstime.com/b/woman-smiling-cartoon-profile-abstract-over-floral-square-frame-vector-illustration-graphic-design-143190583.jpg'
+              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
               alt='profile'
             />
           )}

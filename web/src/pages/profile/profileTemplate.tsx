@@ -32,6 +32,7 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import ImageStack from '../../components/image-stack/imageStack';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
+import NotFound from '../notFound/notFound';
 import ProfilePic from '../../components/profilePic/profilePic';
 import _ from 'lodash';
 import { getShortDateFormat } from '../../utils/helpers';
@@ -144,16 +145,11 @@ const ProfileTemplate: React.FC<props> = ({
   };
 
   if (miniProfile.fetching) {
-    <div
-      style={{
-        display: 'flex',
-        height: '100%',
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Loading />
-    </div>;
+    return <Loading />;
+  }
+
+  if (!miniProfile.fetching && !miniProfile) {
+    return <NotFound />;
   }
 
   let headerTitle = scrollValue > 40 ? `${user?.nickname}` : 'Profile';

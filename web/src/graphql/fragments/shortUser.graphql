@@ -1,0 +1,6 @@
+fragment ShortUser on User {
+  id
+  name
+  photoUrl
+  nickname
+}

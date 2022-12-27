@@ -71,12 +71,14 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
 
   return (
     <CardTemplate
+      type='reply'
       isMain={isMain}
       updateLike={updateLike}
       likeCount={likeCount}
       like={like}
       goToComment={goToReply}
       comment={comment}
+      likedUsers={likedUsers}
     />
   );
 };

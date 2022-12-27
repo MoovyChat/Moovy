@@ -2,14 +2,18 @@ import './commentCard.css';
 
 import { CardParent, SpoilerTag } from './commentCard.styles';
 import {
+  MdDelete,
   MdFavorite,
   MdOutlineFavoriteBorder,
   MdOutlineModeComment,
+  MdReply,
 } from 'react-icons/md';
 import {
   Movie,
   Title,
   User,
+  useDeleteCommentMutation,
+  useGetCommentQuery,
   useGetMovieQuery,
   useGetTitleInfoMutation,
   useGetUserQuery,
@@ -26,24 +30,33 @@ import {
   getFormattedWordsArray,
   getTimeFrame,
 } from '../../utils/helpers';
-import { isServer, textMapTypes } from '../../constants';
+import { isServer, popupStates, textMapTypes } from '../../constants';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetPopupData,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
+import CommentCard from './commentCard';
 import Loading from '../../pages/loading/loading';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import _ from 'lodash';
+import { batch } from 'react-redux';
 import { textMap } from '../../utils/interfaces';
-import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
+  type: string;
   goToComment: MouseEventHandler<HTMLDivElement>;
   comment: any;
   updateLike: MouseEventHandler<HTMLSpanElement>;
   like: boolean;
   likeCount: number;
   isMain?: boolean;
+  likedUsers?: User[];
 };
 
 const CardTemplate: React.FC<props> = ({
@@ -53,6 +66,8 @@ const CardTemplate: React.FC<props> = ({
   like,
   likeCount,
   isMain,
+  likedUsers,
+  type,
 }) => {
   const navigate = useNavigate();
   const mounted = useRef<boolean>(false);
@@ -70,7 +85,13 @@ const CardTemplate: React.FC<props> = ({
   const commentRef = useRef<HTMLDivElement | null>(null);
   let titleEntered = useRef<boolean>(false);
   const isReply = !isNaN(parseInt(comment.parentCommentId));
+  const messageRef = useRef<HTMLDivElement | null>(null);
+  const [isEllipsis, setIsEllipsis] = useState<boolean>(false);
+  const [showMore, setShowMore] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const [cardHeight, setCardHeight] = useState<string>('');
   let timeout = 1000;
+
   const [userInfo] = useGetUserQuery({
     variables: { uid: commentedUserId },
     pause: isSameUserAsLoggedIn && isServer(),
@@ -88,7 +109,6 @@ const CardTemplate: React.FC<props> = ({
   // Check if the component is mounted or not for animation purposes.
   useEffect(() => {
     mounted.current = true;
-
     return () => {
       mounted.current = false;
     };
@@ -151,7 +171,7 @@ const CardTemplate: React.FC<props> = ({
       const _user = data.getUser as User;
       userRef.current = _user;
     }
-  }, [userRef.current]);
+  }, [userRef.current, userInfo]);
 
   useMemo(() => {
     const { message } = comment;
@@ -196,6 +216,53 @@ const CardTemplate: React.FC<props> = ({
     setMessageArray(msgArray);
   }, [comment.message]);
 
+  useEffect(() => {
+    if (!messageRef) return;
+    if (!messageRef.current) return;
+    const { clientHeight, scrollHeight } = messageRef.current;
+    setCardHeight(() => `${scrollHeight}px`);
+    if (clientHeight < scrollHeight) {
+      setIsEllipsis(() => true);
+    } else {
+      setIsEllipsis(() => false);
+    }
+  }, [messageRef.current]);
+
+  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = (e) => {
+    e.stopPropagation();
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.ADD_REPLY));
+      dispatch(sliceSetPopupData(comment));
+    });
+  };
+
+  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const _sentData = {
+      data: likedUsers,
+      type: 'Liked',
+    };
+    batch(() => {
+      dispatch(sliceSetPopupData(_sentData));
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+    });
+  };
+
+  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetPopupData(comment));
+      if (type === 'comment') {
+        dispatch(sliceSetSelectedElement(popupStates.DELETE_COMMENT));
+      } else if (type === 'reply') {
+        dispatch(sliceSetSelectedElement(popupStates.DELETE_REPLY));
+      }
+    });
+  };
+
   if (movieDetails.fetching)
     return (
       <div
@@ -219,7 +286,9 @@ const CardTemplate: React.FC<props> = ({
         showTitleInfo={showTitleInfo}
         episodePoster={movieRef.current?.stills}
         titlePoster={titleRef.current?.artwork}
-        isHover={showEpisodeInfo || showTitleInfo}>
+        isHover={showEpisodeInfo || showTitleInfo}
+        cardHeight={cardHeight}
+        showMore={showMore}>
         <div className='bg'>
           {!isMain && showEpisodeInfo ? (
             <img
@@ -255,7 +324,7 @@ const CardTemplate: React.FC<props> = ({
               />
             </div>
           </div>
-          <div className='message'>
+          <div className='message' onClick={goToComment}>
             <div className='username'>
               <div className='container'>
                 <div className='user'>
@@ -307,13 +376,13 @@ const CardTemplate: React.FC<props> = ({
                 </div>
               )}
             </div>
-            <div className='msg'>
+            <div className='msg' ref={messageRef} onClick={goToComment}>
               {!isMain && showEpisodeInfo ? (
                 <MovieInfo movie={movieRef.current!} />
               ) : !isMain && showTitleInfo ? (
                 <MovieInfo title={titleRef.current!} />
               ) : (
-                <>
+                <div className='message-box' onClick={goToComment}>
                   {mArray.map((msg: textMap, index) =>
                     msg.type === textMapTypes.SPOILER ? (
                       <SpoilerTag key={index}>{msg.message}</SpoilerTag>
@@ -323,7 +392,6 @@ const CardTemplate: React.FC<props> = ({
                           key={index}
                           className={msg.type}
                           onClick={(e) => {
-                            e.stopPropagation();
                             if (msg.type === 'user') {
                               navigate(`/profile/${msg.message.slice(1)}`);
                             }
@@ -333,9 +401,19 @@ const CardTemplate: React.FC<props> = ({
                       </React.Fragment>
                     )
                   )}
-                </>
+                </div>
               )}
             </div>
+            {isEllipsis && !showEpisodeInfo && !showTitleInfo && (
+              <div
+                className='show-more'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMore(!showMore);
+                }}>
+                {showMore ? 'Show less' : 'Show more'}
+              </div>
+            )}
           </div>
         </div>
         {!showEpisodeInfo && !showTitleInfo && (
@@ -348,18 +426,26 @@ const CardTemplate: React.FC<props> = ({
                   <MdOutlineFavoriteBorder size={20} />
                 )}
               </span>
-              <span className='count'>
+              <span className='count' onClick={showLikesWindowHandler}>
                 {getFormattedNumber(likeCount)} Likes
               </span>
             </div>
-            <div className='likes c'>
-              <span className='icon'>
-                <MdOutlineModeComment size={20} />
+            <div className='replies c'>
+              <span className='icon' onClick={openCommentWindowHandler}>
+                <MdReply size={20} />
               </span>
               <span className='count'>
                 {getFormattedNumber(comment.repliesCount!)} Replies
               </span>
             </div>
+            {isSameUserAsLoggedIn && (
+              <div className='delete c' onClick={deleteCommentHandler}>
+                <span className='icon'>
+                  <MdDelete size={20} />
+                </span>
+                <span className='count'>Delete</span>
+              </div>
+            )}
           </div>
         )}
       </CardParent>

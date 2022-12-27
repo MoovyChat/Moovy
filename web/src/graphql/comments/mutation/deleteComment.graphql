@@ -1,0 +1,5 @@
+mutation DeleteComment($mid: String!, $cid: String!) {
+  deleteComment(mid: $mid, cid: $cid) {
+    ...FullComment
+  }
+}

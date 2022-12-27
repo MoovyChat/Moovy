@@ -1,30 +1,51 @@
 import { CommentThreadParent, StyledButton } from './commentThread.styles';
-import { MdFavoriteBorder, MdOutlineMoreHoriz, MdReply } from 'react-icons/md';
+import {
+  MdBlock,
+  MdDelete,
+  MdFavorite,
+  MdFavoriteBorder,
+  MdFlag,
+  MdOutlineFavoriteBorder,
+  MdOutlineMoreHoriz,
+  MdReply,
+  MdReport,
+} from 'react-icons/md';
 import {
   Movie,
   Title,
   User,
+  useGetCommentQuery,
   useGetMovieQuery,
   useGetTitleInfoMutation,
+  useIsFollowingUserQuery,
+  useToggleFollowMutation,
 } from '../../generated/graphql';
 import React, {
   MouseEventHandler,
   MutableRefObject,
+  UIEventHandler,
   useEffect,
   useRef,
   useState,
 } from 'react';
+import { getDateFormat, getFormattedNumber } from '../../utils/helpers';
+import { isServer, popupStates } from '../../constants';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetPopupData,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
+import CommentCard from '../../components/comment-card/commentCard';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
 import { Reply } from '../../utils/interfaces';
 import ReplyCard from '../../components/comment-card/replyCard';
-import { getDateFormat } from '../../utils/helpers';
-import { isServer } from '../../constants';
+import { batch } from 'react-redux';
 import { urqlClient } from '../../utils/urlClient';
-import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
@@ -33,6 +54,13 @@ type props = {
   comment: any;
   replies: any;
   userRef: MutableRefObject<User | null>;
+  page?: number | 1;
+  lastPage?: number | 1;
+  setPage?: any;
+  like: boolean;
+  likesCount: number;
+  likedUsers?: User[];
+  updateLike: MouseEventHandler<HTMLSpanElement>;
 };
 
 const CommentTemplate: React.FC<props> = ({
@@ -40,8 +68,17 @@ const CommentTemplate: React.FC<props> = ({
   comment,
   replies,
   userRef,
+  page,
+  setPage,
+  lastPage,
+  like,
+  likesCount,
+  likedUsers,
+  updateLike,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const popWindowOpen = useAppSelector((state) => state.popup.isPopupOpened);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [movieDetails] = useGetMovieQuery({
     variables: {
@@ -51,11 +88,44 @@ const CommentTemplate: React.FC<props> = ({
   });
   const movieRef = useRef<Movie | null>(null);
   const titleRef = useRef<Title | null>(null);
+  const messageRef = useRef<HTMLDivElement | null>(null);
   const [, getTitleInfo] = useGetTitleInfoMutation();
   const loggedInUser = useAppSelector((state) => state.user);
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
+  const parentComment = useRef<any | null>(null);
+  const isReply = comment?.parentCommentId ? true : false;
+  const [isEllipsis, setIsEllipsis] = useState<boolean>(false);
+  const [showMore, setShowMore] = useState<boolean>(false);
+  const [cardHeight, setCardHeight] = useState<string>('');
+  const [openOptionWindow, setOpenOptionWindow] = useState<boolean>(false);
+  const [isFollowingUser, setIsFollowingUser] = useState<boolean>(false);
+  const [followHovered, setFollowHovered] = useState<boolean>(false);
+  const [, toggleFollow] = useToggleFollowMutation();
+  const [deleteAction, setDeleteAction] = useState<boolean>(false);
+  const [getParentComment] = useGetCommentQuery({
+    variables: { cid: comment?.parentReplyId },
+    pause: isServer(),
+  });
 
+  const [amIFollowingThisUser] = useIsFollowingUserQuery({
+    variables: {
+      uid: loggedInUser.id,
+      fid: comment.commentedUserId,
+    },
+    pause: isServer(),
+  });
+
+  useEffect(() => {
+    if (!isReply) return;
+    const { data, error, fetching } = getParentComment;
+    console.log(getParentComment);
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getComment;
+      parentComment.current = _data;
+    }
+  }, [getParentComment, isReply]);
   // Get movie Info
   useEffect(() => {
     const { data, error, fetching } = movieDetails;
@@ -74,9 +144,23 @@ const CommentTemplate: React.FC<props> = ({
     }
   }, [movieDetails]);
 
-  const backButtonHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  useEffect(() => {
+    const { data, error, fetching } = amIFollowingThisUser;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.isFollowingUser as boolean;
+      setIsFollowingUser(() => _data);
+    }
+  }, [amIFollowingThisUser]);
+
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    navigate(-1);
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      if (page !== lastPage) {
+        setPage(() => page! + 1);
+      }
+    }
   };
 
   const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -97,15 +181,84 @@ const CommentTemplate: React.FC<props> = ({
     setShowTitleInfo(false);
   };
 
+  useEffect(() => {
+    if (!messageRef) return;
+    if (!messageRef.current) return;
+    const { clientHeight, scrollHeight } = messageRef.current;
+    setCardHeight(() => `${scrollHeight}px`);
+    if (clientHeight < scrollHeight) {
+      setIsEllipsis(() => true);
+    } else {
+      setIsEllipsis(() => false);
+    }
+  }, [messageRef.current]);
+
+  const toggleFollowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    setIsFollowingUser(!isFollowingUser);
+    toggleFollow({
+      uid: loggedInUser.id,
+      followingId: comment.commentedUserId,
+      follow: !isFollowingUser,
+    });
+  };
+
+  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    setDeleteAction(() => true);
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetPopupData(comment));
+      if (type === 'comment') {
+        dispatch(sliceSetSelectedElement(popupStates.DELETE_COMMENT));
+      } else if (type === 'reply') {
+        dispatch(sliceSetSelectedElement(popupStates.DELETE_REPLY));
+      }
+      setOpenOptionWindow(() => false);
+    });
+  };
+
+  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const _sentData = {
+      data: likedUsers,
+      type: 'Liked',
+    };
+    batch(() => {
+      dispatch(sliceSetPopupData(_sentData));
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+    });
+  };
+
+  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = (e) => {
+    e.stopPropagation();
+    batch(() => {
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.ADD_REPLY));
+      dispatch(sliceSetPopupData(comment));
+    });
+  };
+
   return (
     <CommentThreadParent
+      cardHeight={cardHeight}
+      showMore={showMore}
       showEpisodeInfo={showEpisodeInfo}
       showTitleInfo={showTitleInfo}
       movieBg={movieRef.current?.stills as string}
       titleBg={titleRef.current?.boxart as string}>
-      <ChildHeader className='comment-header' text={type} />
+      <ChildHeader
+        className='comment-header'
+        text={type.charAt(0).toUpperCase() + type.slice(1)}
+      />
+      {/* {isReply && parentComment && parentComment.current && (
+        <div className='parent-container'>
+          <CommentCard comment={parentComment.current} />
+        </div>
+      )} */}
       <div className='comment-container' ref={ref}>
-        <div className='inner'>
+        <div className='inner' onScroll={handleScroll}>
           <div className='comment-usr-detail'>
             <div className='user-container'>
               <div className='user'>
@@ -119,20 +272,86 @@ const CommentTemplate: React.FC<props> = ({
             </div>
             <div className='options-container'>
               {userRef.current?.nickname !== loggedInUser.nickname && (
-                <div className='follow'>
-                  <StyledButton className='follow-btn' color='#de1328'>
-                    Follow
+                <div
+                  className='follow'
+                  onMouseEnter={() => setFollowHovered(() => true)}
+                  onMouseLeave={() => setFollowHovered(() => false)}>
+                  <StyledButton
+                    className='follow-btn'
+                    color={isFollowingUser ? '#13dbde31' : '#de1328'}
+                    isFollowingUser={isFollowingUser}
+                    onClick={toggleFollowHandler}>
+                    {isFollowingUser
+                      ? followHovered
+                        ? 'UnFollow'
+                        : 'Following'
+                      : 'Follow'}
                   </StyledButton>
                 </div>
               )}
 
               <div className='option'>
-                <MdOutlineMoreHoriz className='icon' size={20} />
+                <div
+                  className='option-icon'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenOptionWindow(() => !openOptionWindow);
+                  }}>
+                  <MdOutlineMoreHoriz className='icon' size={20} />
+                </div>
+                {openOptionWindow && (
+                  <div className='option-window'>
+                    {userRef.current?.nickname === loggedInUser.nickname && (
+                      <div
+                        className='opo delete'
+                        onClick={deleteCommentHandler}>
+                        <div className='opo-icon'>
+                          <MdDelete size={20} />
+                        </div>
+                        <div className='opo-text'>Delete</div>
+                      </div>
+                    )}
+                    <div className='opo'>
+                      <div className='opo-icon'>
+                        <MdFlag size={20} />
+                      </div>
+                      <div className='opo-text'>Flag this comment</div>
+                    </div>
+                    <div className='opo'>
+                      <div className='opo-icon'>
+                        <MdBlock size={20} />
+                      </div>
+                      <div className='opo-text'>
+                        Block @{userRef.current?.nickname}
+                      </div>
+                    </div>
+                    <div className='opo'>
+                      <div className='opo-icon'>
+                        <MdReport size={20} />
+                      </div>
+                      <div className='opo-text'>
+                        Report @{userRef.current?.nickname}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
           <div className='comment-usr-msg'>
-            <div className='cm-us-xt'>{comment?.message}</div>
+            <div className='cm-us-xt' ref={messageRef}>
+              {comment?.message.trim()}
+            </div>
+            {isEllipsis && (
+              <div
+                className='show-more'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMore(!showMore);
+                }}>
+                {showMore ? 'Show less' : 'Show more'}
+              </div>
+            )}
           </div>
           <div className='comment-usr-time'>
             {getDateFormat(comment?.createdAt)}
@@ -192,18 +411,24 @@ const CommentTemplate: React.FC<props> = ({
           </div>
           <div className='comment-usr-stats'>
             <div className='likes cus'>
-              <MdFavoriteBorder size={20} />
-              <div className='cmt-txt'>
-                <div className='count'>{comment?.likesCount}</div>
-                <div className='txt'>Likes</div>
-              </div>
+              <span className='icon' onClick={updateLike}>
+                {like ? (
+                  <MdFavorite size={20} fill='#ff005d' />
+                ) : (
+                  <MdOutlineFavoriteBorder size={20} />
+                )}
+              </span>
+              <span className='count' onClick={showLikesWindowHandler}>
+                {getFormattedNumber(likesCount)} Likes
+              </span>
             </div>
             <div className='comment cus'>
-              <MdReply size={20} />
-              <div className='cmt-txt'>
-                <div className='count'>{comment?.repliesCount}</div>
-                <div className='txt'>Replies</div>
-              </div>
+              <span className='icon' onClick={openCommentWindowHandler}>
+                <MdReply size={20} />
+              </span>
+              <span className='count'>
+                {getFormattedNumber(comment?.repliesCount!)} Replies
+              </span>
             </div>
           </div>
           <div className='comment-replies'>
@@ -216,7 +441,7 @@ const CommentTemplate: React.FC<props> = ({
                 />
               ))
             ) : (
-              <>No Replies yet</>
+              <div className='no-data'>No Replies yet</div>
             )}
           </div>
         </div>

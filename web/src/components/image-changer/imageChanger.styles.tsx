@@ -5,27 +5,31 @@ type props = {
 };
 export const ImageChangerParent = styled.div<props>`
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 50vw;
+  height: 50vh;
   display: flex;
   flex-direction: column;
   .heading {
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: 600;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 10%;
+    height: 20%;
   }
   .save-close {
-    position: absolute;
     display: flex;
-    top: 0px;
-    right: 15px;
     z-index: 6;
     .save {
-      margin-right: 10px;
+      position: absolute;
       pointer-events: ${(p) => (p.url ? 'all' : 'none')};
+      right: 15px;
+      top: 20px;
+    }
+    .close {
+      position: absolute;
+      left: 15px;
+      top: 20px;
     }
   }
   .options {
@@ -95,6 +99,7 @@ export const ImageChangerParent = styled.div<props>`
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
     .in {
       display: flex;
       justify-content: center;
@@ -107,19 +112,22 @@ export const ImageChangerParent = styled.div<props>`
     }
   }
   @media (max-width: 500px) {
+    width: 100vw;
+    height: 990vh;
     .heading {
       font-size: 1em;
       font-weight: 600;
     }
     .save-close {
       width: 90%;
+      top: 40px;
       .save {
         position: absolute;
-        left: 0;
+        right: 20px;
       }
       .close {
         position: absolute;
-        right: 0;
+        left: 20px;
       }
     }
     .options {

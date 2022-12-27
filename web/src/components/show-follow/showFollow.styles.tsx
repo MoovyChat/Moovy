@@ -4,10 +4,11 @@ export const ShowFollowParent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  min-width: 10vw;
+  min-height: 20vh;
   flex-direction: column;
   position: relative;
+  padding: 10px 20px 100px 20px;
   .follow-head {
     margin: 15px 0;
     font-weight: bold;

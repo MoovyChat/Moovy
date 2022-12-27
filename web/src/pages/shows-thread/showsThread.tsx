@@ -4,13 +4,14 @@ import {
   useGetMoviesByTitleIdQuery,
   useGetTitleQuery,
 } from '../../generated/graphql';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import ViewportList from 'react-viewport-list';
+import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
 import { isServer } from '../../constants';
 import { title } from 'process';
@@ -20,11 +21,10 @@ import { useParams } from 'react-router-dom';
 const ShowsThread = () => {
   useIsAuth();
   const { id } = useParams();
-
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<Title | null>(null);
-  const [movies, setMovies] = useState<Movie[] | null>(null);
+  const [movies, setMovies] = useState<Movie[] | null>([]);
   const [lastPage, setLastPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [titleInfo] = useGetTitleQuery({
@@ -36,6 +36,10 @@ const ShowsThread = () => {
     pause: isServer(),
   });
 
+  useEffect(() => {
+    console.log('re-rendering', movies);
+  }, []);
+
   useMemo(() => {
     const { data, error, fetching } = titleInfo;
     if (error) return console.error(error);
@@ -43,19 +47,25 @@ const ShowsThread = () => {
       titleRef.current = data.getTitle as Title;
     }
   }, [titleInfo.fetching]);
+
   useMemo(() => {
     const { data, error, fetching } = getMovies;
     if (error) return console.error(error);
     if (!fetching && data) {
-      const paginatedMovies = data.getMoviesByTitleId?.movies!;
-      const p = data.getMoviesByTitleId?.page!;
-      const lastPage = data.getMoviesByTitleId?.lastPage!;
+      const _data = data.getMoviesByTitleId!;
+      if (_data.id !== id) {
+        setMovies([]);
+        return;
+      }
+      const paginatedMovies = _data.movies!;
+      const p = _data.page!;
+      const lastPage = _data.lastPage!;
       let orderedMovies = _.chain(movies)
         .concat(paginatedMovies)
         .orderBy('id')
         .uniq()
         .value();
-      setMovies(orderedMovies as Movie[]);
+      setMovies(() => orderedMovies as Movie[]);
       setPage(() => p);
       setLastPage(lastPage);
     }
@@ -81,6 +91,12 @@ const ShowsThread = () => {
             <img src={titleRef.current?.boxart as string} alt='title' />
           </div>
           <div className='title-text'>{titleRef.current?.title}</div>
+          <WatchVideo
+            className='watch-video'
+            platform='NETFLIX'
+            id={titleRef.current?.id}
+            type='show'
+          />
         </StyledTitleHeader>
       </ChildHeader>
       <div className='movies-container' ref={parentRef}>

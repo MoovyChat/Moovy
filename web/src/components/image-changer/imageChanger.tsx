@@ -147,14 +147,14 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     <ImageChangerParent url={url}>
       <div className='heading'>Upload the photo</div>
       <div className='save-close'>
+        <StyledButton className='close' color='#484242' onClick={closeHandler}>
+          Close
+        </StyledButton>
         <StyledButton
           className='save'
           color={url ? '#de1328' : '#9c535b'}
           onClick={savePhotoFromUrl}>
           {saveText}
-        </StyledButton>
-        <StyledButton className='close' color='#484242' onClick={closeHandler}>
-          Close
         </StyledButton>
       </div>
       <div className='options'>
