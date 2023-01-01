@@ -4,150 +4,135 @@ export const ProfileParent = styled.div`
   display: flex;
   position: relative;
   flex-direction: column;
-  padding: 2em 3em;
+  padding: 10px;
   width: 100%;
   height: 100%;
   overflow: auto;
-
-  .header {
+  .profile-header {
+    position: relative;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    flex: 1;
-    min-height: 65px;
+    height: 150px;
     flex-shrink: 0;
-    .account {
-      position: absolute;
-      top: -10px;
-      right: 0px;
-    }
-    .profile {
-      position: relative;
-      padding: 10px;
-      height: 95%;
-      aspect-ratio: 1;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      .pic {
-        width: 100%;
-        height: 100%;
-      }
-      .heart {
-        position: absolute;
-        filter: drop-shadow(0px 0px 0px);
-        z-index: 1;
-        bottom: 0;
-        left: 0;
-        transition: transform 0.3s;
-        cursor: pointer;
-        :hover {
-          transform: scale(1.05);
-          transition: transform 0.3s;
-        }
-        :active {
-          transform: scale(0.98);
-          transition: transform 0.3s;
-        }
-      }
-    }
-    .detail {
-      display: flex;
-      flex-direction: column;
-      flex: 8;
-      height: 100%;
-      justify-content: space-evenly;
-      align-items: center;
-      .info {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        .name {
-          font-size: 2em;
-          font-weight: 500;
-          margin: 0 5px;
-          width: 100%;
-          flex: 2;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-        .bio {
-          display: flex;
-          justify-content: flex-start;
-          width: 100%;
-          font-size: 1.2em;
-        }
-      }
-    }
-  }
-  .stats {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 70px;
-    .container {
-      width: 90%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .section {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-        .heading {
-          font-weight: 600;
-          font-size: 1.4em;
-        }
-        .count {
-          font-weight: 600;
-          font-size: 1.2em;
-        }
-      }
-    }
-  }
 
-  .feed {
-    flex: 6;
-    flex-shrink: 0;
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 100px;
+      z-index: -1;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .follow {
+      position: absolute;
+      top: 105px;
+      right: 10px;
+      z-index: 0;
+    }
+
+    .profile-pic {
+      position: absolute;
+      top: 80px;
+      left: 10px;
+      width: 70px;
+      height: 70px;
+      z-index: 0;
+      border-radius: 50%;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+    }
+    .name {
+      position: absolute;
+      top: 105px;
+      left: 90px;
+      gap: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      .fullName {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .nickName {
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.7;
+      }
+    }
+  }
+  .pro {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    align-items: center;
-    .toolbar {
-      flex: 1;
+    width: 99%;
+    font-size: 0.9rem;
+    .block {
       display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 40px;
-      box-shadow: inset 0px 0px 4px 0px;
-      .item {
+      padding: 5px;
+      font-weight: 600;
+      opacity: 0.8;
+      gap: 5px;
+      .icon {
         display: flex;
-        width: 100%;
-        height: 100%;
-        font-size: 1.5em;
         justify-content: center;
+        align-items: flex-start;
+      }
+      .info {
+        display: flex;
+        justify-content: flex-start;
         align-items: center;
-        :hover {
-          cursor: pointer;
+        overflow: hidden;
+        white-space: pre-wrap;
+        font-size: 11px;
+        ::first-letter {
+          text-transform: capitalize;
         }
       }
     }
+  }
+  .movies {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+    gap: 10px;
+    outline: 1px dashed;
+    padding: 5px 3px;
+    .title {
+      font-size: 1.5em;
+      font-weight: 500;
+      opacity: 0.7;
+    }
     .list {
-      flex: 9;
+      display: flex;
       width: 100%;
-      padding: 10px;
+      gap: 3px;
+      justify-content: space-evenly;
+      align-items: center;
+      .movie {
+        height: 100px;
+        width: 70px;
+        box-shadow: 0 0 5px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        :hover {
+          box-shadow: 0 0 7 px;
+        }
+      }
     }
   }
 `;
@@ -166,30 +151,6 @@ export const ProfileImage = styled.div<props>`
   background-size: cover;
 `;
 
-export const HiddenRadioButton = styled.input.attrs({
-  type: 'radio',
-})`
-  cursor: pointer;
-  position: absolute;
-  opacity: 0;
-`;
-
-export const RadioButton = styled.span`
-  ${HiddenRadioButton}:checked + && {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    background-color: #03b3ff;
-    box-shadow: inset -1px 0 1px black;
-    font-weight: 600;
-    color: white;
-    transition: all 0.5s;
-  }
-`;
-
 export const NoTitles = styled.div`
   display: flex;
   justify-content: center;
@@ -197,4 +158,23 @@ export const NoTitles = styled.div`
   font-weight: 500;
   font-size: 1.5em;
   height: 100%;
+`;
+
+type ButtonProps = {
+  color: string;
+  isFollowingUser?: boolean;
+};
+export const StyledButton = styled.div<ButtonProps>`
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 700;
+  border-radius: 10px;
+  color: white;
+  background-color: #1c4ab0;
+  :hover {
+    cursor: pointer;
+    background-color: ${(p) => (p.isFollowingUser ? 'transparent' : p.color)};
+    box-shadow: ${(p) => p.isFollowingUser && 'inset 0 0 2px red'};
+    color: ${(p) => p.isFollowingUser && 'red'};
+  }
 `;

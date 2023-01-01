@@ -1,17 +1,10 @@
-query getFollowers($uid: String!) {
+mutation GetFollowers($uid: String!) {
   getFollowers(uid: $uid) {
     user {
-      id
-      name
-      nickname
-      photoUrl
+      ...FullUser
     }
     followers {
-      id
-      nickname
-      photoUrl
-      joinedAt
-      updatedAt
+      ...FullUser
     }
   }
 }

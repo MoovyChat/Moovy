@@ -1,11 +1,10 @@
-import { ReactElement } from 'react';
-
 export interface User {
   id: string;
   name: string;
   email?: string;
   nickname: string;
   photoUrl?: string;
+  bg?: string;
   comments?: CommentInfo[]; //Remove
   replies?: CommentInfo[]; //Remove
   joinedAt?: string;
@@ -68,6 +67,7 @@ export interface CommentInfo {
   movieId: string;
   page?: number;
   lastPage?: number;
+  commentedUserName?: string;
   parentCommentId?: string;
   parentReplyId?: string;
   platformId: number;

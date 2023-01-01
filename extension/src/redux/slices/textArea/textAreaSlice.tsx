@@ -1,5 +1,3 @@
-import { SettingsInterface } from '../../../Utils/interfaces';
-import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const textAreaState = {

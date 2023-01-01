@@ -80,7 +80,7 @@ export const commentLikeChanges = (
               },
             };
             // console.log('newData', newData);
-            return newData;
+            return newData as any;
           }
         );
       }

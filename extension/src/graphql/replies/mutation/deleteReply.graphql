@@ -1,3 +1,5 @@
 mutation DeleteReply($rid: String!) {
-  deleteReply(rid: $rid)
+  deleteReply(rid: $rid) {
+    ...FullReply
+  }
 }

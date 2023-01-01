@@ -44,7 +44,7 @@ const CommentCard: React.FC<props> = ({
   const uid = useAppSelector((state) => state.user.id);
   const mid = useAppSelector((state) => state.movie.id);
   const [time, setTime] = useState<string>('');
-  const [likedUsers, setLikedUser] = useState<User[]>([]);
+  const [likedUsers, setLikedUser] = useState<any[]>([]);
   const [like, setLike] = useState<boolean>(false);
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);

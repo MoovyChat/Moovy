@@ -52,6 +52,7 @@ const LogIn: React.FC<Props> = ({ setUser }) => {
       {!isUserFetched && !userFromAuth ? (
         <ButtonParent>
           <Button
+            className=''
             bgColor='#990100'
             textColor='white'
             iconSize={25}

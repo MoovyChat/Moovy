@@ -1,7 +1,8 @@
-import React from 'react';
-import { MouseEvent } from 'react';
-import { IconType } from 'react-icons/lib';
 import { ButtonIcon, ButtonText, ButtonWindow } from './button.styles';
+
+import { IconType } from 'react-icons/lib';
+import { MouseEvent } from 'react';
+import React from 'react';
 
 type props = {
   iconSize?: number;
@@ -12,6 +13,7 @@ type props = {
   padding: string;
   Icon?: IconType;
   textShadow?: string;
+  className: string;
 };
 const Button: React.FC<props> = ({
   iconSize,
@@ -22,14 +24,20 @@ const Button: React.FC<props> = ({
   padding,
   Icon,
   textShadow,
+  className,
 }) => {
   return (
     <ButtonWindow
+      className={className}
       bgColor={bgColor}
       textColor={textColor}
       onClick={onClick}
       padding={padding}>
-      <ButtonIcon>{Icon ? <Icon size={iconSize} /> : null}</ButtonIcon>
+      {Icon ? (
+        <ButtonIcon>
+          <Icon size={iconSize} />
+        </ButtonIcon>
+      ) : null}
       <ButtonText textShadow={textShadow}>{text}</ButtonText>
     </ButtonWindow>
   );

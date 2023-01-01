@@ -6,7 +6,8 @@ export const AppWindow = styled(motion.div)`
   text-align: center;
   font-family: 'Lexend', sans-serif;
   width: 300px;
-  height: 200px;
+  max-height: 600px;
+  overflow: auto;
   background-color: black;
 
   .floatRight {
@@ -42,8 +43,7 @@ export const SideBarOpen = styled(motion.div)`
 `;
 
 export const Footer = styled.div`
-  position: absolute;
-  bottom: 2px;
+  position: relative;
   font-size: 13px;
   width: 300px;
   text-align: center;

@@ -1,9 +1,9 @@
-mutation toggleFollow($follow: Boolean!, $followerId: String!, $uid: String!) {
-  toggleFollow(follow: $follow, followerId: $followerId, uid: $uid) {
+mutation toggleFollow($follow: Boolean!, $followingId: String!, $uid: String!) {
+  toggleFollow(follow: $follow, followingId: $followingId, uid: $uid) {
     createdAt
     updatedAt
     userId
-    followerId
+    followingId
     follows
   }
 }

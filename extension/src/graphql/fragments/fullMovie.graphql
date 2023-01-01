@@ -1,4 +1,5 @@
 fragment FullMovie on Movie {
+  __typename
   id
   name
   runtime
@@ -12,4 +13,8 @@ fragment FullMovie on Movie {
   viewsCount
   favCount
   titleId
+  parentTitleName
+  stills
+  synopsis
+  year
 }

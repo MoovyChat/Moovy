@@ -1,12 +1,16 @@
-import React from 'react';
 import { OptionsParent } from './header.styles';
+import React from 'react';
 
-const OptionsHeader = () => {
+type props = {
+  className: string;
+};
+const OptionsHeader: React.FC<props> = ({ className }) => {
   return (
-    <OptionsParent>
+    <OptionsParent className={className} backColor='#39d7ec5f'>
       <div className='logo'>
-        <img src='./ncWhite.png' alt='logo' />
+        <img src='qc.png' alt='logo' />
       </div>
+      <div className='title'>Quiet Chat</div>
     </OptionsParent>
   );
 };

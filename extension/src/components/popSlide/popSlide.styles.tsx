@@ -8,10 +8,10 @@ export const PopSlideParent = styled.div<props>`
   position: absolute;
   width: 100%;
   bottom: -4px;
-  /* border-radius: 10% 10% 0 0; */
+  border-radius: 18px 18px 0 0;
   background-color: ${({ theme }) => theme.chatBody};
   z-index: 15;
-  box-shadow: 0 0 10px black inset;
+  box-shadow: 0 0 10px;
   animation: ${(p) =>
     p.isPopSlideOpen
       ? css`

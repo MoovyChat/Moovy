@@ -4,16 +4,46 @@ import {
   SeasonInfo,
   User,
 } from '../Utils/interfaces';
+import { durations, resolutions } from '../optionsPage/utils';
 import {
   getDomain,
   getIdFromNetflixURL,
 } from '../contentScript/contentScript.utils';
+import {
+  getStoredIsRecording,
+  getStoredResolution,
+  getStoredVideoDuration,
+  getStoredVideoFormat,
+  setStoredBlobURL,
+  setStoredIsRecording,
+} from '../optionsPage/storage';
 import {
   getStoredUserLoginDetails,
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
 import { domains } from '../constants';
+import { wait } from '../contentScript/videoStyles/mediaRecorder';
+
+let options = {
+  audio: true,
+  video: true,
+  audioConstraints: {
+    mandatory: {
+      chromeMediaSource: 'tab',
+      echoCancellation: true,
+    },
+  },
+  videoConstraints: {
+    mandatory: {
+      chromeMediaSource: 'tab',
+      maxWidth: 1920,
+      maxHeight: 1200,
+      minFrameRate: 30,
+      minAspectRatio: 1.77,
+    },
+  },
+};
 
 const setCookieForWebPage = async () => {
   // const user = await getStoredUserLoginDetails();
@@ -163,7 +193,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.text === 'SEEK_VIDEO') {
     console.log('Seeking Video');
     const tabId = sender.tab?.id!;
-
     chrome.scripting.executeScript(
       {
         target: { tabId: tabId, allFrames: true },
@@ -177,7 +206,59 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     );
 
     sendResponse({ tab: sender.tab?.id! });
+  } else if (msg.type === 'RECORD_TAB') {
+    let tabId = msg.tabId;
+    let streamId = msg.streamId;
+    let isRecording = msg.isRecording;
+    getStoredVideoFormat().then((format) => {
+      getStoredResolution().then((resolution) => {
+        getStoredVideoDuration().then((d) => {
+          // Send the streamId to the tab
+          let { height, width } = resolutions[resolution];
+          let duration = durations[d];
+          chrome.tabs.sendMessage(tabId, {
+            type: 'RECORD',
+            streamId,
+            height,
+            width,
+            duration,
+            format,
+            isRecording,
+          });
+
+          let timeCount = duration;
+          let interval = setInterval(() => {
+            timeCount--;
+            getStoredIsRecording().then((res) => {
+              if (!res) {
+                chrome.action.setBadgeText({ text: '' });
+                timeCount = 0;
+                clearInterval(interval);
+              } else {
+                if (timeCount <= 0) {
+                  chrome.action.setBadgeText({ text: '' });
+                  clearInterval(interval);
+                } else {
+                  chrome.action.setBadgeBackgroundColor({
+                    color: '#FE0000',
+                  });
+                  chrome.action.setBadgeText({ text: timeCount + '' });
+                }
+              }
+            });
+          }, 1000);
+        });
+      });
+    });
+  } else if (msg.type === 'RECORD_COMPLETE') {
+    const blobUrl = msg.data as string[];
+    setStoredBlobURL(blobUrl);
+    chrome.tabs.create({ url: '/options.html' });
+    chrome.action.setBadgeText({ text: '' });
+    setStoredIsRecording(false);
   }
+
+  return true;
 });
 
 // When the extension in installed.
@@ -293,6 +374,7 @@ let updateListener = function listener(
 // copy paste the netflix watch link.
 chrome.tabs.onCreated.addListener(() => {
   chrome.tabs.onUpdated.addListener(updateListener);
+  chrome.action.setBadgeText({ text: '' });
 });
 // chrome.tabs.onUpdated.addListener(updateListener);
 chrome.tabs.onUpdated.addListener((_a, changeInfo, tab) => {

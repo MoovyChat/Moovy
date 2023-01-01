@@ -2,7 +2,8 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
+// const BundleAnalyzerPlugin =
+//   require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
   entry: {
     popup: path.resolve('src/extension/popup/popup.tsx'),
@@ -86,6 +87,7 @@ module.exports = {
     ...getHTMLPlugins(['options']),
     ...getHTMLPlugins(['popup']),
     ...getHTMLPlugins(['offsite']),
+    // new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

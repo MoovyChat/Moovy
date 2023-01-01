@@ -1,11 +1,7 @@
 query getUserMovieStatus($mid: String!, $uid: String!) {
   getUserMovieStatus(mid: $mid, uid: $uid) {
     user {
-      id
-      name
-      email
-      photoUrl
-      watchedMovies
+      ...FullUser
     }
     movie {
       id

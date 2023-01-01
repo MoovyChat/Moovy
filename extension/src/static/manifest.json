@@ -1,15 +1,24 @@
 {
   "short_name": "Quiet Chat",
   "name": "Quiet Chat",
-  "description": "Enjoy the Netflix now with the Comments",
+  "description": "Enjoy the Streaming now with the Comments",
   "version": "1.0.5",
   "manifest_version": 3,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAokvPCfupK0jKcWnO5HXobk4g92gWiyyIvK9gkdbZ/w2ikGZLHL5tmDDIBbsjPK+NSC842+b+N73oFyXspGpwIASv5vsNuYc0TwIrdaE4LrokM8XOy6QvuYKzvjkYBwW6hSfcjWtYWaW7tILLsotdA3Bj2w12DhIjkCq/fMrMCXrAwSg4eUwWl3sb2bq4DAF9KkZcMFOFEaSCke3FW6uJYen4rIAfSapKgObFKPNmVldnAVYnhgdodb0B/HpgYMa+PgStrj6+Gm/hAVhJqaBOiKb3wMwgClAaWQ6MzM8qgteeXT+fxINmfcYgwJk8AQd6IfHJSEJ/s4kUpfnj4v6EJQIDAQAB",
-  "permissions": ["identity", "storage", "tabs", "scripting", "cookies"],
+  "permissions": [
+    "identity",
+    "storage",
+    "tabs",
+    "scripting",
+    "cookies",
+    "desktopCapture",
+    "tabCapture",
+    "activeTab"
+  ],
   "content_scripts": [
     {
       "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
-      "js": ["index.js", "netflix.js"],
+      "js": ["index.js", "netflix.js", "record.js"],
       "run_at": "document_idle"
     }
   ],

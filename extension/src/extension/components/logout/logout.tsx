@@ -1,19 +1,16 @@
 import {
-  ButtonParentInLogin,
-  EmailInLogin,
+  MdFiberManualRecord,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowRight,
+  MdKeyboardArrowUp,
+} from 'react-icons/md';
+import {
   Pic,
-  PicParent,
+  RecordOptions,
   Refresh,
   SetTop,
   SideArrowButton,
-  WelcomeInLogin,
-  WelcomeMessage,
 } from './logout.styles';
-import {
-  IoMdArrowDropleft,
-  IoMdArrowDropright,
-  IoMdRefresh,
-} from 'react-icons/io';
 import React, {
   ChangeEventHandler,
   Dispatch,
@@ -23,19 +20,30 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { durations, resolutions } from '../../../optionsPage/utils';
 import {
   getStoredCheckedStatus,
   setStoredCheckedStatus,
   setStoredUserLoginDetails,
 } from '../../../Utils/storage';
+import {
+  getStoredIsRecording,
+  getStoredResolution,
+  getStoredVideoDuration,
+  getStoredVideoFormat,
+  setStoredIsRecording,
+  setStoredResolution,
+  setStoredVideoDuration,
+  setStoredVideoFormat,
+} from '../../../optionsPage/storage';
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { IoMdRefresh } from 'react-icons/io';
 import { User } from '../../../Utils/interfaces';
-import UserNameEdit from '../userNameEdit/userNameEdit';
 import { WithOutLoginWindow } from '../login/login.styles';
 import constants from '../../../constants';
+import { getSupportedMimeTypes } from '../../utils';
 
 const signOut = async (setUser: (user: User) => void) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -49,6 +57,7 @@ const signOut = async (setUser: (user: User) => void) => {
     email: '',
     photoUrl: '',
     nickname: '',
+    bg: '',
     id: '',
     comments: [],
     replies: [],
@@ -60,6 +69,8 @@ const signOut = async (setUser: (user: User) => void) => {
     setUser(removeUser);
   });
 };
+
+// Get supported mime types.
 
 const openSideBar = (
   root: HTMLElement,
@@ -84,11 +95,52 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
   const [sideBarOpened, setSideBatOpen] = useState<boolean>(false);
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
+  const [showRecordOptions, setShowRecordOptions] = useState<boolean>(false);
+  const [selectedResolution, setSelectedResolution] = useState<string>('360p');
+  const [selectedDuration, setSelectedDuration] = useState<string>('10sec');
+  const [supportedVideoFormats, setSupportedVideoFormats] = useState<string[]>(
+    []
+  );
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [selectedVideoFormat, setSelectedVideoFormat] =
+    useState<string>('video/webm');
   useEffect(() => {
     if (user && user.nickname === user.id) {
       setShowNickNameEdit(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    const videoTypes = ['webm', 'ogg', 'mp4', 'x-matroska'];
+    const codecs = [
+      'should-not-be-supported',
+      'vp9',
+      'vp9.0',
+      'vp8',
+      'vp8.0',
+      'avc1',
+      'av1',
+      'h265',
+      'h.265',
+      'h264',
+      'h.264',
+      'opus',
+      'pcm',
+      'aac',
+      'mpeg',
+      'mp4a',
+    ];
+    const supportedVideos = getSupportedMimeTypes('video', videoTypes, codecs);
+    setSupportedVideoFormats(supportedVideos);
+  }, []);
+
+  useEffect(() => {
+    // Get stored resolution and duration values from storage.
+    getStoredResolution().then((val) => setSelectedResolution(val));
+    getStoredVideoDuration().then((val) => setSelectedDuration(val));
+    getStoredVideoFormat().then((val) => setSelectedVideoFormat(val));
+    getStoredIsRecording().then((val) => setIsRecording(val));
+  }, []);
 
   useEffect(() => {
     const appElement = document.getElementById('app');
@@ -133,71 +185,146 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
 
   return (
     <WithOutLoginWindow>
-      {!showNickNameEdit ? (
-        <SetTop>
-          <WelcomeInLogin>
-            <PicParent>
-              <Pic photoURL={user?.photoUrl}></Pic>
-            </PicParent>
-            <WelcomeMessage>
-              {constants.welcome} {user?.name}!
-            </WelcomeMessage>
-            <div
-              className='settings'
-              onClick={() => chrome.runtime.openOptionsPage()}>
-              <IoSettingsOutline className='icon' size={25} />
-            </div>
-          </WelcomeInLogin>
-          <EmailInLogin>
-            <h4>Enable comments</h4>
-            <input type='checkbox' checked={checked} onChange={handleChange} />
-          </EmailInLogin>
-          <ButtonParentInLogin>
-            <Button
-              bgColor='hsl(0, 70%, 30%)'
-              textColor='white'
-              iconSize={25}
-              text={constants.logout}
-              onClick={(e: MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-                setSideOpen(false);
-                signOut(setUser);
-              }}
-              padding='5px 3px'
-              Icon={FcGoogle}
-              textShadow='0 0 6px black, 0 0 5px #0000ff'
-            />
-          </ButtonParentInLogin>
-          <SideArrowButton
-            onClick={(e) => {
-              e.preventDefault();
+      <SetTop>
+        <div className='welcome'>
+          <div className='pic'>
+            <Pic photoURL={user?.photoUrl}></Pic>
+          </div>
+          <div className='message'>
+            {constants.welcome} {user?.name.split(' ')[0]}!
+          </div>
+        </div>
+        <div className='comment-checkbox'>
+          <h4>Enable comments</h4>
+          <input type='checkbox' checked={checked} onChange={handleChange} />
+        </div>
+        <div className='button-list'>
+          <Button
+            className='lst'
+            bgColor='hsl(0, 70%, 30%)'
+            textColor='white'
+            iconSize={25}
+            text={constants.logout}
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
-              openSideBar(root!, setSideBatOpen, sideBarOpened);
-              setSideOpen(!sideBarOpened);
-            }}>
-            {sideBarOpened ? (
-              <IoMdArrowDropright size={40} />
-            ) : (
-              <IoMdArrowDropleft size={40} />
-            )}
-          </SideArrowButton>
-          <Refresh
-            whileHover={{ scale: 1.2, rotate: 90 }}
-            whileTap={{
-              scale: 0.8,
-              rotate: 360,
-              borderRadius: '100%',
+              setSideOpen(false);
+              signOut(setUser);
             }}
-            onClick={refreshData}>
-            <IoMdRefresh size={40} />
-          </Refresh>
-        </SetTop>
-      ) : (
-        <UserNameEdit
-          user={user!}
-          setShowNickNameEdit={setShowNickNameEdit}
-          showNickNameEdit={showNickNameEdit}></UserNameEdit>
-      )}
+            padding='5px 3px'
+            Icon={FcGoogle}
+            textShadow='0 0 6px black, 0 0 5px #0000ff'
+          />
+          <Button
+            className='lst'
+            bgColor='hsl(0, 70%, 30%)'
+            textColor='white'
+            iconSize={25}
+            Icon={
+              showRecordOptions ? MdKeyboardArrowDown : MdKeyboardArrowRight
+            }
+            text={constants.record_options}
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              setShowRecordOptions(!showRecordOptions);
+            }}
+            padding='5px 3px'
+            textShadow='0 0 6px black, 0 0 5px #0000ff'
+          />
+          <RecordOptions showOptions={showRecordOptions}>
+            <div className='record-option'>
+              <div className='key'>Resolution</div>
+              <div className='value'>
+                <select
+                  value={selectedResolution}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setSelectedResolution(e.target.value);
+                    setStoredResolution(e.target.value);
+                  }}>
+                  {Object.keys(resolutions).map((key) => (
+                    <option value={key} key={key}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className='record-option'>
+              <div className='key'>Format</div>
+              <div className='value'>
+                <select
+                  value={selectedVideoFormat}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setSelectedVideoFormat(e.target.value);
+                    setStoredVideoFormat(e.target.value);
+                  }}>
+                  {supportedVideoFormats.map((key) => (
+                    <option value={key} key={key}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className='record-option'>
+              <div className='key'>Duration</div>
+              <div className='value'>
+                <select
+                  value={selectedDuration}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setSelectedDuration(e.target.value);
+                    setStoredVideoDuration(e.target.value);
+                  }}>
+                  {Object.keys(durations).map((key) => (
+                    <option value={key} key={key}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </RecordOptions>
+        </div>
+        <SideArrowButton
+          isRecording={isRecording}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsRecording(!isRecording);
+            setStoredIsRecording(!isRecording);
+
+            chrome.windows.getCurrent((w) => {
+              chrome.tabs.query({ active: true, windowId: w.id! }, (tabs) => {
+                chrome.tabCapture.getMediaStreamId(
+                  {
+                    consumerTabId: tabs[0].id!,
+                  },
+                  (streamId) => {
+                    chrome.runtime.sendMessage({
+                      type: 'RECORD_TAB',
+                      streamId,
+                      tabId: tabs[0].id!,
+                      isRecording: !isRecording,
+                    });
+                  }
+                );
+              });
+            });
+          }}>
+          <MdFiberManualRecord size={40} fill='red' className='icon' />
+        </SideArrowButton>
+        <Refresh
+          whileHover={{ scale: 1.2, rotate: 90 }}
+          whileTap={{
+            scale: 0.8,
+            rotate: 360,
+            borderRadius: '100%',
+          }}
+          onClick={refreshData}>
+          <IoMdRefresh size={40} />
+        </Refresh>
+      </SetTop>
     </WithOutLoginWindow>
   );
 };

@@ -34,7 +34,8 @@ function main() {
   observer.observe(document, { subtree: true, childList: true });
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === 'refresh') {
+    console.log(request);
+    if (request.type === 'refresh') {
       // Netflix related stuff.
       getUserRemoveNodeInitiateContentScript();
       sendResponse({

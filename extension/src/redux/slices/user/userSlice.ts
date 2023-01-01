@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const userState: User = {
   id: '',
   name: '',
+  bg: '',
   email: '',
   nickname: '',
   photoUrl: '',

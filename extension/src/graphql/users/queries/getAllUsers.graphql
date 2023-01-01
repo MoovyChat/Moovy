@@ -1,12 +1,5 @@
 query GetAllUsers {
   users {
-    id
-    email
-    nickname
-    name
-    photoUrl
-    watchedMovies
-    joinedAt
-    updatedAt
+    ...FullUser
   }
 }

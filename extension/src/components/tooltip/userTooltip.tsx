@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '../../Utils/interfaces';
+import { User } from '../../generated/graphql';
 import { UserToolTipParent } from './tooltip.styles';
 
 type props = {
