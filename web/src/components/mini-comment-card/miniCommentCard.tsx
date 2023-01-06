@@ -1,4 +1,10 @@
-import { Comment, User, useGetUserQuery } from '../../generated/graphql';
+import {
+  Comment,
+  User,
+  useGetCommentOrReplyQuery,
+  useGetUserMutMutation,
+  useGetUserQuery,
+} from '../../generated/graphql';
 import React, { useEffect, useRef, useState } from 'react';
 
 import Loading from '../../pages/loading/loading';
@@ -8,33 +14,55 @@ import { StyledMiniCommentCard } from './miniCommentCard.styles';
 import { getTimeFrame } from '../../utils/helpers';
 import { isServer } from '../../constants';
 
+interface miniUser {
+  __typename?: 'User' | undefined;
+  id: string;
+  name: string;
+  photoUrl: string;
+  nickname: string;
+}
 type props = {
-  comment: Comment;
+  id: string;
+  type: string;
   className: string;
   extendData?: boolean;
 };
 const MiniCommentCard: React.FC<props> = ({
-  comment,
+  id,
+  type,
   className,
   extendData,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<miniUser | null>(null);
+  const parentComment = useRef<any | null>(null);
   const [cardHeight, setCardHeight] = useState<string>('');
   const [isEllipsis, setIsEllipsis] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
-
-  const messageRef = useRef<HTMLDivElement | null>(null);
-  const [{ data, error, fetching }] = useGetUserQuery({
-    variables: { uid: comment?.commentedUserId! },
+  const [, getUser] = useGetUserMutMutation();
+  const [getParentComment] = useGetCommentOrReplyQuery({
+    variables: {
+      id,
+      type,
+    },
     pause: isServer(),
   });
+  const messageRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
+    const { data, error, fetching } = getParentComment;
     if (error) console.log(error);
     if (!fetching && data) {
-      const getUser = data?.getUser! as User;
-      setUser(getUser);
+      const _data = data.getCommentOrReply;
+      parentComment.current = _data?.comment ? _data.comment : _data?.reply;
+      getUser({ uid: parentComment?.current?.commentedUserId }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          const _data = data.getUserMut!;
+          setUser(() => _data as miniUser);
+        }
+      });
     }
-  }, [data, error, fetching, user, comment?.commentedUserId]);
+  }, [getParentComment]);
 
   useEffect(() => {
     if (!messageRef) return;
@@ -53,7 +81,7 @@ const MiniCommentCard: React.FC<props> = ({
       className={className}
       cardHeight={cardHeight}
       showMore={showMore}>
-      {comment ? (
+      {parentComment.current ? (
         <React.Fragment>
           <div className='photo'>
             <ProfilePic
@@ -65,10 +93,12 @@ const MiniCommentCard: React.FC<props> = ({
           <div className='data'>
             <div className='name'>
               <span>{user && (user.nickname as string)}</span>
-              <span className='time'>{getTimeFrame(comment.createdAt!)}</span>
+              <span className='time'>
+                {getTimeFrame(parentComment.current.createdAt!)}
+              </span>
             </div>
             <div className='msg' ref={messageRef}>
-              {comment.message}
+              {parentComment.current.message}
             </div>
             {isEllipsis && extendData && (
               <div

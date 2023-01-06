@@ -204,7 +204,13 @@ const AddComment: React.FC<props> = ({ type }) => {
           {type === 'comment' && comment && comment.commentedUserId && (
             <div className='comment'>
               <MiniCommentCard
-                comment={comment as any}
+                id={comment.id}
+                type={
+                  (comment as any)?.parentCommentId ===
+                  (comment as any)?.parentReplyId
+                    ? 'comment'
+                    : 'reply'
+                }
                 className='mini'
                 extendData={false}
               />

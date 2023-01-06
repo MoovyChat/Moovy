@@ -11,7 +11,7 @@ const useFetchEmojis = () => {
     let rg: refinedG = {};
     const data: Emoji[] = await fetchFromCDN('en/data.json');
     // Refining data to the object with keys and subKeys.
-    await data.map((em) => {
+    data.map((em) => {
       let key = em.group!;
       let subKey = em.subgroup!;
       if (rg[key] === undefined) {
@@ -70,7 +70,7 @@ const useFetchEmojis = () => {
           console.log(`Successfully initialized emojiDB`);
         } else {
           const refGroups = await db.emojis.get(1);
-          await setRefinedGroups(refGroups?.emojis as refinedG);
+          setRefinedGroups(refGroups?.emojis as refinedG);
         }
       } catch (error) {
         console.log(`Failed to add emojiDB ${error}`);

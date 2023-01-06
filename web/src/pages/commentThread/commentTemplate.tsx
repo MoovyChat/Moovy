@@ -101,7 +101,6 @@ const CommentTemplate: React.FC<props> = ({
   const loggedInUser = useAppSelector((state) => state.user);
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
-  const parentComment = useRef<any | null>(null);
   const isReply = comment?.parentCommentId ? true : false;
   const [isEllipsis, setIsEllipsis] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -111,13 +110,6 @@ const CommentTemplate: React.FC<props> = ({
   const [followHovered, setFollowHovered] = useState<boolean>(false);
   const [, toggleFollow] = useToggleFollowMutation();
   const [deleteAction, setDeleteAction] = useState<boolean>(false);
-  const [getParentComment] = useGetCommentOrReplyQuery({
-    variables: {
-      id: comment?.parentReplyId! as string,
-      type: isReply ? 'reply' : 'comment',
-    },
-    pause: isServer(),
-  });
 
   const [amIFollowingThisUser] = useIsFollowingUserQuery({
     variables: {
@@ -131,16 +123,6 @@ const CommentTemplate: React.FC<props> = ({
     ref && ref.current?.scrollIntoView();
   }, [ref.current]);
 
-  useEffect(() => {
-    if (!isReply) return;
-    const { data, error, fetching } = getParentComment;
-    // if (error) console.log(error);
-    if (!fetching && data) {
-      const _data = data.getCommentOrReply;
-      console.log(_data);
-      parentComment.current = _data?.comment ? _data.comment : _data?.reply;
-    }
-  }, [getParentComment, isReply]);
   // Get movie Info
   useEffect(() => {
     const { data, error, fetching } = movieDetails;
@@ -274,7 +256,12 @@ const CommentTemplate: React.FC<props> = ({
         {isReply && (
           <MiniCommentCard
             className='cc'
-            comment={parentComment.current}
+            id={comment?.parentReplyId! as string}
+            type={
+              comment?.parentCommentId === comment?.parentReplyId
+                ? 'comment'
+                : 'reply'
+            }
             extendData={true}
           />
         )}

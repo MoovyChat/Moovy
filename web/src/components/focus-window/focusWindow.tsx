@@ -1,5 +1,5 @@
 import { DIRECTION, FOCUS_WINDOW } from '../../utils/enums';
-import React, { useCallback, useState } from 'react';
+import React, { EventHandler, useCallback, useRef, useState } from 'react';
 
 import EmojiPicker from '../emojiPicker/emojiPicker';
 import { StyledFocusWindow } from './focusWindow.styles';
@@ -21,6 +21,7 @@ const FocusWindow: React.FC<props> = ({
   data,
 }) => {
   const [clicked, setClicked] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
   const SelectedElement = useCallback(() => {
     switch (message) {
       case FOCUS_WINDOW.EMOJI:
@@ -29,8 +30,18 @@ const FocusWindow: React.FC<props> = ({
         return <div></div>;
     }
   }, [message]);
+  const KeyDownHandler: EventListenerOrEventListenerObject = (e) => {
+    const target = e.target as HTMLElement;
+    if (!ref.current?.contains(target)) {
+      setClicked(false);
+      document.removeEventListener('mousedown', KeyDownHandler);
+    }
+  };
+  document.addEventListener('mousedown', KeyDownHandler);
   return (
     <StyledFocusWindow
+      id='tooltip'
+      ref={ref}
       className='tooltip-wrapper'
       dir={dir}
       clicked={clicked}

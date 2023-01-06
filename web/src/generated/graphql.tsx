@@ -285,6 +285,7 @@ export type Mutation = {
   setReplyLike?: Maybe<ReplyStatsObject>;
   toggleFollow?: Maybe<Follow>;
   updateMovieTitle?: Maybe<Scalars['Boolean']>;
+  updateMovieViewCount?: Maybe<Scalars['Int']>;
   updateUserBg: NickNameResponse;
   updateUserMovieStats?: Maybe<LikeAndFav>;
   updateUserNickName: NickNameResponse;
@@ -445,6 +446,11 @@ export type MutationToggleFollowArgs = {
 export type MutationUpdateMovieTitleArgs = {
   mid: Scalars['String'];
   name: Scalars['String'];
+};
+
+
+export type MutationUpdateMovieViewCountArgs = {
+  mid: Scalars['String'];
 };
 
 
@@ -1275,6 +1281,13 @@ export type GetFollowingsMutationVariables = Exact<{
 
 export type GetFollowingsMutation = { __typename?: 'Mutation', getFollowings?: { __typename?: 'getFollowings', followings?: Array<{ __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null, user?: { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null } | null };
 
+export type GetUserMutMutationVariables = Exact<{
+  uid: Scalars['String'];
+}>;
+
+
+export type GetUserMutMutation = { __typename?: 'Mutation', getUserMut?: { __typename?: 'User', id: string, name: string, photoUrl: string, nickname: string } | null };
+
 export type LoginMutationVariables = Exact<{
   uid: Scalars['String'];
 }>;
@@ -1986,6 +1999,20 @@ export const GetFollowingsDocument = gql`
 
 export function useGetFollowingsMutation() {
   return Urql.useMutation<GetFollowingsMutation, GetFollowingsMutationVariables>(GetFollowingsDocument);
+};
+export const GetUserMutDocument = gql`
+    mutation GetUserMut($uid: String!) {
+  getUserMut(uid: $uid) {
+    id
+    name
+    photoUrl
+    nickname
+  }
+}
+    `;
+
+export function useGetUserMutMutation() {
+  return Urql.useMutation<GetUserMutMutation, GetUserMutMutationVariables>(GetUserMutDocument);
 };
 export const LoginDocument = gql`
     mutation login($uid: String!) {

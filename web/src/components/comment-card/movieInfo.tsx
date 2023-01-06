@@ -100,7 +100,11 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
           <React.Fragment>
             <div className='year'>{title && title.type}</div>
             {title &&
-              title.advisories?.map((adv) => <div className='year'>{adv}</div>)}
+              title.advisories?.map((adv, index) => (
+                <div className='year' key={index}>
+                  {adv}
+                </div>
+              ))}
             {title?.rating && <div className='year'>{title?.rating}</div>}
           </React.Fragment>
         )}

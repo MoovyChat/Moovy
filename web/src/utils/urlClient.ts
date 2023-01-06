@@ -40,6 +40,7 @@ const cache: Partial<CacheExchangeOpts> = {
     Visited: () => null,
     Profile: () => null,
     MovieStats: () => null,
+    CommentOrReply: () => null,
   },
   updates: {
     Mutation: {
