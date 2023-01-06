@@ -111,7 +111,7 @@ const TitleCard: React.FC<props> = ({
       onMouseLeave={() => hoverHandler(false)}>
       <div className='container' ref={childRef}>
         <div className='title-bg'>
-          <img src={title.artwork as string} alt='title' />
+          <img src={title.artwork as string} alt='title' loading='lazy' />
         </div>
         {hovered && (
           <div className='info'>

@@ -53,7 +53,7 @@ const DifferentProfile = () => {
 
   useEffect(() => {
     if (error) console.log(error);
-    user.current = data?.getUserByUserName as User;
+    if (data) user.current = data?.getUserByUserName as User;
   }, [fetching, id]);
 
   if (fetching)
@@ -67,7 +67,7 @@ const DifferentProfile = () => {
       }}>
       <Loading />
     </div>;
-  if (user.current === null) {
+  if (error || data?.getUserByUserName === null) {
     return <NotFound />;
   }
   return (

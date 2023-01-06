@@ -27,12 +27,15 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AiOutlineNumber } from 'react-icons/ai';
 import CommentCard from '../comment-card/commentCard';
+import { FOCUS_WINDOW } from '../../utils/enums';
+import FocusWindow from '../focus-window/focusWindow';
 import MiniCommentCard from '../mini-comment-card/miniCommentCard';
 import MovieCard from '../movie-card/movieCard';
 import MovieChip from '../movie-chip/movieChip';
 import MovieInfo from '../comment-card/movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import { batch } from 'react-redux';
+import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
 
 type props = {
   type: string;
@@ -40,9 +43,9 @@ type props = {
 const AddComment: React.FC<props> = ({ type }) => {
   const [_ic, insertComment] = useInsertCommentMutation();
   const [_ir, insertReply] = useInsertReplyMutation();
+  const text = useAppSelector((state) => state.textArea.text);
   const ref = useRef<HTMLDivElement | null>(null);
   const user = useAppSelector((state) => state.user);
-  const [text, setText] = useState<string>('');
   let popupData = useAppSelector((state) => state.popup.popupData);
   const [movieInfo, setMovieInfo] = useState<Movie>();
   const [comment, setComment] = useState<Comment | Reply>();
@@ -60,6 +63,7 @@ const AddComment: React.FC<props> = ({ type }) => {
       dispatch(sliceSetIsPopupOpened(false));
       dispatch(sliceSetSelectedElement(''));
       dispatch(sliceSetPopupData({}));
+      dispatch(sliceSetTextAreaMessage(''));
     });
   };
 
@@ -153,35 +157,57 @@ const AddComment: React.FC<props> = ({ type }) => {
             <StyledTextArea
               placeholder='Hmm...'
               value={text}
+              maxLength={300}
+              autoFocus
               onChange={(e) => {
                 e.stopPropagation();
-                setText(e.target.value);
+                dispatch(sliceSetTextAreaMessage(e.target.value));
               }}></StyledTextArea>
             <StyledTextAreaBack ref={ref}>{text}</StyledTextAreaBack>
           </div>
           <div className='options'>
-            <div className='chip'>
-              <div className='icon'>
-                <MdEmojiEmotions size={15} />
+            <FocusWindow
+              message={FOCUS_WINDOW.EMOJI}
+              height='200px'
+              width='200px'>
+              <div className='chip'>
+                <div className='icon'>
+                  <MdEmojiEmotions size={15} />
+                </div>
+                <div className='text'>Emoji</div>
               </div>
-              <div className='text'>Emoji</div>
-            </div>
-            <div className='chip'>
+            </FocusWindow>
+            <div
+              className='chip'
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(sliceSetTextAreaMessage(text + '<s></s>'));
+              }}>
               <div className='icon'>
                 <MdCode size={15} />
               </div>
               <div className='text'>Spoiler</div>
             </div>
-            <div className='chip down'>
+            <div
+              className='chip down'
+              style={{
+                background: `linear-gradient(90deg, #df1212 ${
+                  text.length / 3
+                }%,#6d0e85 0%)`,
+              }}>
               <div className='icon'>
                 <AiOutlineNumber size={15} />
               </div>
-              <div className='text'>12/300</div>
+              <div className='text'>{text.length}/300</div>
             </div>
           </div>
           {type === 'comment' && comment && comment.commentedUserId && (
             <div className='comment'>
-              <MiniCommentCard comment={comment as any} />
+              <MiniCommentCard
+                comment={comment as any}
+                className='mini'
+                extendData={false}
+              />
             </div>
           )}
 

@@ -40,6 +40,7 @@ import {
   SetReplyLikeMutation,
   ToggleFollowMutation,
   UpdateProfileMutation,
+  UpdateUserMovieStatsMutation,
 } from '../generated/graphql';
 
 export const loginChanges = (
@@ -760,6 +761,49 @@ export const deleteReplyChanges = (
           }
         );
       }
+    }
+  });
+};
+
+export const updateMovieLikesChanges = (
+  _result: UpdateUserMovieStatsMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getMovie: 'getMovie',
+  };
+
+  const getMovieFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getMovie
+  );
+  getMovieFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).mid === args.mid) {
+      cache.updateQuery(
+        { query: GetMovieDocument, variables: fieldInfo.arguments },
+        (data: GetMovieQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getMovie = data.getMovie!;
+          const like = (args.options as any).like!;
+          const likesCount = getMovie.likesCount!;
+          return {
+            ...data,
+            getMovie: {
+              ...getMovie,
+              likesCount: like
+                ? likesCount + 1
+                : likesCount - 1 <= 0
+                ? 0
+                : likesCount - 1,
+            },
+          };
+        }
+      );
     }
   });
 };

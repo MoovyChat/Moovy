@@ -74,7 +74,7 @@ export const LeftParent = styled.div`
       }
       .icon.comments {
         svg {
-          fill: #00e5ff;
+          fill: #6a30ac;
         }
       }
       .icon.replies {

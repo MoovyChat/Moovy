@@ -40,29 +40,31 @@ const EmojiPicker = () => {
 
   return (
     <EmojiPickerParent>
-      <EmojiPickerHeader>
-        {Object.values(groups).map(
-          (value, index) =>
-            index !== 2 && (
-              <HeaderKey
-                key={index}
-                className='header-key'
-                selectedGroup={index === groupNumber}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  selectGroup(index);
-                }}>
-                {headerEmoji[value]}
-              </HeaderKey>
-            )
+      <div className='container'>
+        <EmojiPickerHeader>
+          {Object.values(groups).map(
+            (value, index) =>
+              index !== 2 && (
+                <HeaderKey
+                  key={index}
+                  className='header-key'
+                  selectedGroup={index === groupNumber}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectGroup(index);
+                  }}>
+                  {headerEmoji[value]}
+                </HeaderKey>
+              )
+          )}
+        </EmojiPickerHeader>
+        {refinedGroups && refinedGroups[groupNumber] && groupNumber !== 2 && (
+          <EmojiGroup
+            subGroup={refinedGroups[groupNumber]}
+            groupNumber={groupNumber}
+          />
         )}
-      </EmojiPickerHeader>
-      {refinedGroups && refinedGroups[groupNumber] && groupNumber !== 2 && (
-        <EmojiGroup
-          subGroup={refinedGroups[groupNumber]}
-          groupNumber={groupNumber}
-        />
-      )}
+      </div>
     </EmojiPickerParent>
   );
 };

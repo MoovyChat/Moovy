@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const EmojiButtonParent = styled.div`
-  height: 50px;
-  width: 50px;
+  height: 20px;
+  width: 20px;
   display: flex;
   position: relative;
   justify-content: center;
@@ -12,7 +12,7 @@ export const EmojiButtonParent = styled.div`
     height: 100%;
     width: 100%;
     display: flex;
-    font-size: 3rem;
+    font-size: 1.2rem;
     overflow: hidden;
     position: relative;
     justify-content: center;
@@ -22,6 +22,7 @@ export const EmojiButtonParent = styled.div`
     :hover {
       transform: scale(1.1);
       animation: smile 1s ease-in-out infinite;
+      cursor: pointer;
     }
   }
 

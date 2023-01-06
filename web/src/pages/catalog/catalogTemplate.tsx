@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import { Title } from '../../generated/graphql';
@@ -7,8 +7,27 @@ import TitleCard from './titleCard';
 type props = {
   parentRef: React.RefObject<HTMLDivElement>;
   titles: Title[] | null;
+  setPage: any;
+  page: number;
+  lastPage: number;
 };
-const CatalogTemplate: React.FC<props> = ({ parentRef, titles }) => {
+
+const CatalogTemplate: React.FC<props> = ({
+  parentRef,
+  titles,
+  setPage,
+  page,
+  lastPage,
+}) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      if (page !== lastPage) {
+        setPage((p: number) => p + 1);
+      }
+    }
+  };
   if (titles!.length <= 0)
     return (
       <div
@@ -25,7 +44,7 @@ const CatalogTemplate: React.FC<props> = ({ parentRef, titles }) => {
     );
 
   return (
-    <CatalogParent ref={parentRef}>
+    <CatalogParent ref={parentRef} onScroll={handleScroll}>
       {titles &&
         titles.map((title, index) => (
           <TitleCard

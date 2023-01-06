@@ -30,6 +30,8 @@ const ReplyThread = () => {
   const [replyLikeQuery, _executeQuery] = useGetReplyLikesQuery({
     variables: {
       rid: id!,
+      limit: 10,
+      page: 1,
     },
     pause: isServer(),
   });

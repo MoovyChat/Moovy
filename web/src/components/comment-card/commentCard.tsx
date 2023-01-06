@@ -27,6 +27,8 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
       cid: comment.id!,
+      limit: 10,
+      page: 1,
     },
     pause: isServer(),
   });

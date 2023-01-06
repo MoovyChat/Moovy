@@ -192,3 +192,44 @@ export const repliesResolver = (): Resolver => {
     return newData;
   };
 };
+
+export const paginatedMoviesResolver = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    let newTitles = [] as string[];
+    let _page = 0;
+    let _lastPage = 0;
+
+    let _totalTitleCount = 0;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      if (args.cid !== fieldArgs.cid) return;
+      if (args.rid !== fieldArgs.rid) return;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const titles = cache.resolve(link, 'titles') as string[];
+      _lastPage = cache.resolve(link, 'lastPage') as number;
+      _page = cache.resolve(link, 'page') as number;
+      _totalTitleCount = cache.resolve(link, 'totalTitleCount') as number;
+      newTitles = _.concat(newTitles, titles);
+      newTitles = _.uniq(newTitles);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: 'PaginatedTitles',
+      page: _page,
+      lastPage: _lastPage,
+      totalTitleCount: _totalTitleCount,
+      titles: newTitles,
+    };
+    return newData;
+  };
+};

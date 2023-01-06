@@ -36,10 +36,13 @@ export const SearchBarParent = styled.div`
     z-index: 99;
     border-radius: 20px;
     box-shadow: 0 0 5px, inset 0 0 5px;
-    backdrop-filter: blur(10px) brightness(0.6);
+    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    @media (max-width: 767px) {
+      width: 100%;
+    }
     .heading {
       font-size: 1.2em;
       font-weight: bold;

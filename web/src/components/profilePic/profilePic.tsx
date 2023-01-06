@@ -20,7 +20,7 @@ const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
     <React.Fragment>
       {tooltip ? (
         <ProfilePicParent onClick={navigateToUser} id='blur-escape'>
-          <img src={src} alt='profilePic' id='blur-escape' />
+          <img src={src} alt='profilePic' id='blur-escape' loading='lazy' />
         </ProfilePicParent>
       ) : (
         <Tooltip

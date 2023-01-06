@@ -28,6 +28,8 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
   const [replyLikeQuery, _executeQuery] = useGetReplyLikesQuery({
     variables: {
       rid: comment.id!,
+      limit: 10,
+      page: 1,
     },
     pause: isServer(),
   });

@@ -1,6 +1,9 @@
+import * as DOMPurify from 'dompurify';
+
 import { textMap, timeMessage } from './interfaces';
 
 import { Dispatch } from 'redux';
+import HtmlParser from 'react-html-parser';
 import { msgPlace } from './enums';
 import { textMapTypes } from '../constants';
 
@@ -105,4 +108,35 @@ export const getFormattedWordsArray = (text: string): textMap[] => {
       return { message: word, type: textMapTypes.BASIC };
     }
   });
+};
+
+export const ParsedText = (text: string) => {
+  // Use a regular expression to match the links
+  const linkRegex =
+    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+
+  // Replace the links with HTML a elements
+  const linkText = text.replace(linkRegex, (link) => {
+    return `<a href="${link}" target='_blank'>${link}</a>`;
+  });
+
+  // Add a hook to make all links open a new window
+  DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+    // set all elements owning target to target=_blank
+    if ('target' in node) {
+      node.setAttribute('target', '_blank');
+    }
+    // set non-HTML/MathML links to xlink:show=new
+    if (
+      !node.hasAttribute('target') &&
+      (node.hasAttribute('xlink:href') || node.hasAttribute('href'))
+    ) {
+      node.setAttribute('xlink:show', 'new');
+    }
+  });
+  let clean = DOMPurify.sanitize(linkText, {
+    ALLOWED_TAGS: ['a'],
+    ADD_ATTR: ['target'],
+  });
+  return HtmlParser(clean);
 };

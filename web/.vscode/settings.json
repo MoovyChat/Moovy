@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Hanken", "upsert"]
+  "cSpell.words": ["Hanken", "Moovy", "persistor", "upsert"],
+  "svg.preview.background": "transparent"
 }

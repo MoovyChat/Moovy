@@ -12,6 +12,9 @@ export enum DIRECTION {
 export enum TOOLTIP {
   USER = 'USER',
 }
+export enum FOCUS_WINDOW {
+  EMOJI = 'EMOJI',
+}
 
 export enum msgPlace {
   TEXTAREA = 'textArea',

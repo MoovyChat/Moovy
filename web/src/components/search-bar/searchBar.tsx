@@ -67,6 +67,7 @@ const SearchBar = () => {
   };
   const onBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
+    setSearchBarActive(() => false);
   };
   return (
     <SearchBarParent id='blur-escape'>
@@ -83,7 +84,7 @@ const SearchBar = () => {
         onChange={changeValueHandler}
         placeholder='Search people, movies, shows.'
       />
-      {searchBarActive && (
+      {searchBarActive && value && (
         <div className='search-results' id='blur-escape'>
           <div className='heading' id='blur-escape'>
             {value ? 'Search Results' : ' Recent searches'}

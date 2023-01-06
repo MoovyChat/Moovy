@@ -1,0 +1,10 @@
+query GetCommentOrReply($type: String!, $id: String!) {
+  getCommentOrReply(type: $type, id: $id) {
+    comment {
+      ...FullComment
+    }
+    reply {
+      ...FullReply
+    }
+  }
+}

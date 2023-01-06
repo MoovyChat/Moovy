@@ -1,5 +1,23 @@
 import { keyframes } from 'styled-components';
 
+export const animateHeart = keyframes`
+    0% {
+        transform: scale(0.2);
+      }
+      40% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+      }
+`;
+
+export const shine = keyframes`
+ to {
+    background-position-x: -200%;
+  }
+`;
+
 export const rotate180 = keyframes`
    0% {
     -ms-transform: rotate(0deg);
@@ -14,6 +32,23 @@ export const rotate180 = keyframes`
     -webkit-transform: rotate(180deg);
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
+  }
+`;
+
+export const rotateY360 = keyframes`
+   0% {
+    -ms-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+    -o-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+  100% {
+    -ms-transform: rotateY(360deg);
+    -moz-transform: rotateY(360deg);
+    -webkit-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
   }
 `;
 

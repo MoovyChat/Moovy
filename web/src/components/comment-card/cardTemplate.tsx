@@ -5,31 +5,22 @@ import {
   MdDelete,
   MdFavorite,
   MdOutlineFavoriteBorder,
-  MdOutlineModeComment,
   MdReply,
 } from 'react-icons/md';
 import {
   Movie,
   Title,
   User,
-  useDeleteCommentMutation,
-  useGetCommentQuery,
   useGetMovieQuery,
   useGetTitleInfoMutation,
   useGetUserQuery,
 } from '../../generated/graphql';
-import React, {
-  MouseEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
 import {
+  ParsedText,
   getFormattedNumber,
-  getFormattedWordsArray,
   getTimeFrame,
 } from '../../utils/helpers';
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { isServer, popupStates, textMapTypes } from '../../constants';
 import {
   sliceSetIsPopupOpened,
@@ -39,13 +30,12 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
-import CommentCard from './commentCard';
-import Loading from '../../pages/loading/loading';
+import CardTemplateLoader from './cardTemplateLoader';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
-import _ from 'lodash';
 import { batch } from 'react-redux';
 import { textMap } from '../../utils/interfaces';
+import useFormatMessage from '../../hooks/useFormatMessage';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
@@ -75,7 +65,7 @@ const CardTemplate: React.FC<props> = ({
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
   const commentedUserId = comment.commentedUserId;
-  const [mArray, setMessageArray] = useState<textMap[]>([]);
+  // const [mArray, setMessageArray] = useState<textMap[]>([]);
   const loggedInUser = useAppSelector((state) => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
   const movieRef = useRef<Movie | null>(null);
@@ -173,48 +163,7 @@ const CardTemplate: React.FC<props> = ({
     }
   }, [userRef.current, userInfo]);
 
-  useMemo(() => {
-    const { message } = comment;
-    let msgArray: textMap[] = [];
-    if (message) {
-      let msg: string = message;
-      let finalEnd = 0;
-      let index = 0;
-      while (index < msg.length) {
-        let remaining: string = msg.substring(index, msg.length);
-        let l = remaining.indexOf('<s>');
-        let r = remaining.indexOf('</s>');
-        if (l === -1) break;
-        if (r === -1) break;
-        if (l > r) break;
-        if (l > 0) {
-          // non-spoiler.
-          let text = remaining.substring(0, l);
-          let res = getFormattedWordsArray(text);
-          msgArray = _.concat(msgArray, res);
-        }
-        if (l < r) {
-          let spoilerObj: textMap = {
-            type: textMapTypes.SPOILER,
-            message: remaining.substring(l + 3, r),
-          };
-          msgArray.push(spoilerObj);
-        }
-        index += r + 4;
-        if (index <= msg.length) finalEnd = index;
-        // Both non-spoiler and spoiler are pushed into the array until 'r'
-      }
-      // End of loop
-      if (finalEnd !== msg.length && finalEnd < msg.length) {
-        // Final non-spoiler.
-        let finalPhrase: string = msg.substring(finalEnd, msg.length);
-        let res = getFormattedWordsArray(finalPhrase);
-        msgArray = _.concat(msgArray, res);
-      }
-    }
-
-    setMessageArray(msgArray);
-  }, [comment.message]);
+  let formattedMsg = useFormatMessage(comment.message);
 
   useEffect(() => {
     if (!messageRef) return;
@@ -263,17 +212,19 @@ const CardTemplate: React.FC<props> = ({
     });
   };
 
-  if (movieDetails.fetching)
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Loading />
-      </div>
-    );
+  const clickableDiv = document.querySelector('div') as HTMLDivElement;
+  clickableDiv.setAttribute('tabindex', '0');
+  clickableDiv.setAttribute('role', 'button');
+  clickableDiv.setAttribute('href', '#');
+  clickableDiv.addEventListener('click', function () {
+    if (this.getAttribute('tabindex') === '0') {
+      this.setAttribute('tabindex', '-1');
+    } else {
+      this.setAttribute('tabindex', '0');
+    }
+  });
+
+  if (movieDetails.fetching) return <CardTemplateLoader />;
   return (
     <CSSTransition
       in={mounted.current}
@@ -281,6 +232,8 @@ const CardTemplate: React.FC<props> = ({
       timeout={300}
       nodeRef={commentRef}>
       <CardParent
+        tabIndex={0}
+        role='button'
         onClick={goToComment}
         showEpisodeInfo={showEpisodeInfo}
         showTitleInfo={showTitleInfo}
@@ -383,7 +336,7 @@ const CardTemplate: React.FC<props> = ({
                 <MovieInfo title={titleRef.current!} />
               ) : (
                 <div className='message-box' onClick={goToComment}>
-                  {mArray.map((msg: textMap, index) =>
+                  {formattedMsg.map((msg: textMap, index) =>
                     msg.type === textMapTypes.SPOILER ? (
                       <SpoilerTag key={index}>{msg.message}</SpoilerTag>
                     ) : (
@@ -393,10 +346,11 @@ const CardTemplate: React.FC<props> = ({
                           className={msg.type}
                           onClick={(e) => {
                             if (msg.type === 'user') {
+                              e.stopPropagation();
                               navigate(`/profile/${msg.message.slice(1)}`);
                             }
                           }}>
-                          {msg.message + ' '}
+                          {ParsedText(msg.message)}{' '}
                         </span>
                       </React.Fragment>
                     )
@@ -419,19 +373,25 @@ const CardTemplate: React.FC<props> = ({
         {!showEpisodeInfo && !showTitleInfo && (
           <div className='options'>
             <div className='likes c'>
-              <span className='icon' onClick={updateLike}>
+              <span className='icon' onClick={updateLike} tabIndex={0}>
                 {like ? (
                   <MdFavorite size={20} fill='#ff005d' />
                 ) : (
                   <MdOutlineFavoriteBorder size={20} />
                 )}
               </span>
-              <span className='count' onClick={showLikesWindowHandler}>
+              <span
+                className='count'
+                onClick={showLikesWindowHandler}
+                tabIndex={0}>
                 {getFormattedNumber(likeCount)} Likes
               </span>
             </div>
             <div className='replies c'>
-              <span className='icon' onClick={openCommentWindowHandler}>
+              <span
+                className='icon'
+                onClick={openCommentWindowHandler}
+                tabIndex={0}>
                 <MdReply size={20} />
               </span>
               <span className='count'>
@@ -439,7 +399,10 @@ const CardTemplate: React.FC<props> = ({
               </span>
             </div>
             {isSameUserAsLoggedIn && (
-              <div className='delete c' onClick={deleteCommentHandler}>
+              <div
+                className='delete c'
+                onClick={deleteCommentHandler}
+                tabIndex={0}>
                 <span className='icon'>
                   <MdDelete size={20} />
                 </span>

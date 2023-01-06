@@ -1,11 +1,14 @@
 import './index.css';
+import './registerServiceWorker.ts';
+
+import { persistedStore, store } from './redux/store';
 
 import HomeRouter from './routes';
+import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { store } from './redux/store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,9 +17,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <React.Fragment>
+      <PersistGate loading={null} persistor={persistedStore}>
         <HomeRouter />
-      </React.Fragment>
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );

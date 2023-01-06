@@ -12,7 +12,7 @@ export const ProfileParent = styled.div`
   .top {
     position: relative;
     width: 100%;
-    flex: 1 1 45%;
+    height: 350px;
     overflow: hidden;
     :hover {
       transition: all 0.5s;
@@ -24,8 +24,9 @@ export const ProfileParent = styled.div`
       width: 100%;
       position: absolute;
       top: 4px;
+      /* aspect-ratio: 1.77; */
       height: 200px;
-      z-index: -1;
+      z-index: 0;
       box-shadow: 0 0 10px;
 
       img {
@@ -67,7 +68,7 @@ export const ProfileParent = styled.div`
       top: 160px;
       left: 50px;
       width: calc(100% - 50px);
-      ::before {
+      /* ::before {
         content: '';
         position: absolute;
         top: -5px;
@@ -77,7 +78,7 @@ export const ProfileParent = styled.div`
         border-radius: 50%;
         background: black;
         z-index: -1;
-      }
+      } */
       .user-container {
         position: relative;
         width: 100px;
@@ -170,9 +171,9 @@ export const ProfileParent = styled.div`
     }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 400px) {
     .top {
-      flex: 1 1 0%;
+      height: 300px;
       .cover-photo {
         height: 100px;
       }
@@ -183,17 +184,17 @@ export const ProfileParent = styled.div`
         height: 30px;
       }
       .user-photo {
-        top: 60px;
+        top: 75px;
         left: 20px;
         ::before {
-          top: -3px;
-          left: -3px;
-          width: 96px;
-          height: 96px;
+          top: 0px;
+          left: 0px;
+          width: 0px;
+          height: 0px;
         }
         .user-container {
-          width: 90px;
-          height: 90px;
+          width: 70px;
+          height: 70px;
         }
         .user-info {
           margin-left: 5px;
@@ -207,28 +208,18 @@ export const ProfileParent = styled.div`
       }
     }
   }
-  @media (max-width: 376px) {
-    .top {
-      flex: 1 1 14%;
-    }
-  }
 `;
 
 export const SubGroups = styled.div`
-  position: relative;
   display: flex;
-  flex: 1 1 55%;
   flex-direction: column;
-  width: 100%;
-  justify-content: space-evenly;
+  width: 98%;
+  height: calc(100% - 350px);
+  justify-content: flex-start;
   align-items: center;
   .pro {
-    position: absolute;
     display: flex;
     flex-direction: column;
-    top: 0px;
-    left: 0;
-    height: 140px;
     width: 99%;
     font-size: 0.9rem;
     .block {
@@ -247,8 +238,9 @@ export const SubGroups = styled.div`
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        overflow-wrap: break-word;
-        word-break: break-all;
+        overflow: hidden;
+        white-space: pre-wrap;
+        font-size: 0.9em;
         ::first-letter {
           text-transform: capitalize;
         }
@@ -256,9 +248,6 @@ export const SubGroups = styled.div`
     }
   }
   .follow {
-    position: absolute;
-    top: 150px;
-    left: 0;
     height: 100px;
     display: flex;
     justify-content: center;
@@ -288,9 +277,9 @@ export const SubGroups = styled.div`
     }
   }
   .con {
-    position: absolute;
-    top: 260px;
-    width: 100%;
+    width: 99.5%;
+    height: 50%;
+
     .box {
       display: flex;
       flex-direction: column;
@@ -303,7 +292,7 @@ export const SubGroups = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 97%;
+        width: 95%;
         .sm {
           font-size: 0.6rem;
           margin-right: 10px;
@@ -318,8 +307,8 @@ export const SubGroups = styled.div`
     }
   }
 
-  @media (max-height: 550px) {
-    flex: 1 1 45%;
+  @media (max-width: 400px) {
+    height: calc(100% - 215px);
     .pro {
       font-size: 0.6rem;
       .block {
@@ -333,10 +322,8 @@ export const SubGroups = styled.div`
       }
     }
     .follow {
-      top: 80px;
     }
     .con {
-      top: 200px;
     }
   }
 `;

@@ -8,22 +8,20 @@ export const NotFoundParent = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
-  img {
+  .bg {
     position: absolute;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.1;
   }
-  ::before {
-    content: '';
-    background-image: url(https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1);
-    background-size: cover;
-    background-repeat: no-repeat;
+  .wave {
     position: absolute;
     z-index: -1;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    opacity: 0.2;
+    bottom: -300px;
   }
   .code {
     display: flex;

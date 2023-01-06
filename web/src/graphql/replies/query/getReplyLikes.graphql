@@ -1,5 +1,7 @@
-query getReplyLikes($rid: String!) {
-  getReplyLikes(rid: $rid) {
+query GetReplyLikes($limit: Int!, $rid: String!, $page: Int) {
+  getReplyLikes(limit: $limit, rid: $rid, page: $page) {
+    page
+    likesCount
     likes {
       id
       name
@@ -8,6 +10,5 @@ query getReplyLikes($rid: String!) {
       followerCount
       followingCount
     }
-    likesCount
   }
 }

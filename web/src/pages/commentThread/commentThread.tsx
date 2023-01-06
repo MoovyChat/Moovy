@@ -48,6 +48,8 @@ const CommentThread = () => {
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
       cid: id!,
+      limit: 10,
+      page: 1,
     },
     pause: isServer(),
   });

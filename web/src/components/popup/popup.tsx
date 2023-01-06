@@ -1,8 +1,10 @@
 import './popup.css';
 
+import { PopupParent, StyledPopUP } from './popup.styles';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
   sliceSetIsPopupOpened,
+  sliceSetPopupData,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -14,10 +16,10 @@ import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../image-changer/imageChanger';
 import Loading from '../../pages/loading/loading';
 import NotFound from '../../pages/notFound/notFound';
-import { PopupParent } from './popup.styles';
 import ShowFollow from '../show-follow/showFollow';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
+import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
 
 const Popup = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,13 +29,15 @@ const Popup = () => {
     (state) => state.popup.selectedElement
   );
 
-  function handleOutSideClick(event: any) {
-    if (ref && !ref.current?.contains(event.target)) {
+  function handleOutSideClick(e: any) {
+    let target = e.target as HTMLDivElement;
+    if (target.id === 'popup-parent') {
       batch(() => {
         dispatch(sliceSetIsPopupOpened(false));
         dispatch(sliceSetSelectedElement(''));
+        dispatch(sliceSetPopupData(null));
+        dispatch(sliceSetTextAreaMessage(''));
       });
-      document.removeEventListener('click', handleOutSideClick);
     }
   }
   document.addEventListener('click', handleOutSideClick);
@@ -65,11 +69,13 @@ const Popup = () => {
       classNames='alert'
       in={isPopupOpen}
       nodeRef={ref}
-      timeout={1000}
+      timeout={500}
       unmountOnExit>
-      <PopupParent ref={ref}>
-        <SelectedElement />
-      </PopupParent>
+      <StyledPopUP id='popup-parent' ref={ref}>
+        <PopupParent id='popup-child'>
+          <SelectedElement />
+        </PopupParent>
+      </StyledPopUP>
     </CSSTransition>
   );
 };

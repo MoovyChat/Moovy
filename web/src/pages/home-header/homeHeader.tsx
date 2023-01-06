@@ -3,7 +3,7 @@ import React, { MouseEventHandler } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { HomeHeaderParent } from './homeHeader.styles';
-import QCLogo from '../../static/images/qc.png';
+import MoovyLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
 import useIsAuth from '../../utils/isAuthUser';
@@ -24,7 +24,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
     <HomeHeaderParent className={className}>
       <div className='logo'>
         <div className='logo-image'>
-          <img className='image' src={QCLogo} alt='QuietChat' />
+          <img className='image' src={MoovyLogo} alt='QuietChat' />
         </div>
         <div className='logo-icon' onClick={navBarHandler}>
           {isNavBarOpen ? (

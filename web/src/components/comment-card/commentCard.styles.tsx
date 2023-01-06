@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 
+import { animateHeart } from '../../utils/keyframes';
+
 export const commentStyleMixin = () => css`
   color: ${(p) => p.theme.mention};
 `;
@@ -18,14 +20,15 @@ export const CardParent = styled.div<props>`
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 99.5%;
+  width: 99%;
   min-height: 120px;
   justify-content: space-evenly;
   align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
   background-color: transparent;
   overflow: hidden;
   margin: 10px 2px;
-  box-shadow: 0 0 10px black, inset 0 0 5px white;
+  box-shadow: 0 0 4px ${(p) => p.theme.text},
+    inset 0 0 4px ${(p) => p.theme.trendingTiles};
   cursor: pointer;
   font-size: 15px;
   :first-child {
@@ -195,17 +198,7 @@ export const CardParent = styled.div<props>`
       }
     }
   }
-  @keyframes animateHeart {
-    0% {
-      transform: scale(0.2);
-    }
-    40% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
+
   .options {
     display: flex;
     justify-content: space-around;
@@ -228,7 +221,7 @@ export const CardParent = styled.div<props>`
     .likes {
       .icon {
         svg {
-          animation: animateHeart 0.3s linear forwards;
+          animation: ${animateHeart} 0.3s linear forwards;
           :hover {
           }
         }
@@ -344,6 +337,7 @@ export const MovieInfoParent = styled.div`
   .stats {
     display: flex;
     margin: 5px 0;
+
     .likes,
     .comments,
     .views {
@@ -359,6 +353,15 @@ export const MovieInfoParent = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+    }
+    .likes {
+      .icon {
+        svg {
+          animation: ${animateHeart} 0.3s linear forwards;
+          :hover {
+          }
+        }
       }
     }
   }

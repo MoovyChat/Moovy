@@ -5,10 +5,8 @@ import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
 
 const Catalog = () => {
-  const [selectedContent, setSelectedContent] = useState<number>(0);
-
   return (
-    <CatalogContainer selected={selectedContent}>
+    <CatalogContainer>
       <ChildHeader text='Catalog' className='child-header' />
       <div className='options'>
         <NavLink to='/catalog/' end className='option movies' defaultChecked>

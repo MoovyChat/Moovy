@@ -6,40 +6,45 @@ type props = {
 export const ImageChangerParent = styled.div<props>`
   position: relative;
   width: 50vw;
-  height: 50vh;
+  min-height: 70vh;
   display: flex;
+  justify-content: flex-start;
+  align-items: center;
   flex-direction: column;
   .heading {
     font-size: 1.1em;
     font-weight: 600;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 20%;
+    height: 40px;
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 20px;
+      z-index: 2;
+    }
   }
   .save-close {
     display: flex;
     z-index: 6;
     .save {
+      z-index: 2;
       position: absolute;
       pointer-events: ${(p) => (p.url ? 'all' : 'none')};
       right: 15px;
-      top: 20px;
-    }
-    .close {
-      position: absolute;
-      left: 15px;
-      top: 20px;
+      bottom: 20px;
     }
   }
   .options {
     display: flex;
     position: relative;
-    padding: 20px 0;
+    padding: 0px 0;
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 20%;
+    height: 100px;
     .or {
       position: absolute;
       border: 1px solid;
@@ -117,6 +122,12 @@ export const ImageChangerParent = styled.div<props>`
     .heading {
       font-size: 1em;
       font-weight: 600;
+      height: 50px;
+      .close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
     }
     .save-close {
       width: 90%;
@@ -125,13 +136,13 @@ export const ImageChangerParent = styled.div<props>`
         position: absolute;
         right: 20px;
       }
-      .close {
-        position: absolute;
-        left: 20px;
-      }
     }
     .options {
       flex-direction: column;
+      height: 120px;
+      margin-top: 12px;
+      border: 1px solid;
+      padding: 30px;
       .or {
         display: none;
       }
@@ -140,19 +151,36 @@ export const ImageChangerParent = styled.div<props>`
 `;
 
 export const DisplayImage = styled.div`
+  position: relative;
+  align-items: flex-start;
   width: 100%;
-  height: 70%;
+  height: 60%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: auto;
+  overflow: hidden;
   .display-container {
-    width: 300px;
-    max-height: 400px;
-    img {
-      width: 100%;
-      height: 100%;
-      border: 0.3px solid;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .ReactCrop {
+      margin: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 350px;
+      height: 350px;
+      .ReactCrop__child-wrapper {
+        height: 100%;
+        width: 100%;
+        img {
+          width: 100%;
+          height: 100%;
+          border: 0.3px solid;
+          object-fit: contain;
+        }
+      }
     }
   }
 `;

@@ -1,3 +1,7 @@
+import {
+  sliceSetIsTextAreaFocused,
+  sliceSetTextAreaMessage,
+} from '../../../redux/slices/textAreaSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 
 import { Emoji } from 'emojibase';
@@ -9,14 +13,13 @@ type props = {
   emoji: Emoji;
 };
 const EmojiButton: React.FC<props> = ({ emoji }) => {
-  //   const text = useAppSelector((state) => state.textArea.text);
-  const text = '';
+  const text = useAppSelector((state) => state.textArea.text);
   const dispatch = useAppDispatch();
-
   const handleEmojiClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    // dispatch(sliceSetTextAreaMessage(`${text}${emoji.emoji}`));
-    // dispatch(sliceSetIsTextAreaFocused(true));
+    if (text.length >= 300) return;
+    dispatch(sliceSetTextAreaMessage(`${text}${emoji.emoji}`));
+    dispatch(sliceSetIsTextAreaFocused(true));
 
     const addToRecentIndexedDB = async () => {
       try {

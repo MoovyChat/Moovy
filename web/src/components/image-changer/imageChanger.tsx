@@ -3,12 +3,14 @@ import { MdInfoOutline, MdLink, MdUploadFile } from 'react-icons/md';
 import React, {
   ChangeEventHandler,
   MouseEventHandler,
+  useEffect,
   useRef,
   useState,
 } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import {
   sliceSetIsPopupOpened,
+  sliceSetPopupData,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -43,6 +45,15 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [, saveProfilePhoto] = useSaveProfilePictureMutation();
   const [, saveBg] = useUpdateUserBgMutation();
+
+  // Change the parent top style.
+  useEffect(() => {
+    const parentDiv = document.getElementById('popup-child') as HTMLDivElement;
+    if (parentDiv)
+      parentDiv.style.cssText = `
+      top: 50%;
+    `;
+  }, []);
 
   // Image saving states
   const [saved, setSaved] = useState<boolean>(false);
@@ -139,17 +150,20 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
       dispatch(sliceSetSelectedElement(''));
+      dispatch(sliceSetPopupData(null));
     });
   };
 
   const saveText = saveClicked ? (saved ? `Saved` : `Saving..`) : `Save`;
   return (
     <ImageChangerParent url={url}>
-      <div className='heading'>Upload the photo</div>
-      <div className='save-close'>
+      <div className='heading'>
+        <span>Upload the photo</span>
         <StyledButton className='close' color='#484242' onClick={closeHandler}>
           Close
         </StyledButton>
+      </div>
+      <div className='save-close'>
         <StyledButton
           className='save'
           color={url ? '#de1328' : '#9c535b'}
@@ -211,7 +225,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
                   url={url}
                   setCompletedCrop={setCompletedCrop}
                   imageRef={imageRef}
-                  aspect={1.77}
+                  aspect={3.5}
                 />
               )
             ) : (

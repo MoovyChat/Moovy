@@ -26,6 +26,7 @@ import {
   useState,
 } from 'react';
 import { NoTitle, ProfileParent, SubGroups } from './profile.styles';
+import { ParsedText, getShortDateFormat } from '../../utils/helpers';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChildHeader from '../../components/childHeader/childHeader';
@@ -35,7 +36,6 @@ import MovieCard from '../../components/movie-card/movieCard';
 import NotFound from '../notFound/notFound';
 import ProfilePic from '../../components/profilePic/profilePic';
 import _ from 'lodash';
-import { getShortDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
 import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 
@@ -220,7 +220,7 @@ const ProfileTemplate: React.FC<props> = ({
                 <MdOutlineCake size={25} />
               </div>
               <div className='info'>
-                {dobInTime === '' ? 'Not Specified' : dobInTime}
+                {dobInTime === '' ? 'Not Specified' : ParsedText(dobInTime)}
               </div>
             </div>
 
@@ -246,7 +246,9 @@ const ProfileTemplate: React.FC<props> = ({
                 <MdOutlineContacts size={25} />
               </div>
               <div className='info'>
-                {profile && profile.bio ? profile.bio : 'Not Specified'}
+                {profile && profile.bio
+                  ? ParsedText(profile.bio)
+                  : 'Not Specified'}
               </div>
             </div>
           </div>

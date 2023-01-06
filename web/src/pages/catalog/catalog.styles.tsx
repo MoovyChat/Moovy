@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-type containerProps = {
-  selected?: number;
-};
+type containerProps = {};
 export const CatalogContainer = styled.div<containerProps>`
   display: flex;
   flex-direction: column;

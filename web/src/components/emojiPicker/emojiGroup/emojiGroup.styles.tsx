@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 export const GroupParent = styled.div`
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  gap: 10px;
   overflow: auto;
 `;

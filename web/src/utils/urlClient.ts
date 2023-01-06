@@ -10,10 +10,12 @@ import {
   profileUpdateChanges,
   replyLikeChanges,
   toggleFollowChanges,
+  updateMovieLikesChanges,
 } from './cacheExchanges';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
   movieCommentsResolver,
+  paginatedMoviesResolver,
   repliesResolver,
   userCommentsResolver,
   userRepliesResolver,
@@ -37,6 +39,7 @@ const cache: Partial<CacheExchangeOpts> = {
     SearchObject: () => null,
     Visited: () => null,
     Profile: () => null,
+    MovieStats: () => null,
   },
   updates: {
     Mutation: {
@@ -50,6 +53,7 @@ const cache: Partial<CacheExchangeOpts> = {
       toggleFollow: toggleFollowChanges,
       deleteComment: deleteCommentChanges,
       deleteReply: deleteReplyChanges,
+      updateUserMovieStats: updateMovieLikesChanges,
     },
   },
   resolvers: {
@@ -59,6 +63,8 @@ const cache: Partial<CacheExchangeOpts> = {
       getRepliesOfTheUser: userRepliesResolver(),
       getRepliesOfComment: repliesResolver(),
       getRepliesOfReply: repliesResolver(),
+      getPaginatedMovies: paginatedMoviesResolver(),
+      getPaginatedShows: paginatedMoviesResolver(),
     },
   },
 };
