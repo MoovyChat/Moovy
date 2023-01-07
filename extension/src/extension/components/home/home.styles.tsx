@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const HomeWindow = styled.div`
-  height: 65%;
+  height: auto;
   width: 300px;
   position: relative;
   z-index: 999;

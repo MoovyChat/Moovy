@@ -44,7 +44,7 @@ const CommentCard: React.FC<props> = ({
   const uid = useAppSelector((state) => state.user.id);
   const mid = useAppSelector((state) => state.movie.id);
   const [time, setTime] = useState<string>('');
-  const [likedUsers, setLikedUser] = useState<User[]>([]);
+  const [likedUsers, setLikedUser] = useState<any[]>([]);
   const [like, setLike] = useState<boolean>(false);
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
@@ -55,6 +55,8 @@ const CommentCard: React.FC<props> = ({
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
       cid: id!,
+      page: 1,
+      limit: 10,
     },
   });
 
@@ -192,8 +194,6 @@ const CommentCard: React.FC<props> = ({
         like ? likedUsers.filter((u) => u.id !== uid) : [...likedUsers, user]
       );
       setLikesCount(like ? likesCount - 1 : likesCount + 1);
-      // Deal with backend
-      console.log('CommentCard: ', id);
       setCommentLike({
         cid: id!,
         uid,

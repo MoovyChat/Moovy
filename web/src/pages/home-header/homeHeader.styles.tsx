@@ -6,7 +6,7 @@ const w = 12;
 export const HomeHeaderParent = styled.div`
   display: flex;
   overflow: hidden;
-  border-bottom: 0.3px solid;
+  width: 100vw;
   .logo,
   .user {
     position: relative;

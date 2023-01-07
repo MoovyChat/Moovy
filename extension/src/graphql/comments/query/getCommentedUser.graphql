@@ -1,13 +1,5 @@
 query getCommentedUser($cid: String!) {
   getCommentedUser(cid: $cid) {
-    id
-    name
-    photoUrl
-    email
-    updatedAt
-    watchedMovies
-    nickname
-    joinedAt
-    updatedAt
+    ...FullUser
   }
 }

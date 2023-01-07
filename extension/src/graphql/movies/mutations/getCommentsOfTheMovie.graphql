@@ -13,10 +13,7 @@ mutation getCommentsOfTheMovie(
     totalCommentCount
     pastLoadedCount
     comments {
-      id
-      commentedUserId
-      createdAt
-      message
+      ...FullComment
     }
   }
 }

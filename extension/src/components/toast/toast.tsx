@@ -16,29 +16,20 @@ import { sliceSetToastVisible } from '../../redux/slices/toast/toastSlice';
 const Toast = () => {
   const dispatch = useAppDispatch();
   const { icon, message, visible } = useAppSelector((state) => state.toast);
-  const [progress, setProgress] = useState<number>(0);
   const size = 25;
-  useEffect(() => {
-    if (visible && progress === 100) setProgress(0);
-  }, [visible]);
 
   useEffect(() => {
-    let interval: NodeJS.Timer;
+    let interval: NodeJS.Timeout;
     if (visible) {
-      interval = setInterval(() => {
-        setProgress((progress) => progress + 1);
-        if (progress === 100) {
-          dispatch(sliceSetToastVisible(false));
-          clearInterval(interval);
-        }
-      }, 10);
-    } else {
-      setProgress(100);
+      interval = setTimeout(() => {
+        dispatch(sliceSetToastVisible(false));
+        clearTimeout(interval);
+      }, 2000);
     }
     return () => {
-      clearInterval(interval);
+      clearTimeout(interval);
     };
-  }, [visible, progress]);
+  }, [visible]);
 
   const SelectedIcon = useCallback(() => {
     switch (icon) {
@@ -61,12 +52,15 @@ const Toast = () => {
 
   return (
     <React.Fragment>
-      <ToastParent visible={visible} progress={progress}>
+      <ToastParent visible={visible}>
         <div className='container'>
-          <div className='icon'>
-            <SelectedIcon />
+          <div className='fill'></div>
+          <div className='toast-msg'>
+            <div className='icon'>
+              <SelectedIcon />
+            </div>
+            <div className='msg'>{message}</div>
           </div>
-          <div className='msg'>{message}</div>
         </div>
       </ToastParent>
     </React.Fragment>

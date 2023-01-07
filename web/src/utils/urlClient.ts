@@ -1,10 +1,25 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
-import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
+  commentLikeChanges,
+  deleteCommentChanges,
+  deleteReplyChanges,
+  insertCommentChanges,
+  insertReplyChanges,
   logOutChanges,
   loginChanges,
-  setCommentLikeChanges,
+  profileUpdateChanges,
+  replyLikeChanges,
+  toggleFollowChanges,
+  updateMovieLikesChanges,
 } from './cacheExchanges';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+import {
+  movieCommentsResolver,
+  paginatedMoviesResolver,
+  repliesResolver,
+  userCommentsResolver,
+  userRepliesResolver,
+} from './resolvers';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
@@ -15,16 +30,42 @@ const wsClient = createWSClient({
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
-    LikesObject: (data) => data.id as string,
-    CommentLikesObject: (data) => data.id as string,
-    RepliesObject: (data) => data.id as string,
-    replyLikesObject: (data) => data.id as string,
+    PaginatedMovieComments: () => null,
+    PaginatedUserComments: () => null,
+    RepliesObject: () => null,
+    PaginatedUserReplies: () => null,
+    CommentLikesObject: () => null,
+    replyLikesObject: () => null,
+    SearchObject: () => null,
+    Visited: () => null,
+    Profile: () => null,
+    MovieStats: () => null,
+    CommentOrReply: () => null,
   },
   updates: {
     Mutation: {
       login: loginChanges,
       logout: logOutChanges,
-      setCommentLike: setCommentLikeChanges,
+      setCommentLike: commentLikeChanges,
+      setReplyLike: replyLikeChanges,
+      upsertProfile: profileUpdateChanges,
+      insertComment: insertCommentChanges,
+      insertReply: insertReplyChanges,
+      toggleFollow: toggleFollowChanges,
+      deleteComment: deleteCommentChanges,
+      deleteReply: deleteReplyChanges,
+      updateUserMovieStats: updateMovieLikesChanges,
+    },
+  },
+  resolvers: {
+    Query: {
+      getCommentsOfTheMovie: movieCommentsResolver(),
+      getCommentsOfTheUser: userCommentsResolver(),
+      getRepliesOfTheUser: userRepliesResolver(),
+      getRepliesOfComment: repliesResolver(),
+      getRepliesOfReply: repliesResolver(),
+      getPaginatedMovies: paginatedMoviesResolver(),
+      getPaginatedShows: paginatedMoviesResolver(),
     },
   },
 };

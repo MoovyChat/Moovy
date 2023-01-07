@@ -1,6 +1,4 @@
 import { commentStyleMixin } from '../../Utils/mixins';
-import { globalUIStyles } from '../../Utils/interfaces';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const CommentCardContainer = styled.div`
@@ -14,12 +12,17 @@ export const CommentCardContainer = styled.div`
   position: relative;
   padding: 5px 0;
   padding-left: 2%;
+  cursor: pointer;
+
   .card-parent {
     position: relative;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: row;
+    :hover {
+      filter: drop-shadow(2px 4px 6px);
+    }
   }
 
   // Enter from

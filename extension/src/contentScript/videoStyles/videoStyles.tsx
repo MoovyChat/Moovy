@@ -8,11 +8,18 @@ import {
 import {
   ChangeEventHandler,
   FocusEventHandler,
+  MouseEventHandler,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { MdAdd, MdFilterAlt, MdOutlineWbIridescent } from 'react-icons/md';
+import {
+  MdAdd,
+  MdBuild,
+  MdFiberManualRecord,
+  MdFilterAlt,
+  MdOutlineWbIridescent,
+} from 'react-icons/md';
 import { addBorder, applyFilter, borders, filters } from './videoStyles.help';
 import {
   borderType,
@@ -37,6 +44,7 @@ import {
 import Slider from '../../components/slider/slider';
 import _ from 'lodash';
 import { defaultVideoValues } from '../../Utils/defaultValues';
+import { getStreamForWindow } from './mediaRecorder';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
 import { title } from 'process';
@@ -46,6 +54,7 @@ const VideoStyles = () => {
   const dispatch = useAppDispatch();
   const colorRef = useRef<HTMLInputElement>(null);
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
+  const [recording, setRecording] = useState<boolean>(false);
   const [canvas, setCanvas] = useState<HTMLElement>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
   const [screenSize, setScreenSize] = useState<string>('100');
@@ -216,8 +225,79 @@ const VideoStyles = () => {
     });
   };
 
+  // Media recorder
+  const handleRecordButton: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    getStreamForWindow().then((stream) => {
+      let recorder = new MediaRecorder(stream);
+      let chunks: Blob[] = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+
+        // let's create a blob with e.data which has the
+        // contents of the video in webm
+        console.log('Data available');
+        var link = document.createElement('a');
+        link.setAttribute('href', window.URL.createObjectURL(event.data));
+        link.setAttribute(
+          'download',
+          'video_' + Math.floor(Math.random() * 999999) + '.webm'
+        );
+        link.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                font-size: 4em;
+                color:black;
+                z-index: 10;
+              `;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        recorder.stream.getTracks().forEach((track) => track.stop());
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, {
+          type: 'video/webm;codecs=h264',
+        });
+
+        chunks = [];
+        const blobUrl = URL.createObjectURL(blob);
+
+        console.log(blobUrl);
+      };
+      let timeout = setTimeout(() => {
+        recorder.start(10000);
+        clearTimeout(timeout);
+      }, 2000);
+    });
+  };
+
+  //Chrome.DesktopCapture
+  const handleRecord: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    chrome.runtime
+      .sendMessage({ text: 'RECORD_TAB' })
+      .then((res) => console.log(res));
+  };
+
   return (
     <VideoParent>
+      <OptionGroup expandGroup={true}>
+        <div className='title'>
+          <div className='name'>
+            <div className='name-icon'>
+              <MdBuild />
+            </div>
+            <label>Tools</label>
+          </div>
+        </div>
+      </OptionGroup>
       <OptionGroup expandGroup={openFilterSection}>
         <div className='title'>
           <div className='name'>

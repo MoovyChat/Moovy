@@ -63,6 +63,9 @@ const MovieSlice = createSlice({
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
       return { ...state, totalCommentsCountOfMovie: action.payload || 0 };
     },
+    sliceUpdateViewsCount: (state, action) => {
+      return { ...state, viewsCount: action.payload };
+    },
     sliceSetCommentsLoadedCount: (state, action) => {
       return {
         ...state,
@@ -107,27 +110,6 @@ const MovieSlice = createSlice({
     sliceResetMovie: () => {
       return movieState;
     },
-    // sliceAddTimeMessages: (state, action) => {
-    //   let initialStateTimeChats = state.timeChats!;
-    //   let timeChat = action.payload as timeMessage;
-    //   let time = timeChat.time;
-    //   let isKeyExist = initialStateTimeChats[time];
-    //   if (!isKeyExist) {
-    //     let newStateTimeChats = {
-    //       ...initialStateTimeChats,
-    //       [time]: [timeChat],
-    //     };
-    //     return { ...state, timeChats: newStateTimeChats };
-    //   } else {
-    //     let getExistingTimeMap = initialStateTimeChats[time];
-    //     let addedTimeMapToExisting = [...getExistingTimeMap, timeChat];
-    //     let newStateTimeChats = {
-    //       ...initialStateTimeChats,
-    //       [time]: addedTimeMapToExisting,
-    //     };
-    //     return { ...state, timeChats: newStateTimeChats };
-    //   }
-    // },
   },
 });
 
@@ -139,6 +121,7 @@ export const {
   sliceAddMovieName,
   sliceSetLoadNew,
   sliceSetFetched,
+  sliceUpdateViewsCount,
   sliceSetTotalCommentsOfTheMovie,
   sliceSetCommentsLoadedCount,
   sliceSetLikesCount,

@@ -17,12 +17,14 @@ export const ChatTitleParent = styled.div`
   grid-row-gap: 0px;
   .logo {
     grid-area: 1 / 1 / 2 / 2;
-    background: url('https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
     width: 25px;
     height: 25px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
   }
   .title {
     grid-area: 1 / 2 / 2 / 3;
@@ -37,9 +39,13 @@ export const ChatTitleParent = styled.div`
     align-items: center;
     overflow: hidden;
     display: -webkit-inline-box;
-
+    cursor: pointer;
+    filter: drop-shadow(0 0 1px ${(p) => p.theme.text});
+    box-shadow: inset 0 0 1px ${(p) => p.theme.text};
+    border-radius: 10px;
+    max-width: 70px;
+    color: ${(p) => p.theme.text};
     .fav-count {
-      max-width: 0px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -59,17 +65,6 @@ export const ChatTitleParent = styled.div`
       }
       :active {
         transform: scale(0.95);
-      }
-    }
-    :hover {
-      cursor: pointer;
-      filter: drop-shadow(0 0 1px ${(p) => p.theme.text});
-      box-shadow: inset 0 0 1px ${(p) => p.theme.text};
-      border-radius: 10px;
-      .fav-count {
-        max-width: 30px;
-        color: ${(p) => p.theme.text};
-        transition: all 1s linear;
       }
     }
   }

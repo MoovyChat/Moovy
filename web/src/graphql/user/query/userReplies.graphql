@@ -1,0 +1,26 @@
+query getRepliesOfTheUser(
+  $limit: Int!
+  $uid: String!
+  $asc: Boolean
+  $page: Int
+  $time: String
+) {
+  getRepliesOfTheUser(
+    limit: $limit
+    uid: $uid
+    ASC: $asc
+    page: $page
+    time: $time
+  ) {
+    user {
+      ...FullUser
+    }
+    totalCommentCount
+    pastCount
+    comments {
+      ...FullReply
+    }
+    hasMoreComments
+    lastPage
+  }
+}

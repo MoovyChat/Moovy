@@ -1,0 +1,13 @@
+query getUserProfile($uid: String!) {
+  getUserProfile(uid: $uid) {
+    bio
+    createdAt
+    deletedAt
+    dob
+    firstname
+    gender
+    lastname
+    updatedAt
+    userId
+  }
+}

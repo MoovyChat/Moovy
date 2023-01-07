@@ -1,0 +1,18 @@
+.chip {
+  display: flex;
+  font-size: 0.7rem;
+  font-weight: 600;
+  width: fit-content;
+  block-size: fit-content;
+  padding: 5px 8px;
+  border-radius: 15px;
+  color: #ffffff;
+  background-color: #a42525;
+}
+
+.chip:hover {
+  text-decoration: underline;
+  text-decoration-color: white;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}

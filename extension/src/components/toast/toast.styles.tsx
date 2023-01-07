@@ -1,8 +1,9 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import { fillUp } from '../../styles/keyframes';
 
 type props = {
   visible: boolean;
-  progress: number;
 };
 export const ToastParent = styled.div<props>`
   position: absolute;
@@ -17,46 +18,68 @@ export const ToastParent = styled.div<props>`
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 50px;
+  border-radius: 60px;
   color: ${(p) => p.theme.chatBody};
   font-size: 1.2em;
   font-weight: 600;
-  background: linear-gradient(
-    ${(p) => p.theme.chatText} 0%,
-    ${(p) => p.theme.chatText} ${(p) => 100 - p.progress}%,
-    red ${(p) => 100 - p.progress}%,
-    red ${(p) => p.progress}%,
-    red 100%
-  );
-  transition: bottom 0.5s
-    ${(p) =>
-      p.visible
-        ? 'cubic-bezier(0.18, 0.89, 0.32, 1.28)'
-        : 'cubic-bezier(0.6, -0.28, 0.74, 0.05)'};
   z-index: 16;
+
   .container {
-    padding: 10px;
+    position: relative;
     display: flex;
     width: 100%;
     height: 100%;
     justify-content: center;
     align-items: center;
     font-style: italic;
-    .icon {
+
+    background: ${(p) => p.theme.chatText};
+    transition: bottom 0.5s
+      ${(p) =>
+        p.visible
+          ? 'cubic-bezier(0.18, 0.89, 0.32, 1.28)'
+          : 'cubic-bezier(0.6, -0.28, 0.74, 0.05)'};
+    .fill {
+      position: absolute;
+
+      background: red;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 17;
+      animation: ${(p) =>
+        p.visible
+          ? css`
+              ${fillUp} 2s ease-in-out forwards reverse
+            `
+          : 'none'};
+    }
+    .toast-msg {
+      position: relative;
+      z-index: 18;
+      padding: 10px;
       display: flex;
-      flex: 0 1 25%;
+      width: 100%;
+      height: 100%;
       justify-content: center;
       align-items: center;
-      padding: 0 10px;
-    }
-    .msg {
-      flex: 0 1 75%;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      white-space: nowrap;
-      font-size: 1em;
-      padding: 0 10px;
+      font-style: italic;
+      .icon {
+        display: flex;
+        flex: 0 1 25%;
+        justify-content: center;
+        align-items: center;
+        padding: 0 10px;
+      }
+      .msg {
+        flex: 0 1 75%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        white-space: nowrap;
+        font-size: 1em;
+        padding: 0 10px;
+      }
     }
   }
 `;

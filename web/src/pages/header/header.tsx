@@ -1,18 +1,18 @@
 import { HeaderButton, HeaderParent } from './header.styles';
 import { MdLightMode, MdNightlight } from 'react-icons/md';
 import React, { useEffect } from 'react';
-import { sliceSetUser, userState } from '../../redux/slices/userSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  User,
   useLoginMutation,
   useLogoutMutation,
   useMeQuery,
 } from '../../generated/graphql';
+import { sliceSetUser, userState } from '../../redux/slices/userSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { DIRECTION } from '../../utils/enums';
 import { LOGIN } from '../../components/tooltip/constants';
 import Tooltip from '../../components/tooltip/tooltip';
-import { User } from '../../utils/interfaces';
 import { googleSignIn } from '../login/login';
 import { isServer } from '../../constants';
 import { redirect } from 'react-router-dom';
@@ -51,7 +51,7 @@ const Header = () => {
       const user = data?.login?.user;
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
-        dispatch(sliceSetUser(user));
+        dispatch(sliceSetUser(user as User));
       }
       navigate('/');
     });

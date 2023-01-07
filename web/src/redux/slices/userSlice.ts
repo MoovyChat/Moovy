@@ -1,4 +1,4 @@
-import { User } from '../../utils/interfaces';
+import { User } from '../../generated/graphql';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -8,11 +8,13 @@ export const userState: User = {
   email: '',
   nickname: '',
   photoUrl: '',
+  bg: '',
   followerCount: 0,
   followingCount: 0,
   watchedMovies: [],
   joinedAt: '',
   updatedAt: '',
+  deletedAt: '',
 };
 
 const UserSlice = createSlice({
@@ -22,8 +24,14 @@ const UserSlice = createSlice({
     sliceSetUser: (state, action: { payload: User; type: string }) => {
       return action.payload;
     },
+    sliceSetUserNickName: (
+      state,
+      action: { payload: string; type: string }
+    ) => {
+      return { ...state, nickname: action.payload };
+    },
   },
 });
 
-export const { sliceSetUser } = UserSlice.actions;
+export const { sliceSetUser, sliceSetUserNickName } = UserSlice.actions;
 export default UserSlice.reducer;

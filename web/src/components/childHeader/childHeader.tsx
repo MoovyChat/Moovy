@@ -6,10 +6,11 @@ import { MdKeyboardBackspace } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
-  text: string;
+  text?: string;
   className: string;
+  children?: React.ReactNode;
 };
-const ChildHeader: React.FC<props> = ({ text, className }) => {
+const ChildHeader: React.FC<props> = ({ text, className, children }) => {
   const navigate = useNavigate();
   const backButtonHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -18,9 +19,9 @@ const ChildHeader: React.FC<props> = ({ text, className }) => {
   return (
     <ChildHeaderStyles className={className}>
       <div className='back-button' onClick={backButtonHandler}>
-        <MdKeyboardBackspace size={35} />
+        <MdKeyboardBackspace size={30} />
       </div>
-      <HeaderText className='header-text'>{text}</HeaderText>
+      <HeaderText className='header-text'>{text ? text : children}</HeaderText>
     </ChildHeaderStyles>
   );
 };

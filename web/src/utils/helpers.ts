@@ -1,6 +1,9 @@
+import * as DOMPurify from 'dompurify';
+
 import { textMap, timeMessage } from './interfaces';
 
 import { Dispatch } from 'redux';
+import HtmlParser from 'react-html-parser';
 import { msgPlace } from './enums';
 import { textMapTypes } from '../constants';
 
@@ -45,44 +48,6 @@ export const isNumber = (c: string) => {
   else return true;
 };
 
-export const getFormattedWordsArray = (
-  text: string,
-  place: string,
-  dispatch: Dispatch<any>,
-  userId: string,
-  commentTimeStamp: number
-): textMap[] => {
-  return text
-    .trim()
-    .split(' ')
-    .map((word) => {
-      if (word.startsWith('@')) {
-        return { message: word, type: textMapTypes.USER };
-      } else if (word.includes(':')) {
-        let words = word.split(':');
-        let hours = words.length === 3 ? words[0] : '0';
-        let minutes = hours !== '0' ? words[1] : words[0];
-        let seconds = hours !== '0' ? words[2] : words[1];
-        if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
-          if (place === msgPlace.COMMENT_CARD) {
-            // let timeMsgObj: timeMessage = {
-            //   madeBy: userId,
-            //   message: text,
-            //   time: word,
-            //   timeStamp: commentTimeStamp,
-            // };
-            // dispatch(sliceAddTimeMessages(timeMsgObj));
-          }
-          return { message: word, type: textMapTypes.TIME };
-        } else {
-          return { message: word, type: textMapTypes.BASIC };
-        }
-      } else {
-        return { message: word, type: textMapTypes.BASIC };
-      }
-    });
-};
-
 export const colorLog = (...args: any) => {
   console.log(`%c[qchat]`, 'color: #00d9ff', ...args);
 };
@@ -104,6 +69,18 @@ export const getDateFormat = (time: string | undefined) => {
   return intlFormat.toString();
 };
 
+// Date format: DD MMM YYYY
+export const getShortDateFormat = (time: string | undefined) => {
+  if (!time) return;
+  let intTime = parseInt(time);
+  let intlFormat = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(intTime);
+  return intlFormat.toString();
+};
+
 export const isImageURLValid = async (url: string) => {
   const img = new Image();
   img.src = url;
@@ -111,4 +88,55 @@ export const isImageURLValid = async (url: string) => {
     img.onerror = () => resolve(false);
     img.onload = () => resolve(true);
   });
+};
+
+export const getFormattedWordsArray = (text: string): textMap[] => {
+  return text.split(' ').map((word) => {
+    if (word.startsWith('@')) {
+      return { message: word, type: textMapTypes.USER };
+    } else if (word.includes(':')) {
+      let words = word.split(':');
+      let hours = words.length === 3 ? words[0] : '0';
+      let minutes = hours !== '0' ? words[1] : words[0];
+      let seconds = hours !== '0' ? words[2] : words[1];
+      if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
+        return { message: word, type: textMapTypes.TIME };
+      } else {
+        return { message: word, type: textMapTypes.BASIC };
+      }
+    } else {
+      return { message: word, type: textMapTypes.BASIC };
+    }
+  });
+};
+
+export const ParsedText = (text: string) => {
+  // Use a regular expression to match the links
+  const linkRegex =
+    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+
+  // Replace the links with HTML a elements
+  const linkText = text.replace(linkRegex, (link) => {
+    return `<a href="${link}" target='_blank'>${link}</a>`;
+  });
+
+  // Add a hook to make all links open a new window
+  DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+    // set all elements owning target to target=_blank
+    if ('target' in node) {
+      node.setAttribute('target', '_blank');
+    }
+    // set non-HTML/MathML links to xlink:show=new
+    if (
+      !node.hasAttribute('target') &&
+      (node.hasAttribute('xlink:href') || node.hasAttribute('href'))
+    ) {
+      node.setAttribute('xlink:show', 'new');
+    }
+  });
+  let clean = DOMPurify.sanitize(linkText, {
+    ALLOWED_TAGS: ['a'],
+    ADD_ATTR: ['target'],
+  });
+  return HtmlParser(clean);
 };

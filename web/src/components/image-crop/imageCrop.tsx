@@ -1,6 +1,6 @@
 import 'react-image-crop/dist/ReactCrop.css';
 
-import React, { Dispatch, MouseEventHandler, useState } from 'react';
+import React, { Dispatch, MouseEventHandler, useEffect, useState } from 'react';
 import ReactCrop, { PixelCrop, centerCrop } from 'react-image-crop';
 
 import { Crop } from 'react-image-crop';
@@ -10,11 +10,15 @@ type props = {
   url: string;
   setCompletedCrop: Dispatch<React.SetStateAction<PixelCrop | undefined>>;
   imageRef: any;
+  aspect: number;
 };
-const ImageCrop: React.FC<props> = ({ url, setCompletedCrop, imageRef }) => {
+const ImageCrop: React.FC<props> = ({
+  url,
+  setCompletedCrop,
+  imageRef,
+  aspect,
+}) => {
   const [crop, setCrop] = useState<Crop>();
-
-  const [aspect, setAspect] = useState<number | undefined>(1);
   const centerAspectCrop = (
     mediaWidth: number,
     mediaHeight: number,

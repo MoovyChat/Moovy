@@ -1,13 +1,7 @@
 query getUserStats($uid: String!) {
   getUserStatistics(uid: $uid) {
     user {
-      id
-      name
-      nickname
-      email
-      joinedAt
-      photoUrl
-      watchedMovies
+      ...FullUser
     }
     favTitles {
       favorite

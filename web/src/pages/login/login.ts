@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 
-import { User } from '../../utils/interfaces';
+import { User } from '../../generated/graphql';
 import { app } from '../../firebase';
 
 const auth = getAuth(app);

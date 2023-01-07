@@ -1,13 +1,16 @@
 fragment FullReply on Reply {
+  __typename
   id
-  commentedUserId
   message
   movieId
   parentCommentId
+  commentedUserName
+  parentRepliedUser
   parentReplyId
-  platformId
-  repliesCount
+  commentedUserId
   likesCount
+  repliesCount
+  platformId
   createdAt
   updatedAt
 }

@@ -31,7 +31,7 @@ export const LeftParent = styled.div`
       color: inherit;
       text-decoration: none;
       :hover {
-        background-color: #ff0044;
+        background-color: ${(p) => p.theme.hoverColor};
         cursor: pointer;
       }
       .icon {
@@ -46,7 +46,89 @@ export const LeftParent = styled.div`
       }
     }
     .active {
-      color: gold;
+      .icon {
+        svg {
+          height: 35px;
+          width: 35px;
+        }
+      }
+      .icon.feed {
+        svg {
+          fill: red;
+        }
+      }
+      .icon.catalog {
+        svg {
+          fill: #ff7b00;
+        }
+      }
+      .icon.p {
+        svg {
+          fill: #3db847;
+        }
+      }
+      .icon.favorites {
+        svg {
+          fill: #ff0000;
+        }
+      }
+      .icon.comments {
+        svg {
+          fill: #6a30ac;
+        }
+      }
+      .icon.replies {
+        svg {
+          fill: #478887;
+        }
+      }
+      .icon.notifications {
+        svg {
+          fill: #426bda;
+        }
+      }
+      .text {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  @media (max-height: 700px) {
+    .profile {
+      width: 70px;
+      height: 70px;
+      margin: 20% 0;
+    }
+  }
+
+  @media (max-height: 550px) {
+    .profile {
+      display: none;
+    }
+
+    .options {
+      display: flex;
+      justify-content: center;
+
+      height: 100%;
+      overflow: auto;
+      .option {
+        .icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex: 1 0 30%;
+          svg {
+            height: 20px;
+            width: 20px;
+          }
+        }
+        .text {
+          flex: 1 0 80%;
+          font-size: 0.7rem;
+          font-weight: 600;
+        }
+      }
     }
   }
 `;

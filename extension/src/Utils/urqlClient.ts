@@ -7,6 +7,7 @@ import {
 import { NextUrqlClientConfig, WithUrqlClientOptions } from 'next-urql';
 import { commentLikeChanges, replyLikeChanges } from './betterUpdateQuery';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+import { deleteCommentChanges, toggleFollowChanges } from './cacheExchanges';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
@@ -18,15 +19,20 @@ const wsClient = createWSClient({
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
-    LikesObject: (data) => data.id as string,
-    CommentLikesObject: (data) => data.id as string,
-    RepliesObject: (data) => data.id as string,
-    replyLikesObject: (data) => data.id as string,
+    LikesObject: () => null,
+    CommentLikesObject: () => null,
+    RepliesObject: () => null,
+    replyLikesObject: () => null,
+    Profile: () => null,
+    Visited: () => null,
+    MovieStats: () => null,
   },
   updates: {
     Mutation: {
       setCommentLike: commentLikeChanges,
       setReplyLike: replyLikeChanges,
+      toggleFollow: toggleFollowChanges,
+      deleteComment: deleteCommentChanges,
     },
     Subscription: {
       commentLikesUpdate: commentLikeChanges,

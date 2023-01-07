@@ -1,9 +1,5 @@
 mutation getUserMut($uid: String!) {
   getUserMut(uid: $uid) {
-    id
-    name
-    nickname
-    photoUrl
-    watchedMovies
+    ...FullUser
   }
 }

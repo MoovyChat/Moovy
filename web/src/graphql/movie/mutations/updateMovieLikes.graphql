@@ -1,0 +1,10 @@
+mutation UpdateUserMovieStats(
+  $options: UserMovieOptions!
+  $mid: String!
+  $uid: String!
+) {
+  updateUserMovieStats(options: $options, mid: $mid, uid: $uid) {
+    like
+    favorite
+  }
+}

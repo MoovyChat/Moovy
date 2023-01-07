@@ -1,12 +1,12 @@
 import constants from '../../../constants';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const AppWindow = styled(motion.div)`
+export const AppWindow = styled.div`
   text-align: center;
   font-family: 'Lexend', sans-serif;
   width: 300px;
-  height: 200px;
+  max-height: 600px;
+  overflow: auto;
   background-color: black;
 
   .floatRight {
@@ -20,7 +20,7 @@ export const AppWindow = styled(motion.div)`
   }
 `;
 
-export const SideBarOpen = styled(motion.div)`
+export const SideBarOpen = styled.div`
   position: fixed;
   background-image: linear-gradient(black 0.5%, #232323);
   width: 200px;
@@ -42,8 +42,7 @@ export const SideBarOpen = styled(motion.div)`
 `;
 
 export const Footer = styled.div`
-  position: absolute;
-  bottom: 2px;
+  position: relative;
   font-size: 13px;
   width: 300px;
   text-align: center;

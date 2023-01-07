@@ -1,6 +1,59 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Moovy",
+  "name": "Moovy Chat",
+  "description": "Now stream movies with comments",
+  "orientation": "portrait",
+  "screenshots": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon",
+      "platform": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Welcome",
+      "url": "/welcome",
+      "description": "Welcome screen"
+    },
+    {
+      "name": "Feed",
+      "url": "/feed"
+    },
+    {
+      "name": "Comments",
+      "url": "/comments"
+    },
+    {
+      "name": "Replies",
+      "url": "/replies"
+    },
+    {
+      "name": "Comment",
+      "url": "/comment"
+    },
+    {
+      "name": "Reply",
+      "url": "/reply"
+    },
+    {
+      "name": "Catalog",
+      "url": "/catalog"
+    },
+    {
+      "name": "Profile",
+      "url": "/profile"
+    },
+    {
+      "name": "Show",
+      "url": "/show"
+    }
+  ],
   "icons": [
     {
       "src": "favicon.ico",
@@ -16,6 +69,13 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
+    }
+  ],
+  "iarc_rating_id": "language-6",
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://www.twitter.com/"
     }
   ],
   "start_url": ".",

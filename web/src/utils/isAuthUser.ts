@@ -1,11 +1,10 @@
+import { User, useMeQuery } from '../generated/graphql';
 import { sliceSetUser, userState } from '../redux/slices/userSlice';
 import { useEffect, useState } from 'react';
 
-import { User } from './interfaces';
 import { isServer } from '../constants';
 import { urqlClient } from './urlClient';
 import { useAppDispatch } from '../redux/hooks';
-import { useMeQuery } from '../generated/graphql';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 

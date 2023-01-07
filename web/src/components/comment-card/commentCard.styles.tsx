@@ -1,129 +1,272 @@
 import styled, { css } from 'styled-components';
 
-import { expandDown } from '../../utils/keyframes';
+import { animateHeart } from '../../utils/keyframes';
+
+export const commentStyleMixin = () => css`
+  color: ${(p) => p.theme.mention};
+`;
 
 type props = {
   isReply?: boolean;
-  showReplies?: boolean;
+  showEpisodeInfo?: boolean;
+  showTitleInfo?: boolean;
+  episodePoster?: any;
+  titlePoster?: any;
+  isHover?: boolean;
+  cardHeight?: string;
+  showMore?: boolean;
 };
 export const CardParent = styled.div<props>`
   display: flex;
   flex-direction: column;
-  width: 99.5%;
-  min-height: 60px;
+  position: relative;
+  width: 99%;
+  min-height: 120px;
   justify-content: space-evenly;
   align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
-  padding: 6px 0px;
-  margin: 7px 0px;
+  background-color: transparent;
+  overflow: hidden;
+  margin: 10px 2px;
+  box-shadow: 0 0 4px ${(p) => p.theme.text},
+    inset 0 0 4px ${(p) => p.theme.trendingTiles};
+  cursor: pointer;
+  font-size: 15px;
   :first-child {
     margin-top: 10px;
   }
-  :hover {
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
-    background-image: ${(p) => p.theme.movieHeader};
+    filter: blur(1px);
+    z-index: -1;
+    filter: blur(2px) brightness(0.8);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: fadeIn 0.6s linear forwards, scaleUp 10s linear forwards;
+    }
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    @keyframes scaleUp {
+      0% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1.2);
+      }
+    }
   }
   .content {
     display: flex;
-    width: ${(p) => (p.isReply ? '95%' : '90%')};
-    height: 100%;
-    align-items: center;
+    width: 95%;
+    align-items: flex-start;
+    padding-top: 10px;
     .user-pic {
-      width: 50px;
+      max-width: 50px;
       height: 100%;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      margin-top: 5px;
       .pic-container {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        flex-direction: column;
       }
     }
     .message {
-      display: flex;
-      padding-left: 10px;
+      display: block;
+      padding-left: 15px;
       width: calc(100% - 50px);
       flex-direction: column;
       justify-content: center;
+      padding-bottom: 10px;
+      .show-more {
+        font-weight: 600;
+        font-size: 12px;
+        color: ${(p) => p.theme.mention};
+        text-decoration: underline;
+      }
       .username {
         display: flex;
-        align-items: center;
-        .user {
-          font-weight: 600;
-          font-size: 0.9em;
-        }
-        .time {
+        flex-direction: column;
+        .container {
           display: flex;
-          justify-content: center;
-          height: 80%;
-          align-items: flex-end;
+          align-items: center;
+          .user {
+            font-weight: 800;
+          }
+          .time {
+            display: flex;
+            justify-content: center;
+            height: 80%;
+            align-items: flex-end;
+            font-weight: 600;
+            font-size: 0.7em;
+            margin-left: 5px;
+          }
+        }
+        .isReply {
           font-weight: 400;
-          font-size: 0.5em;
-          margin-left: 5px;
+          font-size: 0.7em;
+          .ru {
+            color: ${(p) => p.theme.mention};
+            font-weight: 600;
+            :hover {
+              text-decoration: underline;
+            }
+          }
+        }
+        .movie {
+          display: flex;
+          font-size: 0.5rem;
+          font-weight: 600;
+          margin: 5px 0;
+          .name {
+            position: relative;
+            width: fit-content;
+            block-size: fit-content;
+            padding: 5px 8px;
+            border-radius: 10px;
+            color: #ffffff;
+            overflow: hidden;
+            :hover {
+              text-decoration: underline;
+              text-decoration-color: white;
+              text-decoration-thickness: 1px;
+              cursor: pointer;
+            }
+          }
+          .title {
+            background: linear-gradient(90deg, #2c4bc9 50%, #445ec4 0)
+              var(--_p, 100%) / 200% no-repeat;
+            color: white;
+            margin-right: 6px;
+            transition: 1s;
+            :hover {
+              --_p: 0%;
+              text-decoration: underline;
+              text-decoration-color: black;
+              text-decoration-thickness: 1px;
+              cursor: pointer;
+            }
+          }
+          .episode {
+            background: linear-gradient(90deg, #a42525 50%, #af540f 0)
+              var(--_p, 100%) / 200% no-repeat;
+            color: white;
+            transition: 1s;
+            :hover {
+              --_p: 0%;
+              text-decoration: underline;
+              text-decoration-color: black;
+              text-decoration-thickness: 1px;
+              cursor: pointer;
+            }
+          }
         }
       }
       .msg {
-        font-size: 0.8em;
-        padding: 2px 0;
+        font-weight: 600;
         font-weight: normal;
-      }
-    }
-
-    .options {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      width: 25%;
-      height: 100%;
-      .c {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        width: 40px;
-        height: 100%;
-        .icon {
-          margin-right: 3px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100%;
+        overflow: hidden;
+        max-height: ${(p) =>
+          p.showMore ? p.cardHeight : p.isHover ? '200px' : '100px'};
+        transition: max-height 0.5s;
+        white-space: pre-line;
+        .message-box {
         }
-        .count {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 0.9em;
-          height: 100%;
+        .time,
+        .user {
+          ${commentStyleMixin()};
+          :hover {
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+          }
         }
       }
     }
   }
 
-  .show-replies {
+  .options {
     display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    width: calc(100% - 50px);
-    justify-content: flex-end;
-    transition: all 1s;
-    .icon {
-      display: flex;
-      justify-content: flex-end;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 10px;
+    font-weight: 600;
+    .delete {
+      color: #e80d2d;
     }
-    .reply-text {
-      display: flex;
-      width: 100%;
-      font-size: 0.7em;
-      align-items: flex-end;
-      justify-content: flex-end;
-      font-weight: 600;
-      :hover {
-        text-decoration: underline;
+    .replies {
+      .icon {
+        :hover {
+          svg {
+          }
+        }
       }
-      .rt-wc {
+    }
+    .likes {
+      .icon {
+        svg {
+          animation: ${animateHeart} 0.3s linear forwards;
+          :hover {
+          }
+        }
+      }
+    }
+    .c {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 5px 0;
+      .icon {
         display: flex;
-        width: 90%;
-        padding-bottom: 10px;
-        padding-top: 3px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 18px 0 0 18px;
+        box-shadow: 0 0 2px;
+        cursor: pointer;
+        padding: 2px 10px 2px 10px;
+        :hover {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
+        }
+        :active {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+        }
+      }
+      .count {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.75em;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 0 18px 18px 0;
+        box-shadow: 0 0 2px;
+        cursor: pointer;
+        :hover {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
+        }
+        :active {
+          background-color: ${(p) =>
+            p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
+        }
       }
     }
   }
@@ -135,7 +278,105 @@ export const ReplyWindow = styled.div<props>`
   position: relative;
   align-self: flex-end;
   border-left: 0.3px solid;
-  height: 40vh;
-  max-height: ${(p) => (p.showReplies ? '40vh' : '0vh')};
-  transition: max-height 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+`;
+
+export const MovieInfoParent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: white;
+  .title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    :hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+  .parent {
+    font-size: 0.6rem;
+    font-weight: 600;
+    margin: 4px 0;
+    :hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  .group {
+    display: flex;
+    flex-wrap: wrap;
+    .year,
+    .runtime {
+      padding: 5px 10px;
+      border-radius: 3px;
+      border: 1px solid #d01323;
+      margin: 2px;
+    }
+  }
+  .synopsis {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    .a {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .b {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: initial;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+  .stats {
+    display: flex;
+    margin: 5px 0;
+
+    .likes,
+    .comments,
+    .views {
+      display: flex;
+      margin: 3px 5px;
+      justify-content: center;
+      align-items: center;
+      .count {
+        font-weight: 600;
+        margin-right: 2px;
+      }
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .likes {
+      .icon {
+        svg {
+          animation: ${animateHeart} 0.3s linear forwards;
+          :hover {
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const SpoilerTag = styled.span`
+  filter: blur(2px);
+  background-color: red;
+  color: white;
+  transition: filter 0.2s linear;
+  margin: 0 5px;
+  border-radius: 5px;
+  padding: 1px 4px;
+  cursor: pointer;
+  :hover {
+    filter: none;
+  }
 `;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import ChildHeader from '../../components/childHeader/childHeader';
 import { HeaderText } from '../commentThread/commentThread.styles';
 import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
@@ -27,10 +28,12 @@ const NotificationsModule = () => {
   }, [notificationQueryResult]);
   return (
     <NotificationParent>
-      <HeaderText className='heading'>
-        <span>Notifications</span>
-        <span className='count'>{notifications?.length}</span>
-      </HeaderText>
+      <ChildHeader className='header'>
+        <HeaderText className='heading'>
+          <span>Notifications</span>
+          <span className='count'>{notifications?.length}</span>
+        </HeaderText>
+      </ChildHeader>
       <div className='notifications'>
         {notifications?.map((notification) => (
           <NotificationCard

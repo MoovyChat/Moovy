@@ -1,5 +1,4 @@
 import constants from '../../../constants';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 interface prop {
@@ -16,13 +15,42 @@ export const SetTop = styled.div`
   justify-content: center;
   position: relative;
   z-index: 10;
+  color: white;
+  .welcome {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    text-align: center;
+    align-items: center;
+    .pic {
+      flex: 1 1 30%;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .message {
+      flex: 1 1 70%;
+      height: 100%;
+      display: flex;
+      justify-content: flex-start;
+      margin-left: 10px;
+    }
+  }
+  .comment-checkbox {
+    display: flex;
+  }
+  .button-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .lst {
+      width: 50%;
+      margin: 5px 0;
+    }
+  }
 `;
 
-export const PicParent = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 30px;
-`;
 export const Pic = styled.div<prop>`
   display: inline-block;
   width: 40px;
@@ -45,48 +73,8 @@ export const Pic = styled.div<prop>`
   }
 `;
 
-export const WelcomeInLogin = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  color: white;
-  text-align: center;
-  margin-bottom: 40px;
-  .settings {
-    position: absolute;
-    right: 15px;
-    top: 5px;
-    color: #e2e2e2;
-    :hover {
-      cursor: pointer;
-    }
-    .icon {
-      :hover {
-        animation: spin 4s linear infinite;
-      }
-    }
-  }
-
-  @keyframes spin {
-    100% {
-      transform: rotate(360deg) scale(1);
-    }
-    75% {
-      transform: rotate(270deg) scale(1.1);
-    }
-    50% {
-      transform: rotate(180deg) scale(1);
-    }
-    25% {
-      transform: rotate(90deg) scale(1.1);
-    }
-    0% {
-      transform: rotate(0deg) scale(1);
-    }
-  }
-`;
-
 export const WelcomeMessage = styled.div`
-  position: absolute;
+  position: relative;
   flex-basis: 80%;
   margin-left: 10px;
   text-align: center;
@@ -101,7 +89,7 @@ export const ButtonParentInLogin = styled.div`
 `;
 
 export const EmailInLogin = styled.div`
-  position: absolute;
+  position: relative;
   display: flex;
   top: 31px;
   left: 100px;
@@ -112,7 +100,10 @@ export const EmailInLogin = styled.div`
   text-align: center;
 `;
 
-export const SideArrowButton = styled.div`
+type recordProps = {
+  isRecording: boolean;
+};
+export const SideArrowButton = styled.div<recordProps>`
   color: white;
   position: absolute;
   left: 0px;
@@ -123,9 +114,28 @@ export const SideArrowButton = styled.div`
     background-color: rgb(255, 255, 255);
     color: ${constants.main_color};
   }
+  .icon {
+    animation: ${(p) =>
+      p.isRecording ? 'shrinkAndGrow 0.5s linear infinite' : 'none'};
+    filter: drop-shadow(11px 10px 4px rgb(0 0 0 / 4.4));
+  }
+
+  @keyframes shrinkAndGrow {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(0.8);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
 `;
 
-export const Refresh = styled(motion.div)`
+export const Refresh = styled.div`
   width: 25px;
   height: 25px;
   padding: 5px;
@@ -138,7 +148,62 @@ export const Refresh = styled(motion.div)`
   border-radius: 50%;
   right: 10px;
   bottom: 35px;
+  transition: all 0.2s;
   :hover {
     cursor: pointer;
+    transform: rotate(-40deg);
+  }
+  :active {
+    transform: rotate(195deg);
+  }
+`;
+
+type props = {
+  showOptions: boolean;
+};
+export const RecordOptions = styled.div<props>`
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  color: white;
+  width: 60%;
+  height: 80px;
+  overflow: auto;
+  max-height: ${(p) => (p.showOptions ? '80px' : '0px')};
+  transition: max-height 0.4s linear;
+  .record-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    .key {
+      width: 40%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .value {
+      width: 60%;
+      margin: 4px 0;
+      select {
+        position: relative;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        width: 100%;
+        background-color: transparent;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 0.8rem;
+        overflow: hidden;
+        :focus {
+          outline: none;
+        }
+      }
+    }
   }
 `;

@@ -1,35 +1,44 @@
-import {
-  CommentThreadParent,
-  HeaderText,
-  StyledButton,
-} from './commentThread.styles';
-import {
-  MdFavoriteBorder,
-  MdKeyboardBackspace,
-  MdOutlineMoreHoriz,
-  MdReply,
-} from 'react-icons/md';
 import { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import { Reply, User } from '../../utils/interfaces';
 import {
+  User,
   useGetRepliedUserQuery,
   useGetRepliesOfReplyQuery,
+  useGetReplyLikesQuery,
   useGetReplyQuery,
+  useSetReplyLikeMutation,
 } from '../../generated/graphql';
-import { useNavigate, useParams } from 'react-router-dom';
 
-import ProfilePic from '../../components/profilePic/profilePic';
-import ReplyCard from '../../components/comment-card/replyCard';
-import { getDateFormat } from '../../utils/helpers';
+import CommentTemplate from './commentTemplate';
+import Loading from '../loading/loading';
+import NotFound from '../notFound/notFound';
+import { Reply } from '../../utils/interfaces';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
+import { useAppSelector } from '../../redux/hooks';
+import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const ReplyThread = () => {
   const { id } = useParams();
-  const ref = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const [commentQueyResults] = useGetReplyQuery({
+  const userRef = useRef<User | null>(null);
+  const loggedInUser = useAppSelector((state) => state.user);
+  const [page, setPage] = useState<number>(1);
+  const [like, setLike] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [likedUsers, setLikedUsers] = useState<any[]>([]);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [replyLikeQuery, _executeQuery] = useGetReplyLikesQuery({
+    variables: {
+      rid: id!,
+      limit: 10,
+      page: 1,
+    },
+    pause: isServer(),
+  });
+
+  const [, setReplyLike] = useSetReplyLikeMutation();
+
+  const [commentQueryResults] = useGetReplyQuery({
     variables: { rid: id! },
     pause: isServer(),
   });
@@ -40,29 +49,37 @@ const ReplyThread = () => {
   const [repliesQueryResult] = useGetRepliesOfReplyQuery({
     variables: {
       rid: id!,
-      limit: 10,
+      limit: 5,
+      page: page!,
     },
+    pause: isServer(),
   });
+
   const [comment, setComment] = useState<Reply>();
-  const [replies, setReplies] = useState<Reply[]>();
-  const [commentHeight, setCommentHeight] = useState<number>(0);
-  const [replyCount, setReplyCount] = useState<number>(0);
-  const [lastPage, setLastPage] = useState<number>(1);
-  const [commentedUser, setCommentedUser] = useState<User>();
-  const backButtonHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    navigate(-1);
-  };
+
+  useEffect(() => {
+    const { data, fetching, error } = replyLikeQuery;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _count = data.getReplyLikes?.likesCount!;
+      const _users = data.getReplyLikes?.likes;
+      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
+      if (findCurrentUser) setLike(true);
+      else setLike(false);
+      setLikedUsers(_users!);
+      setLikeCount(_count);
+    }
+  }, [replyLikeQuery.fetching]);
 
   // Get Reply data
   useEffect(() => {
-    const { data, fetching, error } = commentQueyResults;
+    const { data, fetching, error } = commentQueryResults;
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getReply as Reply;
-      setComment(_data);
+      setComment(() => _data);
     }
-  }, [commentQueyResults]);
+  }, [commentQueryResults]);
 
   // Get commented user data
   useEffect(() => {
@@ -70,7 +87,7 @@ const ReplyThread = () => {
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getRepliedUser as User;
-      setCommentedUser(_data);
+      userRef.current = _data;
     }
   }, [commentedQueryResult]);
 
@@ -79,75 +96,50 @@ const ReplyThread = () => {
     const { data, error, fetching } = repliesQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _repliesData = data.getRepliesOfReply.replies;
-      const _repliesCount = data.getRepliesOfReply.repliesCount;
-      const _lastPage = data.getRepliesOfReply.lastPage;
-      setReplies(_repliesData);
-      setReplyCount(_repliesCount);
-      setLastPage(_lastPage);
+      const _repliesLastPage = data.getRepliesOfReply.lastPage;
+      setLastPage(() => _repliesLastPage);
     }
   }, [repliesQueryResult]);
 
-  // Get comment height.
-  useEffect(() => {
-    setCommentHeight(ref.current?.clientHeight!);
-  }, [ref.current]);
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+    e.stopPropagation();
+    setLike(!like);
+    like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
+    const res = await setReplyLike({
+      uid: loggedInUser.id,
+      rid: id!,
+      like: !like,
+      mid: comment?.movieId!,
+    });
+    const { data, error } = res;
+    if (error) console.log(error);
+    const _like = data?.setReplyLike?.likeStatus.like!;
+    setLike(_like);
+  };
+
+  if (commentQueryResults.fetching) return <Loading />;
+  if (!comment) return <NotFound />;
+
+  if (repliesQueryResult.fetching) return <Loading />;
+  const data = repliesQueryResult.data!;
+  const _data = data && data.getRepliesOfReply;
+  const replies = _data && _data.replies ? _data.replies : [];
+
   return (
-    <CommentThreadParent commentHeight={commentHeight}>
-      <div className='comment-header'>
-        <div className='back-button' onClick={backButtonHandler}>
-          <MdKeyboardBackspace size={35} />
-        </div>
-        <HeaderText className='header-text'>Memo</HeaderText>
-      </div>
-      <div className='comment-container' ref={ref}>
-        <div className='comment-usr-detail'>
-          <div className='user-container'>
-            <div className='user'>
-              <ProfilePic src={commentedUser?.photoUrl!} />
-            </div>
-            <div className='name'>{commentedUser?.nickname}</div>
-          </div>
-          <div className='options-container'>
-            <div className='follow'>
-              <StyledButton className='follow-btn' color='#de1328'>
-                Follow
-              </StyledButton>
-            </div>
-            <div className='option'>
-              <MdOutlineMoreHoriz className='icon' size={20} />
-            </div>
-          </div>
-        </div>
-        <div className='comment-usr-msg'>
-          <div className='cm-us-xt'>{comment?.message}</div>
-        </div>
-        <div className='comment-usr-time'>
-          {getDateFormat(comment?.createdAt)}
-        </div>
-        <div className='comment-usr-stats'>
-          <div className='likes cus'>
-            <MdFavoriteBorder size={20} />
-            <div className='cmt-txt'>
-              <div className='count'>{comment?.likesCount}</div>
-              <div className='txt'>Likes</div>
-            </div>
-          </div>
-          <div className='comment cus'>
-            <MdReply size={20} />
-            <div className='cmt-txt'>
-              <div className='count'>{comment?.repliesCount}</div>
-              <div className='txt'>Replies</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className='comment-replies'>
-        {replies?.map((reply) => (
-          <ReplyCard comment={reply} key={`reply${reply.id!}`} />
-        ))}
-      </div>
-    </CommentThreadParent>
+    <CommentTemplate
+      type='reply'
+      userRef={userRef}
+      comment={comment}
+      replies={replies}
+      page={page}
+      setPage={setPage}
+      lastPage={lastPage}
+      like={like}
+      setLike={setLike}
+      likesCount={likeCount}
+      likedUsers={likedUsers}
+      updateLike={updateLike}
+    />
   );
 };
 

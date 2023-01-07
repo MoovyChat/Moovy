@@ -2,8 +2,9 @@ import styled from 'styled-components';
 
 export const WithOutLoginWindow = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
-  height: 150px;
+  max-height: 600px;
   width: 300px;
   display: center;
   align-items: center;
@@ -16,15 +17,11 @@ export const Welcome = styled.div`
   display: flex;
   align-items: flex-start;
   color: white;
+  margin: 10px 0;
 `;
 export const ButtonParent = styled.div`
   width: 70%;
   flex-basis: 50%;
-`;
-
-export const Footer = styled.div`
-  position: absolute;
-  bottom: 2px;
-  font-size: 15px;
-  color: white;
+  margin-top: 10px;
+  margin-bottom: 20px;
 `;

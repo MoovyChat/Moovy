@@ -3,6 +3,17 @@ export enum DIRECTION {
   RIGHT = 'right',
   TOP = 'top',
   BOTTOM = 'bottom',
+  BOTTOM_RIGHT = 'bottom-right',
+  TOP_RIGHT = 'top-right',
+  TOP_LEFT = 'top-left',
+  BOTTOM_LEFT = 'bottom-left',
+}
+
+export enum TOOLTIP {
+  USER = 'USER',
+}
+export enum FOCUS_WINDOW {
+  EMOJI = 'EMOJI',
 }
 
 export enum msgPlace {

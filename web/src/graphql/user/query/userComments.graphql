@@ -1,18 +1,26 @@
-query getCommentsOfTheUser($uid: String!) {
-  getCommentsOfTheUser(uid: $uid) {
-    id
+query getCommentsOfTheUser(
+  $limit: Int!
+  $uid: String!
+  $asc: Boolean
+  $page: Int
+  $time: String
+) {
+  getCommentsOfTheUser(
+    limit: $limit
+    uid: $uid
+    ASC: $asc
+    page: $page
+    time: $time
+  ) {
     user {
-      id
-      name
-      email
-      photoUrl
-      nickname
-      updatedAt
-      watchedMovies
-      joinedAt
+      ...FullUser
     }
+    totalCommentCount
+    pastCount
     comments {
       ...FullComment
     }
+    hasMoreComments
+    lastPage
   }
 }

@@ -1,11 +1,7 @@
 subscription commentLikes($cid: String!) {
   commentLikesUpdate(cid: $cid) {
     likes {
-      id
-      name
-      nickname
-      photoUrl
-      watchedMovies
+      ...FullUser
     }
     likesCount
   }

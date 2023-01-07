@@ -1,12 +1,5 @@
 query GetUser($uid: String!) {
   getUser(uid: $uid) {
-    id
-    name
-    photoUrl
-    email
-    nickname
-    watchedMovies
-    joinedAt
-    updatedAt
+    ...FullUser
   }
 }

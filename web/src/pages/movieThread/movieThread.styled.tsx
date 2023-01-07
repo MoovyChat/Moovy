@@ -4,21 +4,29 @@ export const MovieThreadParent = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0px 10px;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  width: 99%;
+  height: 99%;
+  overflow: auto;
   position: absolute;
   .movie-container {
     position: absolute;
-    top: 14%;
+    top: 9%;
     height: 86%;
     width: 100%;
+    .no-data {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 20px;
+      width: 100%;
+      height: 100%;
+    }
     .thread-movie {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 10%;
+      height: auto;
       width: 100%;
       overflow: hidden;
     }
@@ -29,14 +37,16 @@ export const MovieThreadParent = styled.div`
       height: calc(100% - 100px);
       margin-left: auto;
       margin-right: auto;
-      width: 99%;
+      width: 90%;
       font-weight: 700;
-      overflow-y: scroll;
       .show-more {
         font-size: 0.7em;
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 15px 0;
+        padding-bottom: 25px;
+        z-index: 10;
         :hover {
           cursor: pointer;
           text-decoration: underline;
@@ -56,11 +66,18 @@ export const MovieThreadParent = styled.div`
   @media (max-width: 500px) {
     .movie-container {
       .thread-movie {
-        height: 13%;
         padding-bottom: 6px;
       }
       .thread-comments {
       }
     }
+  }
+`;
+
+export const StyledHeader = styled.div`
+  display: flex;
+  align-items: center;
+  .watch-video {
+    margin-left: 40px;
   }
 `;

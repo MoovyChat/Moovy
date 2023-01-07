@@ -4,6 +4,8 @@ fragment FullReply on Reply {
   message
   movieId
   parentCommentId
+  commentedUserName
+  parentRepliedUser
   parentReplyId
   commentedUserId
   likesCount

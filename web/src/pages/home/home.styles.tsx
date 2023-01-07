@@ -35,7 +35,7 @@ export const PanelsParent = styled.div<props>`
     flex: 1 0 25%;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 800px) {
     .right {
       display: none;
     }

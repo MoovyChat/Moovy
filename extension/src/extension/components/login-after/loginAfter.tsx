@@ -6,6 +6,7 @@ import {
 
 import { User } from '../../../Utils/interfaces';
 import { UserCredential } from 'firebase/auth';
+import { isServerSide } from '../../../constants';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
 import { urqlClient } from '../../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -31,48 +32,47 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
     variables: {
       uid: userFromAuth.user.uid,
     },
+    pause: isServerSide(),
   });
   useEffect(() => {
-    if (!fetching && !error) {
-      if (!fetching) {
-        const { uid, email, displayName, photoURL } = userFromAuth.user;
-        let user: User = {
-          name: displayName!,
-          email: email!,
-          photoUrl: photoURL!,
-          nickname: uid,
-          id: uid,
-        };
-        // User doesn't exist in the database yet.
-        if (data!.getUser === null) {
-          createUser({
-            options: user as any,
-          })
-            .then(() => {
-              setUserToStore(user, setUser);
-              chrome.windows.getCurrent((w) => {
-                chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
-                  chrome.tabs.sendMessage(
-                    tabs[0].id!,
-                    { user: user, from: 'withOutLogin' },
-                    (response) => {
-                      console.log(response);
-                    }
-                  );
-                });
+    if (error) console.log(error);
+    if (!fetching) {
+      const { uid, email, displayName, photoURL } = userFromAuth.user;
+      let user: User = {
+        name: displayName!,
+        email: email!,
+        photoUrl: photoURL!,
+        nickname: displayName!,
+        id: uid,
+        bg: '',
+      };
+      // User doesn't exist in the database yet.
+      if (data!.getUser === null) {
+        createUser({
+          options: user as any,
+        })
+          .then(() => {
+            setUserToStore(user, setUser);
+            chrome.windows.getCurrent((w) => {
+              chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
+                chrome.tabs.sendMessage(
+                  tabs[0].id!,
+                  { user: user, from: 'withOutLogin' },
+                  (response) => {
+                    console.log(response);
+                  }
+                );
               });
-            })
-            .catch((err: any) => {
-              console.log('ERR: Unable to create user', err);
             });
-        } else {
-          setUserToStore(data!.getUser as any, setUser);
-        }
+          })
+          .catch((err: any) => {
+            console.log('ERR: Unable to create user', err);
+          });
+      } else {
+        setUserToStore(data!.getUser as any, setUser);
       }
-    } else {
-      console.log('error', error, fetching);
     }
-  }, [data]);
+  }, [data, userFromAuth, fetching]);
 
   return <div style={{ color: 'white' }}>Singing In</div>;
 };

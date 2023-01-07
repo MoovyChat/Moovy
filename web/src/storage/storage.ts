@@ -1,4 +1,4 @@
-import { User } from '../utils/interfaces';
+import { User } from '../generated/graphql';
 
 // Used to communicate data between popup and content script
 export interface LocalStorage {

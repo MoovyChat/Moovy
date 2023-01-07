@@ -1,12 +1,5 @@
 mutation getUserByNickName($nickname: String!) {
   getUserByNickName(nickname: $nickname) {
-    id
-    name
-    nickname
-    photoUrl
-    email
-    joinedAt
-    updatedAt
-    watchedMovies
+    ...FullUser
   }
 }

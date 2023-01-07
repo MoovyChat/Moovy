@@ -82,15 +82,18 @@ const MessageBox: React.FC<props> = ({
     replyWindowResponse: any,
     setReplyClickResponse: (e: any) => void
   ) => {
+    console.log(replyWindowResponse);
     if (replyWindowResponse) {
       let newReply: ReplyInput = {
         commentedUserId: userFromRedux.id,
         likesCount: 0,
         repliesCount: 0,
+        commentedUserName: userFromRedux?.nickname as string,
         parentCommentId: replyWindowResponse.parentCommentId
           ? replyWindowResponse.parentCommentId
           : replyWindowResponse.id,
         parentReplyId: replyWindowResponse.id,
+        parentRepliedUser: replyWindowResponse.commentedUserName,
         message: text,
         movieId: movieIdFromRedux,
         platformId: 1,
@@ -119,6 +122,7 @@ const MessageBox: React.FC<props> = ({
         commentedUserId: user?.id,
         likesCount: 0,
         message: text,
+        commentedUserName: user?.nickname,
         movieId: movieIdFromRedux,
         platformId: 1,
       };

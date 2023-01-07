@@ -1,31 +1,42 @@
+import { DIRECTION, TOOLTIP } from '../../utils/enums';
 import { GET_CONSTANT, LOGIN } from './constants';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { DIRECTION } from '../../utils/enums';
 import Login from './tooltip-components/login/login';
 import { ToolTipParent } from './tooltip.styles';
+import { User } from '../../generated/graphql';
+import UserTip from './tooltip-components/usertip/usertip';
 
 interface props {
   children?: React.ReactNode;
-  dir: DIRECTION;
+  dir?: DIRECTION;
   message: string;
   height: string;
   width: string;
+  data?: any;
 }
 
 const Tooltip: React.FC<props> = ({
   children,
-  dir,
+  dir = DIRECTION.BOTTOM,
   message,
   height,
   width,
+  data,
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
+  const [touch, setTouch] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      setTouch(true);
+    } else setTouch(false);
+  }, []);
+
   const SelectedElement = useCallback(() => {
     switch (message) {
-      case GET_CONSTANT:
-      case LOGIN:
-        return <Login />;
+      case TOOLTIP.USER:
+        return <UserTip user={data as User} />;
       default:
         return <div></div>;
     }
@@ -40,9 +51,11 @@ const Tooltip: React.FC<props> = ({
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}>
       <div className='component'>{children}</div>
-      <div className={`tooltip ${dir || DIRECTION.BOTTOM}`}>
-        <SelectedElement />
-      </div>
+      {!touch && (
+        <div className={`tooltip ${dir || DIRECTION.BOTTOM}`}>
+          <SelectedElement />
+        </div>
+      )}
     </ToolTipParent>
   );
 };

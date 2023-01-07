@@ -90,3 +90,34 @@ export const getFormattedNumber = (count: number) => {
     maximumFractionDigits: 1,
   }).format(count);
 };
+
+export const getDateFormat = (time: string | undefined) => {
+  if (!time) return;
+  let intTimeFormat = parseInt(time);
+  let intlFormat = new Intl.DateTimeFormat('en-GB', {
+    dateStyle: 'full',
+    timeStyle: 'long',
+  }).format(intTimeFormat);
+  return intlFormat.toString();
+};
+
+// Date format: DD MMM YYYY
+export const getShortDateFormat = (time: string | undefined) => {
+  if (!time) return;
+  let intTime = parseInt(time);
+  let intlFormat = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(intTime);
+  return intlFormat.toString();
+};
+
+export const isImageURLValid = async (url: string) => {
+  const img = new Image();
+  img.src = url;
+  return new Promise((resolve) => {
+    img.onerror = () => resolve(false);
+    img.onload = () => resolve(true);
+  });
+};

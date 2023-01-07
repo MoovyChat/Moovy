@@ -29,8 +29,11 @@ export const CommentParent = styled.div`
     height: calc(100% - 40px);
     width: 95%;
     overflow: auto;
-    ::-webkit-scrollbar {
-      display: none; /* Safari and Chrome */
+    .extra {
+      display: flex;
+      max-height: 120px;
+      justify-content: center;
+      align-items: center;
     }
   }
 `;
@@ -69,9 +72,9 @@ export const CommentGroupParent = styled.div<props>`
       margin: 4px 0;
       border-radius: 20px;
       overflow: auto;
-      ::-webkit-scrollbar {
+      /* ::-webkit-scrollbar {
         display: none;
-      }
+      } */
     }
   }
   @media (max-width: 900px) {

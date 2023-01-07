@@ -1,0 +1,10 @@
+mutation GetFollowings($uid: String!) {
+  getFollowings(uid: $uid) {
+    followings {
+      ...FullUser
+    }
+    user {
+      ...FullUser
+    }
+  }
+}

@@ -5,14 +5,7 @@ mutation UpdateUserNickName($uid: String!, $nickname: String) {
       message
     }
     user {
-      id
-      name
-      nickname
-      email
-      photoUrl
-      watchedMovies
-      joinedAt
-      updatedAt
+      ...FullUser
     }
   }
 }

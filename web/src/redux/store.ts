@@ -3,6 +3,7 @@ import { applyMiddleware, compose, configureStore } from '@reduxjs/toolkit';
 import { batchedSubscribe } from 'redux-batched-subscribe';
 import debounce from 'lodash.debounce';
 import logger from 'redux-logger';
+import { persistStore } from 'redux-persist';
 import { rootReducer } from './reducer/rootReducer';
 import thunk from 'redux-thunk';
 
@@ -19,6 +20,7 @@ export const store = configureStore({
   enhancers: [enhancer],
 });
 
+export const persistedStore = persistStore(store);
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type AppState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}

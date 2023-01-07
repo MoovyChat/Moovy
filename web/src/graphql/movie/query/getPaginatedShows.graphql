@@ -1,0 +1,11 @@
+query getPaginatedShows($limit: Int!, $page: Int, $asc: Boolean) {
+  getPaginatedShows(limit: $limit, page: $page, ASC: $asc) {
+    hasMoreTitles
+    page
+    lastPage
+    totalTitleCount
+    titles {
+      ...FullTitle
+    }
+  }
+}

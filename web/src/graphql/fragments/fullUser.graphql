@@ -5,6 +5,7 @@ fragment FullUser on User {
   name
   nickname
   photoUrl
+  bg
   watchedMovies
   followerCount
   followingCount

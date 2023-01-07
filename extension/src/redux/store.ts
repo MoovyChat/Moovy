@@ -8,7 +8,7 @@ import thunk from 'redux-thunk';
 
 const debounceNotify = debounce((notify) => notify());
 const enhancer = compose(
-  applyMiddleware(thunk, logger),
+  applyMiddleware(thunk),
   batchedSubscribe((notify) => {
     notify();
   }),

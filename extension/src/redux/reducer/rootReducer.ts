@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import commentReducer from '../slices/comment/commentSlice';
 import loadingReducer from '../slices/loading/loadingSlice';
 import movieReducer from '../slices/movie/movieSlice';
+import profileReducer from '../slices/userProfile/userProfileSlice';
 import replyReducer from '../slices/reply/replySlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import storage from 'redux-persist/lib/storage';
@@ -26,6 +27,7 @@ export const rootReducer = {
   loading: loadingReducer,
   textArea: textAreaReducer,
   toast: toastReducer,
+  profile: profileReducer,
 };
 
 export default rootReducer;

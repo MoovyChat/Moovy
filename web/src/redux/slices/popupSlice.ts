@@ -5,6 +5,7 @@ import { themes } from '../../constants';
 export const popupState = {
   isPopupOpened: false,
   selectedElement: '',
+  popupData: {},
 };
 
 const PopupSlice = createSlice({
@@ -20,9 +21,15 @@ const PopupSlice = createSlice({
         selectedElement: action.payload,
       };
     },
+    sliceSetPopupData: (state, action) => {
+      return { ...state, popupData: action.payload };
+    },
   },
 });
 
-export const { sliceSetIsPopupOpened, sliceSetSelectedElement } =
-  PopupSlice.actions;
+export const {
+  sliceSetIsPopupOpened,
+  sliceSetSelectedElement,
+  sliceSetPopupData,
+} = PopupSlice.actions;
 export default PopupSlice.reducer;
