@@ -5,42 +5,27 @@ import {
   User,
   useGetUserMiniProfileQuery,
   useGetUserQuery,
-  useIsFollowingUserQuery,
   useToggleFollowMutation,
 } from '../../generated/graphql';
+import { MOOVY_URL, isServerSide } from '../../constants';
 import {
   MdFemale,
   MdMale,
   MdOutlineCake,
   MdOutlineContacts,
 } from 'react-icons/md';
-import {
-  ProfileImage,
-  ProfileParent,
-  StyledButton,
-} from './profileWindow.styles';
 import React, {
-  UIEventHandler,
+  MouseEventHandler,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import {
-  colorLog,
-  getFormattedNumber,
-  getShortDateFormat,
-} from '../../Utils/utilities';
-import {
-  sliceSetToastBody,
-  sliceSetToastVisible,
-} from '../../redux/slices/toast/toastSlice';
+import { getFormattedNumber, getShortDateFormat } from '../../Utils/utilities';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import NotFound from '../notFound/notFound';
-import { batch } from 'react-redux';
-import { iconsEnum } from '../../Utils/enums';
-import { isServerSide } from '../../constants';
+import FollowButton from '../follow-button/followButton';
+import { ProfileParent } from './profileWindow.styles';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
@@ -68,8 +53,6 @@ interface favTitles {
 
 const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
-  const loggedInUserId = useAppSelector((state) => state.user.id);
-  const ref = useRef<HTMLDivElement>(null);
   const [userBasicInfo, setUserBasic] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [follower, setFollower] = useState<FollowerObject | null>(null);
@@ -80,13 +63,8 @@ const ProfileWindow = () => {
   const [historyCount, setHistoryCount] = useState<number>(0);
   const [likedMoviesCount, setLikedMoviesCount] = useState<number>(0);
   const [favMoviesCount, setFavMoviesCount] = useState<number>(0);
-  const dispatch = useAppDispatch();
-  const [followHovered, setFollowHovered] = useState<boolean>(false);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [dobInTime, setDOBInTime] = useState<string>('');
-  const [scrollValue, setScrollValue] = useState<number>(0);
-  const isDifferentUser = loggedInUserId !== userId;
-  const [, toggleFollow] = useToggleFollowMutation();
+
   const [userData] = useGetUserQuery({
     variables: { uid: userId },
     pause: isServerSide(),
@@ -98,26 +76,13 @@ const ProfileWindow = () => {
     pause: isServerSide(),
   });
 
-  const [amIFollowingUser] = useIsFollowingUserQuery({
-    variables: { uid: loggedInUserId, fid: userId },
-    pause: isServerSide(),
-  });
-
   useMemo(() => {
     const { data, error, fetching } = userData;
-    const _data = data?.getUser as User;
-    setUserBasic(() => _data);
-  }, [userData]);
-
-  useMemo(() => {
-    const { data, error, fetching } = amIFollowingUser;
-    if (error) console.log(error);
-    console.log(data);
     if (!fetching && data) {
-      const _data = data.isFollowingUser as boolean;
-      setIsFollowing(() => _data);
+      const _data = data?.getUser as User;
+      setUserBasic(() => _data);
     }
-  }, [amIFollowingUser]);
+  }, [userData]);
 
   useMemo(() => {
     if (!profile) return;
@@ -155,82 +120,39 @@ const ProfileWindow = () => {
     }
   }, [miniProfile.fetching, userId]);
 
-  const profileScrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
-    if (ref && ref.current) {
-      const scrollValue = ref.current!.scrollTop;
-      setScrollValue(() => scrollValue);
-    }
-  };
-
-  let headerTitle = scrollValue > 40 ? `${userBasicInfo?.nickname}` : 'Profile';
-  let followStatus = isFollowing ? 'Following' : 'Follow';
-
-  const toggleFollowHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const goToProfile: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    setIsFollowing(!isFollowing);
-    toggleFollow({
-      uid: loggedInUserId,
-      followingId: userId,
-      follow: !isFollowing,
-    }).then((res) => {
-      const { error, data } = res;
-      if (error) colorLog(error);
-      const isFollowingRes = data?.toggleFollow?.follows;
-      let icon = '';
-      let message = '';
-      if (isFollowingRes !== null && isFollowingRes !== undefined) {
-        setIsFollowing(isFollowingRes);
-        if (isFollowingRes) {
-          icon = iconsEnum.PERSON_FOLLOW;
-          message = `You are following ${userBasicInfo?.nickname!}`;
-        } else {
-          icon = iconsEnum.PERSON_UNFOLLOW;
-          message = `You un-followed ${userBasicInfo?.nickname!}`;
-        }
-        batch(() => {
-          dispatch(sliceSetToastVisible(true));
-          dispatch(sliceSetToastBody({ icon, message }));
-        });
-      }
+    let profileUrl = `${MOOVY_URL}/profile/${userBasicInfo?.nickname}`;
+    chrome.runtime.sendMessage({
+      type: 'OPEN_LINK',
+      url: profileUrl,
     });
   };
-  if (!userBasicInfo) return <>Null</>;
+  if (userData?.fetching || miniProfile?.fetching) return <div>Loading...</div>;
+  if (!userBasicInfo)
+    return <div>Unexpected Error. Please try refreshing the extension.</div>;
   return (
     <ProfileParent className='mini-profile'>
       <React.Fragment>
         <div className='profile-header'>
           <div className='bg'>
-            <img src={userBasicInfo.bg as string} alt='bg' />
+            <img src={userBasicInfo?.bg as string} alt='bg' />
           </div>
-          <div
-            className='follow'
-            onMouseEnter={() => setFollowHovered(() => true)}
-            onMouseLeave={() => setFollowHovered(() => false)}>
-            {isDifferentUser && (
-              <StyledButton
-                className='follow-btn'
-                color={isFollowing ? '#13dbde31' : '#de1328'}
-                isFollowingUser={isFollowing}
-                onClick={toggleFollowHandler}>
-                {isFollowing
-                  ? followHovered
-                    ? 'UnFollow'
-                    : 'Following'
-                  : 'Follow'}
-              </StyledButton>
-            )}
-          </div>
+          <FollowButton
+            userId={userBasicInfo?.id!}
+            nickName={userBasicInfo?.nickname!}
+          />
 
           <div className='profile-pic'>
             <img src={userBasicInfo?.photoUrl! as string} alt='dp' />
           </div>
-          <div className='name'>
-            <div className='fullName'>{`${profile?.firstname} ${profile?.lastname}`}</div>
-            <div className='nickName'>@{userBasicInfo?.nickname}</div>
-            <div className='nickname'>{`${getFormattedNumber(
-              userBasicInfo.followerCount as number
+          <div className='name' onClick={goToProfile}>
+            <div className='fullName p'>{`${profile?.firstname} ${profile?.lastname}`}</div>
+            <div className='nickName p'>@{userBasicInfo?.nickname}</div>
+            <div className='nickname p'>{`${getFormattedNumber(
+              userBasicInfo?.followerCount as number
             )} Followers ${getFormattedNumber(
-              userBasicInfo.followingCount as number
+              userBasicInfo?.followingCount as number
             )} Following`}</div>
           </div>
         </div>

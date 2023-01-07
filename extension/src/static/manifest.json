@@ -24,7 +24,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["netflix.js", "qchat.js"],
+      "resources": [
+        "netflix.js",
+        "qchat.js",
+        "Moovy/moovyIcon.png",
+        "Moovy/moovy.png"
+      ],
       "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"]
     }
   ],
@@ -33,17 +38,17 @@
   },
   "host_permissions": ["https://www.netflix.com/*", "http://localhost:3000/*"],
   "icons": {
-    "16": "qc_16.png",
-    "48": "qc_48.png",
-    "128": "qc_128.png"
+    "16": "Moovy/moovyIcon.png",
+    "48": "Moovy/moovyIcon.png",
+    "128": "Moovy/moovyIcon.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Quiet Chat",
     "default_icons": {
-      "16": "qc_16.png",
-      "48": "qc_48.png",
-      "128": "qc_128.png"
+      "16": "Moovy/moovyIcon.png",
+      "48": "Moovy/moovyIcon.png",
+      "128": "Moovy/moovyIcon.png"
     }
   },
   "options_page": "options.html",

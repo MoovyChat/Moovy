@@ -5,7 +5,14 @@ import {
   HeaderKey,
 } from './emojiPicker.styles';
 import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  TouchEventHandler,
+  WheelEventHandler,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import EmojiGroup from './emojiGroup/emojiGroup';
 import groupSet from 'emojibase-data/meta/groups.json';
@@ -32,15 +39,53 @@ let headerEmoji: any = {
 
 const EmojiPicker = () => {
   const { groups } = groupSet;
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
   const [groupNumber, setGroupNumber] = useState<number>(0);
   const refinedGroups = useFetchEmojis();
 
+  const swipeThreshold = 30;
   const selectGroup = (groupNum: number) => {
     setGroupNumber(groupNum);
   };
 
+  const handleWheel: WheelEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (Math.abs(e.deltaX) >= swipeThreshold) {
+      if (e.deltaX > 0) {
+        // Swipe right
+        setGroupNumber((num) => (num + 1 >= 9 ? 9 : num + 1));
+      } else {
+        // Swipe left
+        setGroupNumber((num) => (num - 1 < 0 ? 0 : num - 1));
+      }
+    }
+  };
+
+  const handleTouchStart: TouchEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd: TouchEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    touchEndX.current = e.changedTouches[0].clientX;
+    const deltaX = touchEndX.current - touchStartX.current;
+    if (deltaX > 0) {
+      // Swipe right
+      setGroupNumber((num) => (num + 1 >= 10 ? 10 : num + 1));
+    } else {
+      // Swipe left
+      setGroupNumber((num) => (num - 1 < 0 ? 0 : num - 1));
+    }
+  };
+
   return (
-    <EmojiPickerParent>
+    <EmojiPickerParent
+      onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}>
       <EmojiPickerHeader>
         {Object.values(groups).map(
           (value, index) =>

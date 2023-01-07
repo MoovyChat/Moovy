@@ -1,27 +1,13 @@
 import {
   ChatWindowParent,
   DragBar,
+  NoUserScreen,
   Perimeter,
   TextAreaContainer,
 } from './chatInterface.styles';
 import { CommentInfo, User } from '../../Utils/interfaces';
-import { MdStar, MdStarOutline } from 'react-icons/md';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  sliceSetChatWindowSize,
-  sliceSetSmoothWidth,
-} from '../../redux/slices/settings/settingsSlice';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  useGetMovieFavCountQuery,
-  useUpdateUserMovieStatusMutation,
-} from '../../generated/graphql';
 
 import { CSSTransition } from 'react-transition-group';
 import ChatBox from '../../contentScript/chatBox/chatBox';
@@ -31,9 +17,8 @@ import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
-import { urqlClient } from '../../Utils/urqlClient';
+import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
 import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
-import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
@@ -204,38 +189,47 @@ const ChatInterface: React.FC<props> = ({
         chatWindowSize={chatWindowSize}
         onClick={(e) => e.stopPropagation()}
         windowOpened={display}>
-        <React.Fragment>
-          <ChatTitle />
-          <ChatStats />
-          <TextAreaContainer
-            className='text-area-container'
-            onClick={(e) => e.stopPropagation()}>
-            <MessageBox
-              replyWindowResponse={replyWindowResponse}
-              setReplyClickResponse={setReplyClickResponse}
+        {user ? (
+          <React.Fragment>
+            <ChatTitle />
+            <ChatStats />
+            <TextAreaContainer
+              className='text-area-container'
+              onClick={(e) => e.stopPropagation()}>
+              <MessageBox
+                replyWindowResponse={replyWindowResponse}
+                setReplyClickResponse={setReplyClickResponse}
+              />
+            </TextAreaContainer>
+            <ChatBox
+              responseFromReplyWindow={responseFromReplyWindow}
+              type='comment'
             />
-          </TextAreaContainer>
-          <ChatBox
-            responseFromReplyWindow={responseFromReplyWindow}
-            type='comment'
-          />
-        </React.Fragment>
+          </React.Fragment>
+        ) : (
+          <NoUserScreen>
+            <div>User not logged In.</div>
+            <div>
+              Please refresh the page, or refresh the app using extension
+            </div>
+          </NoUserScreen>
+        )}
 
         <CSSTransition
           in={isPopSlideOpen}
           classNames='fade'
           timeout={300}
           unmountOnExit>
-          <PopSlide />
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }}>
+            <PopSlide />
+          </div>
         </CSSTransition>
 
-        {/* <CSSTransition
-          in={isPopSlideOpen}
-          classNames='fade'
-          timeout={300}
-          unmountOnExit>
-          <Toast />
-        </CSSTransition> */}
         <Toast />
       </ChatWindowParent>
     </Perimeter>

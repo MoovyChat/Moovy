@@ -1,5 +1,4 @@
 import constants from '../../../constants';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 interface prop {
@@ -136,7 +135,7 @@ export const SideArrowButton = styled.div<recordProps>`
   }
 `;
 
-export const Refresh = styled(motion.div)`
+export const Refresh = styled.div`
   width: 25px;
   height: 25px;
   padding: 5px;
@@ -149,8 +148,13 @@ export const Refresh = styled(motion.div)`
   border-radius: 50%;
   right: 10px;
   bottom: 35px;
+  transition: all 0.2s;
   :hover {
     cursor: pointer;
+    transform: rotate(-40deg);
+  }
+  :active {
+    transform: rotate(195deg);
   }
 `;
 

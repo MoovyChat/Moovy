@@ -18,7 +18,8 @@ import {
   useGetRepliesQuery,
   useGetUserByNickNameMutation,
 } from '../../generated/graphql';
-import React, { useEffect, useRef, useState } from 'react';
+import { MOOVY_URL, textMapTypes } from '../../constants';
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
   sliceAddAllReplies,
   sliceDeleteReply,
@@ -30,7 +31,7 @@ import {
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
-  sliceSetPopSlideLikes,
+  sliceSetPopSlideData,
   sliceSetPopSlideUserId,
 } from '../../redux/slices/settings/settingsSlice';
 import {
@@ -48,7 +49,6 @@ import { batch } from 'react-redux';
 import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
-import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
@@ -193,7 +193,11 @@ const CommentInterface: React.FC<props> = ({
     batch(() => {
       dispatch(sliceSetPopSlide(true));
       dispatch(slicePopSlideContentType('likes'));
-      dispatch(sliceSetPopSlideLikes(likedUsers));
+      dispatch(
+        sliceSetPopSlideData({
+          data: { id: commentOrReply.id as string, type },
+        })
+      );
     });
   };
 
@@ -262,13 +266,25 @@ const CommentInterface: React.FC<props> = ({
     });
   };
 
+  const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    let url = `${MOOVY_URL}/${type}/${commentOrReply.id}`;
+    chrome.runtime.sendMessage({
+      type: 'OPEN_LINK',
+      url: url,
+    });
+  };
+
   return (
     <CSSTransition
       in={mounted.current && del}
       classNames='comment'
       timeout={300}
       nodeRef={commentRef}>
-      <CommentCardContainer className={className} ref={commentRef}>
+      <CommentCardContainer
+        className={className}
+        ref={commentRef}
+        onClick={goToComment}>
         <div className='card-parent'>
           {commentedUser?.id === userId && (
             <Delete

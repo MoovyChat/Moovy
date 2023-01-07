@@ -25,6 +25,7 @@ const cache: Partial<CacheExchangeOpts> = {
     replyLikesObject: () => null,
     Profile: () => null,
     Visited: () => null,
+    MovieStats: () => null,
   },
   updates: {
     Mutation: {

@@ -1,5 +1,0 @@
-query getOnlyUserMovieStats($mid: String!, $uid: String!) {
-  getOnlyUserMovieStats(mid: $mid, uid: $uid) {
-    ...FullMovieStats
-  }
-}

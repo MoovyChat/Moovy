@@ -61,6 +61,15 @@ export const rotate = keyframes`
   }
 `;
 
+export const fillUp = keyframes`
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+`;
+
 export const rotate180 = keyframes`
    0% {
     -ms-transform: rotate(0deg);

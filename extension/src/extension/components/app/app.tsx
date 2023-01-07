@@ -3,7 +3,6 @@ import './app.scss';
 import { AppWindow, Footer, SideBarOpen } from './app.styles';
 import React, { useEffect, useState } from 'react';
 
-import { AnimatePresence } from 'framer-motion';
 import Header from '../header/header';
 import Home from '../home/home';
 import Sidebar from '../sidebar/sidebar';
@@ -49,19 +48,7 @@ const App: React.FC = () => {
 
   const animationClass = sideOpen ? { width: '500px' } : { width: '300px' };
   return (
-    <AppWindow
-      className='app'
-      id='app'
-      transition={{ duration: 0.5 }}
-      animate={animationClass}>
-      <AnimatePresence>
-        {sideOpen && (
-          <SideBarOpen exit={{ opacity: 1 }}>
-            <Stats className='stats' uid={user.id} />
-            <Sidebar className='side' mid={mid} />
-          </SideBarOpen>
-        )}
-      </AnimatePresence>
+    <AppWindow className='app' id='app'>
       <div className='floatRight'>
         <Header></Header>
         <Home

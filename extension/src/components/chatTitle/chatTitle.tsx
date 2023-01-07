@@ -1,3 +1,4 @@
+import { EXT_URL, isServerSide } from '../../constants';
 import { MdStar, MdStarOutline } from 'react-icons/md';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
@@ -7,6 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieFavCountQuery,
+  useGetOnlyUserMovieStatsQuery,
   useUpdateMovieTitleMutation,
   useUpdateUserMovieStatusMutation,
 } from '../../generated/graphql';
@@ -36,6 +38,19 @@ const ChatTitle = () => {
     },
     pause: true,
   });
+  const [movieStats] = useGetOnlyUserMovieStatsQuery({
+    variables: { uid: userId, mid: movieId },
+    pause: isServerSide(),
+  });
+  useMemo(() => {
+    const { error, fetching, data } = movieStats;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getOnlyUserMovieStats;
+      const _fav = _data?.favorite!;
+      setFav(() => _fav);
+    }
+  }, [movieStats]);
   useEffect(() => {
     if (movieId) _query();
   }, [movieId]);
@@ -72,7 +87,6 @@ const ChatTitle = () => {
     if (movieTitle) return;
     // Adding the Interval to grab the video title from DOM
     let interval = setInterval(() => {
-      console.log('Fetching video title');
       if (movieTitle) {
         setTempTitle(movieTitle);
         clearInterval(interval);
@@ -80,7 +94,6 @@ const ChatTitle = () => {
       }
       let title = getVideoTitleFromNetflixWatch();
       if (title) {
-        console.log('Fetched title: ', title);
         setTempTitle(title);
         // Update movie name in the database only if the name is not available.
         dispatch(sliceAddMovieName({ movieId, title }));
@@ -94,7 +107,9 @@ const ChatTitle = () => {
   }, [movieId, movieTitle]);
   return (
     <ChatTitleParent className='chat-title'>
-      <div className='logo'></div>
+      <div className='logo'>
+        <img src={`${EXT_URL}/Moovy/moovyIcon.png`} alt='logo' />
+      </div>
       <div className='title'>
         <div className='set'>{tempTitle}</div>
       </div>
@@ -115,7 +130,6 @@ const ChatTitle = () => {
               message: '',
             };
             if (error) console.log(error);
-            console.log(data);
             if (data && data.updateUserMovieStats) {
               const { favorite } = data?.updateUserMovieStats!;
               if (favorite !== null && favorite !== undefined) {

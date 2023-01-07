@@ -61,6 +61,12 @@ export const ProfileParent = styled.div`
       justify-content: center;
       align-items: flex-start;
       flex-direction: column;
+      .p {
+        :hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
       .fullName {
         font-size: 14px;
         font-weight: 500;
@@ -158,23 +164,4 @@ export const NoTitles = styled.div`
   font-weight: 500;
   font-size: 1.5em;
   height: 100%;
-`;
-
-type ButtonProps = {
-  color: string;
-  isFollowingUser?: boolean;
-};
-export const StyledButton = styled.div<ButtonProps>`
-  padding: 10px 20px;
-  font-size: 1em;
-  font-weight: 700;
-  border-radius: 10px;
-  color: white;
-  background-color: #1c4ab0;
-  :hover {
-    cursor: pointer;
-    background-color: ${(p) => (p.isFollowingUser ? 'transparent' : p.color)};
-    box-shadow: ${(p) => p.isFollowingUser && 'inset 0 0 2px red'};
-    color: ${(p) => p.isFollowingUser && 'red'};
-  }
 `;

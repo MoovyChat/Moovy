@@ -4,6 +4,7 @@ import {
   UserCredential,
   signInWithCredential,
 } from 'firebase/auth';
+import React, { useState } from 'react';
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
@@ -11,7 +12,6 @@ import LoginAfter from '../login-after/loginAfter';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
 import constants from '../../../constants';
-import { useState } from 'react';
 
 const getGoogleAuthCredential = () => {
   return new Promise<ReturnType<typeof GoogleAuthProvider.credential>>(
@@ -38,9 +38,8 @@ const LogIn: React.FC<Props> = ({ setUser }) => {
     try {
       const credential = await getGoogleAuthCredential();
       const result = await signInWithCredential(auth, credential);
-      // const { uid, displayName, email, photoURL } = result.user;
-      setUserFromAuth(result);
-      setIsUserFetched(true);
+      setUserFromAuth(() => result);
+      setIsUserFetched(() => true);
     } catch (err) {
       console.log(err);
     }
@@ -50,19 +49,34 @@ const LogIn: React.FC<Props> = ({ setUser }) => {
     <WithOutLoginWindow>
       <Welcome>{constants.welcome}</Welcome>
       {!isUserFetched && !userFromAuth ? (
-        <ButtonParent>
-          <Button
-            className=''
-            bgColor='#990100'
-            textColor='white'
-            iconSize={25}
-            text={constants.login}
-            padding='10px 0px'
-            onClick={async () => SignIn()}
-            Icon={FcGoogle}
-            textShadow='0 0 6px black, 0 0 5px #0000ff'
-          />
-        </ButtonParent>
+        <React.Fragment>
+          <ButtonParent>
+            <Button
+              className=''
+              bgColor='#990100'
+              textColor='white'
+              iconSize={25}
+              text={constants.chrome}
+              padding='10px 0px'
+              onClick={async () => SignIn()}
+              Icon={FcGoogle}
+              textShadow='0 0 6px black, 0 0 5px #0000ff'
+            />
+          </ButtonParent>
+          <ButtonParent>
+            <Button
+              className=''
+              bgColor='#990100'
+              textColor='white'
+              iconSize={25}
+              text={constants.login}
+              padding='10px 0px'
+              onClick={async () => SignIn()}
+              Icon={FcGoogle}
+              textShadow='0 0 6px black, 0 0 5px #0000ff'
+            />
+          </ButtonParent>
+        </React.Fragment>
       ) : (
         <LoginAfter setUser={setUser} userFromAuth={userFromAuth!} />
       )}

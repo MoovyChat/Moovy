@@ -1,20 +1,10 @@
 import { Movie, MovieFullInformation } from '../../Utils/interfaces';
-import {
-  getPlayerViewElement,
-  getVideoTitleFromNetflixWatch,
-} from '../contentScript.utils';
-import {
-  sliceAddMovie,
-  sliceAddMovieName,
-} from '../../redux/slices/movie/movieSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  useGetMovieQuery,
   useInsertMovieInfoMutation,
   useInsertMovieMutation,
   useInsertVisitedMutation,
-  useUpdateMovieTitleMutation,
 } from '../../generated/graphql';
 
 import ChatWindow from '../createChatWindow/chatWindow';
@@ -22,14 +12,13 @@ import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
-import VideoStyles from '../videoStyles/videoStyles';
 import { createRoot } from 'react-dom/client';
+import { getPlayerViewElement } from '../contentScript.utils';
 import { getStoredCheckedStatus } from '../../Utils/storage';
+import { sliceAddMovie } from '../../redux/slices/movie/movieSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
-import { urqlClient } from '../../Utils/urqlClient';
 import { v4 } from 'uuid';
-import { withUrqlClient } from 'next-urql';
 
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
@@ -92,25 +81,29 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   );
 
   // Logs user view history.
-  useEffect(() => {
-    let sessionId = v4();
-    let visitInterval = setInterval(() => {
-      insertVisited({
-        uid: userId,
-        mid: movieId,
-        insertVisitedId: sessionId,
-        time: 5,
-      }).then((res) => {
-        const { data, error } = res;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data.insertVisited;
-          console.log(_data);
-        }
-      });
-    }, 300000);
-    () => clearInterval(visitInterval);
-  }, [userId, movieId]);
+  // useEffect(() => {
+  //   let sessionId = v4();
+  //   let visitInterval = setInterval(() => {
+  //     if (movieId && userId)
+  //       insertVisited({
+  //         uid: userId,
+  //         mid: movieId,
+  //         insertVisitedId: sessionId,
+  //         time: 5,
+  //       }).then((res) => {
+  //         const { data, error } = res;
+  //         if (error) {
+  //           clearInterval(visitInterval);
+  //           console.log(error);
+  //         }
+  //         if (data) {
+  //           const _data = data.insertVisited;
+  //         }
+  //       });
+  //     else clearInterval(visitInterval);
+  //   }, 300000);
+  //   () => clearInterval(visitInterval);
+  // }, [userId, movieId]);
 
   useEffect(() => {
     // Listen for the activation of comment icon when user is logged in for the
@@ -171,7 +164,6 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
               advisories: result.advisories!,
             },
           }).then(() => {
-            console.log(type);
             if (type === 'movie') {
               insertMovie({
                 options: {
@@ -241,6 +233,9 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
     }, 500);
   }, [movieId, movieFetched]);
 
+  if (!movieFetched && !movieId) return <GoCommentDiscussion size={40} />;
+
+  if (!isVisible) return <></>;
   return (
     <div
       onClick={(e) => {
@@ -254,7 +249,7 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
         }, 100);
       }}>
       <CommentHeader
-        isVisible={isVisible}
+        isVisible={true}
         id='comment-header'
         className='comment-header'
         chatWindowSize={smoothWidth + ''}

@@ -6,7 +6,7 @@ type props = {
 };
 export const PopSlideParent = styled.div<props>`
   position: absolute;
-  width: 100%;
+  width: min(30vw, 448px);
   bottom: -4px;
   border-radius: 18px 18px 0 0;
   background-color: ${({ theme }) => theme.chatBody};

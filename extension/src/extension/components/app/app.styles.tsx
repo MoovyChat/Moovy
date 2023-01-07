@@ -1,8 +1,7 @@
 import constants from '../../../constants';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const AppWindow = styled(motion.div)`
+export const AppWindow = styled.div`
   text-align: center;
   font-family: 'Lexend', sans-serif;
   width: 300px;
@@ -21,7 +20,7 @@ export const AppWindow = styled(motion.div)`
   }
 `;
 
-export const SideBarOpen = styled(motion.div)`
+export const SideBarOpen = styled.div`
   position: fixed;
   background-image: linear-gradient(black 0.5%, #232323);
   width: 200px;

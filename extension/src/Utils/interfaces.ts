@@ -117,7 +117,7 @@ export interface SettingsInterface {
   isPopSlideOpen: boolean;
   popSlideContentType: string;
   popSlideUserId: string;
-  popSlideLikes: any[];
+  popSlideData: { data: any };
   theme: string;
 }
 

@@ -20,6 +20,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import constants, { MOOVY_URL } from '../../../constants';
 import { durations, resolutions } from '../../../optionsPage/utils';
 import {
   getStoredCheckedStatus,
@@ -42,7 +43,6 @@ import { FcGoogle } from 'react-icons/fc';
 import { IoMdRefresh } from 'react-icons/io';
 import { User } from '../../../Utils/interfaces';
 import { WithOutLoginWindow } from '../login/login.styles';
-import constants from '../../../constants';
 import { getSupportedMimeTypes } from '../../utils';
 
 const signOut = async (setUser: (user: User) => void) => {
@@ -63,7 +63,9 @@ const signOut = async (setUser: (user: User) => void) => {
     replies: [],
     watchedMovies: [],
     favorites: [],
-    joinedAt: '0',
+    followerCount: 0,
+    followingCount: 0,
+    joinedAt: '',
   };
   setStoredUserLoginDetails(removeUser).then(() => {
     setUser(removeUser);
@@ -92,7 +94,6 @@ type props = {
 };
 const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
   const [checked, setChecked] = useState<boolean>(false);
-  const [sideBarOpened, setSideBatOpen] = useState<boolean>(false);
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
   const [showRecordOptions, setShowRecordOptions] = useState<boolean>(false);
@@ -187,7 +188,16 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
     <WithOutLoginWindow>
       <SetTop>
         <div className='welcome'>
-          <div className='pic'>
+          <div
+            className='pic'
+            onClick={(e) => {
+              e.stopPropagation();
+              let profileUrl = `${MOOVY_URL}/profile/${user?.nickname}`;
+              chrome.runtime.sendMessage({
+                type: 'OPEN_LINK',
+                url: profileUrl,
+              });
+            }}>
             <Pic photoURL={user?.photoUrl}></Pic>
           </div>
           <div className='message'>
@@ -314,14 +324,7 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
           }}>
           <MdFiberManualRecord size={40} fill='red' className='icon' />
         </SideArrowButton>
-        <Refresh
-          whileHover={{ scale: 1.2, rotate: 90 }}
-          whileTap={{
-            scale: 0.8,
-            rotate: 360,
-            borderRadius: '100%',
-          }}
-          onClick={refreshData}>
+        <Refresh onClick={refreshData}>
           <IoMdRefresh size={40} />
         </Refresh>
       </SetTop>

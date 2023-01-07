@@ -21,7 +21,7 @@ export const ChatStatContainer = styled.div<props>`
     display: -ms-flexbox;
     display: flex;
     border-radius: 20px;
-    width: 150px;
+    width: 200px;
     overflow: hidden;
     justify-content: center;
     align-items: center;

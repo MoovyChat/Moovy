@@ -23,46 +23,8 @@ import {
 } from '../Utils/storage';
 
 import { domains } from '../constants';
-import { wait } from '../contentScript/videoStyles/mediaRecorder';
 
-let options = {
-  audio: true,
-  video: true,
-  audioConstraints: {
-    mandatory: {
-      chromeMediaSource: 'tab',
-      echoCancellation: true,
-    },
-  },
-  videoConstraints: {
-    mandatory: {
-      chromeMediaSource: 'tab',
-      maxWidth: 1920,
-      maxHeight: 1200,
-      minFrameRate: 30,
-      minAspectRatio: 1.77,
-    },
-  },
-};
-
-const setCookieForWebPage = async () => {
-  // const user = await getStoredUserLoginDetails();
-  // if (!user) return;
-  // const userId = user.id;
-  // chrome.cookies.set(
-  //   {
-  //     name: 'userId',
-  //     url: 'http://localhost:3000/',
-  //     value: userId,
-  //   },
-  //   (cookie) => {
-  //     console.log(JSON.stringify(cookie));
-  //     console.log(chrome.extension.lastError);
-  //     console.log(chrome.runtime.lastError);
-  //   }
-  // );
-};
-
+const MOOVY_URL = 'http://localhost:3000';
 const injectScriptsOnReload = async () => {
   for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
     for (const tab of await chrome.tabs.query({ url: cs.matches })) {
@@ -70,7 +32,6 @@ const injectScriptsOnReload = async () => {
       const _url = getDomain(url);
       switch (_url) {
         case domains.NETFLIX:
-          console.log('INJECTED');
           chrome.scripting.executeScript({
             target: { tabId: tab.id! },
             files: ['netflix.js'],
@@ -100,8 +61,8 @@ var getMovieInfo = (movieId: string) => {
   let _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
   let _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
   let metaData = videoMetaData?._metadata?.video;
-  let mainYear = metaData.year;
-  let mainRunTime = metaData.runtime;
+  let mainYear = metaData?.year;
+  let mainRunTime = metaData?.runtime;
   let mainTitleType: string = metaData?.type;
   let mainTitle: string = metaData?.title;
   let artwork: string = metaData?.artwork[0]?.url;
@@ -256,6 +217,8 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     chrome.tabs.create({ url: '/options.html' });
     chrome.action.setBadgeText({ text: '' });
     setStoredIsRecording(false);
+  } else if (msg.type === 'OPEN_LINK') {
+    chrome.tabs.create({ url: msg.url });
   }
 
   return true;
@@ -263,7 +226,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
 // When the extension in installed.
 chrome.runtime.onInstalled.addListener(() => {
-  setCookieForWebPage();
   let user: User = {
     name: '',
     email: '',
@@ -293,9 +255,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
         console.log('ON ACTIVATED');
         chrome.action.setIcon({
           path: {
-            '16': 'qc_16.png',
-            '48': 'qc_48.png',
-            '128': 'qc_128.png',
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
           },
         });
         // Changing the pop up html
@@ -305,9 +267,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
         // Change icon when url is not visited.
         chrome.action.setIcon({
           path: {
-            '16': 'qc_16.png',
-            '48': 'qc_48.png',
-            '128': 'qc_128.png',
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
           },
         });
         // Change the pop up html
@@ -346,9 +308,9 @@ let updateListener = function listener(
         );
         chrome.action.setIcon({
           path: {
-            '16': 'qc_16.png',
-            '48': 'qc_48.png',
-            '128': 'qc_128.png',
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
           },
         });
         // Changing the pop up html
@@ -358,9 +320,9 @@ let updateListener = function listener(
         // Change icon when url is not visited.
         chrome.action.setIcon({
           path: {
-            '16': 'qc_16.png',
-            '48': 'qc_48.png',
-            '128': 'qc_128.png',
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
           },
         });
         // Change the pop up html
@@ -442,16 +404,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         getStoredUserLoginDetails().then((res) => {
           sendResponse(res);
         });
-        break;
-      case 'DELETE_COOKIE':
-        if (sender.tab && request.type === 'DELETE_COOKIE') {
-          chrome.cookies.getAll({}, function (cookies) {
-            console.log('@getCookies. Cookies found ' + cookies.length);
-            cookies.forEach(function (cookie) {
-              console.log('[COOKIE] => ' + JSON.stringify(cookie));
-            });
-          });
-        }
         break;
     }
   }

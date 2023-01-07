@@ -1,5 +1,3 @@
-import { globalUIStyles } from '../../Utils/interfaces';
-import { rotate } from '../../styles/keyframes';
 import styled from 'styled-components';
 
 export const TextAreaContainer = styled.div`
@@ -67,6 +65,12 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
     margin: 5px auto;
   }
 
+  &.fade {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
   // exit from
   &.fade-exit {
     opacity: 1;
@@ -93,4 +97,16 @@ export const SettingsScreen = styled.div`
   background-color: transparent;
   filter: blur(0.5);
   color: inherit; ;
+`;
+
+export const NoUserScreen = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 1em;
+  flex-wrap: wrap;
+  word-break: break-all;
+  gap: 10px;
 `;

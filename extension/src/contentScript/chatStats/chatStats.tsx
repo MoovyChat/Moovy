@@ -1,5 +1,13 @@
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
+import {
+  MdOutlineModeComment,
+  MdOutlineRemoveRedEye,
+  MdOutlineWbSunny,
+  MdRemoveRedEye,
+  MdThumbUp,
+  MdThumbUpOffAlt,
+} from 'react-icons/md';
 import React, { Dispatch, useEffect, useState } from 'react';
 import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
@@ -21,7 +29,6 @@ import {
 
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
-import { MdOutlineWbSunny } from 'react-icons/md';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
@@ -159,14 +166,18 @@ const ChatStats: React.FC<props> = () => {
           }}>
           <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
-            <AiFillLike className='icon' size={icon_Size} />
+            <MdThumbUp className='icon' size={icon_Size} />
           ) : (
-            <AiOutlineLike size={icon_Size} />
+            <MdThumbUpOffAlt size={icon_Size} />
           )}
         </div>
         <div className='comment'>
           <span>{getFormattedNumber(commentsCount!)}</span>
-          <BiComment size={icon_Size} />
+          <MdOutlineModeComment size={icon_Size} />
+        </div>
+        <div className='comment'>
+          <span>{getFormattedNumber(movie?.viewsCount!)}</span>
+          <MdOutlineRemoveRedEye size={icon_Size} />
         </div>
         <div
           className='theme-mode'
@@ -187,9 +198,8 @@ const ChatStats: React.FC<props> = () => {
           </div>
         </div>
       </div>
-      <div className='user' onClick={changeNickName}>
+      <div className='user'>
         <h4>{nickname ? nickname : user.nickname}</h4>
-        <BiEdit size={icon_Size} />
       </div>
       <div
         className='user'

@@ -1,4 +1,5 @@
 const path = require('path');
+var webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -87,6 +88,9 @@ module.exports = {
     ...getHTMLPlugins(['options']),
     ...getHTMLPlugins(['popup']),
     ...getHTMLPlugins(['offsite']),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
     // new BundleAnalyzerPlugin(),
   ],
   resolve: {

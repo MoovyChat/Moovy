@@ -35,7 +35,7 @@ function main() {
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log(request);
-    if (request.type === 'refresh') {
+    if (request.type === 'refresh' || request.type === 'RESET_MOVIE_ID') {
       // Netflix related stuff.
       getUserRemoveNodeInitiateContentScript();
       sendResponse({

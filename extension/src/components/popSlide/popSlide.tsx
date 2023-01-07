@@ -1,10 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  slicePopSlideContentType,
-  sliceSetPopSlide,
-  sliceSetPopSlideLikes,
-  sliceSetPopSlideUserId,
-} from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import EmojiPicker from '../emojiPicker/emojiPicker';
@@ -13,7 +7,7 @@ import LikesWindow from '../likesWindow/likesWindow';
 import { PopSlideParent } from './popSlide.styles';
 import ProfileWindow from '../profileWindow/profileWindow';
 import VideoStyles from '../../contentScript/videoStyles/videoStyles';
-import { batch } from 'react-redux';
+import { sliceResetPopUp } from '../../redux/slices/settings/settingsSlice';
 
 const PopSlide = () => {
   const dispatch = useAppDispatch();
@@ -24,18 +18,10 @@ const PopSlide = () => {
   const PopSlideContentType = useAppSelector(
     (state) => state.settings.popSlideContentType
   );
-  const popSlideContentLikes = useAppSelector(
-    (state) => state.settings.popSlideLikes
-  );
 
   const closePopSlide: React.MouseEventHandler<SVGElement> = (e) => {
     e.stopPropagation();
-    batch(() => {
-      dispatch(sliceSetPopSlide(false));
-      dispatch(sliceSetPopSlideLikes([]));
-      dispatch(sliceSetPopSlideUserId(''));
-      dispatch(slicePopSlideContentType(''));
-    });
+    dispatch(sliceResetPopUp());
   };
 
   useEffect(() => {
@@ -43,9 +29,6 @@ const PopSlide = () => {
       case 'likes':
         let ex = {
           title: 'Likes',
-          subTitle: `${
-            popSlideContentLikes && popSlideContentLikes.length
-          } likes`,
         };
         setInputs(ex);
         break;

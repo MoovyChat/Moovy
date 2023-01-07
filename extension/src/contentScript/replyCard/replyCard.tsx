@@ -1,13 +1,8 @@
-import { CommentInfo, User, _users, textMap } from '../../Utils/interfaces';
+import { CommentInfo, User, textMap } from '../../Utils/interfaces';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { getFormattedWordsArray, getTimeFrame } from '../../Utils/utilities';
-import {
-  sliceAddToReplyLikes,
-  sliceSetReplyLikeCount,
-} from '../../redux/slices/reply/replySlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  useGetRepliedUserQuery,
   useGetReplyLikesQuery,
   useGetUserQuery,
   useSetReplyLikeMutation,
@@ -15,7 +10,6 @@ import {
 
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
-import { batch } from 'react-redux';
 import { msgPlace } from '../../Utils/enums';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -53,6 +47,8 @@ const ReplyCard: React.FC<props> = ({
   const [replyLikeCountQuery, _executeQuery] = useGetReplyLikesQuery({
     variables: {
       rid: id!,
+      page: 1,
+      limit: 10,
     },
   });
 
@@ -66,7 +62,6 @@ const ReplyCard: React.FC<props> = ({
       const isFoundUser = _users && _users.find((u) => u.id === uid);
       if (isFoundUser) setLike(true);
       else setLike(false);
-      setLikedUser(_users ? _users : []);
       setLikesCount(_users ? _count : 0);
     }
   }, [replyLikeCountQuery.fetching]);
