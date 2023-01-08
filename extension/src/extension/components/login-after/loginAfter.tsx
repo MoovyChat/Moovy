@@ -44,14 +44,15 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
         photoUrl: photoURL!,
         nickname: displayName!,
         id: uid,
-        bg: '',
       };
       // User doesn't exist in the database yet.
       if (data!.getUser === null) {
         createUser({
           options: user as any,
         })
-          .then(() => {
+          .then((res) => {
+            const { data, error } = res;
+            if (error) console.log(error);
             setUserToStore(user, setUser);
             chrome.windows.getCurrent((w) => {
               chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {

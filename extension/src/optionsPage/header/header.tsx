@@ -10,7 +10,7 @@ const OptionsHeader: React.FC<props> = ({ className }) => {
       <div className='logo'>
         <img src='qc.png' alt='logo' />
       </div>
-      <div className='title'>Quiet Chat</div>
+      <div className='title'>Moovy</div>
     </OptionsParent>
   );
 };

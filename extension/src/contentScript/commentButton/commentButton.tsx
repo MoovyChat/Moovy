@@ -61,7 +61,6 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
     (state) => state.settings.chatWindowSize
   );
   const movieId = useAppSelector((state) => state.movie.id);
-  const userId = useAppSelector((state) => state.user.id);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -72,7 +71,6 @@ const CommentButton: React.FC<props> = ({ movieFetched, setMovieFetched }) => {
   // GraphQL
   const [, insertMovieInfo] = useInsertMovieInfoMutation();
   const [, insertMovie] = useInsertMovieMutation();
-  const [, insertVisited] = useInsertVisitedMutation();
   const stableDispatch = useCallback(
     (args: any) => {
       return dispatch(args);

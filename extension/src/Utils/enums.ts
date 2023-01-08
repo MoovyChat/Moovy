@@ -18,3 +18,7 @@ export enum iconsEnum {
   ADD_FAVORITES = 'ADD_FAVORITES',
   REMOVE_FAVORITES = 'REMOVE_FAVORITES',
 }
+
+export enum requestTypes {
+  REFETCH_USER = 'REFETCH_USER',
+}

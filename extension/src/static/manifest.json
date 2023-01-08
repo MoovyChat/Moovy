@@ -28,7 +28,14 @@
         "netflix.js",
         "qchat.js",
         "Moovy/moovyIcon.png",
-        "Moovy/moovy.png"
+        "Moovy/moovy.png",
+        "Moovy/moovy-black-text.svg",
+        "Moovy/moovy-black.svg",
+        "Moovy/moovy-logo-black.jpg",
+        "Moovy/moovy-logo-black.png",
+        "Moovy/moovy-logo-white.jpg",
+        "Moovy/moovy-text-logo-white.png",
+        "Moovy/moovy-text-logo-black.png"
       ],
       "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"]
     }

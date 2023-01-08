@@ -13,6 +13,7 @@ import { CSSTransition } from 'react-transition-group';
 import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
 import ChatTitle from '../chatTitle/chatTitle';
+import ErrorPage from '../errorPage/errorPage';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
@@ -207,12 +208,7 @@ const ChatInterface: React.FC<props> = ({
             />
           </React.Fragment>
         ) : (
-          <NoUserScreen>
-            <div>User not logged In.</div>
-            <div>
-              Please refresh the page, or refresh the app using extension
-            </div>
-          </NoUserScreen>
+          <ErrorPage text='Unable to retrieve user login details. Please re-install the extension or refresh the app using the extension'></ErrorPage>
         )}
 
         <CSSTransition
