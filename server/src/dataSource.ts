@@ -4,10 +4,11 @@ import { Comment } from './entities/Comment';
 import { CommentStats } from './entities/CommentStat';
 import { DataSource } from 'typeorm';
 import { Follow } from './entities/Follow';
+import { FollowNotifications } from './entities/FollowNotifications';
+import { LikeNotifications } from './entities/LikeNotifications';
 import { Movie } from './entities/Movie';
 import { MovieStats } from './entities/MovieStats';
 import { MovieStatsSubscriber } from './subscriptions/movieStats.subscription';
-import { Notifications } from './entities/Notifications';
 import { Platform } from './entities/Platform';
 import { Profile } from './entities/Profile';
 import { Reply } from './entities/Reply';
@@ -35,7 +36,8 @@ export const conn = new DataSource({
     CommentStats,
     ReplyStats,
     Follow,
-    Notifications,
+    FollowNotifications,
+    LikeNotifications,
     Title,
     Visited,
     Profile,

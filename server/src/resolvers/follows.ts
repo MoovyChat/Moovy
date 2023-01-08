@@ -11,7 +11,7 @@ import {
 } from 'type-graphql';
 import { conn } from '../dataSource';
 import { Follow } from '../entities/Follow';
-import { Notifications } from '../entities/Notifications';
+import { FollowNotifications } from '../entities/FollowNotifications';
 import { User } from '../entities/User';
 
 @ObjectType()
@@ -64,7 +64,7 @@ export class FollowResolver {
       );
       result = res.raw[0];
       const userRepo = manager.getRepository(User);
-      const notificationRepo = manager.getRepository(Notifications);
+      const notificationRepo = manager.getRepository(FollowNotifications);
       if (result && follow) {
         await userRepo.increment({ id: followingId }, 'followerCount', 1);
         await userRepo.increment({ id: uid }, 'followingCount', 1);
@@ -74,8 +74,8 @@ export class FollowResolver {
         const message = `${follower?.nickname} stated following you`;
         await notificationRepo.insert([
           {
-            userId: followingId,
-            fromUser: uid,
+            toUserId: followingId,
+            fromUser: follower?.nickname,
             isRead: false,
             message: message,
             fromUserPhotoUrl: follower?.photoUrl,

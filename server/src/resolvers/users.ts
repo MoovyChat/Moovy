@@ -309,9 +309,11 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserComments | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await User.findOne({
+      where: [{ id: uid }, { name: uid }],
+    });
     if (!user) throw new Error('User not found');
-    const query = await conn
+    const query = conn
       .getRepository(Comment)
       .createQueryBuilder('c')
       .innerJoinAndSelect(
@@ -319,7 +321,7 @@ export class UserResolver {
         'user',
         'user.id = c.commentedUserId'
       )
-      .where('c.commentedUserId = :uid', { uid });
+      .where('c.commentedUserId = :uid', { uid: user.id });
     let totalCommentCount = await query.getCount();
     if (time && time !== '') {
       query.andWhere('c.createdAt < :time', {
@@ -332,6 +334,7 @@ export class UserResolver {
       .limit(limit)
       .orderBy('c.createdAt', ASC ? 'ASC' : 'DESC')
       .getMany();
+    console.log(comments);
     return {
       user,
       comments,
@@ -352,7 +355,9 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserReplies | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
     if (!user) throw new Error('User not found');
     const query = await conn
       .getRepository(Reply)

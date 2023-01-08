@@ -12,6 +12,7 @@ import { Comment } from '../entities/Comment';
 import { conn } from '../dataSource';
 import { COMMENT_LIKES_SUB } from '../constants';
 import { User } from '../entities/User';
+import { LikeNotifications } from '../entities/LikeNotifications';
 
 @ObjectType()
 class CommentsStatsObject {
@@ -67,18 +68,40 @@ export class CommentStatsResolver {
       detail = updateStatus.raw[0];
     }
     // Update the likes count in the comment table.
-    await conn
-      .createQueryBuilder()
-      .update(Comment)
-      .set({
-        likesCount: () => {
-          if (like) return '"likesCount"+1';
-          else return '"likesCount"-1';
-        },
-      })
-      .where('id = :cid', { cid })
-      .returning('*')
-      .execute();
+    if (detail) {
+      await conn
+        .createQueryBuilder()
+        .update(Comment)
+        .set({
+          likesCount: () => {
+            if (like) return '"likesCount"+1';
+            else return '"likesCount"-1';
+          },
+        })
+        .where('id = :cid', { cid })
+        .returning('*')
+        .execute();
+
+      if (like) {
+        // Insert notifications.
+        const notifications = conn.getRepository(LikeNotifications);
+        const commentedUser = await User.findOne({
+          where: { id: comment.commentedUserId },
+        });
+        const message = `${user?.nickname} liked your comment`;
+        await notifications.insert({
+          toUserId: commentedUser?.id,
+          toUserNickName: commentedUser?.nickname,
+          commentId: cid,
+          replyId: null,
+          isRead: false,
+          message: message,
+          fromUser: uid,
+          fromUserPhotoUrl: user?.photoUrl,
+        });
+      }
+    }
+
     await pubSub.publish(COMMENT_LIKES_SUB, cid);
     return { likeStatus: detail, user };
   }
