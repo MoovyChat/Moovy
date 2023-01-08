@@ -66,18 +66,6 @@ const Header = () => {
     <HeaderParent>
       <div className='header'></div>
       <div className='header-buttons'>
-        <HeaderButton className='toggle-theme'>
-          <input
-            type='checkbox'
-            id='theme-toggle'
-            defaultChecked={true}
-            onChange={themeHandler}
-          />
-          <label htmlFor='theme-toggle'>
-            <MdLightMode className='sun' size={25} fill='white' />
-            <MdNightlight className='moon' size={25} fill='black' />
-          </label>
-        </HeaderButton>
         {user && user.id ? (
           <HeaderButton className='hb' id='logout-btn' onClick={logOutHandler}>
             Logout
@@ -87,7 +75,9 @@ const Header = () => {
             Login
           </HeaderButton>
         )}
-        <HeaderButton className='install-button hb'>
+        <HeaderButton
+          className='install-button hb'
+          onClick={() => window.open('', '_blank')}>
           Install Extension
         </HeaderButton>
       </div>

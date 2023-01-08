@@ -19,6 +19,7 @@ import {
   useUpdateUserBgMutation,
 } from '../../generated/graphql';
 
+import { ImageChangerTypes } from '../../utils/types';
 import ImageCrop from '../image-crop/imageCrop';
 import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
@@ -88,11 +89,11 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       const _snapshot = await uploadBytes(storageRef, blob);
       const urlSnapShot = await getDownloadURL(storageRef);
       // Saves the URL to the database.
-      if (type === 'pfp')
+      if (type === ImageChangerTypes.PFP)
         result = await saveProfilePhoto({ url: urlSnapShot, uid: user.id });
       else result = await saveBg({ url: urlSnapShot, uid: user.id });
     } else {
-      if (type === 'pfp')
+      if (type === ImageChangerTypes.PFP)
         result = await saveProfilePhoto({ url, uid: user.id });
       else result = await saveBg({ url, uid: user.id });
     }
@@ -100,7 +101,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     const { error, data } = result;
     if (error) console.log(error);
     if (!error) {
-      if (type === 'pfp') {
+      if (type === ImageChangerTypes.PFP) {
         const _data = data?.updateUserProfilePhoto.user;
         const _errors = data?.updateUserProfilePhoto.errors;
         if (_errors) console.log(_errors);
@@ -213,7 +214,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         <div className='display-container'>
           {!!url &&
             (selectedOption === 'fromLocal' ? (
-              type === 'pfp' ? (
+              type === ImageChangerTypes.PFP ? (
                 <ImageCrop
                   url={url}
                   setCompletedCrop={setCompletedCrop}

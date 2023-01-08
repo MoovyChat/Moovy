@@ -13,6 +13,7 @@ import {
 
 import { ImageStackParent } from './imageStack.style';
 import { LOGIN } from '../tooltip/constants';
+import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import Tooltip from '../tooltip/tooltip';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
@@ -110,10 +111,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <img
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
-              alt='profile'
-            />
+            <img src={MoovyIcon} alt='profile' />
           )}
         </div>
         <div className='two profile-box'>
@@ -133,10 +131,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <img
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
-              alt='profile'
-            />
+            <img src={MoovyIcon} alt='profile' />
           )}
         </div>
         <div className='three profile-box'>
@@ -156,10 +151,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <img
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/640px-Black_colour.jpg'
-              alt='profile'
-            />
+            <img src={MoovyIcon} alt='profile' />
           )}
         </div>
       </div>

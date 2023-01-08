@@ -13,6 +13,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { DeleteCommentParent } from './deleteComment.styles';
+import { DeleteCommentTypes } from '../../utils/types';
 import { batch } from 'react-redux';
 
 type props = {
@@ -26,13 +27,15 @@ const DeleteComment: React.FC<props> = ({ type }) => {
   const [, deleteComment] = useDeleteCommentMutation();
   const [, deleteReply] = useDeleteReplyMutation();
   useEffect(() => {
-    if (type === 'comment') setComment(popup.popupData as Comment);
-    else if (type === 'reply') setReply(popup.popupData as Reply);
+    if (type === DeleteCommentTypes.COMMENT)
+      setComment(popup.popupData as Comment);
+    else if (type === DeleteCommentTypes.REPLY)
+      setReply(popup.popupData as Reply);
   }, [type]);
 
   const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    if (type === 'comment') {
+    if (type === DeleteCommentTypes.COMMENT) {
       deleteComment({ cid: comment?.id!, mid: comment?.movieId! }).then(
         (res) => {
           const { data, error } = res;
@@ -47,7 +50,7 @@ const DeleteComment: React.FC<props> = ({ type }) => {
         }
       );
     } else {
-      if (type === 'reply') {
+      if (type === DeleteCommentTypes.REPLY) {
         deleteReply({ rid: reply?.id! }).then((res) => {
           const { data, error } = res;
           if (error || !data) console.log(error);
@@ -74,7 +77,7 @@ const DeleteComment: React.FC<props> = ({ type }) => {
   return (
     <DeleteCommentParent>
       <div className='heading'>
-        Delete {type === 'comment' ? 'Comment' : 'Reply'}?
+        Delete {type === DeleteCommentTypes.COMMENT ? 'Comment' : 'Reply'}?
       </div>
       <div className='sub'>
         The comment will be deleted permanently from your profile, the feed for

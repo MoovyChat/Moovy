@@ -27,6 +27,9 @@ import { withUrqlClient } from 'next-urql';
 
 const CommentThread = () => {
   const { id } = useParams();
+  useEffect(() => {
+    document.title = 'Comment - Moovy';
+  }, []);
   const userRef = useRef<User | null>(null);
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);

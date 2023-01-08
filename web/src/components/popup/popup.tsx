@@ -1,21 +1,24 @@
 import './popup.css';
 
+import {
+  AddCommentTypes,
+  DeleteCommentTypes,
+  ImageChangerTypes,
+} from '../../utils/types';
 import { PopupParent, StyledPopUP } from './popup.styles';
-import React, { useCallback, useEffect, useRef } from 'react';
 import {
   sliceSetIsPopupOpened,
   sliceSetPopupData,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useCallback, useRef } from 'react';
 
 import AddComment from '../add-comment/addComment';
 import { CSSTransition } from 'react-transition-group';
 import DeleteComment from '../delete-comment/deleteComment';
 import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../image-changer/imageChanger';
-import Loading from '../../pages/loading/loading';
-import NotFound from '../../pages/notFound/notFound';
 import ShowFollow from '../show-follow/showFollow';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
@@ -45,21 +48,21 @@ const Popup = () => {
   const SelectedElement = useCallback(() => {
     switch (selectedElemFromRedux) {
       case popupStates.IMAGE_POP_UP:
-        return <ImageChanger type='pfp' />;
+        return <ImageChanger type={ImageChangerTypes.PFP} />;
       case popupStates.EDIT_PROFILE:
         return <EditProfile />;
       case popupStates.BG_POP_UP:
-        return <ImageChanger type='bg' />;
+        return <ImageChanger type={ImageChangerTypes.BG} />;
       case popupStates.ADD_COMMENT:
-        return <AddComment type='movie' />;
+        return <AddComment type={AddCommentTypes.MOVIE} />;
       case popupStates.ADD_REPLY:
-        return <AddComment type='comment' />;
+        return <AddComment type={AddCommentTypes.COMMENT} />;
       case popupStates.OPEN_FOLLOW:
         return <ShowFollow />;
       case popupStates.DELETE_COMMENT:
-        return <DeleteComment type='comment' />;
+        return <DeleteComment type={DeleteCommentTypes.COMMENT} />;
       case popupStates.DELETE_REPLY:
-        return <DeleteComment type='reply' />;
+        return <DeleteComment type={DeleteCommentTypes.REPLY} />;
       default:
         return <div></div>;
     }

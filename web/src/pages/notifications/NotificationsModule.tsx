@@ -1,31 +1,53 @@
+import {
+  FollowNotifications,
+  LikeNotifications,
+  NotificationObject,
+  useGetUserNotificationsQuery,
+} from '../../generated/graphql';
 import React, { useEffect, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import { HeaderText } from '../commentThread/commentThread.styles';
+import Loading from '../loading/loading';
+import NotFound from '../notFound/notFound';
 import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
-import { Notifications } from '../../utils/interfaces';
+import _ from 'lodash';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
-import { useGetUserNotificationsQuery } from '../../generated/graphql';
+import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const NotificationsModule = () => {
   const user = useAppSelector((state) => state.user);
-  const [notifications, setNotifications] = useState<Notifications[]>();
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<any>([]);
   const [notificationQueryResult] = useGetUserNotificationsQuery({
     variables: { uid: user.id },
     pause: isServer(),
   });
   useEffect(() => {
+    document.title = 'Notifications - Moovy';
+  }, []);
+  useEffect(() => {
     const { data, error, fetching } = notificationQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getUserNotifications as Notifications[];
-      setNotifications(_data);
+      const _data = data.getUserNotifications as NotificationObject;
+      const followNotifications = _data.follow as FollowNotifications[];
+      const likeNotifications = _data.like as LikeNotifications[];
+      const combinedNotifications = _.chain(notifications)
+        .concat(followNotifications)
+        .concat(likeNotifications)
+        .value();
+      setNotifications(() => combinedNotifications);
     }
   }, [notificationQueryResult]);
+
+  if (notificationQueryResult.fetching) return <Loading />;
+  if (notificationQueryResult.error) return <NotFound />;
   return (
     <NotificationParent>
       <ChildHeader className='header'>
@@ -34,14 +56,25 @@ const NotificationsModule = () => {
           <span className='count'>{notifications?.length}</span>
         </HeaderText>
       </ChildHeader>
-      <div className='notifications'>
-        {notifications?.map((notification) => (
-          <NotificationCard
-            notification={notification}
-            key={notification.createdAt}
-          />
-        ))}
-      </div>
+      {notifications.length > 0 ? (
+        <div className='notifications'>
+          {notifications?.map((notification: any) => (
+            <NotificationCard
+              type={notification.__typename}
+              notification={notification}
+              key={notification.createdAt}
+              onClick={(e: any) => {
+                e.stopPropagation();
+                if (notification.__typename === 'LikeNotifications') {
+                  navigate(`/comment/${notification.commentId}`);
+                } else navigate(`/profile/${notification.fromUser}`);
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyPage msg='Notifications are empty' />
+      )}
     </NotificationParent>
   );
 };

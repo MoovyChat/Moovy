@@ -1,5 +1,10 @@
-query getUserNotifications($uid: String!) {
+query GetUserNotifications($uid: String!) {
   getUserNotifications(uid: $uid) {
-    ...FullNotification
+    follow {
+      ...FollowNotification
+    }
+    like {
+      ...LikeNotification
+    }
   }
 }

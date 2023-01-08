@@ -31,7 +31,9 @@ const Home = () => {
       // The screen.orientation API is not available, so you may want to fall back to another solution
     }
   }, []);
-  useIsAuth();
+  useEffect(() => {
+    document.title = 'Moovy';
+  }, []);
   const navigate = useNavigate();
   const theme = useAppSelector((state) => state.settings.theme);
   const isPopupOpen = useAppSelector((state) => state.popup.isPopupOpened);
@@ -76,4 +78,5 @@ const Home = () => {
     </ThemeProvider>
   );
 };
+
 export default withUrqlClient(urqlClient)(Home);

@@ -1,14 +1,10 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Comment,
   User,
   useGetCommentOrReplyQuery,
   useGetUserMutMutation,
-  useGetUserQuery,
 } from '../../generated/graphql';
-import React, { useEffect, useRef, useState } from 'react';
 
-import Loading from '../../pages/loading/loading';
-import NotFound from '../../pages/notFound/notFound';
 import ProfilePic from '../profilePic/profilePic';
 import { StyledMiniCommentCard } from './miniCommentCard.styles';
 import { getTimeFrame } from '../../utils/helpers';

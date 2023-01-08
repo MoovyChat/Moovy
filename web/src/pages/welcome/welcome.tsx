@@ -35,7 +35,7 @@ const Welcome = () => {
           </div>
         </div>
         <div className='heading'>
-          <div className='company'>Quiet Chat is here</div>
+          <div className='company'>Moovy is here</div>
           <div className='text'>{home.heading}</div>
           <div className='sub'>{home.sub}</div>
           <div className='sub2'>{home.sub2}</div>

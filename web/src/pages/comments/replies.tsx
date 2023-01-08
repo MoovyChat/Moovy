@@ -2,7 +2,9 @@ import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import { CommentParent } from './comments.styles';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
+import NotFound from '../notFound/notFound';
 import { Reply } from '../../utils/interfaces';
 import ReplyCard from '../../components/comment-card/replyCard';
 import ViewportList from 'react-viewport-list';
@@ -10,20 +12,24 @@ import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetRepliesOfTheUserQuery } from '../../generated/graphql';
+import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 export interface allRepliesInterface {
   [key: string]: Reply[];
 }
 const Replies = () => {
-  const user = useAppSelector((state) => state.user);
+  const { id } = useParams();
+  useEffect(() => {
+    document.title = 'Replies - Moovy';
+  }, []);
   const [lastPage, setLastPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [{ data, error, fetching }] = useGetRepliesOfTheUserQuery({
-    variables: { uid: user.id, limit: 15, page: page, asc: false },
-    pause: isServer(),
+    variables: { uid: id!, limit: 15, page: page, asc: false },
+    pause: isServer() && !id,
   });
 
   useEffect(() => {
@@ -44,20 +50,10 @@ const Replies = () => {
   if (fetching) {
     return <Loading />;
   }
+  if (!id || error) return <NotFound />;
   const { comments } = data?.getRepliesOfTheUser!;
   if (comments.length <= 0) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        You haven't made your first comment
-      </div>
-    );
+    return <EmptyPage msg='No Replies!' />;
   }
   return (
     <CommentParent>

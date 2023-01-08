@@ -7,12 +7,12 @@ export const ProfileParent = styled.div`
   height: 100%;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: auto;
   .top {
     position: relative;
     width: 100%;
-    height: 350px;
+    min-height: 280px;
     overflow: hidden;
     :hover {
       transition: all 0.5s;
@@ -170,12 +170,22 @@ export const ProfileParent = styled.div`
       }
     }
   }
+  .sub-division {
+    width: 100%;
+    position: relative;
+    .comments {
+      overflow: initial;
+      .child {
+        overflow: initial;
+      }
+    }
+  }
 
   @media (max-width: 400px) {
     .top {
-      height: 300px;
+      min-height: 160px;
       .cover-photo {
-        height: 100px;
+        height: 110px;
       }
       .change-background {
         top: 60px;
@@ -214,7 +224,7 @@ export const SubGroups = styled.div`
   display: flex;
   flex-direction: column;
   width: 98%;
-  height: calc(100% - 350px);
+  height: calc(100% - 390px);
   justify-content: flex-start;
   align-items: center;
   .pro {
@@ -222,6 +232,7 @@ export const SubGroups = styled.div`
     flex-direction: column;
     width: 99%;
     font-size: 0.9rem;
+    margin: 10px 0;
     .block {
       display: flex;
       padding: 5px;

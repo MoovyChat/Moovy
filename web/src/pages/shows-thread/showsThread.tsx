@@ -20,6 +20,9 @@ import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
   useIsAuth();
+  useEffect(() => {
+    document.title = 'Show - Moovy';
+  }, []);
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);

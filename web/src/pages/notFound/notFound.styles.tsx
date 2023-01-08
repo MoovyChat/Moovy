@@ -21,7 +21,8 @@ export const NotFoundParent = styled.div`
   .wave {
     position: absolute;
     z-index: -1;
-    bottom: -300px;
+    bottom: 0px;
+    width: 100%;
   }
   .code {
     display: flex;

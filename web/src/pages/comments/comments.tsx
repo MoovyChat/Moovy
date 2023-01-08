@@ -4,13 +4,14 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import { Comment } from '../../utils/interfaces';
 import CommentCard from '../../components/comment-card/commentCard';
 import { CommentParent } from './comments.styles';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ViewportList from 'react-viewport-list';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
-import { useAppSelector } from '../../redux/hooks';
 import { useGetCommentsOfTheUserQuery } from '../../generated/graphql';
+import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 export interface allCommentsInterface {
@@ -18,14 +19,20 @@ export interface allCommentsInterface {
 }
 
 const Comments = () => {
-  const user = useAppSelector((state) => state.user);
+  const { id } = useParams();
+
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [lastPage, setLastPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
+
+  useEffect(() => {
+    document.title = 'Comments - Moovy';
+  }, []);
+
   const [{ data, fetching, error }] = useGetCommentsOfTheUserQuery({
-    variables: { uid: user.id, limit: 15, page: page, asc: false },
-    pause: isServer(),
+    variables: { uid: id!, limit: 15, page: page, asc: false },
+    pause: isServer() && !id,
   });
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
@@ -45,28 +52,18 @@ const Comments = () => {
     }
   }, [fetching, data, error]);
 
+  if (!id) return <NotFound />;
   if (fetching) {
     return <Loading />;
   }
+  if (!data?.getCommentsOfTheUser) return <NotFound />;
   const { comments } = data?.getCommentsOfTheUser!;
   if (comments.length <= 0) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        You haven't made your first comment
-      </div>
-    );
+    return <EmptyPage msg='No Comments!' />;
   }
   return (
-    <CommentParent>
+    <CommentParent className='comments'>
       <Fragment>
-        <ChildHeader text='Comments' className='comment-header' />
         <div className='child' ref={parentRef} onScroll={handleScroll}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={comments}>
             {(comment, index) =>

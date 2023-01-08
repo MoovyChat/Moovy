@@ -20,6 +20,9 @@ import { withUrqlClient } from 'next-urql';
 
 const ReplyThread = () => {
   const { id } = useParams();
+  useEffect(() => {
+    document.title = 'Reply - Moovy';
+  }, []);
   const userRef = useRef<User | null>(null);
   const loggedInUser = useAppSelector((state) => state.user);
   const [page, setPage] = useState<number>(1);

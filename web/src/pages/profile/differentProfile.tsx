@@ -1,5 +1,5 @@
 import { Outlet, useParams } from 'react-router-dom';
-import React, { MouseEventHandler, useEffect, useRef } from 'react';
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
   User,
   useGetUserByNickNameQuery,
@@ -19,7 +19,11 @@ import { batch } from 'react-redux';
 
 const DifferentProfile = () => {
   const { id } = useParams();
-  let user = useRef<User | null>(null);
+
+  useEffect(() => {
+    document.title = 'Profile - Moovy';
+  }, []);
+  const [user, setUser] = useState<User | null>(null);
   const userFromRedux = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const isSameUser = id !== userFromRedux.nickname;
@@ -53,35 +57,26 @@ const DifferentProfile = () => {
 
   useEffect(() => {
     if (error) console.log(error);
-    if (data) user.current = data?.getUserByUserName as User;
-  }, [fetching, id]);
+    if (data) {
+      setUser(() => data?.getUserByUserName as User);
+    }
+  }, [fetching, data, error, id]);
 
-  if (fetching)
-    <div
-      style={{
-        display: 'flex',
-        height: '100%',
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Loading />
-    </div>;
+  if (fetching) <Loading />;
+  if (!user) return <NotFound />;
   if (error || data?.getUserByUserName === null) {
     return <NotFound />;
   }
   return (
     <React.Fragment>
-      {user && user.current && (
-        <ProfileTemplate
-          isDifferentUser={isSameUser}
-          user={user.current}
-          currentUser={userFromRedux}
-          profilePicChangeHandler={profilePicChangeHandler}
-          bgChangeHandler={bgChangeHandler}
-          editProfileHandler={editProfileHandler}
-        />
-      )}
+      <ProfileTemplate
+        isDifferentUser={isSameUser}
+        user={user}
+        currentUser={userFromRedux}
+        profilePicChangeHandler={profilePicChangeHandler}
+        bgChangeHandler={bgChangeHandler}
+        editProfileHandler={editProfileHandler}
+      />
     </React.Fragment>
   );
 };
