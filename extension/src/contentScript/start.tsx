@@ -11,6 +11,7 @@ import {
 import {
   sliceAddMovie,
   sliceAddMovieId,
+  sliceResetMovie,
   sliceUpdateViewsCount,
 } from '../redux/slices/movie/movieSlice';
 import {
@@ -115,6 +116,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     dispatch(sliceComment({ type: COMMENT.RESET }));
     dispatch(sliceResetReply());
     dispatch(sliceResetSettings());
+    dispatch(sliceResetMovie());
     if (userDetails.id === '') {
       // console.log('Checking details', userDetails);
       getStoredUserLoginDetails().then((res) => {
@@ -124,7 +126,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     } else {
       setU(userDetails);
     }
-  }, [movieId]);
+  }, []);
 
   useEffect(() => {
     if (error) colorLog(error);
@@ -141,26 +143,23 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     if (!fetching && data) {
       const _data = data.getMovie;
       if (_data) {
-        if (movie.id && movie.name) {
-          console.log('Movie loaded');
-        } else {
-          dispatch(sliceAddMovie(_data));
-          // Increase views count
-          incrementMovieViewCount({ mid: _data.id }).then((res) => {
-            const { error, data } = res;
-            if (error) colorLog(error);
-            if (data) {
-              const _data = data.updateMovieViewCount!;
-              dispatch(sliceUpdateViewsCount(_data as number));
-            }
-          });
-        }
+        dispatch(sliceAddMovie(_data));
+        // Increase views count
+        incrementMovieViewCount({ mid: _data.id }).then((res) => {
+          const { error, data } = res;
+          if (error) colorLog(error);
+          if (data) {
+            const _data = data.updateMovieViewCount!;
+            dispatch(sliceUpdateViewsCount(_data as number));
+          }
+        });
+
         setMovieFetched(1);
       } else {
         setMovieFetched(2);
       }
     }
-  }, [getMovieInfo, stableDispatch]);
+  }, [getMovieInfo, stableDispatch, movieId]);
 
   useEffect(() => {
     //Redux: Add new movie id
