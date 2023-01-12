@@ -17,6 +17,7 @@ export const GlobalStyles = createGlobalStyle`
   div a {
   color: #27b569;
   text-decoration: underline;
+  font-size: 14px;
 }
   /* Style for visited links */
   a:visited {

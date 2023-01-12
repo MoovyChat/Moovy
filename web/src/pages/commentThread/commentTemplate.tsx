@@ -46,6 +46,8 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
+import FollowButton from '../../components/follow-button/followButton';
+import { Image } from '../../components/Image/image';
 import MiniCommentCard from '../../components/mini-comment-card/miniCommentCard';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
@@ -106,9 +108,6 @@ const CommentTemplate: React.FC<props> = ({
   const [showMore, setShowMore] = useState<boolean>(false);
   const [cardHeight, setCardHeight] = useState<string>('');
   const [openOptionWindow, setOpenOptionWindow] = useState<boolean>(false);
-  const [isFollowingUser, setIsFollowingUser] = useState<boolean>(false);
-  const [followHovered, setFollowHovered] = useState<boolean>(false);
-  const [, toggleFollow] = useToggleFollowMutation();
   const [deleteAction, setDeleteAction] = useState<boolean>(false);
 
   const [amIFollowingThisUser] = useIsFollowingUserQuery({
@@ -140,15 +139,6 @@ const CommentTemplate: React.FC<props> = ({
       });
     }
   }, [movieDetails]);
-
-  useEffect(() => {
-    const { data, error, fetching } = amIFollowingThisUser;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _data = data.isFollowingUser as boolean;
-      setIsFollowingUser(() => _data);
-    }
-  }, [amIFollowingThisUser]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -189,16 +179,6 @@ const CommentTemplate: React.FC<props> = ({
       setIsEllipsis(() => false);
     }
   }, [messageRef.current]);
-
-  const toggleFollowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    setIsFollowingUser(!isFollowingUser);
-    toggleFollow({
-      uid: loggedInUser.id,
-      followingId: comment.commentedUserId,
-      follow: !isFollowingUser,
-    });
-  };
 
   const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -279,25 +259,14 @@ const CommentTemplate: React.FC<props> = ({
                 <div className='name'>{userRef.current?.nickname}</div>
               </div>
               <div className='options-container'>
-                {userRef.current?.nickname !== loggedInUser.nickname && (
-                  <div
-                    className='follow'
-                    onMouseEnter={() => setFollowHovered(() => true)}
-                    onMouseLeave={() => setFollowHovered(() => false)}>
-                    <StyledButton
-                      className='follow-btn'
-                      color={isFollowingUser ? '#13dbde31' : '#de1328'}
-                      isFollowingUser={isFollowingUser}
-                      onClick={toggleFollowHandler}>
-                      {isFollowingUser
-                        ? followHovered
-                          ? 'UnFollow'
-                          : 'Following'
-                        : 'Follow'}
-                    </StyledButton>
-                  </div>
-                )}
-
+                {userRef.current?.nickname !== loggedInUser.nickname &&
+                  userRef &&
+                  userRef.current && (
+                    <FollowButton
+                      userId={userRef.current?.id!}
+                      nickName={userRef.current?.nickname!}
+                    />
+                  )}
                 <div className='option'>
                   <div
                     className='option-icon'
@@ -410,19 +379,19 @@ const CommentTemplate: React.FC<props> = ({
             <div className='show-details'>
               <div className='bg'>
                 {showEpisodeInfo ? (
-                  <img
+                  <Image
                     key='episode'
                     src={movieRef.current?.stills as string}
                     alt='background-image'
                   />
                 ) : showTitleInfo ? (
-                  <img
+                  <Image
                     key='title'
                     src={titleRef.current?.artwork as string}
                     alt='background-image'
                   />
                 ) : (
-                  <img
+                  <Image
                     src='https://png.pngtree.com/thumb_back/fh260/background/20210316/pngtree-black-abstract-fluorescent-line-background-image_587942.jpg'
                     alt='background-image'
                   />

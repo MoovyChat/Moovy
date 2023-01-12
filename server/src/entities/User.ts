@@ -15,9 +15,10 @@ import { Field, Int, ObjectType } from 'type-graphql';
 import { Comment } from './Comment';
 import { CommentStats } from './CommentStat';
 import { Follow } from './Follow';
+import { FollowNotifications } from './FollowNotifications';
+import { LikeNotifications } from './LikeNotifications';
 import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
-import { Notifications } from './Notifications';
 import { Profile } from './Profile';
 import { Reply } from './Reply';
 import { ReplyStats } from './ReplyStats';
@@ -46,7 +47,7 @@ export class User extends BaseEntity {
   @Column({
     nullable: true,
     default:
-      'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1',
+      'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/moovy-text-logo-white.png?alt=media&token=116dbe60-973c-4302-8402-ce1f3d0aab4a',
   })
   bg: string;
 
@@ -91,14 +92,17 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];
 
-  @OneToMany(() => Notifications, (Notifications) => Notifications.user)
-  notifications: Notification[];
+  @OneToMany(() => Reply, (reply) => reply.commentedUser)
+  replies: Reply[];
+
+  @OneToMany(() => FollowNotifications, (Notifications) => Notifications.toUser)
+  followNotifications: FollowNotifications[];
+
+  @OneToMany(() => LikeNotifications, (Notifications) => Notifications.toUser)
+  likeNotifications: LikeNotifications[];
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];
-
-  @OneToMany(() => Reply, (reply) => reply.commentedUser)
-  replies: Reply[];
 
   @Field(() => String, { nullable: true })
   @CreateDateColumn()

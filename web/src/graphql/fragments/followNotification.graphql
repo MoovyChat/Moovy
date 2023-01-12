@@ -1,11 +1,12 @@
-fragment FullNotification on Notifications {
+fragment FollowNotification on FollowNotifications {
   __typename
   id
-  userId
+  toUserId
   message
   fromUser
   fromUserPhotoUrl
   isRead
   createdAt
   updatedAt
+  deletedAt
 }

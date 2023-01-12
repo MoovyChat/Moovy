@@ -3,6 +3,7 @@ import './registerServiceWorker.ts';
 
 import { persistedStore, store } from './redux/store';
 
+import GoogleAnalytics from './components/google-analytics/googleAnalytics';
 import HomeRouter from './routes';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
@@ -18,7 +19,10 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>
-        <HomeRouter />
+        <>
+          {/* <GoogleAnalytics /> */}
+          <HomeRouter />
+        </>
       </PersistGate>
     </Provider>
   </React.StrictMode>

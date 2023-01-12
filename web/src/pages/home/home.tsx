@@ -31,7 +31,9 @@ const Home = () => {
       // The screen.orientation API is not available, so you may want to fall back to another solution
     }
   }, []);
-  useIsAuth();
+  useEffect(() => {
+    document.title = 'Moovy';
+  }, []);
   const navigate = useNavigate();
   const theme = useAppSelector((state) => state.settings.theme);
   const isPopupOpen = useAppSelector((state) => state.popup.isPopupOpened);
@@ -68,7 +70,7 @@ const Home = () => {
         <HomeHeader className='home-header' />
         <PanelsParent className='panels' isNavBarOpen={isNavBarOpen}>
           <LeftPanel className='left'></LeftPanel>
-          <CenterPanel className='center'></CenterPanel>
+          <CenterPanel className='center' id='center'></CenterPanel>
           <RightPanel className='right'></RightPanel>
         </PanelsParent>
         <Popup />
@@ -76,4 +78,5 @@ const Home = () => {
     </ThemeProvider>
   );
 };
+
 export default withUrqlClient(urqlClient)(Home);

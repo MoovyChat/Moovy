@@ -18,6 +18,9 @@ import { MovieStats } from '../entities/MovieStats';
 import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
 import { COOKIE_NAME } from '../constants';
+import { Follow } from '../entities/Follow';
+import { Any, EntityManager } from 'typeorm';
+import { resolve } from 'node:path/win32';
 
 @InputType()
 class UserInput {
@@ -130,6 +133,20 @@ class PaginatedUserComments {
 }
 
 @ObjectType()
+class MiniCommentFormat {
+  @Field()
+  id: string;
+  @Field()
+  type: string;
+  @Field()
+  commentedUserId: string;
+  @Field()
+  createdAt: string;
+  @Field()
+  updatedAt: string;
+}
+
+@ObjectType()
 class PaginatedUserReplies {
   @Field(() => Int, { defaultValue: 0 })
   totalCommentCount: number;
@@ -165,6 +182,79 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   getUserByUserName(@Arg('nickname') nickname: string): Promise<User | null> {
     return User.findOne({ where: { nickname } });
+  }
+
+  @Query(() => [MiniCommentFormat], { nullable: true })
+  async getFeed(
+    @Arg('uid') uid: string,
+    @Arg('limit') limit: number,
+    @Arg('page') page: number
+  ): Promise<MiniCommentFormat[] | null> {
+    let result: MiniCommentFormat[] = [];
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const queryRunner = conn.createQueryRunner();
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    try {
+      // lets now open a new transaction:
+      await queryRunner.startTransaction();
+      const followRepo = conn.getRepository(Follow);
+      const commentRepo = conn.getRepository(Comment);
+      const replyRepo = conn.getRepository(Reply);
+      const ids = await followRepo
+        .createQueryBuilder('f')
+        .select('f.userId', 'id')
+        .where('f.followingId = :uid', { uid })
+        .andWhere('f.follows = :f', { f: true })
+        .execute();
+      const updatedIds = [...ids, { id: uid }];
+      console.log(updatedIds);
+      await Promise.all(
+        updatedIds.map(async (idObject) => {
+          let neededUserId = idObject.id;
+          // Get comments of that user and also retrieve that user info.
+          const _comments: MiniCommentFormat[] = await commentRepo
+            .createQueryBuilder('c')
+            .select('c.id', 'id')
+            .addSelect('c.commentedUserId', 'commentedUserId')
+            .addSelect('c.createdAt', 'createdAt')
+            .addSelect('c.updatedAt', 'updatedAt')
+            .addSelect('c.type', 'type')
+            .where('c.commentedUserId = :id', { id: neededUserId })
+            .andWhere('c.updatedAt >= :date', { date: thirtyDaysAgo })
+            .offset((page - 1) * limit)
+            .limit(limit)
+            .execute();
+          const _replies: MiniCommentFormat[] = await replyRepo
+            .createQueryBuilder('r')
+            .select('r.id', 'id')
+            .addSelect('r.commentedUserId', 'commentedUserId')
+            .addSelect('r.type', 'type')
+            .addSelect('r.createdAt', 'createdAt')
+            .addSelect('r.updatedAt', 'updatedAt')
+            .where('r.commentedUserId = :id', { id: neededUserId })
+            .andWhere('r.updatedAt >= :date', { date: thirtyDaysAgo })
+            .offset((page - 1) * limit)
+            .limit(limit)
+            .execute();
+          result = _.chain(result)
+            .concat(_comments)
+            .concat(_replies)
+            .uniqBy('id')
+            .orderBy('updatedAt', 'desc')
+            .value();
+        })
+      );
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+    return result;
   }
 
   @Query(() => FullUserObject, { nullable: true })
@@ -309,9 +399,11 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserComments | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
     if (!user) throw new Error('User not found');
-    const query = await conn
+    const query = conn
       .getRepository(Comment)
       .createQueryBuilder('c')
       .innerJoinAndSelect(
@@ -319,7 +411,7 @@ export class UserResolver {
         'user',
         'user.id = c.commentedUserId'
       )
-      .where('c.commentedUserId = :uid', { uid });
+      .where('c.commentedUserId = :uid', { uid: user.id });
     let totalCommentCount = await query.getCount();
     if (time && time !== '') {
       query.andWhere('c.createdAt < :time', {
@@ -352,7 +444,9 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserReplies | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
     if (!user) throw new Error('User not found');
     const query = await conn
       .getRepository(Reply)

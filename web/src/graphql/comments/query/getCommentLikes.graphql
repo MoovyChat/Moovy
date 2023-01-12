@@ -10,5 +10,6 @@ query GetCommentLikes($limit: Int!, $cid: String!, $page: Int) {
     }
     likesCount
     page
+    lastPage
   }
 }

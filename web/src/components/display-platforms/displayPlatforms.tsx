@@ -4,6 +4,7 @@ import {
 } from './displayPlatforms.styles';
 import React, { Fragment } from 'react';
 
+import { Image } from '../Image/image';
 import { MdLockClock } from 'react-icons/md';
 
 export const streamingServices = [
@@ -55,7 +56,7 @@ const LogoSet: React.FC<logoSetProp> = ({ platform }) => {
   return (
     <LogoSetParent className='platform'>
       <div className='set'>
-        <img src={platform.imgUrl} alt={platform.title} />
+        <Image src={platform.imgUrl} alt={platform.title} />
         {platform.title !== 'Netflix' && <div className='layover'></div>}
         <label>{platform.status}</label>
       </div>

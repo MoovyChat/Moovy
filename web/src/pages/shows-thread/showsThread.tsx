@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import ViewportList from 'react-viewport-list';
@@ -20,6 +21,9 @@ import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
   useIsAuth();
+  useEffect(() => {
+    document.title = 'Show - Moovy';
+  }, []);
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -88,7 +92,7 @@ const ShowsThread = () => {
       <ChildHeader className='movie-header'>
         <StyledTitleHeader>
           <div className='title-image'>
-            <img src={titleRef.current?.boxart as string} alt='title' />
+            <Image src={titleRef.current?.boxart as string} alt='title' />
           </div>
           <div className='title-text'>{titleRef.current?.title}</div>
           <WatchVideo

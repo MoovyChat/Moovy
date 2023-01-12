@@ -1,11 +1,14 @@
 import { LoadingParent } from './loading.styles';
-import { ReactComponent as Moovy } from '../../svgs/moovy-white.svg';
+import React from 'react';
 
 const Loading = () => {
   return (
     <LoadingParent>
-      <div className='container'>
-        <Moovy />
+      <div className='lds-ellipsis'>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
     </LoadingParent>
   );

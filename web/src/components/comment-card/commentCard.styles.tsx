@@ -71,6 +71,7 @@ export const CardParent = styled.div<props>`
     display: flex;
     width: 95%;
     align-items: flex-start;
+    font-size: 14px;
     padding-top: 10px;
     .user-pic {
       max-width: 50px;

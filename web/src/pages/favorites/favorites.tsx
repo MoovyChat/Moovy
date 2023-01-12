@@ -1,8 +1,19 @@
+import React, { useEffect } from 'react';
+
+import ChildHeader from '../../components/childHeader/childHeader';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import { FavoriteStyles } from './favorites.styles';
-import React from 'react';
 
 const Favorites = () => {
-  return <FavoriteStyles>Favorites</FavoriteStyles>;
+  useEffect(() => {
+    document.title = 'Favorites - Moovy';
+  }, []);
+  return (
+    <FavoriteStyles>
+      <ChildHeader text='Favorites' className='feed-header' />
+      <EmptyPage msg='Your Favorites is empty!' />
+    </FavoriteStyles>
+  );
 };
 
 export default Favorites;

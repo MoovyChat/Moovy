@@ -80,7 +80,6 @@ const CommentInterface: React.FC<props> = ({
   className,
 }) => {
   const mounted = useRef<boolean>(false);
-  const nodeRef = useRef<any>(null);
   const movieId = useAppSelector((state) => state.movie.id);
   // Check if the passed component is comment or reply.
   if (!commentOrReply) return <div>Invalid comment</div>;

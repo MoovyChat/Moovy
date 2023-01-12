@@ -1,7 +1,6 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
-  useDeleteCommentMutation,
-  useGetCommentLikesQuery,
+  useGetIsUserLikedCommentQuery,
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
@@ -23,17 +22,21 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
-  const [likedUsers, setLikedUsers] = useState<any[]>([]);
-  const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
-    variables: {
-      cid: comment.id!,
-      limit: 10,
-      page: 1,
-    },
+  const [, setCommentLike] = useSetCommentLikeMutation();
+  const [isUserLikedQuery] = useGetIsUserLikedCommentQuery({
+    variables: { uid: loggedInUser.id, cid: comment.id },
     pause: isServer(),
   });
 
-  const [, setCommentLike] = useSetCommentLikeMutation();
+  useEffect(() => {
+    const { error, data, fetching } = isUserLikedQuery;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getIsUserLikedComment!;
+      const isLiked = _data.isLiked as boolean;
+      setLike(isLiked);
+    }
+  }, [isUserLikedQuery]);
 
   const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -54,30 +57,7 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
     if (error) console.log(error);
     const _like = data?.setCommentLike?.likeStatus.like!;
     setLike(_like);
-    setLikedUsers((users) => {
-      let newUsers = [];
-      if (_like) {
-        newUsers = [...users, loggedInUser];
-      } else {
-        newUsers = users.filter((user) => user.id !== loggedInUser.id);
-      }
-      return newUsers;
-    });
   };
-
-  useEffect(() => {
-    const { data, fetching, error } = commentLikeCountQuery;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _count = data.getCommentLikes?.likesCount!;
-      const _users = data.getCommentLikes?.likes;
-      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
-      if (findCurrentUser) setLike(true);
-      else setLike(false);
-      setLikedUsers(_users!);
-      setLikeCount(_count);
-    }
-  }, [commentLikeCountQuery.fetching]);
 
   return (
     <CardTemplate
@@ -88,7 +68,6 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
       like={like}
       goToComment={goToComment}
       comment={comment}
-      likedUsers={likedUsers}
     />
   );
 };

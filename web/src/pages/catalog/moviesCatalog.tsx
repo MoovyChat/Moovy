@@ -3,6 +3,7 @@ import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import CatalogTemplate from './catalogTemplate';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
 import TitleCard from './titleCard';
 import _ from 'lodash';
@@ -18,6 +19,9 @@ const MoviesCatalog = () => {
     variables: { limit: 15, page: page },
     pause: isServer(),
   });
+  useEffect(() => {
+    document.title = 'Movies - Moovy';
+  }, []);
 
   useMemo(() => {
     if (error) console.log(error);
@@ -53,19 +57,7 @@ const MoviesCatalog = () => {
     );
 
   if (titles && titles?.length <= 0)
-    return (
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontWeight: '600',
-        }}>
-        Catalog is empty
-      </div>
-    );
+    return <EmptyPage msg='Movies catalog is empty' />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>

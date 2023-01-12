@@ -25,6 +25,9 @@ import { withUrqlClient } from 'next-urql';
 const MovieThread = () => {
   useIsAuth();
   const { id } = useParams();
+  useEffect(() => {
+    document.title = 'Movie - Moovy';
+  }, []);
   const limit = 10;
   const ref = useRef<HTMLDivElement | null>(null);
   const [valid, setValid] = useState<boolean>(false);

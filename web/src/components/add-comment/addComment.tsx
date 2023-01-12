@@ -25,14 +25,12 @@ import {
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import { AddCommentTypes } from '../../utils/types';
 import { AiOutlineNumber } from 'react-icons/ai';
-import CommentCard from '../comment-card/commentCard';
 import { FOCUS_WINDOW } from '../../utils/enums';
 import FocusWindow from '../focus-window/focusWindow';
 import MiniCommentCard from '../mini-comment-card/miniCommentCard';
-import MovieCard from '../movie-card/movieCard';
 import MovieChip from '../movie-chip/movieChip';
-import MovieInfo from '../comment-card/movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import { batch } from 'react-redux';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
@@ -53,7 +51,7 @@ const AddComment: React.FC<props> = ({ type }) => {
   const [commentInserted, setCommentInserted] = useState<number>(0);
 
   useEffect(() => {
-    if (type === 'movie') setMovieInfo(popupData as Movie);
+    if (type === AddCommentTypes.MOVIE) setMovieInfo(popupData as Movie);
     else setComment(() => popupData as any);
   }, [type]);
 
@@ -72,7 +70,7 @@ const AddComment: React.FC<props> = ({ type }) => {
     if (text === '') {
       return;
     }
-    if (type === 'movie') {
+    if (type === AddCommentTypes.MOVIE) {
       setCommentInserted(1);
       insertComment({
         options: {
@@ -100,7 +98,7 @@ const AddComment: React.FC<props> = ({ type }) => {
       });
     }
 
-    if (type === 'comment') {
+    if (type === AddCommentTypes.COMMENT) {
       setCommentInserted(1);
       let commentData = comment as Reply;
       let parentComment = commentData.parentCommentId as string;
@@ -113,7 +111,7 @@ const AddComment: React.FC<props> = ({ type }) => {
           movieId: commentData?.movieId!,
           platformId: 1,
           repliesCount: 0,
-          parentRepliedUser: commentData?.commentedUserName,
+          parentRepliedUser: commentData?.commentedUserName as string,
           parentCommentId: isNaN(parseInt(parentComment))
             ? commentData.id
             : parentComment,
@@ -201,16 +199,11 @@ const AddComment: React.FC<props> = ({ type }) => {
               <div className='text'>{text.length}/300</div>
             </div>
           </div>
-          {type === 'comment' && comment && comment.commentedUserId && (
+          {type === AddCommentTypes.COMMENT && comment && (
             <div className='comment'>
               <MiniCommentCard
                 id={comment.id}
-                type={
-                  (comment as any)?.parentCommentId ===
-                  (comment as any)?.parentReplyId
-                    ? 'comment'
-                    : 'reply'
-                }
+                type={(comment as any).parentCommentId ? 'reply' : 'comment'}
                 className='mini'
                 extendData={false}
               />

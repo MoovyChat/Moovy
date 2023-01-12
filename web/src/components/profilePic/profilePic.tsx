@@ -1,3 +1,4 @@
+import { Image } from '../Image/image';
 import { ProfilePicParent } from './profilePic.styles';
 import React from 'react';
 import { TOOLTIP } from '../../utils/enums';
@@ -20,7 +21,7 @@ const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
     <React.Fragment>
       {tooltip ? (
         <ProfilePicParent onClick={navigateToUser} id='blur-escape'>
-          <img src={src} alt='profilePic' id='blur-escape' loading='lazy' />
+          <Image src={src} alt='profilePic' id='blur-escape' loading='lazy' />
         </ProfilePicParent>
       ) : (
         <Tooltip
@@ -29,7 +30,7 @@ const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
           data={user as User}
           message={TOOLTIP.USER}>
           <ProfilePicParent id='blur-escape'>
-            <img src={src} alt='profilePic' />
+            <Image src={src} alt='profilePic' loading='lazy' />
           </ProfilePicParent>
         </Tooltip>
       )}

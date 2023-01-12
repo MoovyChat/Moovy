@@ -49,6 +49,15 @@ export interface Movie {
   viewsCount: number;
 }
 
+export interface FeedObject {
+  __typename?: 'MiniCommentFormat' | undefined;
+  id: string;
+  type: string;
+  commentedUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Notifications {
   __typename?: 'Notifications' | undefined;
   id: string;

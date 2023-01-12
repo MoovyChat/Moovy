@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { Image } from '../Image/image';
 import { Movie } from '../../generated/graphql';
 import { MovieCardParent } from './movieCard.styles';
 import MovieInfo from '../comment-card/movieInfo';
@@ -21,7 +22,7 @@ const MovieCard: React.FC<props> = ({ movie }) => {
     <MovieCardParent bg={movie?.stills!} onClick={cardClickHandler}>
       <div className='container'>
         <div className='thumbs'>
-          <img src={movie?.thumbs!} alt='movie' loading='lazy' />
+          <Image src={movie?.thumbs!} alt='movie' loading='lazy' />
         </div>
         <div className='info'>
           <MovieInfo movie={movie} />

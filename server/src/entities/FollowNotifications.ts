@@ -15,19 +15,21 @@ import { User } from './User';
 
 @ObjectType()
 @Entity()
-export class Notifications extends BaseEntity {
+export class FollowNotifications extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => String)
   id!: string;
 
+  // To whom notifications are added to.
   @Field(() => String)
   @PrimaryColumn()
-  userId!: string;
+  toUserId!: string;
 
   @Field(() => String)
   @Column()
   message!: string;
 
+  // From whom notifications are sent.
   @Field(() => String)
   @PrimaryColumn()
   fromUser!: string;
@@ -40,8 +42,8 @@ export class Notifications extends BaseEntity {
   @Column()
   isRead!: boolean;
 
-  @ManyToOne(() => User, (user) => user.notifications)
-  user: User;
+  @ManyToOne(() => User, (user) => user.followNotifications)
+  toUser: User;
 
   @Field(() => String)
   @CreateDateColumn()

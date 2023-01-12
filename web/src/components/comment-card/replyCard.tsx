@@ -1,8 +1,6 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
-  User,
-  useGetReplyLikesQuery,
-  useGetUserQuery,
+  useGetIsUserLikedReplyQuery,
   useSetReplyLikeMutation,
 } from '../../generated/graphql';
 
@@ -24,36 +22,26 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
   const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
-  const [likedUsers, setLikedUsers] = useState<any[]>([]);
-  const [replyLikeQuery, _executeQuery] = useGetReplyLikesQuery({
-    variables: {
-      rid: comment.id!,
-      limit: 10,
-      page: 1,
-    },
+  const [, setReplyLike] = useSetReplyLikeMutation();
+  const [isUserLikedQuery] = useGetIsUserLikedReplyQuery({
+    variables: { uid: loggedInUser.id, rid: comment.id },
     pause: isServer(),
   });
 
-  const [, setReplyLike] = useSetReplyLikeMutation();
+  useEffect(() => {
+    const { error, data, fetching } = isUserLikedQuery;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getIsUserLikedReply!;
+      const isLiked = _data.isLiked as boolean;
+      setLike(isLiked);
+    }
+  }, [isUserLikedQuery]);
 
   const goToReply: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     navigate(`/reply/${comment.id}`);
   };
-
-  useEffect(() => {
-    const { data, fetching, error } = replyLikeQuery;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _count = data.getReplyLikes?.likesCount!;
-      const _users = data.getReplyLikes?.likes;
-      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
-      if (findCurrentUser) setLike(true);
-      else setLike(false);
-      setLikedUsers(_users!);
-      setLikeCount(_count);
-    }
-  }, [replyLikeQuery.fetching]);
 
   const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
     e.stopPropagation();
@@ -80,7 +68,6 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
       like={like}
       goToComment={goToReply}
       comment={comment}
-      likedUsers={likedUsers}
     />
   );
 };

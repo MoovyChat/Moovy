@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
 export const SearchBarParent = styled.div`
-  width: 50%;
+  width: 100%;
   border: 1px solid;
   overflow: hidden;
   border-radius: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
+  margin: 10px 0;
   .icon {
     display: flex;
     justify-content: flex-end;
@@ -19,7 +19,7 @@ export const SearchBarParent = styled.div`
     background: transparent;
     border: none;
     font-size: 1rem;
-    padding: 0.5rem 1rem;
+    padding: 0.7rem 1rem;
     border-radius: 0.25rem;
     outline: none;
     width: calc(100% - 50px);

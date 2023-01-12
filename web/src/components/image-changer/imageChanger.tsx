@@ -1,5 +1,11 @@
 import { DisplayImage, ImageChangerParent } from './imageChanger.styles';
-import { MdInfoOutline, MdLink, MdUploadFile } from 'react-icons/md';
+import {
+  MdDone,
+  MdInfoOutline,
+  MdLink,
+  MdOutlineError,
+  MdUploadFile,
+} from 'react-icons/md';
 import React, {
   ChangeEventHandler,
   MouseEventHandler,
@@ -19,7 +25,9 @@ import {
   useUpdateUserBgMutation,
 } from '../../generated/graphql';
 
+import { ImageChangerTypes } from '../../utils/types';
 import ImageCrop from '../image-crop/imageCrop';
+import Loading from '../../pages/loading/loading';
 import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
 import { batch } from 'react-redux';
@@ -28,6 +36,17 @@ import { isImageURLValid } from '../../utils/helpers';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { withUrqlClient } from 'next-urql';
+
+const MsgObjType = {
+  INITIAL: 'INITIAL',
+  LOADING: 'LOADING',
+  ERROR: 'ERROR',
+  SUCCESS: 'SUCCESS',
+};
+interface MsgObj {
+  msg: string;
+  status: string;
+}
 
 type props = {
   type: string;
@@ -38,7 +57,10 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const [url, setUrl] = useState<string>('');
   const [isURLValid, setURLValid] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [loadingStatus, setLoadingStatus] = useState<MsgObj>({
+    msg: '',
+    status: MsgObjType.INITIAL,
+  });
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const [selectedOption, setSelectedOption] = useState<string>('');
@@ -63,9 +85,15 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     setUrl(e.target.value);
     const res = (await isImageURLValid(e.target.value)) as unknown as boolean;
     if (!res) {
-      setError('No image found in the URL provided');
+      setLoadingStatus({
+        msg: 'No image found in the URL provided',
+        status: MsgObjType.ERROR,
+      });
     } else {
-      setError('');
+      setLoadingStatus({
+        msg: '',
+        status: MsgObjType.INITIAL,
+      });
     }
     setURLValid(res);
   };
@@ -76,7 +104,10 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     setSaved(false);
     const storageRef = ref(storage, user.id + '-' + type);
     let result: any;
-    setError('Uploading image. Please stay on this page.');
+    setLoadingStatus({
+      msg: 'Uploading image. Please stay on this page.',
+      status: MsgObjType.LOADING,
+    });
     if (selectedOption === 'fromLocal') {
       // Upload the updated blob to firebase storage and get the URL.
       const blob = await imgPreview(imageRef.current!, completedCrop!);
@@ -88,11 +119,11 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       const _snapshot = await uploadBytes(storageRef, blob);
       const urlSnapShot = await getDownloadURL(storageRef);
       // Saves the URL to the database.
-      if (type === 'pfp')
+      if (type === ImageChangerTypes.PFP)
         result = await saveProfilePhoto({ url: urlSnapShot, uid: user.id });
       else result = await saveBg({ url: urlSnapShot, uid: user.id });
     } else {
-      if (type === 'pfp')
+      if (type === ImageChangerTypes.PFP)
         result = await saveProfilePhoto({ url, uid: user.id });
       else result = await saveBg({ url, uid: user.id });
     }
@@ -100,7 +131,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     const { error, data } = result;
     if (error) console.log(error);
     if (!error) {
-      if (type === 'pfp') {
+      if (type === ImageChangerTypes.PFP) {
         const _data = data?.updateUserProfilePhoto.user;
         const _errors = data?.updateUserProfilePhoto.errors;
         if (_errors) console.log(_errors);
@@ -115,7 +146,10 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         if (_data === null || _data === undefined) return;
         dispatch(sliceSetUser(_data));
       }
-      setError('Profile pic updated successfully');
+      setLoadingStatus({
+        msg: 'Profile pic updated successfully',
+        status: MsgObjType.SUCCESS,
+      });
       setSaved(true);
     }
   };
@@ -135,11 +169,17 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         setSelectedOption('fromURL');
         inputFileRef.current!.value = '';
         setUrl('');
-        setError('');
+        setLoadingStatus({
+          msg: '',
+          status: MsgObjType.INITIAL,
+        });
         break;
       case 'fromLocal':
         setSelectedOption('fromLocal');
-        setError('');
+        setLoadingStatus({
+          msg: '',
+          status: MsgObjType.INITIAL,
+        });
         break;
       default:
         break;
@@ -202,7 +242,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
             <input
               ref={inputFileRef}
               type='file'
-              accept='image/png, image/jpeg'
+              accept='image/jpeg, image/jpg'
               placeholder='Upload image'
               onChange={fileUploadHandler}
             />
@@ -213,7 +253,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         <div className='display-container'>
           {!!url &&
             (selectedOption === 'fromLocal' ? (
-              type === 'pfp' ? (
+              type === ImageChangerTypes.PFP ? (
                 <ImageCrop
                   url={url}
                   setCompletedCrop={setCompletedCrop}
@@ -234,10 +274,20 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         </div>
       </DisplayImage>
       <div className='error'>
-        {error ? (
+        {loadingStatus.status !== MsgObjType.INITIAL ? (
           <div className='in'>
-            <MdInfoOutline size={15} />
-            <div className='e-in-e'>{error}</div>
+            <div className='loading'>
+              {loadingStatus.status === MsgObjType.LOADING ? (
+                <Loading />
+              ) : loadingStatus.status === MsgObjType.ERROR ? (
+                <MdOutlineError size={20} fill='#c11d1d' />
+              ) : loadingStatus.status === MsgObjType.SUCCESS ? (
+                <MdDone size={20} fill='#00ff2f' />
+              ) : (
+                ''
+              )}
+            </div>
+            <div className='e-in-e'>{loadingStatus.msg}</div>
           </div>
         ) : (
           <></>

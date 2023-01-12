@@ -1,13 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import App from './pages/app/app';
+import BasicInfo from './pages/profile/basicInfo';
 import Catalog from './pages/catalog/catalog';
 import CommentThread from './pages/commentThread/commentThread';
 import Comments from './pages/comments/comments';
+import CommentsComponent from './pages/comments/commentsComponent';
 import DifferentProfile from './pages/profile/differentProfile';
 import Favorites from './pages/favorites/favorites';
 import Feed from './pages/feed/feed';
-import Home from './pages/home/home';
 import MovieThread from './pages/movieThread/movieThread';
 import MoviesCatalog from './pages/catalog/moviesCatalog';
 import NotFound from './pages/notFound/notFound';
@@ -17,17 +17,22 @@ import ReplyThread from './pages/commentThread/replyThread';
 import ShowsCatalog from './pages/catalog/showsCatalog';
 import ShowsThread from './pages/shows-thread/showsThread';
 import ShowsThreadComponent from './pages/shows-thread/showsThreadParent.component';
+import SplashScreen from './pages/splash-screen/splashScreen';
 import { urqlClient } from './utils/urlClient';
-import { useEffect } from 'react';
 import { withUrqlClient } from 'next-urql';
 
 const HomeRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Home />}>
+        <Route path='/' element={<SplashScreen />}>
           <Route index element={<Feed />} />
-          <Route path='comments' element={<Comments />} />
+          <Route
+            path='comments'
+            element={<CommentsComponent type='Comments' />}>
+            <Route path=':id' element={<Comments />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
           <Route path='comment' element={<ShowsThreadComponent />}>
             <Route path=':id' element={<CommentThread />} />
             <Route path='*' element={<NotFound />} />
@@ -36,7 +41,10 @@ const HomeRouter = () => {
             <Route path=':id' element={<ReplyThread />} />
             <Route path='*' element={<NotFound />} />
           </Route>
-          <Route path='replies' element={<Replies />} />
+          <Route path='replies' element={<CommentsComponent type='Replies' />}>
+            <Route path=':id' element={<Replies />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
           <Route path='notifications' element={<Notifications />} />
           <Route path='favorites' element={<Favorites />} />
           <Route path='catalog' element={<Catalog />}>
@@ -45,7 +53,12 @@ const HomeRouter = () => {
             <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='profile' element={<ShowsThreadComponent />}>
-            <Route path=':id' element={<DifferentProfile />} />
+            <Route path=':id' element={<DifferentProfile />}>
+              <Route path='' index element={<BasicInfo />} />
+              <Route path='comments' element={<Comments />} />
+              <Route path='replies' element={<Replies />} />
+              <Route path='*' element={<NotFound />} />
+            </Route>
             <Route path='*' element={<NotFound />} />
           </Route>
           <Route path='show' element={<ShowsThreadComponent />}>
@@ -58,7 +71,7 @@ const HomeRouter = () => {
           </Route>
           <Route path='*' element={<NotFound />} />
         </Route>
-        <Route path='/welcome' element={<App />} />
+        {/* <Route path='/welcome' element={<App />} /> */}
       </Routes>
     </BrowserRouter>
   );

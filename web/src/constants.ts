@@ -1,6 +1,6 @@
 export const home = {
   heading: 'Now stream movies with comments',
-  sub: 'Quiet chat provides you a new way to enjoy your streaming experience with a comment section and video filters.',
+  sub: 'Moovy provides you a new way to enjoy your streaming experience with a comment section and video filters.',
   sub2: 'Why wait? Install our extension and step up the game with your streaming experience.',
   supported: 'Supported Platforms:',
 };
@@ -26,6 +26,7 @@ export const popupStates = {
   ADD_COMMENT: 'ADD_COMMENT',
   ADD_REPLY: 'ADD_REPLY',
   OPEN_FOLLOW: 'OPEN_FOLLOW',
+  OPEN_LIKES: 'OPEN_LIKES',
   DELETE_COMMENT: 'DELETE_COMMENT',
   DELETE_REPLY: 'DELETE_REPLY',
 };

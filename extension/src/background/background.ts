@@ -23,6 +23,7 @@ import {
 } from '../Utils/storage';
 
 import { domains } from '../constants';
+import { requestTypes } from '../Utils/enums';
 
 const MOOVY_URL = 'http://localhost:3000';
 const injectScriptsOnReload = async () => {
@@ -401,6 +402,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (sender.tab) {
     switch (request.type) {
       case 'GET_USER':
+        getStoredUserLoginDetails().then((res) => {
+          sendResponse(res);
+        });
+        break;
+      case requestTypes.REFETCH_USER:
         getStoredUserLoginDetails().then((res) => {
           sendResponse(res);
         });

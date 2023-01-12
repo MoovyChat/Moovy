@@ -2,11 +2,10 @@ import { rotate180, rotateX180 } from '../../utils/keyframes';
 
 import styled from 'styled-components';
 
-const w = 12;
 export const HomeHeaderParent = styled.div`
   display: flex;
-  overflow: hidden;
   width: 100vw;
+  justify-content: space-evenly;
   .logo,
   .user {
     position: relative;
@@ -14,14 +13,15 @@ export const HomeHeaderParent = styled.div`
     height: 100%;
     justify-content: space-evenly;
     align-items: center;
-    flex: 1 0 ${w}%;
+
     .logo-image {
       width: 100%;
       display: flex;
       justify-content: space-evenly;
       .image {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
       }
       .logo-text {
         display: flex;
@@ -42,65 +42,26 @@ export const HomeHeaderParent = styled.div`
   }
   .user {
     justify-content: space-evenly;
-    .logo-pic {
+    cursor: pointer;
+    :hover {
+      border-radius: 50%;
+      box-shadow: 0 0 3px;
+    }
+    .logo-image {
       display: flex;
       align-items: center;
+      overflow: hidden;
+      border-radius: 50%;
       img {
         border-radius: 50%;
       }
     }
   }
-  .stats {
-    flex: 1 0 ${100 - 2 * w}%;
-    height: 100%;
-    perspective: 1000px;
-    .inner {
-      transform-style: preserve-3d;
-      height: 100%;
-      animation: ${rotateX180} 20s linear infinite;
-      .front,
-      .back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-      }
-      .back {
-        transform: rotateX(180deg);
-      }
-      .side {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        height: 100%;
-        .one {
-          display: flex;
-          width: 10%;
-          justify-content: space-evenly;
-          font-weight: 600;
-          font-size: 0.8em;
-          .count {
-          }
-          .text {
-          }
-        }
-      }
-      @media (max-width: 900px) {
-        .side {
-          .one {
-            width: 100%;
-          }
-        }
-      }
-    }
+  .search {
+    width: 40%;
   }
+
   @media (max-width: 500px) {
-    .stats {
-      .inner {
-        animation: none;
-      }
-    }
     .logo {
       .logo-image {
         display: none;

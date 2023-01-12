@@ -4,8 +4,8 @@ export const ShowFollowParent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 10vw;
-  min-height: 20vh;
+  width: 50vw;
+  height: 40vh;
   flex-direction: column;
   position: relative;
   padding: 10px 20px 100px 20px;
@@ -33,13 +33,14 @@ export const ShowFollowParent = styled.div`
   .users-container {
     position: relative;
     height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     overflow: auto;
-    min-width: 400px;
-    @media (max-width: 500px) {
-      min-width: 300px;
-    }
+  }
+  @media (max-width: 500px) {
+    width: 100vw;
+    height: 99vh;
   }
 `;
 
@@ -47,7 +48,7 @@ export const StyledUserCard = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 95%;
+  width: 92%;
   max-height: 60px;
   padding: 10px;
   .user-block {
@@ -65,19 +66,5 @@ export const StyledUserCard = styled.div`
     }
   }
   .follow {
-    padding: 7px 15px;
-    border-radius: 15px;
-    background: ${(p) => p.theme.body};
-    font-weight: 600;
-    font-size: 0.9em;
-    box-shadow: 0 0 5px;
-    transition: all 0.2s;
-    cursor: pointer;
-    :hover {
-      transform: scale(1.1);
-    }
-    :active {
-      transform: scale(1);
-    }
   }
 `;

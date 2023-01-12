@@ -12,6 +12,7 @@ import {
 import { Field, Int, ObjectType } from 'type-graphql';
 
 import { CommentStats } from './CommentStat';
+import { LikeNotifications } from './LikeNotifications';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
@@ -52,8 +53,18 @@ export class Comment extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({
+    nullable: true,
+    default: 'comment',
+  })
+  type: string;
+
   @OneToMany(() => Reply, (reply) => reply.parentComment)
   replies: Reply[];
+
+  @OneToMany(() => LikeNotifications, (Notifications) => Notifications.comment)
+  likeNotifications: LikeNotifications[];
 
   @OneToMany(() => CommentStats, (stats) => stats.comment)
   commentStats: CommentStats[];

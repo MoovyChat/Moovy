@@ -2,6 +2,7 @@ import { DIRECTION, FOCUS_WINDOW } from '../../utils/enums';
 import React, { EventHandler, useCallback, useRef, useState } from 'react';
 
 import EmojiPicker from '../emojiPicker/emojiPicker';
+import HeaderOptions from '../header-profile-options/headerOptions';
 import { StyledFocusWindow } from './focusWindow.styles';
 
 interface props {
@@ -26,6 +27,8 @@ const FocusWindow: React.FC<props> = ({
     switch (message) {
       case FOCUS_WINDOW.EMOJI:
         return <EmojiPicker />;
+      case FOCUS_WINDOW.HEADER_OPTIONS:
+        return <HeaderOptions />;
       default:
         return <div></div>;
     }

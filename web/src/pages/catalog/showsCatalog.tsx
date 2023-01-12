@@ -3,6 +3,7 @@ import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import CatalogTemplate from './catalogTemplate';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
 import TitleCard from './titleCard';
 import _ from 'lodash';
@@ -14,7 +15,9 @@ const ShowsCatalog = () => {
   const [titles, setTitles] = useState<Title[] | null>([]);
   const [lastPage, setLastPage] = useState<number>(1);
   const totalTitleCount = useRef<number | null>(null);
-
+  useEffect(() => {
+    document.title = 'Shows - Moovy';
+  }, []);
   const [{ error, fetching, data }] = useGetPaginatedShowsQuery({
     variables: { limit: 15, page: page },
     pause: isServer(),
@@ -44,20 +47,7 @@ const ShowsCatalog = () => {
       }
     }
   };
-  if (titles!.length <= 0)
-    return (
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontWeight: '600',
-        }}>
-        Catalog is empty
-      </div>
-    );
+  if (titles!.length <= 0) return <EmptyPage msg='Shows catalog is empty' />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>

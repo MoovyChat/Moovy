@@ -102,13 +102,19 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           </div>
           <div className='text'>Favorites</div>
         </NavLink>
-        <NavLink to='/comments' className='option' onClick={linkClickHandler}>
+        <NavLink
+          to={`/comments/${user.nickname}`}
+          className='option'
+          onClick={linkClickHandler}>
           <div className='icon comments'>
             <MdModeComment size={iconSize} />
           </div>
           <div className='text'>Comments</div>
         </NavLink>
-        <NavLink to='/replies' className='option' onClick={linkClickHandler}>
+        <NavLink
+          to={`/replies/${user.nickname}`}
+          className='option'
+          onClick={linkClickHandler}>
           <div className='icon replies'>
             <MdOutlineReply size={iconSize} />
           </div>

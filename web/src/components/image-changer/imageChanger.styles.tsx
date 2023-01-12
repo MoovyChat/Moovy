@@ -109,6 +109,12 @@ export const ImageChangerParent = styled.div<props>`
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      .loading {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
       .e-in-e {
         font-size: 12px;
         font-weight: 600;
@@ -159,18 +165,23 @@ export const DisplayImage = styled.div`
   justify-content: center;
   overflow: hidden;
   .display-container {
-    width: 100%;
-    height: 100%;
+    width: 400px;
+    height: 400px;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: auto;
+    img {
+      width: 100%;
+      height: 100%;
+      border: 0.3px solid;
+    }
     .ReactCrop {
       margin: 10px 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 350px;
-      height: 350px;
+
       .ReactCrop__child-wrapper {
         height: 100%;
         width: 100%;
@@ -178,7 +189,6 @@ export const DisplayImage = styled.div`
           width: 100%;
           height: 100%;
           border: 0.3px solid;
-          object-fit: contain;
         }
       }
     }

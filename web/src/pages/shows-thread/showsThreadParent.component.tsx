@@ -4,6 +4,7 @@ import React from 'react';
 
 const ShowsThreadComponent = () => {
   const location = useLocation();
+
   return (
     <React.Fragment>
       <Outlet key={location.pathname} />

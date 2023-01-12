@@ -1,13 +1,13 @@
-query getUserProfile($uid: String!) {
+query GetUserProfile($uid: String!) {
   getUserProfile(uid: $uid) {
-    bio
-    createdAt
-    deletedAt
-    dob
-    firstname
-    gender
-    lastname
-    updatedAt
     userId
+    firstname
+    lastname
+    dob
+    bio
+    gender
+    createdAt
+    updatedAt
+    deletedAt
   }
 }

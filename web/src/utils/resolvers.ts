@@ -1,5 +1,10 @@
+import {
+  FollowNotifications,
+  LikeNotifications,
+  User,
+} from '../generated/graphql';
+
 import { Resolver } from '@urql/exchange-graphcache';
-import { User } from '../generated/graphql';
 import _ from 'lodash';
 import { stringifyVariables } from 'urql';
 
@@ -80,7 +85,7 @@ export const userCommentsResolver = (): Resolver => {
     let _user: User | null = null;
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
-      if (args.mid !== fieldArgs.mid) return;
+      if (args.uid !== fieldArgs.uid) return;
       const link = cache.resolve(entityKey, fieldKey) as string;
       const comments = cache.resolve(link, 'comments') as string[];
       newComments = _.concat(newComments, comments);
@@ -229,6 +234,68 @@ export const paginatedMoviesResolver = (): Resolver => {
       lastPage: _lastPage,
       totalTitleCount: _totalTitleCount,
       titles: newTitles,
+    };
+    return newData;
+  };
+};
+
+export const paginatedFeedResolver = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    let paginatedComments = [] as string[];
+
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+
+      if (args.uid !== fieldArgs.uid) return;
+
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      paginatedComments.push(...link);
+    });
+    info.partial = true;
+    return paginatedComments;
+  };
+};
+
+export const paginatedUserNotificationsResolver = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    let follow: FollowNotifications[] = [];
+    let like: LikeNotifications[] = [];
+    let typeName: string = '';
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const likeNot = cache.resolve(link, 'like') as LikeNotifications[];
+      const followNot = cache.resolve(link, 'follow') as FollowNotifications[];
+      typeName = cache.resolve(link, '__typename') as string;
+      // follow = _.chain(follow).concat(followNot).uniqBy('id').value();
+      // like = _.chain(like).concat(likeNot).uniqBy('id').value();
+      follow.push(...followNot);
+      like.push(...likeNot);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: typeName,
+      like: like,
+      follow: follow,
     };
     return newData;
   };
