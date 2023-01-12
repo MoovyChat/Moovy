@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import App from '../app/app';
 import Home from '../home/home';
+import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from './splashScreen.styles';
@@ -28,7 +29,7 @@ const SplashScreen = () => {
     return (
       <StyledSplashScreen>
         <div className='logo'>
-          <img src={Moovy} alt='Moovy' />
+          <Image src={Moovy} alt='Moovy' />
         </div>
         <div className='loading'>
           <Loading />

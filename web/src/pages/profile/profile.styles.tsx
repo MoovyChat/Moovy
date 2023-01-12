@@ -150,22 +150,8 @@ export const ProfileParent = styled.div`
         }
         .follow {
           position: absolute;
-          right: 10px;
-          bottom: 10px;
-          padding: 7px 15px;
-          border-radius: 15px;
-          background: ${(p) => p.theme.body};
-          font-weight: 600;
-          font-size: 0.9em;
-          box-shadow: 0 0 5px;
-          transition: all 0.2s;
-          cursor: pointer;
-          :hover {
-            transform: scale(1.1);
-          }
-          :active {
-            transform: scale(1);
-          }
+          right: 0;
+          top: 0;
         }
       }
     }

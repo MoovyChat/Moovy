@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const offset = 50;
+const offset = 55;
 type props = {
   isNavBarOpen: boolean;
 };

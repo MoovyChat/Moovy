@@ -1,6 +1,6 @@
 import 'react-image-crop/dist/ReactCrop.css';
 
-import React, { Dispatch, MouseEventHandler, useEffect, useState } from 'react';
+import React, { Dispatch, useState } from 'react';
 import ReactCrop, { PixelCrop, centerCrop } from 'react-image-crop';
 
 import { Crop } from 'react-image-crop';
@@ -51,7 +51,9 @@ const ImageCrop: React.FC<props> = ({
       onChange={(_, percentCrop) => {
         setCrop(percentCrop);
       }}
-      onComplete={(c) => setCompletedCrop(c)}
+      onComplete={(c) => {
+        setCompletedCrop(c);
+      }}
       aspect={aspect}>
       <img alt='image-crop' src={url} onLoad={onImageLoad} ref={imageRef} />
     </ReactCrop>

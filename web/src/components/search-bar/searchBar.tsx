@@ -17,6 +17,7 @@ import {
   StyledUserCard,
 } from './searchBar.styles';
 
+import { Image } from '../Image/image';
 import { MdSearch } from 'react-icons/md';
 import ProfilePic from '../profilePic/profilePic';
 import { isServer } from '../../constants';
@@ -136,7 +137,7 @@ const SearchBar = () => {
                             navigate(`/show/${title.id}`);
                             setSearchBarActive(() => false);
                           }}>
-                          <img
+                          <Image
                             src={title.boxart}
                             alt={title.title}
                             className='thumbs'
@@ -164,7 +165,7 @@ const SearchBar = () => {
                             navigate(`/movie/${movie.id}`);
                             setSearchBarActive(() => false);
                           }}>
-                          <img
+                          <Image
                             src={movie.boxart}
                             alt={movie.title}
                             className='thumbs'

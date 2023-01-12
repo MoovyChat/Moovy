@@ -14,6 +14,7 @@ export enum TOOLTIP {
 }
 export enum FOCUS_WINDOW {
   EMOJI = 'EMOJI',
+  HEADER_OPTIONS = 'HEADER_OPTIONS',
 }
 
 export enum msgPlace {

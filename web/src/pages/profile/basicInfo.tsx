@@ -37,7 +37,7 @@ const BasicInfo = () => {
   const [dobInTime, setDOBInTime] = useState<string>('');
   const userFromRedux = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const isDifferentUser = id !== userFromRedux.id;
+  const isDifferentUser = id !== userFromRedux.nickname;
   const [{ error, fetching, data }] = useGetUserByNickNameQuery({
     variables: { nickname: id! },
     pause: isServer(),

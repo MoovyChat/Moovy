@@ -1,5 +1,6 @@
 import { Cache, ResolveInfo, Variables } from '@urql/exchange-graphcache';
 import {
+  ClearNotificationsMutation,
   Comment,
   DeleteCommentMutation,
   DeleteReplyMutation,
@@ -27,6 +28,8 @@ import {
   GetUserByNickNameQuery,
   GetUserMiniProfileDocument,
   GetUserMiniProfileQuery,
+  GetUserNotificationsDocument,
+  GetUserNotificationsQuery,
   InsertCommentMutation,
   InsertReplyMutation,
   IsFollowingUserDocument,
@@ -35,6 +38,7 @@ import {
   LogoutMutation,
   MeDocument,
   MeQuery,
+  ReadNotificationMutation,
   Reply,
   SetCommentLikeMutation,
   SetReplyLikeMutation,
@@ -802,6 +806,90 @@ export const updateMovieLikesChanges = (
                 : likesCount - 1,
             },
           };
+        }
+      );
+    }
+  });
+};
+
+export const readNotificationChanges = (
+  _result: ReadNotificationMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getUserNotifications: 'getUserNotifications',
+  };
+
+  const getUserNotificationsFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getUserNotifications
+  );
+  getUserNotificationsFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).uid === args.uid) {
+      cache.updateQuery(
+        { query: GetUserNotificationsDocument, variables: fieldInfo.arguments },
+        (data: GetUserNotificationsQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getUserNotifications = data.getUserNotifications!;
+          let likeNotifications = getUserNotifications.like!;
+          let followNotifications = getUserNotifications.follow!;
+          const newData = {
+            ...data,
+            getUserNotifications: {
+              ...getUserNotifications,
+              like: likeNotifications.map((like) => {
+                return { ...like, isRead: true };
+              }),
+              follow: followNotifications.map((follow) => {
+                return { ...follow, isRead: true };
+              }),
+            },
+          };
+          return newData;
+        }
+      );
+    }
+  });
+};
+
+export const clearNotificationsChanges = (
+  _result: ClearNotificationsMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getUserNotifications: 'getUserNotifications',
+  };
+
+  const getUserNotificationsFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getUserNotifications
+  );
+  getUserNotificationsFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).uid === args.uid) {
+      cache.updateQuery(
+        { query: GetUserNotificationsDocument, variables: fieldInfo.arguments },
+        (data: GetUserNotificationsQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getUserNotifications = data.getUserNotifications!;
+          const newData = {
+            ...data,
+            getUserNotifications: {
+              ...getUserNotifications,
+              like: [],
+              follow: [],
+            },
+          };
+          return newData;
         }
       );
     }

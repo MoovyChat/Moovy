@@ -31,10 +31,11 @@ const Comments = () => {
   }, []);
 
   const [{ data, fetching, error }] = useGetCommentsOfTheUserQuery({
-    variables: { uid: id!, limit: 15, page: page, asc: false },
+    variables: { uid: id!, limit: 5, page: page, asc: false },
     pause: isServer() && !id,
   });
 
+  // Scroll handler.
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
@@ -51,6 +52,24 @@ const Comments = () => {
       setLastPage(data?.getCommentsOfTheUser?.lastPage!);
     }
   }, [fetching, data, error]);
+
+  //Scroll handler: Fallback - Find the scrollable parent element.
+  useEffect(() => {
+    const scrollComments = () => {
+      if (!profileParent) return null;
+      if (
+        profileParent.scrollHeight - profileParent.scrollTop - 2 <=
+        profileParent.clientHeight
+      ) {
+        if (page !== lastPage) {
+          setPage((page) => page + 1);
+        }
+      }
+    };
+    var profileParent = document.getElementById('profile-parent');
+    profileParent?.addEventListener('scroll', scrollComments);
+    return () => profileParent?.removeEventListener('scroll', scrollComments);
+  }, [page, lastPage]);
 
   if (!id) return <NotFound />;
   if (fetching) {

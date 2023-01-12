@@ -2,6 +2,7 @@ import './welcome.css';
 
 import Dark from '../../static/images/dark-chat.png';
 import DisplayPlatforms from '../../components/display-platforms/displayPlatforms';
+import { Image } from '../../components/Image/image';
 import Light from '../../static/images/light-chat.png';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import { WelcomeParent } from './welcome.styles';
@@ -25,12 +26,12 @@ const Welcome = () => {
         <div className='pics'>
           <div className='first pic'>
             <picture>
-              <img className='image' src={Light} alt='light' />
+              <Image className='image' src={Light} alt='light' />
             </picture>
           </div>
           <div className='second pic'>
             <picture>
-              <img className='image' src={Dark} alt='dark' />
+              <Image className='image' src={Dark} alt='dark' />
             </picture>
           </div>
         </div>

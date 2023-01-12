@@ -11,6 +11,7 @@ import {
   Movie,
   Title,
   User,
+  useGetIsUserLikedCommentQuery,
   useGetMovieQuery,
   useGetTitleInfoMutation,
   useGetUserQuery,
@@ -31,6 +32,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
 import CardTemplateLoader from './cardTemplateLoader';
+import { Image } from '../Image/image';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import { batch } from 'react-redux';
@@ -46,7 +48,6 @@ type props = {
   like: boolean;
   likeCount: number;
   isMain?: boolean;
-  likedUsers?: User[];
 };
 
 const CardTemplate: React.FC<props> = ({
@@ -56,7 +57,6 @@ const CardTemplate: React.FC<props> = ({
   like,
   likeCount,
   isMain,
-  likedUsers,
   type,
 }) => {
   const navigate = useNavigate();
@@ -65,7 +65,6 @@ const CardTemplate: React.FC<props> = ({
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
   const commentedUserId = comment.commentedUserId;
-  // const [mArray, setMessageArray] = useState<textMap[]>([]);
   const loggedInUser = useAppSelector((state) => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
   const movieRef = useRef<Movie | null>(null);
@@ -188,14 +187,16 @@ const CardTemplate: React.FC<props> = ({
 
   const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
+    // Send comment/reply id as data.
     const _sentData = {
-      data: likedUsers,
+      data: comment.id,
       type: 'Liked',
+      isReply: isReply,
     };
     batch(() => {
       dispatch(sliceSetPopupData(_sentData));
       dispatch(sliceSetIsPopupOpened(true));
-      dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+      dispatch(sliceSetSelectedElement(popupStates.OPEN_LIKES));
     });
   };
 
@@ -244,13 +245,13 @@ const CardTemplate: React.FC<props> = ({
         showMore={showMore}>
         <div className='bg'>
           {!isMain && showEpisodeInfo ? (
-            <img
+            <Image
               key='episode'
               src={movieRef.current?.stills as string}
               alt='background-image'
             />
           ) : !isMain && showTitleInfo ? (
-            <img
+            <Image
               key='title'
               src={titleRef.current?.artwork as string}
               alt='background-image'

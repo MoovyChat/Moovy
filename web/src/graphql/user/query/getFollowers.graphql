@@ -1,0 +1,13 @@
+query GetFollowers($limit: Float!, $page: Float!, $uid: String!) {
+  getFollowers(limit: $limit, page: $page, uid: $uid) {
+    user {
+      ...FullUser
+    }
+    followers {
+      ...FullUser
+    }
+    count
+    page
+    lastPage
+  }
+}

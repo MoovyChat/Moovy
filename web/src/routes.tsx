@@ -27,7 +27,9 @@ const HomeRouter = () => {
       <Routes>
         <Route path='/' element={<SplashScreen />}>
           <Route index element={<Feed />} />
-          <Route path='comments' element={<CommentsComponent type='Comment' />}>
+          <Route
+            path='comments'
+            element={<CommentsComponent type='Comments' />}>
             <Route path=':id' element={<Comments />} />
             <Route path='*' element={<NotFound />} />
           </Route>

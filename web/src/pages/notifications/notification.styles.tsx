@@ -6,16 +6,37 @@ export const NotificationParent = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  .heading {
-    padding: 20px 0;
-    .count {
-      margin-left: 10px;
-      padding: 2px 10px;
-      font-size: 0.6em;
-      background-color: #0099ff;
-      color: white;
-      font-weight: 700;
-      border-radius: 5px 0 5px 0;
+  .header {
+    width: 100%;
+    .header-text {
+      width: 100%;
+    }
+    .heading {
+      padding: 20px 0;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      .count {
+        margin-left: 10px;
+        padding: 2px 10px;
+        font-size: 0.6em;
+        background-color: #0099ff;
+        color: white;
+        font-weight: 700;
+        border-radius: 18px;
+      }
+      .clear {
+        font-size: 14px;
+        margin-right: 10px;
+        box-shadow: 0 0 1px;
+        padding: 7px 10px;
+        border-radius: 18px;
+        cursor: pointer;
+        :hover {
+          box-shadow: 0 0 5px;
+        }
+      }
     }
   }
   .notifications {
@@ -29,10 +50,7 @@ export const NotificationParent = styled.div`
   }
 `;
 
-type cardProps = {
-  isRead: any;
-};
-export const NotificationCardParent = styled.div<cardProps>`
+export const NotificationCardParent = styled.div`
   display: flex;
   position: relative;
   width: 90%;
@@ -55,7 +73,7 @@ export const NotificationCardParent = styled.div<cardProps>`
     }
     .message {
       position: absolute;
-      left: 80px;
+      left: 90px;
       width: 70%;
       font-weight: 500;
       line-height: 16px;
@@ -66,7 +84,7 @@ export const NotificationCardParent = styled.div<cardProps>`
         background-color: #0099ff;
         color: white;
         font-weight: 700;
-        border-radius: 5px 0 5px 0;
+        border-radius: 18px;
       }
     }
     .timestamp {

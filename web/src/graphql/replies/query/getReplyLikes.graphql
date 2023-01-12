@@ -2,6 +2,7 @@ query GetReplyLikes($limit: Int!, $rid: String!, $page: Int) {
   getReplyLikes(limit: $limit, rid: $rid, page: $page) {
     page
     likesCount
+    lastPage
     likes {
       id
       name

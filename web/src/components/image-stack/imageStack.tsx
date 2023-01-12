@@ -1,20 +1,17 @@
 import { DIRECTION, TOOLTIP } from '../../utils/enums';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
-  User,
-  useGetFollowersMutation,
-  useGetFollowingsMutation,
-} from '../../generated/graphql';
-import {
   sliceSetIsPopupOpened,
   sliceSetPopupData,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 
+import { Image } from '../Image/image';
 import { ImageStackParent } from './imageStack.style';
 import { LOGIN } from '../tooltip/constants';
 import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import Tooltip from '../tooltip/tooltip';
+import { User } from '../../generated/graphql';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 import { useAppDispatch } from '../../redux/hooks';
@@ -28,11 +25,9 @@ type props = {
 };
 const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   let [users, setUsers] = useState<User[]>([]);
   let [isFollowerSection, setIsFollowerSection] = useState<boolean>(false);
-  const [, getFollowers] = useGetFollowersMutation();
-  const [, getFollowing] = useGetFollowingsMutation();
-  const dispatch = useAppDispatch();
   const redirectToUserProfile = (id: string) => {
     navigate(`/profile/${id}`);
   };
@@ -50,43 +45,18 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
     ? `${count} followers`
     : `${count} following`;
 
-  const showFollows: MouseEventHandler<HTMLDivElement> = (e) => {
+  const showFollowUsers: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    if (isFollowerSection) {
-      getFollowers({ uid: user.id }).then((res) => {
-        const { data, error } = res;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data?.getFollowers?.followers;
-          const _sentData = {
-            data: _data,
-            type: 'Followers',
-          };
-          batch(() => {
-            dispatch(sliceSetIsPopupOpened(true));
-            dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
-            dispatch(sliceSetPopupData(_sentData));
-          });
-        }
-      });
-    } else {
-      getFollowing({ uid: user.id }).then((res) => {
-        const { data, error } = res;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data?.getFollowings?.followings;
-          const _sentData = {
-            data: _data,
-            type: 'Following',
-          };
-          batch(() => {
-            dispatch(sliceSetIsPopupOpened(true));
-            dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
-            dispatch(sliceSetPopupData(_sentData));
-          });
-        }
-      });
-    }
+    const _sentData = {
+      data: user.id,
+      type: isFollowerSection ? 'Followers' : 'Following',
+      isFollower: isFollowerSection,
+    };
+    batch(() => {
+      dispatch(sliceSetPopupData(_sentData));
+      dispatch(sliceSetIsPopupOpened(true));
+      dispatch(sliceSetSelectedElement(popupStates.OPEN_FOLLOW));
+    });
   };
 
   let defaultText = isFollowerSection ? `No followers` : `0 following`;
@@ -101,17 +71,17 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               width='200px'
               data={users[0]}
               dir={followers ? DIRECTION.BOTTOM_RIGHT : DIRECTION.BOTTOM}>
-              <img
+              <Image
                 src={users[0]?.photoUrl}
                 alt='profile'
-                onClick={(e) => {
+                onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[0].nickname);
                 }}
               />
             </Tooltip>
           ) : (
-            <img src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt='profile' />
           )}
         </div>
         <div className='two profile-box'>
@@ -121,17 +91,17 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               message={LOGIN}
               width='200px'
               dir={DIRECTION.BOTTOM}>
-              <img
+              <Image
                 src={users[1]?.photoUrl}
                 alt='profile'
-                onClick={(e) => {
+                onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[1].nickname);
                 }}
               />
             </Tooltip>
           ) : (
-            <img src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt='profile' />
           )}
         </div>
         <div className='three profile-box'>
@@ -141,21 +111,21 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               message={LOGIN}
               width='200px'
               dir={following ? DIRECTION.BOTTOM_LEFT : DIRECTION.BOTTOM}>
-              <img
+              <Image
                 src={users[2]?.photoUrl}
                 alt='profile'
-                onClick={(e) => {
+                onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[2].nickname);
                 }}
               />
             </Tooltip>
           ) : (
-            <img src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt='profile' />
           )}
         </div>
       </div>
-      <div className='count' onClick={showFollows}>
+      <div className='count' onClick={showFollowUsers}>
         {count <= 0 ? defaultText : countText}
       </div>
     </ImageStackParent>

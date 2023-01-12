@@ -11,7 +11,7 @@ type props = {
 };
 const NotificationCard: React.FC<props> = ({ notification, onClick, type }) => {
   return (
-    <NotificationCardParent isRead={notification.isRead} onClick={onClick}>
+    <NotificationCardParent onClick={onClick}>
       <div className='first'>
         <div className='profile-pic'>
           <ProfilePic src={notification.fromUserPhotoUrl} tooltip={true} />

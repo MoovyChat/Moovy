@@ -1,45 +1,33 @@
-import {
-  FollowerObject,
-  FollowingObject,
-  Movie,
-  Profile,
-  User,
-  useGetUserMiniProfileQuery,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
-} from '../../generated/graphql';
-import {
-  MdCameraAlt,
-  MdEdit,
-  MdFemale,
-  MdMale,
-  MdOutlineCake,
-  MdOutlineContacts,
-} from 'react-icons/md';
+import { MdCameraAlt, MdEdit } from 'react-icons/md';
 import {
   MouseEventHandler,
   UIEventHandler,
-  useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { NoTitle, ProfileParent, SubGroups } from './profile.styles';
-import { ParsedText, getShortDateFormat } from '../../utils/helpers';
+import { NavLink, Outlet } from 'react-router-dom';
+import {
+  Profile,
+  User,
+  useGetUserMiniProfileQuery,
+  useGetUserProfileQuery,
+  useIsFollowingUserQuery,
+  useToggleFollowMutation,
+} from '../../generated/graphql';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChildHeader from '../../components/childHeader/childHeader';
-import ImageStack from '../../components/image-stack/imageStack';
+import FollowButton from '../../components/follow-button/followButton';
+import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
-import MovieCard from '../../components/movie-card/movieCard';
 import NavLinks from '../../components/nav-links/navLinks';
 import NotFound from '../notFound/notFound';
+import { ProfileParent } from './profile.styles';
 import ProfilePic from '../../components/profilePic/profilePic';
 import _ from 'lodash';
+import { getShortDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
-import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 
 type props = {
   user: User;
@@ -61,36 +49,20 @@ const ProfileTemplate: React.FC<props> = ({
   const profileFromRedux = useAppSelector((state) => state.profile);
   const [profile, setProfile] = useState<Profile | null>(null);
   const dispatch = useAppDispatch();
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [scrollValue, setScrollValue] = useState<number>(0);
 
-  const [, toggleFollow] = useToggleFollowMutation();
-
-  const [miniProfile] = useGetUserMiniProfileQuery({
-    variables: {
-      uid: user.id,
-    },
-    pause: isDifferentUser
-      ? isServer()
-      : isServer() && _.isEqual(profile, profileFromRedux),
-  });
-
-  const [amIFollowingUser] = useIsFollowingUserQuery({
-    variables: { uid: currentUser.id, fid: user.id },
-    pause: isDifferentUser
-      ? isServer()
-      : isServer() && _.isEqual(profile, profileFromRedux),
+  const [profileQuery] = useGetUserProfileQuery({
+    variables: { uid: user.id },
   });
 
   useMemo(() => {
-    const { data, error, fetching } = amIFollowingUser;
+    const { error, data } = profileQuery;
     if (error) console.log(error);
-    console.log(data);
-    if (!fetching && data) {
-      const _data = data.isFollowingUser as boolean;
-      setIsFollowing(() => _data);
+    if (data) {
+      const _data = data.getUserProfile! as Profile;
+      setProfile(_data);
     }
-  }, [amIFollowingUser]);
+  }, [profileQuery]);
 
   const profileScrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
     if (ref && ref.current) {
@@ -99,32 +71,16 @@ const ProfileTemplate: React.FC<props> = ({
     }
   };
 
-  const toggleFollowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    setIsFollowing(!isFollowing);
-    toggleFollow({
-      uid: currentUser.id,
-      followingId: user.id,
-      follow: !isFollowing,
-    });
-  };
-
-  if (miniProfile.fetching) {
-    return <Loading />;
-  }
-
-  if (!miniProfile.fetching && !miniProfile) {
-    return <NotFound />;
-  }
-
   let headerTitle = scrollValue > 40 ? `${user?.nickname}` : 'Profile';
-  let followStatus = isFollowing ? 'Following' : 'Follow';
   return (
-    <ProfileParent ref={ref} onScroll={profileScrollHandler}>
+    <ProfileParent
+      ref={ref}
+      onScroll={profileScrollHandler}
+      id='profile-parent'>
       <ChildHeader text={headerTitle} className='comment-header' />
       <div className='top'>
         <div className='cover-photo'>
-          <img
+          <Image
             src={`${
               user.bg
                 ? user.bg
@@ -168,8 +124,8 @@ const ProfileTemplate: React.FC<props> = ({
               Joined on {getShortDateFormat(user?.joinedAt as string)}
             </div>
             {isDifferentUser && (
-              <div className='follow' onClick={toggleFollowHandler}>
-                {followStatus}
+              <div className='follow'>
+                <FollowButton userId={user.id} nickName={user.nickname} />
               </div>
             )}
           </div>

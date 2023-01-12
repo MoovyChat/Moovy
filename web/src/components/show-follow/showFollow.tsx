@@ -1,113 +1,103 @@
-import React, { MouseEventHandler, useMemo, useState } from 'react';
-import { ShowFollowParent, StyledUserCard } from './showFollow.styles';
+import { MouseEventHandler, UIEventHandler, useEffect, useState } from 'react';
 import {
   User,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
+  useGetFollowersQuery,
+  useGetFollowingsQuery,
 } from '../../generated/graphql';
-import {
-  sliceSetIsPopupOpened,
-  sliceSetPopupData,
-  sliceSetSelectedElement,
-} from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { MdClose } from 'react-icons/md';
-import ProfilePic from '../profilePic/profilePic';
-import { batch } from 'react-redux';
+import { ShowFollowParent } from './show.styles';
+import { UserCard } from './userCard';
 import { isServer } from '../../constants';
-import { useNavigate } from 'react-router-dom';
+import { sliceResetPopup } from '../../redux/slices/popupSlice';
 
 const ShowFollow = () => {
   const popup = useAppSelector((state) => state.popup);
-  const users = (popup.popupData as any).data as User[];
+  const userId = (popup.popupData as any).data as string;
   const type = (popup.popupData as any).type;
+  const isFollower = (popup.popupData as any).isFollower as boolean;
+  console.log({ userId, type, isFollower });
   const dispatch = useAppDispatch();
+  const [users, setUsers] = useState<User[]>([]);
+  const [usersCount, setUsersCount] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [followerQuery] = useGetFollowersQuery({
+    variables: {
+      uid: userId,
+      page: page,
+      limit: 10,
+    },
+    pause: isServer() && !isFollower,
+  });
+  const [followingQuery] = useGetFollowingsQuery({
+    variables: {
+      uid: userId,
+      page: page,
+      limit: 10,
+    },
+    pause: isServer() && isFollower,
+  });
+
+  useEffect(() => {
+    if (!isFollower) return;
+    const { data, fetching, error } = followerQuery;
+    console.log(data);
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _followers = data.getFollowers?.followers!;
+      setUsers(() => _followers);
+      setPage((p) => p + 1);
+      setLastPage(() => data.getFollowers?.lastPage!);
+      setUsersCount(() => data.getFollowers?.count!);
+    }
+  }, [followerQuery.fetching]);
+
+  useEffect(() => {
+    if (isFollower) return;
+    const { data, fetching, error } = followingQuery;
+    console.log(data);
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _followings = data.getFollowings?.followings!;
+      setUsers(() => _followings);
+      setPage((p) => p + 1);
+      setLastPage(() => data.getFollowings?.lastPage!);
+      setUsersCount(() => data.getFollowings?.count!);
+    }
+  }, [followingQuery.fetching]);
+
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    batch(() => {
-      dispatch(sliceSetIsPopupOpened(false));
-      dispatch(sliceSetSelectedElement(''));
-      dispatch(sliceSetPopupData(null));
-    });
+    dispatch(sliceResetPopup());
+  };
+
+  // Scroll handler.
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      if (page !== lastPage) {
+        setPage((page) => page + 1);
+      }
+    }
   };
 
   return (
     <ShowFollowParent>
       <div className='follow-head'>
         <span>
-          {users && users.length > 0 ? users.length : 0} {type}
+          {usersCount} {type}
         </span>
         <div className='close' onClick={closeHandler}>
           <MdClose size={25} />
         </div>
       </div>
-      <div className='users-container'>
+      <div className='users-container' onScroll={handleScroll}>
         {users && users.map((user) => <UserCard user={user} />)}
       </div>
     </ShowFollowParent>
-  );
-};
-
-type props = {
-  user: User;
-};
-const UserCard: React.FC<props> = ({ user }) => {
-  const currentUser = useAppSelector((state) => state.user);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  const [, toggleFollow] = useToggleFollowMutation();
-  const isSameUser = user.id === currentUser.id;
-  const [amIFollowingUser] = useIsFollowingUserQuery({
-    variables: { uid: currentUser.id, fid: user.id },
-    pause: isServer(),
-  });
-  const navigate = useNavigate();
-  const cardClickHandler = (userId: string) => {
-    navigate(`/profile/${userId}`);
-  };
-  useMemo(() => {
-    const { data, error, fetching } = amIFollowingUser;
-    if (error) console.log(error);
-    console.log(data);
-    if (!fetching && data) {
-      const _data = data.isFollowingUser as boolean;
-      setIsFollowing(() => _data);
-    }
-  }, [amIFollowingUser]);
-
-  const toggleFollowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    setIsFollowing(!isFollowing);
-    toggleFollow({
-      uid: currentUser.id,
-      followingId: user.id,
-      follow: !isFollowing,
-    }).then((res) => {
-      const { data, error } = res;
-      if (error) console.log(error);
-      const _data = data?.toggleFollow?.follows as boolean;
-      setIsFollowing(_data);
-    });
-  };
-  let followStatus = isFollowing ? 'Following' : 'Follow';
-  return (
-    <StyledUserCard
-      onClick={(e) => {
-        e.stopPropagation();
-        cardClickHandler(user.nickname);
-      }}>
-      <div className='user-block'>
-        <div className='pic-container'>
-          <ProfilePic src={user.photoUrl} tooltip={true} user={user} />
-        </div>
-        <div className='user-name'>{user.nickname}</div>
-      </div>
-      {!isSameUser && (
-        <div className='follow' onClick={toggleFollowHandler}>
-          {followStatus}
-        </div>
-      )}
-    </StyledUserCard>
   );
 };
 

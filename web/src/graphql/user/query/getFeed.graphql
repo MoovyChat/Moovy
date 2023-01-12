@@ -1,0 +1,9 @@
+query GetFeed($page: Float!, $limit: Float!, $uid: String!) {
+  getFeed(page: $page, limit: $limit, uid: $uid) {
+    id
+    type
+    commentedUserId
+    createdAt
+    updatedAt
+  }
+}

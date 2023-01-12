@@ -1,5 +1,6 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
 import {
+  clearNotificationsChanges,
   commentLikeChanges,
   deleteCommentChanges,
   deleteReplyChanges,
@@ -8,6 +9,7 @@ import {
   logOutChanges,
   loginChanges,
   profileUpdateChanges,
+  readNotificationChanges,
   replyLikeChanges,
   toggleFollowChanges,
   updateMovieLikesChanges,
@@ -15,7 +17,9 @@ import {
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
   movieCommentsResolver,
+  paginatedFeedResolver,
   paginatedMoviesResolver,
+  paginatedUserNotificationsResolver,
   repliesResolver,
   userCommentsResolver,
   userRepliesResolver,
@@ -31,6 +35,7 @@ const wsClient = createWSClient({
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
     PaginatedMovieComments: () => null,
+    getPaginatedMovies: () => null,
     PaginatedUserComments: () => null,
     RepliesObject: () => null,
     PaginatedUserReplies: () => null,
@@ -41,6 +46,7 @@ const cache: Partial<CacheExchangeOpts> = {
     Profile: () => null,
     MovieStats: () => null,
     CommentOrReply: () => null,
+    NotificationObject: () => null,
   },
   updates: {
     Mutation: {
@@ -55,6 +61,8 @@ const cache: Partial<CacheExchangeOpts> = {
       deleteComment: deleteCommentChanges,
       deleteReply: deleteReplyChanges,
       updateUserMovieStats: updateMovieLikesChanges,
+      readNotification: readNotificationChanges,
+      clearNotifications: clearNotificationsChanges,
     },
   },
   resolvers: {
@@ -66,6 +74,8 @@ const cache: Partial<CacheExchangeOpts> = {
       getRepliesOfReply: repliesResolver(),
       getPaginatedMovies: paginatedMoviesResolver(),
       getPaginatedShows: paginatedMoviesResolver(),
+      getFeed: paginatedFeedResolver(),
+      getUserNotifications: paginatedUserNotificationsResolver(),
     },
   },
 };

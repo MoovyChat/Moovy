@@ -70,7 +70,7 @@ const Home = () => {
         <HomeHeader className='home-header' />
         <PanelsParent className='panels' isNavBarOpen={isNavBarOpen}>
           <LeftPanel className='left'></LeftPanel>
-          <CenterPanel className='center'></CenterPanel>
+          <CenterPanel className='center' id='center'></CenterPanel>
           <RightPanel className='right'></RightPanel>
         </PanelsParent>
         <Popup />

@@ -5,11 +5,12 @@ import useIsAuth from '../../../utils/isAuthUser';
 
 type props = {
   className: string;
+  id?: string;
 };
-const CenterPanel: React.FC<props> = ({ className }) => {
+const CenterPanel: React.FC<props> = ({ className, id }) => {
   useIsAuth();
   return (
-    <CenterParent className={className}>
+    <CenterParent className={className} id={id}>
       <Outlet />
     </CenterParent>
   );

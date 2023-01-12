@@ -20,6 +20,7 @@ import DeleteComment from '../delete-comment/deleteComment';
 import EditProfile from '../edit-profile/editProfile';
 import ImageChanger from '../image-changer/imageChanger';
 import ShowFollow from '../show-follow/showFollow';
+import ShowLikes from '../show-follow/showLikes';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
@@ -59,6 +60,8 @@ const Popup = () => {
         return <AddComment type={AddCommentTypes.COMMENT} />;
       case popupStates.OPEN_FOLLOW:
         return <ShowFollow />;
+      case popupStates.OPEN_LIKES:
+        return <ShowLikes />;
       case popupStates.DELETE_COMMENT:
         return <DeleteComment type={DeleteCommentTypes.COMMENT} />;
       case popupStates.DELETE_REPLY:

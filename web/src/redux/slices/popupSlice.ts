@@ -24,6 +24,14 @@ const PopupSlice = createSlice({
     sliceSetPopupData: (state, action) => {
       return { ...state, popupData: action.payload };
     },
+    sliceResetPopup: (state) => {
+      return {
+        ...state,
+        popupData: {},
+        isPopupOpened: false,
+        selectedElement: '',
+      };
+    },
   },
 });
 
@@ -31,5 +39,6 @@ export const {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
   sliceSetPopupData,
+  sliceResetPopup,
 } = PopupSlice.actions;
 export default PopupSlice.reducer;
