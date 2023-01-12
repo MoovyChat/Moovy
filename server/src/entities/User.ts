@@ -92,6 +92,9 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.commentedUser)
   comments: Comment[];
 
+  @OneToMany(() => Reply, (reply) => reply.commentedUser)
+  replies: Reply[];
+
   @OneToMany(() => FollowNotifications, (Notifications) => Notifications.toUser)
   followNotifications: FollowNotifications[];
 
@@ -100,9 +103,6 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];
-
-  @OneToMany(() => Reply, (reply) => reply.commentedUser)
-  replies: Reply[];
 
   @Field(() => String, { nullable: true })
   @CreateDateColumn()

@@ -38,7 +38,7 @@ class CommentInput {
 }
 
 @ObjectType()
-class IsUserLikedObject {
+export class IsUserLikedObject {
   @Field()
   id: string;
   @Field(() => Boolean, { defaultValue: false })

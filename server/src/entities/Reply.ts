@@ -68,6 +68,13 @@ export class Reply extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({
+    nullable: true,
+    default: 'reply',
+  })
+  type: string;
+
   @OneToMany(() => LikeNotifications, (Notifications) => Notifications.reply)
   likeNotifications: LikeNotifications[];
 

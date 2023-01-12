@@ -53,6 +53,13 @@ export class Comment extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({
+    nullable: true,
+    default: 'comment',
+  })
+  type: string;
+
   @OneToMany(() => Reply, (reply) => reply.parentComment)
   replies: Reply[];
 

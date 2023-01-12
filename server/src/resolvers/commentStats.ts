@@ -85,20 +85,22 @@ export class CommentStatsResolver {
       if (like) {
         // Insert notifications.
         const notifications = conn.getRepository(LikeNotifications);
-        const commentedUser = await User.findOne({
-          where: { id: comment.commentedUserId },
-        });
-        const message = `${user?.nickname} liked your comment`;
-        await notifications.insert({
-          toUserId: commentedUser?.id,
-          toUserNickName: commentedUser?.nickname,
-          commentId: cid,
-          replyId: null,
-          isRead: false,
-          message: message,
-          fromUser: uid,
-          fromUserPhotoUrl: user?.photoUrl,
-        });
+        if (uid !== comment.commentedUserId) {
+          const commentedUser = await User.findOne({
+            where: { id: comment.commentedUserId },
+          });
+          const message = `${user?.nickname} liked your comment`;
+          await notifications.insert({
+            toUserId: commentedUser?.id,
+            toUserNickName: commentedUser?.nickname,
+            commentId: cid,
+            replyId: null,
+            isRead: false,
+            message: message,
+            fromUser: uid,
+            fromUserPhotoUrl: user?.photoUrl,
+          });
+        }
       }
     }
 

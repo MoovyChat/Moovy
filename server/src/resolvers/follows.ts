@@ -20,6 +20,12 @@ class getFollowers {
   user: User;
   @Field(() => [User], { nullable: true })
   followers: User[];
+  @Field(() => Int)
+  count: number;
+  @Field(() => Int)
+  page: number;
+  @Field(() => Int)
+  lastPage: number;
 }
 
 @ObjectType()
@@ -28,6 +34,12 @@ class getFollowings {
   user: User;
   @Field(() => [User], { nullable: true })
   followings: User[];
+  @Field(() => Int)
+  count: number;
+  @Field(() => Int)
+  page: number;
+  @Field(() => Int)
+  lastPage: number;
 }
 
 @ObjectType()
@@ -127,11 +139,15 @@ export class FollowResolver {
     };
   }
 
-  @Mutation(() => getFollowers, { nullable: true })
-  async getFollowers(@Arg('uid') uid: string): Promise<getFollowers | null> {
+  @Query(() => getFollowers, { nullable: true })
+  async getFollowers(
+    @Arg('uid') uid: string,
+    @Arg('page') page: number,
+    @Arg('limit') limit: number
+  ): Promise<getFollowers | null> {
     const user = await User.findOne({ where: { id: uid } });
     if (!user) return null;
-    const followers: User[] = await conn
+    const query = await conn
       .getRepository(User)
       .createQueryBuilder('user')
       .innerJoin('user.followers', 'followers')
@@ -146,16 +162,31 @@ export class FollowResolver {
       .addSelect('user.joinedAt', 'joinedAt')
       .addSelect('user.updatedAt', 'updatedAt')
       .addSelect('user.deletedAt', 'deletedAt')
-      .andWhere('user.id = followers.userId')
+      .andWhere('user.id = followers.userId');
+    const count = await query.getCount();
+    const followers: User[] = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .orderBy('user.nickname', 'ASC')
       .getRawMany();
-    return { user, followers };
+    return {
+      user,
+      followers,
+      count,
+      page,
+      lastPage: count === 0 ? 1 : Math.ceil(count / limit),
+    };
   }
 
-  @Mutation(() => getFollowings, { nullable: true })
-  async getFollowings(@Arg('uid') uid: string): Promise<getFollowings | null> {
+  @Query(() => getFollowings, { nullable: true })
+  async getFollowings(
+    @Arg('uid') uid: string,
+    @Arg('page') page: number,
+    @Arg('limit') limit: number
+  ): Promise<getFollowings | null> {
     const user = await User.findOne({ where: { id: uid } });
     if (!user) return null;
-    const followings: User[] = await conn
+    const query = await conn
       .getRepository(User)
       .createQueryBuilder('user')
       .innerJoin('user.followings', 'followers')
@@ -170,8 +201,15 @@ export class FollowResolver {
       .addSelect('user.joinedAt', 'joinedAt')
       .addSelect('user.updatedAt', 'updatedAt')
       .addSelect('user.deletedAt', 'deletedAt')
-      .andWhere('user.id = followers.followingId')
-      .getRawMany();
-    return { user, followings };
+      .andWhere('user.id = followers.followingId');
+    const count = await query.getCount();
+    const followings: User[] = await query.getRawMany();
+    return {
+      user,
+      followings,
+      count,
+      page,
+      lastPage: count === 0 ? 1 : Math.ceil(count / limit),
+    };
   }
 }

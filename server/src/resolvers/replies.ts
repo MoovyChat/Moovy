@@ -16,6 +16,7 @@ import { ReplyStats } from '../entities/ReplyStats';
 import { User } from '../entities/User';
 import { REPLY_LIKES_SUB } from '../constants';
 import { Comment } from '../entities/Comment';
+import { IsUserLikedObject } from './comments';
 
 @ObjectType()
 class replyLikesObject {
@@ -74,12 +75,12 @@ export class ReplyResolver {
     return Reply.findOne({ where: { id: rid } });
   }
 
-  @Query(() => Boolean, { nullable: true })
+  @Query(() => IsUserLikedObject, { nullable: true })
   async getIsUserLikedReply(@Arg('rid') rid: string, @Arg('uid') uid: string) {
     const replyStat = await ReplyStats.findOne({
       where: { replyId: rid, userId: uid },
     });
-    return replyStat?.like;
+    return { id: rid, isLiked: replyStat?.like };
   }
 
   @Query(() => User, { nullable: true })
