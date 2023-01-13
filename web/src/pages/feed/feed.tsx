@@ -6,10 +6,7 @@ import FeedComment from './feed-comment/feedComment';
 import { FeedObject } from '../../utils/interfaces';
 import { FeedParent } from './feed.styles';
 import Loading from '../loading/loading';
-import Moovy from '../../svgs/moovy-text.png';
 import NotFound from '../notFound/notFound';
-import Reel from '../../static/images/reel.png';
-import _ from 'lodash';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 import { useGetFeedQuery } from '../../generated/graphql';
@@ -18,6 +15,9 @@ const Feed = () => {
   const user = useAppSelector((state) => state.user);
   const [items, setItems] = useState<FeedObject[]>([]);
   const [page, setPage] = useState<number>(1);
+  useEffect(() => {
+    document.title = 'Moovy';
+  }, []);
   const [feedQuery] = useGetFeedQuery({
     variables: {
       uid: user.id,
