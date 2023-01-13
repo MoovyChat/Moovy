@@ -19,8 +19,6 @@ import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
 import { COOKIE_NAME } from '../constants';
 import { Follow } from '../entities/Follow';
-import { Any, EntityManager } from 'typeorm';
-import { resolve } from 'node:path/win32';
 
 @InputType()
 class UserInput {
