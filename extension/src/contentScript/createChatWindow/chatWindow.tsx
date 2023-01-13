@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
 
 import ChatInterface from '../../components/chatInterface/chatInterface';
@@ -17,7 +17,7 @@ const ChatWindow = () => {
     (state) => state.settings.openChatWindow
   );
   // React: useState hook.
-  const theme = useAppSelector((state) => state.settings.theme);
+  const theme = useAppSelector((state) => state.misc.theme);
   // React: useRef hook.
   const divRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<HTMLDivElement | null>(null);

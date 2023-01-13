@@ -28,6 +28,7 @@ import {
 
 import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
+import LogoLoading from '../components/logo-loading/logoLoading';
 import { colorLog } from '../Utils/utilities';
 import { getVideoElement } from './contentScript.utils';
 import { isNumber } from '../constants';
@@ -50,6 +51,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   const [{ data, error, fetching }, _] = useGetUserQuery({
     variables: { uid: u?.id },
   });
+  const knobColor = useAppSelector((state) => state.misc.knobColor);
   const [movieId, setMovieId] = useState<string>(video_id);
   const [getMovieInfo] = useGetMovieQuery({ variables: { mid: movieId } });
   const [movieFetched, setMovieFetched] = useState<number>(0);
@@ -64,6 +66,29 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     },
     [dispatch]
   );
+
+  // This interval will run continuously through out the session.
+  useEffect(() => {
+    async function applyTimeLineStyles() {
+      let timelineBar = document.querySelector('[data-uia="timeline-bar"]');
+      if (timelineBar) {
+        const firstChild = timelineBar.firstChild as HTMLElement;
+        const secondChild = timelineBar.childNodes[1] as HTMLElement;
+        firstChild.style.backgroundColor = knobColor;
+        firstChild.style.opacity = '0.5';
+        secondChild.style.backgroundColor = knobColor;
+      }
+      let knowView = document.querySelector('[data-uia="timeline-knob"]');
+      let knobElement = knowView as HTMLElement;
+      if (knobElement) {
+        knobElement.style.backgroundColor = knobColor;
+      }
+    }
+    let interval = setInterval(() => {
+      applyTimeLineStyles();
+    }, 100);
+    return () => clearInterval(interval);
+  }, [knobColor]);
 
   // Set the pre-saved video styles.
   useEffect(() => {

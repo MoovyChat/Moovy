@@ -27,6 +27,7 @@ export type Comment = {
   movieId: Scalars['String'];
   platformId: Scalars['Int'];
   repliesCount?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['String'];
 };
 
@@ -236,6 +237,15 @@ export type LikesObject = {
   likesCount: Scalars['Int'];
 };
 
+export type MiniCommentFormat = {
+  __typename?: 'MiniCommentFormat';
+  commentedUserId: Scalars['String'];
+  createdAt: Scalars['String'];
+  id: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type Movie = {
   __typename?: 'Movie';
   commentCount: Scalars['Int'];
@@ -288,6 +298,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addMovieIdToTheUserWatchList: Scalars['Boolean'];
   amIFollowingThisUser?: Maybe<Scalars['Boolean']>;
+  clearNotifications?: Maybe<Scalars['Boolean']>;
   createPlatform?: Maybe<Platform>;
   createUser?: Maybe<User>;
   deleteComment?: Maybe<Comment>;
@@ -308,6 +319,7 @@ export type Mutation = {
   insertVisited?: Maybe<Visited>;
   login?: Maybe<UserResponse>;
   logout: Scalars['Boolean'];
+  readNotification?: Maybe<NotificationObj>;
   setCommentLike?: Maybe<CommentsStatsObject>;
   setReplyLike?: Maybe<ReplyStatsObject>;
   toggleFollow?: Maybe<Follow>;
@@ -329,6 +341,11 @@ export type MutationAddMovieIdToTheUserWatchListArgs = {
 
 export type MutationAmIFollowingThisUserArgs = {
   fid: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
+export type MutationClearNotificationsArgs = {
   uid: Scalars['String'];
 };
 
@@ -437,6 +454,13 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationReadNotificationArgs = {
+  id: Scalars['Float'];
+  type: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
 export type MutationSetCommentLikeArgs = {
   cid: Scalars['String'];
   like: Scalars['Boolean'];
@@ -509,6 +533,12 @@ export type NickNameResponse = {
   __typename?: 'NickNameResponse';
   errors?: Maybe<Array<ErrorField>>;
   user?: Maybe<User>;
+};
+
+export type NotificationObj = {
+  __typename?: 'NotificationObj';
+  follow?: Maybe<Array<FollowNotifications>>;
+  like?: Maybe<Array<LikeNotifications>>;
 };
 
 export type NotificationObject = {
@@ -609,7 +639,7 @@ export type Query = {
   getCommentedUser?: Maybe<User>;
   getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
   getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
-  getFeed: Scalars['Boolean'];
+  getFeed?: Maybe<Array<MiniCommentFormat>>;
   getFollowers?: Maybe<GetFollowers>;
   getFollowings?: Maybe<GetFollowings>;
   getFullUserProfile?: Maybe<FullMiniUser>;
@@ -693,6 +723,8 @@ export type QueryGetCommentsOfTheUserArgs = {
 
 
 export type QueryGetFeedArgs = {
+  limit: Scalars['Float'];
+  page: Scalars['Float'];
   uid: Scalars['String'];
 };
 
@@ -855,6 +887,8 @@ export type QueryGetUserMovieStatusArgs = {
 
 
 export type QueryGetUserNotificationsArgs = {
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
   uid: Scalars['String'];
 };
 
@@ -896,6 +930,7 @@ export type Reply = {
   parentReplyId?: Maybe<Scalars['String']>;
   platformId: Scalars['Int'];
   repliesCount?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['String'];
 };
 

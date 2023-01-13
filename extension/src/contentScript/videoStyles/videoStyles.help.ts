@@ -125,7 +125,6 @@ export const applyFilter = (
   filterValues: any,
   videoElem: HTMLVideoElement | undefined
 ) => {
-  console.log({ selectedFilters, filterValues, videoElem });
   let filterText = selectedFilters
     .map((f) => {
       switch (f.title) {

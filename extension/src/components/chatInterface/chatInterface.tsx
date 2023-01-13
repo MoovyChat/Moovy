@@ -39,18 +39,17 @@ const ChatInterface: React.FC<props> = ({
 }) => {
   let commentIcon = document.getElementById('comment-header');
   let videoElem = getPlayerViewElement();
+  const enableBackground = useAppSelector(
+    (state) => state.misc.enableBackground
+  );
   let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   let thumbs = useAppSelector((state) => state.movie.thumbs!);
   const dispatch = useAppDispatch();
   const position = useMousePosition();
   // Redux: App selectors.
-  const isEditNameBoxOpen = useAppSelector(
-    (state) => state.loading.isEditNameBoxOpen
-  );
   const chatWindowSize = useAppSelector(
     (state) => state.settings.chatWindowSize
   );
-  const movie = useAppSelector((state) => state.movie);
   const isPopSlideOpen = useAppSelector(
     (state) => state.settings.isPopSlideOpen
   );
@@ -180,6 +179,7 @@ const ChatInterface: React.FC<props> = ({
     <Perimeter
       className='chat-perimeter'
       thumbs={thumbs}
+      enableBackground={enableBackground}
       ref={divRef}
       chatWindowSize={chatWindowSize}
       openChatWindow={openChatWindow!}>

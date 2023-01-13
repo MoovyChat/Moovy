@@ -8,12 +8,11 @@ import {
   MdThumbUp,
   MdThumbUpOffAlt,
 } from 'react-icons/md';
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { Dispatch, MouseEventHandler, useEffect, useState } from 'react';
 import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
-  sliceSetTheme,
 } from '../../redux/slices/settings/settingsSlice';
 import {
   sliceSetFavCount,
@@ -29,9 +28,11 @@ import {
 
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
+import { MOOVY_URL } from '../../constants';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
+import { sliceSetTheme } from '../../redux/slices/misc/miscSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
@@ -66,7 +67,7 @@ const ChatStats: React.FC<props> = () => {
   // TODO: Comments + replies count
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [themeToggled, setThemeToggled] = useState<number>(0);
-  const theme = useAppSelector((state) => state.settings.theme);
+  const theme = useAppSelector((state) => state.misc.theme);
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (!sender.tab && request.type === 'EDIT_NICK_NAME') {
@@ -138,9 +139,14 @@ const ChatStats: React.FC<props> = () => {
     };
   }, []);
 
-  // Change the nick name.
-  const changeNickName = () => {
-    dispatch(sliceCheckEditBoxOpen(true));
+  // Go to user profile..
+  const goToProfile: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    let url = `${MOOVY_URL}/profile/${user.nickname}`;
+    chrome.runtime.sendMessage({
+      type: 'OPEN_LINK',
+      url: url,
+    });
   };
 
   // GraphQL: Toggle like of the movie.
@@ -199,7 +205,9 @@ const ChatStats: React.FC<props> = () => {
         </div>
       </div>
       <div className='user'>
-        <h4>{nickname ? nickname : user.nickname}</h4>
+        <h4 onClick={goToProfile} className='nn'>
+          {nickname ? nickname : user.nickname}
+        </h4>
       </div>
       <div
         className='user'
@@ -207,8 +215,7 @@ const ChatStats: React.FC<props> = () => {
           dispatch(sliceSetPopSlide(true));
           dispatch(slicePopSlideContentType('video-styles'));
         }}>
-        <h4>Paint</h4>
-        <BiPaint size={icon_Size} />
+        <BiPaint size={icon_Size} className='ic' />
       </div>
     </ChatStatContainer>
   );

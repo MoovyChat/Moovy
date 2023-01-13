@@ -10,6 +10,7 @@ import {
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
 import { GoCommentDiscussion } from 'react-icons/go';
+import LogoLoading from '../../components/logo-loading/logoLoading';
 import { MdChevronRight } from 'react-icons/md';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createRoot } from 'react-dom/client';

@@ -118,7 +118,6 @@ export interface SettingsInterface {
   popSlideContentType: string;
   popSlideUserId: string;
   popSlideData: { data: any };
-  theme: string;
 }
 
 export interface videoBorderSettings {

@@ -97,12 +97,27 @@ export const ChatStatContainer = styled.div<props>`
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     color: inherit;
-    overflow: hidden;
+    border-radius: 18px;
+    .nn {
+      cursor: pointer;
+    }
+    .ic {
+      padding: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      :hover {
+        box-shadow: inset 0 0 4px;
+        padding: 5px;
+      }
+    }
     h4 {
-      padding: 2px 3px;
+      padding: 4px 7px;
       font-size: 1.3em;
+      border-radius: 18px;
+      :hover {
+        box-shadow: 0 0 5px;
+      }
     }
   }
 `;
