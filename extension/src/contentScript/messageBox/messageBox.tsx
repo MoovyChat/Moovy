@@ -42,6 +42,7 @@ import { batch } from 'react-redux';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
+import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -82,7 +83,6 @@ const MessageBox: React.FC<props> = ({
     replyWindowResponse: any,
     setReplyClickResponse: (e: any) => void
   ) => {
-    console.log(replyWindowResponse);
     if (replyWindowResponse) {
       let newReply: ReplyInput = {
         commentedUserId: userFromRedux.id,
@@ -104,13 +104,19 @@ const MessageBox: React.FC<props> = ({
           options: newReply,
         })
           .then((response) => {
-            const data = response.data;
-            const insertedReply = data?.insertReply;
-            // Adds the new comment to redux store.
-            batch(() => {
-              dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
-              // dispatch(sliceSetPastLoadedCount(1));
-            });
+            const { data, error } = response;
+            if (error) {
+              console.log({ error });
+              if (error.networkError) dispatch(sliceSetNetworkError(true));
+            }
+            if (data) {
+              const insertedReply = data?.insertReply;
+              // Adds the new comment to redux store.
+              batch(() => {
+                dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
+                // dispatch(sliceSetPastLoadedCount(1));
+              });
+            }
             setIsReply(false);
             setReplyClickResponse(undefined);
           })
@@ -131,21 +137,24 @@ const MessageBox: React.FC<props> = ({
         insertComment({
           options: newComment,
         }).then((response) => {
-          const data = response.data;
-          const insertedComment = data?.insertComment;
-          // Adds the new comment to redux store.
-          batch(() => {
-            // dispatch(
-            //   sliceAddComment({ ...insertedComment, isReplyWindowOpen: false })
-            // );
-            dispatch(
-              sliceComment({
-                payload: { ...insertedComment, isReplyWindowOpen: false },
-                type: COMMENT.ADD_COMMENT,
-              })
-            );
-            dispatch(sliceSetPastLoadedCount(1));
-          });
+          const { error, data } = response;
+          if (error) {
+            console.log({ error });
+            if (error.networkError) dispatch(sliceSetNetworkError(true));
+          }
+          if (data) {
+            const insertedComment = data?.insertComment;
+            // Adds the new comment to redux store.
+            batch(() => {
+              dispatch(
+                sliceComment({
+                  payload: { ...insertedComment, isReplyWindowOpen: false },
+                  type: COMMENT.ADD_COMMENT,
+                })
+              );
+              dispatch(sliceSetPastLoadedCount(1));
+            });
+          }
           setIsReply(false);
           setReplyClickResponse(undefined);
         });

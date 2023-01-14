@@ -4,8 +4,10 @@ import { darkTheme, lightTheme } from '../../theme/theme';
 import ChatInterface from '../../components/chatInterface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
 import useFetchEmojis from '../hooks/useFetchEmojis';
+import { withUrqlClient } from 'next-urql';
 
 // Chat window component -> Renders ChatInterface component.
 const ChatWindow = () => {
@@ -46,4 +48,4 @@ const ChatWindow = () => {
   );
 };
 
-export default ChatWindow;
+export default withUrqlClient(urqlClient)(ChatWindow);

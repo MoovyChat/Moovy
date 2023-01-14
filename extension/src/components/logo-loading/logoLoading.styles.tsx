@@ -16,6 +16,16 @@ export const StyledSplashScreen = styled.div`
       object-fit: contain;
     }
   }
+  .fetch-movie {
+    padding: 8px 15px;
+    border-radius: 18px;
+    font-size: 1.4em;
+    box-shadow: 0 0 4px, inset 0 0 3px;
+    cursor: pointer;
+    :hover {
+      box-shadow: 0 0 5px, inset 0 0 5px;
+    }
+  }
   .loading {
   }
 `;

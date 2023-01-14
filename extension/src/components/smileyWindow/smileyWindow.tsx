@@ -7,7 +7,9 @@ import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { withUrqlClient } from 'next-urql';
 
 const SmileyWindow = () => {
   const iconSize = 30;
@@ -147,4 +149,4 @@ const SmileyWindow = () => {
   );
 };
 
-export default SmileyWindow;
+export default withUrqlClient(urqlClient)(SmileyWindow);

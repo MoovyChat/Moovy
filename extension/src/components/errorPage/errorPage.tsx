@@ -20,7 +20,6 @@ const ErrorPage: React.FC<props> = ({ text }) => {
     chrome.runtime.sendMessage(
       { type: requestTypes.REFETCH_USER },
       function (response) {
-        console.log(response);
         let userFromExtension = response as User;
         dispatch(sliceAddUser(userFromExtension));
         if (response) {
@@ -43,10 +42,10 @@ const ErrorPage: React.FC<props> = ({ text }) => {
       <div className='logo'>
         <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
       </div>
+      <div className='text'>{text}</div>
       <div className='refetch' onClick={refetchUser}>
         Refetch User details
       </div>
-      <div className='text'>{text}</div>
       {err && <div className='err text'>{err}</div>}
     </StyledErrorPage>
   );

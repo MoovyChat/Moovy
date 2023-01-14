@@ -11,7 +11,6 @@ import {
 import {
   sliceAddMovie,
   sliceAddMovieId,
-  sliceResetMovie,
   sliceUpdateViewsCount,
 } from '../redux/slices/movie/movieSlice';
 import {
@@ -19,6 +18,11 @@ import {
   sliceSetSmoothWidth,
   sliceSetVideoSize,
 } from '../redux/slices/settings/settingsSlice';
+import {
+  sliceSetIsMovieExists,
+  sliceSetNetworkError,
+  sliceValidateMovieLoading,
+} from '../redux/slices/loading/loadingSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
   useGetMovieQuery,
@@ -28,37 +32,32 @@ import {
 
 import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
-import LogoLoading from '../components/logo-loading/logoLoading';
 import { colorLog } from '../Utils/utilities';
 import { getVideoElement } from './contentScript.utils';
-import { isNumber } from '../constants';
+import { isServerSide } from '../constants';
 import { sliceAddUser } from '../redux/slices/user/userSlice';
 import { sliceComment } from '../redux/slices/comment/commentSlice';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
 import { urqlClient } from '../Utils/urqlClient';
+import { useFetchMovie } from './hooks/useFetchMovie';
 import { withUrqlClient } from 'next-urql';
 
 interface props {
-  video_id: string;
-  userDetails: User;
+  userDetails?: User;
 }
 
-const Start: React.FC<props> = ({ video_id, userDetails }) => {
-  const [u, setU] = useState<User>(userDetails);
-  const movie = useAppSelector((state) => state.movie);
+const Start: React.FC<props> = () => {
+  const [u, setU] = useState<User | null>(null);
   const dispatch = useAppDispatch();
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const [{ data, error, fetching }, _] = useGetUserQuery({
-    variables: { uid: u?.id },
+    variables: { uid: u?.id! },
+    pause: isServerSide(),
   });
   const knobColor = useAppSelector((state) => state.misc.knobColor);
-  const [movieId, setMovieId] = useState<string>(video_id);
-  const [getMovieInfo] = useGetMovieQuery({ variables: { mid: movieId } });
-  const [movieFetched, setMovieFetched] = useState<number>(0);
+  const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
-
-  const [, incrementMovieViewCount] = useUpdateMovieViewCountMutation();
 
   const stableDispatch = useCallback(
     (args: any) => {
@@ -66,6 +65,19 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     },
     [dispatch]
   );
+
+  useEffect(() => {
+    colorLog('"Start" component initiated');
+    colorLog('Cleared Redux storage');
+    // Clear redux cache.
+    dispatch(sliceComment({ type: COMMENT.RESET }));
+    dispatch(sliceResetReply());
+    dispatch(sliceResetSettings());
+    dispatch(sliceValidateMovieLoading(false));
+    getStoredUserLoginDetails().then((res) => {
+      setU(res);
+    });
+  }, []);
 
   // This interval will run continuously through out the session.
   useEffect(() => {
@@ -122,11 +134,20 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   }, [movieId, videoElem]);
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
-      if (isNumber(movieId)) {
-        setMovieId(() => request.movieId);
-        dispatch(sliceSetSmoothWidth(0));
-      }
+    if (!sender.tab && request.type === 'SET_MOVIE_ID') {
+      // Clear redux cache.
+      dispatch(sliceComment({ type: COMMENT.RESET }));
+      dispatch(sliceResetReply());
+      dispatch(sliceResetSettings());
+      dispatch(sliceValidateMovieLoading(false));
+      setMovieId(() => request.movieId + '');
+      dispatch(sliceSetSmoothWidth(0));
+      sendResponse({
+        data: 'Movie ID got reset',
+      });
+    } else if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
+      setMovieId(() => request.movieId + '');
+      dispatch(sliceSetSmoothWidth(0));
       sendResponse({
         data: 'Movie ID got reset',
       });
@@ -135,26 +156,12 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   });
 
   useEffect(() => {
-    colorLog('"Start" component initiated');
-    colorLog('Cleared Redux storage');
-    // Clear redux cache.
-    dispatch(sliceComment({ type: COMMENT.RESET }));
-    dispatch(sliceResetReply());
-    dispatch(sliceResetSettings());
-    dispatch(sliceResetMovie());
-    if (userDetails.id === '') {
-      // console.log('Checking details', userDetails);
-      getStoredUserLoginDetails().then((res) => {
-        // console.log('Checking user', res);
-        setU(res);
-      });
-    } else {
-      setU(userDetails);
+    if (error) {
+      console.log({ error });
+      const networkError = error.networkError;
+      if (networkError) dispatch(sliceSetNetworkError(true));
+      else dispatch(sliceSetNetworkError(false));
     }
-  }, []);
-
-  useEffect(() => {
-    if (error) colorLog(error);
     if (!fetching && data) {
       let _u = data.getUser as User;
       stableDispatch(sliceAddUser(_u));
@@ -162,29 +169,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     return () => {};
   }, [stableDispatch, fetching, data, error]);
 
-  useMemo(() => {
-    let { data, error, fetching } = getMovieInfo;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _data = data.getMovie;
-      if (_data) {
-        dispatch(sliceAddMovie(_data));
-        // Increase views count
-        incrementMovieViewCount({ mid: _data.id }).then((res) => {
-          const { error, data } = res;
-          if (error) colorLog(error);
-          if (data) {
-            const _data = data.updateMovieViewCount!;
-            dispatch(sliceUpdateViewsCount(_data as number));
-          }
-        });
-
-        setMovieFetched(1);
-      } else {
-        setMovieFetched(2);
-      }
-    }
-  }, [getMovieInfo, stableDispatch, movieId]);
+  useFetchMovie(movieId);
 
   useEffect(() => {
     //Redux: Add new movie id
@@ -192,12 +177,8 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     return () => {};
   }, [stableDispatch, movieId]);
 
-  return (
-    <CommentButton
-      movieFetched={movieFetched}
-      setMovieFetched={setMovieFetched}
-    />
-  );
+  if (!videoElem) return <></>;
+  return <CommentButton />;
 };
 
 export default withUrqlClient(urqlClient)(Start);

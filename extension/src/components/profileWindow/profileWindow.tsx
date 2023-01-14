@@ -5,7 +5,6 @@ import {
   User,
   useGetUserMiniProfileQuery,
   useGetUserQuery,
-  useToggleFollowMutation,
 } from '../../generated/graphql';
 import { MOOVY_URL, isServerSide } from '../../constants';
 import {
@@ -14,19 +13,13 @@ import {
   MdOutlineCake,
   MdOutlineContacts,
 } from 'react-icons/md';
-import React, {
-  MouseEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { getFormattedNumber, getShortDateFormat } from '../../Utils/utilities';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import FollowButton from '../follow-button/followButton';
 import { ProfileParent } from './profileWindow.styles';
 import { urqlClient } from '../../Utils/urqlClient';
+import { useAppSelector } from '../../redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
 export interface likedTitles {
@@ -86,7 +79,10 @@ const ProfileWindow = () => {
 
   useMemo(() => {
     if (!profile) return;
-    if (!profile.dob) setDOBInTime('');
+    if (!profile.dob) {
+      setDOBInTime('');
+      return;
+    }
     let UTCTimeString = (profile.dob as string).split('-').join('/');
     let dobTimeString = getShortDateFormat(
       new Date(UTCTimeString).getTime().toString()
@@ -162,7 +158,7 @@ const ProfileWindow = () => {
               <MdOutlineCake size={25} />
             </div>
             <div className='info'>
-              {dobInTime === '' ? 'Not Specified' : dobInTime}
+              {!dobInTime ? 'Not Specified' : dobInTime}
             </div>
           </div>
 

@@ -15,18 +15,25 @@ const miscSlice = createSlice({
     sliceSetTheme: (state, action) => {
       return { ...state, theme: action.payload };
     },
-    sliceSetEnableBackground: (state, action) => {
+    sliceSetEnableBackground: (
+      state,
+      action: { payload: boolean; type: string }
+    ) => {
       return { ...state, enableBackground: action.payload };
     },
     sliceSetKnobColor: (state, action) => {
       return { ...state, knobColor: action.payload };
     },
-    sliceResetSettings: () => {
+    sliceResetMisc: () => {
       return miscState;
     },
   },
 });
 
-export const { sliceSetTheme, sliceSetEnableBackground, sliceSetKnobColor } =
-  miscSlice.actions;
+export const {
+  sliceSetTheme,
+  sliceSetEnableBackground,
+  sliceSetKnobColor,
+  sliceResetMisc,
+} = miscSlice.actions;
 export default miscSlice.reducer;

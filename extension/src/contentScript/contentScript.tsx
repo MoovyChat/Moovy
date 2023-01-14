@@ -4,7 +4,6 @@ import {
   getElementByDataUIA,
   getIdFromNetflixURL,
   removeNodeFromDomById,
-  setVideoFilters,
 } from './contentScript.utils';
 
 import React from 'react';
@@ -18,13 +17,12 @@ import { store } from '../redux/store';
 
 const client = createClient({ url: 'http://localhost:4000/graphql' });
 export const initiateContentScript = async () => {
-  colorLog('Initiating content script');
   const url = window.location.href!;
   const CHAT_ICON = 'chatIcon';
   var reactApp = document.createElement('div');
   reactApp.id = CHAT_ICON;
-  let movieId = getIdFromNetflixURL(url);
-  if (movieId === '') return;
+  let movieId = await getIdFromNetflixURL(url);
+  if (!movieId) return;
   const domain = getDomain(url);
   if (domain !== domains.NETFLIX) return;
   // Attach the chat icon when the video is loaded.
@@ -49,7 +47,7 @@ export const initiateContentScript = async () => {
         colorLog('user not found! terminating the app');
         return;
       }
-      if (movieId === '') {
+      if (!movieId) {
         colorLog('ERR: FAILED TO GET THE VIDEO ID');
         boot.render(<React.Fragment></React.Fragment>);
       } else {

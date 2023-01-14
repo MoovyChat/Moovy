@@ -138,6 +138,13 @@ export interface loadingInterface {
   isCommentsLoaded: boolean;
   isRepliesLoaded: boolean;
   isEditNameBoxOpen: boolean;
+  isMovieExists: boolean;
+  isMovieLoaded: boolean;
+  isMovieInsertionFinished: boolean;
+  loadingText: string;
+  isNewCommentsLoaded: boolean;
+  isNextCommentsLoaded: boolean;
+  networkError: boolean;
 }
 
 export interface borderType {

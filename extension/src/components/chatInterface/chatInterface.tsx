@@ -14,12 +14,16 @@ import ChatBox from '../../contentScript/chatBox/chatBox';
 import ChatStats from '../../contentScript/chatStats/chatStats';
 import ChatTitle from '../chatTitle/chatTitle';
 import ErrorPage from '../errorPage/errorPage';
+import LogoLoading from '../logo-loading/logoLoading';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../popSlide/popSlide';
 import Toast from '../toast/toast';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
+import { sliceSetLoadingText } from '../../redux/slices/loading/loadingSlice';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
+import { withUrqlClient } from 'next-urql';
 
 type props = {
   user: User;
@@ -38,6 +42,12 @@ const ChatInterface: React.FC<props> = ({
   openChatWindow,
 }) => {
   let commentIcon = document.getElementById('comment-header');
+  const movie = useAppSelector((state) => state.movie);
+  const networkError = useAppSelector((state) => state.loading.networkError);
+  const isMovieLoaded = useAppSelector((state) => state.loading.isMovieLoaded);
+  const isMovieInserted = useAppSelector(
+    (state) => state.loading.isMovieInsertionFinished
+  );
   let videoElem = getPlayerViewElement();
   const enableBackground = useAppSelector(
     (state) => state.misc.enableBackground
@@ -139,7 +149,7 @@ const ChatInterface: React.FC<props> = ({
     if (openChatWindow) {
       commentIcon!.style.cssText = `
         right: ${chatWindowSize}%;
-        transition: all 0.6s ${windowTransition};
+        transition: all 1s ${windowTransition};
       `;
       divRef.current!.style.cssText = `
         max-width: ${chatWindowSize}%;
@@ -175,6 +185,15 @@ const ChatInterface: React.FC<props> = ({
     return () => clearTimeout(timeout);
   }, [openChatWindow]);
 
+  useEffect(() => {
+    let loadingText = '';
+    if (!isMovieLoaded)
+      loadingText = movie.name
+        ? `Loading Title "${movie.name}"`
+        : 'Unable to fetch Title.';
+    dispatch(sliceSetLoadingText(loadingText));
+  }, [isMovieLoaded]);
+
   return (
     <Perimeter
       className='chat-perimeter'
@@ -184,52 +203,57 @@ const ChatInterface: React.FC<props> = ({
       chatWindowSize={chatWindowSize}
       openChatWindow={openChatWindow!}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
-      <ChatWindowParent
-        className='chat-interface'
-        openChatWindow={openChatWindow!}
-        chatWindowSize={chatWindowSize}
-        onClick={(e) => e.stopPropagation()}
-        windowOpened={display}>
-        {user ? (
-          <React.Fragment>
-            <ChatTitle />
-            <ChatStats />
-            <TextAreaContainer
-              className='text-area-container'
-              onClick={(e) => e.stopPropagation()}>
-              <MessageBox
-                replyWindowResponse={replyWindowResponse}
-                setReplyClickResponse={setReplyClickResponse}
+      {!isMovieLoaded || !isMovieInserted || networkError ? (
+        <LogoLoading />
+      ) : (
+        <ChatWindowParent
+          className='chat-interface'
+          openChatWindow={openChatWindow!}
+          chatWindowSize={chatWindowSize}
+          onClick={(e) => e.stopPropagation()}
+          windowOpened={display}>
+          {user ? (
+            <React.Fragment>
+              <ChatTitle />
+              <ChatStats />
+              <TextAreaContainer
+                className='text-area-container'
+                onClick={(e) => e.stopPropagation()}>
+                <MessageBox
+                  replyWindowResponse={replyWindowResponse}
+                  setReplyClickResponse={setReplyClickResponse}
+                />
+              </TextAreaContainer>
+              <ChatBox
+                responseFromReplyWindow={responseFromReplyWindow}
+                type='comment'
               />
-            </TextAreaContainer>
-            <ChatBox
-              responseFromReplyWindow={responseFromReplyWindow}
-              type='comment'
-            />
-          </React.Fragment>
-        ) : (
-          <ErrorPage text='Unable to retrieve user login details. Please re-install the extension or refresh the app using the extension'></ErrorPage>
-        )}
+            </React.Fragment>
+          ) : (
+            <ErrorPage
+              text={`Login using the extension, and click on Refetch`}></ErrorPage>
+          )}
 
-        <CSSTransition
-          in={isPopSlideOpen}
-          classNames='fade'
-          timeout={300}
-          unmountOnExit>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-            }}>
-            <PopSlide />
-          </div>
-        </CSSTransition>
+          <CSSTransition
+            in={isPopSlideOpen}
+            classNames='fade'
+            timeout={300}
+            unmountOnExit>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }}>
+              <PopSlide />
+            </div>
+          </CSSTransition>
 
-        <Toast />
-      </ChatWindowParent>
+          <Toast />
+        </ChatWindowParent>
+      )}
     </Perimeter>
   );
 };
 
-export default ChatInterface;
+export default withUrqlClient(urqlClient)(ChatInterface);

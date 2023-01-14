@@ -111,7 +111,7 @@ const ChatTitle = () => {
         <img src={`${EXT_URL}/Moovy/moovyIcon.png`} alt='logo' />
       </div>
       <div className='title'>
-        <div className='set'>{tempTitle}</div>
+        <div className='set'>{movieTitle ? movieTitle : tempTitle}</div>
       </div>
       <div
         className='icon'

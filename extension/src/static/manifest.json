@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
-      "js": ["index.js", "netflix.js", "record.js"],
+      "js": ["index.js", "netflix.js", "record.js", "qchat.js"],
       "run_at": "document_idle"
     }
   ],
@@ -37,7 +37,8 @@
         "Moovy/moovy-text-logo-white.png",
         "Moovy/moovy-text-logo-black.png"
       ],
-      "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"]
+      "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
+      "use_dynamic_url": true
     }
   ],
   "externally_connectable": {

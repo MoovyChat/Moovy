@@ -252,7 +252,9 @@ const VideoStyles = () => {
                 defaultChecked={enableBackground}
                 onChange={(e) => {
                   e.stopPropagation();
-                  dispatch(sliceSetEnableBackground(e.target.checked));
+                  dispatch(
+                    sliceSetEnableBackground(e.target.checked as boolean)
+                  );
                 }}
               />
               <label htmlFor='bg'></label>

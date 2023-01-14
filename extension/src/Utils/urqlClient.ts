@@ -1,17 +1,11 @@
 import { CacheExchangeOpts, cacheExchange } from '@urql/exchange-graphcache';
-import {
-  GetCommentLikesDocument,
-  GetCommentLikesQuery,
-  SetCommentLikeMutation,
-} from '../generated/graphql';
-import { NextUrqlClientConfig, WithUrqlClientOptions } from 'next-urql';
 import { commentLikeChanges, replyLikeChanges } from './betterUpdateQuery';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import { deleteCommentChanges, toggleFollowChanges } from './cacheExchanges';
 
+import { NextUrqlClientConfig } from 'next-urql';
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
-import { isServerSide } from '../constants';
 import { retryExchange } from '@urql/exchange-retry';
 
 const wsClient = createWSClient({
