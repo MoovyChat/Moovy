@@ -1,10 +1,5 @@
-import { Outlet, useParams } from 'react-router-dom';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import {
-  User,
-  useGetUserByNickNameQuery,
-  useGetUserQuery,
-} from '../../generated/graphql';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { User, useGetUserByNickNameQuery } from '../../generated/graphql';
 import { isServer, popupStates } from '../../constants';
 import {
   sliceSetIsPopupOpened,
@@ -16,6 +11,7 @@ import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ProfileTemplate from './profileTemplate';
 import { batch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 const DifferentProfile = () => {
   const { id } = useParams();
