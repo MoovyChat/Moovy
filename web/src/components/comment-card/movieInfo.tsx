@@ -1,19 +1,25 @@
 import {
-  MdChatBubbleOutline,
-  MdFavorite,
-  MdOutlineFavoriteBorder,
-  MdVisibility,
-} from 'react-icons/md';
-import {
+  HistoryObject,
   Movie,
   Title,
   useGetOnlyUserMovieStatsQuery,
+  useGetVisitedQuery,
   useUpdateUserMovieStatsMutation,
 } from '../../generated/graphql';
+import {
+  MdAccessTime,
+  MdChatBubbleOutline,
+  MdFavorite,
+  MdOutlineFavoriteBorder,
+  MdTimer,
+  MdVisibility,
+} from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { MovieInfoParent } from './commentCard.styles';
+import { VisitedInterface } from '../../utils/interfaces';
+import { getShortDateFormat } from '../../utils/helpers';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 
@@ -27,10 +33,35 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
   const navigate = useNavigate();
   const [, setCommentLike] = useUpdateUserMovieStatsMutation();
   const user = useAppSelector((state) => state.user);
+  const [visitedData, setVisited] = useState<VisitedInterface | null>(null);
+  const [visited] = useGetVisitedQuery({
+    variables: {
+      uid: user.id,
+      mid: movie?.id!,
+    },
+    pause: isServer() || title ? true : false,
+  });
+
+  // Set history data
+  useEffect(() => {
+    const { data, error, fetching } = visited;
+    if (!fetching && data) {
+      const _data = data.getVisited!;
+      console.log(_data);
+      if (_data !== null) {
+        const history = _data.history;
+        const parsedHistory: VisitedInterface | null = JSON.parse(
+          history.slice(-1)[0]
+        );
+        setVisited(() => parsedHistory);
+      }
+    }
+  }, [visited]);
   const [getUserMovieStats] = useGetOnlyUserMovieStatsQuery({
     variables: { uid: user.id!, mid: movie?.id! },
     pause: isServer(),
   });
+
   const parentClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     if (movie) {
@@ -79,12 +110,14 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
   }, [getUserMovieStats]);
   return (
     <MovieInfoParent>
-      <div className='title' onClick={titleClickHandler}>
-        {movie ? movie.name : title?.title}
+      <div className='title'>
+        <span onClick={titleClickHandler}>
+          {movie ? movie.name : title?.title}
+        </span>
       </div>
-      {movie && (
-        <div className='parent' onClick={parentClickHandler}>
-          {movie?.parentTitleName}
+      {movie && movie.parentTitleName && (
+        <div className='parent'>
+          <span onClick={parentClickHandler}>{movie?.parentTitleName}</span>
         </div>
       )}
       <div className='group'>
@@ -114,29 +147,43 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
         <div className='b'>{movie ? movie.synopsis : title?.synopsis}</div>
       </div>
       {movie && (
-        <div className='stats'>
-          <div className='likes' onClick={updateLike}>
-            <div className='count'>{movie?.likesCount}</div>
-            <div className='icon'>
-              {like ? (
-                <MdFavorite size={20} fill='#ff005d' />
-              ) : (
-                <MdOutlineFavoriteBorder size={20} />
-              )}
+        <div className='stats-container'>
+          <div className='stats'>
+            <div className='likes' onClick={updateLike}>
+              <div className='count'>{movie?.likesCount}</div>
+              <div className='icon'>
+                {like ? (
+                  <MdFavorite size={20} fill='#ff005d' />
+                ) : (
+                  <MdOutlineFavoriteBorder size={20} />
+                )}
+              </div>
+            </div>
+            <div className='comments'>
+              <div className='count'>{movie?.commentCount}</div>
+              <div className='icon'>
+                <MdChatBubbleOutline size={20} fill='violet' />
+              </div>
+            </div>
+            <div className='views'>
+              <div className='count'>{movie?.viewsCount}</div>
+              <div className='icon'>
+                <MdVisibility size={20} fill='#00dfff' />
+              </div>
             </div>
           </div>
-          <div className='comments'>
-            <div className='count'>{movie?.commentCount}</div>
-            <div className='icon'>
-              <MdChatBubbleOutline size={20} fill='violet' />
+          {visitedData && visitedData?.visitTime && (
+            <div className='stats '>
+              <div className='likes history'>
+                <div className='icon'>
+                  <MdAccessTime size={20} />
+                </div>
+                <div className='count'>
+                  {getShortDateFormat(visitedData?.visitTime + '')}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className='views'>
-            <div className='count'>{movie?.viewsCount}</div>
-            <div className='icon'>
-              <MdVisibility size={20} fill='#00dfff' />
-            </div>
-          </div>
+          )}
         </div>
       )}
     </MovieInfoParent>

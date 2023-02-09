@@ -1,7 +1,9 @@
 import {
   FollowNotifications,
   LikeNotifications,
+  MovieStats,
   User,
+  Visited,
 } from '../generated/graphql';
 
 import { Resolver } from '@urql/exchange-graphcache';
@@ -133,7 +135,7 @@ export const userRepliesResolver = (): Resolver => {
     let _user: User | null = null;
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
-      if (args.mid !== fieldArgs.mid) return;
+      if (args.uid !== fieldArgs.uid) return;
       const link = cache.resolve(entityKey, fieldKey) as string;
       const comments = cache.resolve(link, 'comments') as string[];
       newComments = _.concat(newComments, comments);
@@ -296,6 +298,79 @@ export const paginatedUserNotificationsResolver = (): Resolver => {
       __typename: typeName,
       like: like,
       follow: follow,
+    };
+    return newData;
+  };
+};
+
+export const getPaginatedMovieStatsResolver = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    let movieStats: MovieStats[] = [];
+    let typeName: string = '';
+    let page = 1;
+    let lastPage = 1;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const _movieStats = cache.resolve(link, 'movieStats') as MovieStats[];
+      page = cache.resolve(link, 'page') as number;
+      lastPage = cache.resolve(link, 'lastPage') as number;
+      typeName = cache.resolve(link, '__typename') as string;
+      movieStats.push(..._movieStats);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: typeName,
+      movieStats,
+      page,
+      lastPage,
+    };
+    return newData;
+  };
+};
+
+export const getUserViewHistoryResolver = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    let visited: Visited[] = [];
+    let typeName: string = '';
+    let page = 1;
+    let lastPage = 1;
+    let count = 0;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const _visited = cache.resolve(link, 'visited') as Visited[];
+      page = cache.resolve(link, 'page') as number;
+      count = cache.resolve(link, 'count') as number;
+      lastPage = cache.resolve(link, 'lastPage') as number;
+      typeName = cache.resolve(link, '__typename') as string;
+      visited.push(..._visited);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: typeName,
+      count,
+      visited,
+      page,
+      lastPage,
     };
     return newData;
   };

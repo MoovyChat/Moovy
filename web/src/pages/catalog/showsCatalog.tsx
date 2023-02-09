@@ -47,7 +47,8 @@ const ShowsCatalog = () => {
       }
     }
   };
-  if (titles!.length <= 0) return <EmptyPage msg='Shows catalog is empty' />;
+  if (titles && titles.length <= 0)
+    return <EmptyPage msg='Shows catalog is empty' />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>

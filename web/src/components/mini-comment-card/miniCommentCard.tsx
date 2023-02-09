@@ -9,6 +9,7 @@ import ProfilePic from '../profilePic/profilePic';
 import { StyledMiniCommentCard } from './miniCommentCard.styles';
 import { getTimeFrame } from '../../utils/helpers';
 import { isServer } from '../../constants';
+import { useNavigate } from 'react-router-dom';
 
 interface miniUser {
   __typename?: 'User' | undefined;
@@ -29,6 +30,7 @@ const MiniCommentCard: React.FC<props> = ({
   className,
   extendData,
 }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<miniUser | null>(null);
   const parentComment = useRef<any | null>(null);
   const [cardHeight, setCardHeight] = useState<string>('');
@@ -76,7 +78,15 @@ const MiniCommentCard: React.FC<props> = ({
     <StyledMiniCommentCard
       className={className}
       cardHeight={cardHeight}
-      showMore={showMore}>
+      showMore={showMore}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (type === 'reply') {
+          navigate(`/reply/${id}`);
+        } else if (type === 'comment') {
+          navigate(`/comment/${id}`);
+        }
+      }}>
       {parentComment.current ? (
         <React.Fragment>
           <div className='photo'>

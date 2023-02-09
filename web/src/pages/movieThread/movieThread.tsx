@@ -7,9 +7,9 @@ import { MovieThreadParent, StyledHeader } from './movieThread.styled';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
-import { Comment } from '../../utils/interfaces';
 import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import NotFound from '../notFound/notFound';
@@ -110,7 +110,7 @@ const MovieThread = () => {
           </ChildHeader>
           <div className='movie-container'>
             <div className='thread-movie'>
-              <MovieCard movie={movieInfo!} />
+              <MovieCard movieId={movieInfo.id!} />
             </div>
             {comments && comments.length !== 0 ? (
               <div className='thread-comments'>
@@ -133,7 +133,7 @@ const MovieThread = () => {
               </div>
             ) : (
               <div className='no-data'>
-                No Comments yet. Make your first comment
+                <EmptyPage msg='No Comments yet. Make your first comment' />
               </div>
             )}
           </div>

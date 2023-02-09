@@ -18,7 +18,7 @@ export const StyledFocusWindow = styled.div<props>`
   .tooltip {
     position: absolute;
     display: ${(p) => (p.clicked ? 'flex' : 'none')};
-    left: 50%;
+    left: 0%;
     transform: translateX(-50%);
     border-radius: 10px;
     line-height: 1;
@@ -33,8 +33,9 @@ export const StyledFocusWindow = styled.div<props>`
     left: calc((${(p) => p.width}) * 0.5);
   }
   .tooltip.bottom-left {
-    bottom: calc((${(p) => p.height}) * -1);
+    bottom: calc((${(p) => p.height}) * -1.05);
     right: calc((${(p) => p.width}) * 0.5);
+    left: -30px;
   }
   .tooltip.bottom {
     bottom: calc((${(p) => p.height}) * -1);

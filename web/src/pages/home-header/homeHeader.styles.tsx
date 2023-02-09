@@ -5,12 +5,14 @@ import styled from 'styled-components';
 export const HomeHeaderParent = styled.div`
   display: flex;
   width: 100vw;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  border-bottom: 1px solid #8f8f8f81;
   .logo,
   .user {
     position: relative;
     display: flex;
     height: 100%;
+    margin: 0px 50px;
     justify-content: space-evenly;
     align-items: center;
 
@@ -19,8 +21,8 @@ export const HomeHeaderParent = styled.div`
       display: flex;
       justify-content: space-evenly;
       .image {
-        width: 45px;
-        height: 45px;
+        width: 40px;
+        height: 40px;
         object-fit: contain;
       }
       .logo-text {
@@ -59,9 +61,10 @@ export const HomeHeaderParent = styled.div`
   }
   .search {
     width: 40%;
+    align-self: center;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 800px) {
     .logo {
       .logo-image {
         display: none;
@@ -69,11 +72,11 @@ export const HomeHeaderParent = styled.div`
       .logo-icon {
         .icon {
           display: flex;
+          padding: 5px;
           :hover {
             background-color: #6e6e6e50;
             cursor: pointer;
             border-radius: 50%;
-            padding: 5px;
           }
           :active {
             background-color: #6e6e6e7d;

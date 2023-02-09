@@ -5,13 +5,13 @@ type ButtonProps = {
   isFollowingUser?: boolean;
 };
 export const StyledButton = styled.div<ButtonProps>`
+  position: relative;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 700;
   border-radius: 10px;
-  color: white;
   background: transparent;
-  box-shadow: inset 0 0 2px white;
+  box-shadow: inset 0 0 2px;
 
   :hover {
     cursor: pointer;

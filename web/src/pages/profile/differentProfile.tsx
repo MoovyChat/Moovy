@@ -59,20 +59,21 @@ const DifferentProfile = () => {
   }, [fetching, data, error, id]);
 
   if (fetching) <Loading />;
-  if (!user) return <NotFound />;
-  if (error || data?.getUserByUserName === null) {
+  if (error) {
     return <NotFound />;
   }
   return (
     <React.Fragment>
-      <ProfileTemplate
-        isDifferentUser={isSameUser}
-        user={user}
-        currentUser={userFromRedux}
-        profilePicChangeHandler={profilePicChangeHandler}
-        bgChangeHandler={bgChangeHandler}
-        editProfileHandler={editProfileHandler}
-      />
+      {user && (
+        <ProfileTemplate
+          isDifferentUser={isSameUser}
+          user={user}
+          currentUser={userFromRedux}
+          profilePicChangeHandler={profilePicChangeHandler}
+          bgChangeHandler={bgChangeHandler}
+          editProfileHandler={editProfileHandler}
+        />
+      )}
     </React.Fragment>
   );
 };

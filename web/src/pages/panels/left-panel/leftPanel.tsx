@@ -96,7 +96,10 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           </div>
           <div className='text'>Profile</div>
         </NavLink>
-        <NavLink to='/favorites' className='option' onClick={linkClickHandler}>
+        <NavLink
+          to={`activity/${user.nickname}/favorites`}
+          className='option'
+          onClick={linkClickHandler}>
           <div className='icon favorites'>
             <MdFavorite size={iconSize} />
           </div>

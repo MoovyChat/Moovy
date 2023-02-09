@@ -89,7 +89,6 @@ const EditProfile = () => {
     })
       .then((res) => {
         const { data, error } = res;
-        console.log(data, error);
         if (error?.message) {
           setSaving(() => false);
           console.log(

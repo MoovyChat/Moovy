@@ -19,7 +19,6 @@ export const MovieThreadParent = styled.div`
       align-items: flex-start;
       margin-top: 20px;
       width: 100%;
-      height: 100%;
     }
     .thread-movie {
       position: relative;

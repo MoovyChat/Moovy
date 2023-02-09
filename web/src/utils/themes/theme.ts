@@ -8,6 +8,8 @@ export interface ThemeProps {
   hoverColor?: string;
   mention?: string;
   themeType?: string;
+  premium?: string;
+  border?: string;
 }
 
 export const lightTheme: ThemeProps = {
@@ -24,7 +26,7 @@ export const darkTheme: ThemeProps = {
 };
 
 export const lightThemeForHome: ThemeProps = {
-  body: 'linear-gradient(62deg, #d1dee3 60%, #6fa3c1 100%);',
+  body: 'linear-gradient(62deg, #d1dee3 80%, #6fa3c1 100%);',
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: 'linear-gradient(to right, #1f86e1, #c9f8fe, #78caf0)',
@@ -32,6 +34,8 @@ export const lightThemeForHome: ThemeProps = {
   trendingTiles: '#d1dee3',
   hoverColor: '#6fa3c1',
   mention: '#1da3f0',
+  border: '#1f86e1',
+  premium: 'linear-gradient(45deg, #58e6f3, #1da3f0) border-box',
   themeType: 'light',
 };
 export const darkThemeForHome: ThemeProps = {
@@ -43,5 +47,7 @@ export const darkThemeForHome: ThemeProps = {
   trendingTiles: '#0c0c0c',
   hoverColor: '#451374',
   mention: '#00ff99',
+  border: '#f00f0f',
+  premium: 'linear-gradient(45deg, #be3944, #681515) border-box',
   themeType: 'dark',
 };

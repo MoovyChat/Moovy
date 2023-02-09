@@ -47,8 +47,9 @@ export const AddCommentParent = styled.div<props>`
     height: 90%;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+
     .user-container {
       height: 100%;
       flex: 1 1 15%;
@@ -65,9 +66,9 @@ export const AddCommentParent = styled.div<props>`
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      flex: 1 1 80%;
       margin-left: 40px;
       height: 100%;
+      width: 80%;
       position: relative;
       .textarea-container {
         display: flex;
@@ -141,6 +142,7 @@ export const AddCommentParent = styled.div<props>`
             width: 80%;
             .msg {
               height: 100%;
+              width: 100%;
               text-overflow: ellipsis;
               display: block;
               overflow: hidden;

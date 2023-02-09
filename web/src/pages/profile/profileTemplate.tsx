@@ -7,27 +7,15 @@ import {
   useState,
 } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import {
-  Profile,
-  User,
-  useGetUserMiniProfileQuery,
-  useGetUserProfileQuery,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
-} from '../../generated/graphql';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { Profile, User, useGetUserProfileQuery } from '../../generated/graphql';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import FollowButton from '../../components/follow-button/followButton';
 import { Image } from '../../components/Image/image';
-import Loading from '../loading/loading';
 import NavLinks from '../../components/nav-links/navLinks';
-import NotFound from '../notFound/notFound';
 import { ProfileParent } from './profile.styles';
 import ProfilePic from '../../components/profilePic/profilePic';
-import _ from 'lodash';
 import { getShortDateFormat } from '../../utils/helpers';
-import { isServer } from '../../constants';
 
 type props = {
   user: User;
@@ -43,14 +31,10 @@ const ProfileTemplate: React.FC<props> = ({
   profilePicChangeHandler,
   editProfileHandler,
   isDifferentUser,
-  currentUser,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const profileFromRedux = useAppSelector((state) => state.profile);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const dispatch = useAppDispatch();
   const [scrollValue, setScrollValue] = useState<number>(0);
-
   const [profileQuery] = useGetUserProfileQuery({
     variables: { uid: user.id },
   });

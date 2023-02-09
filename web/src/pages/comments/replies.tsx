@@ -58,7 +58,6 @@ const Replies = () => {
   return (
     <CommentParent>
       <Fragment>
-        <ChildHeader text='Replies' className='comment-header' />
         <div className='child' onScroll={handleScroll} ref={parentRef}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={comments}>
             {(reply, index) =>

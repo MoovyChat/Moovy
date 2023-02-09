@@ -80,3 +80,9 @@ export interface timeMessage {
   madeBy: string;
   timeStamp: number;
 }
+
+export interface VisitedInterface {
+  id: string;
+  visitTime: number;
+  watchTime: number;
+}

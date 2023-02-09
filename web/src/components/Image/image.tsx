@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
+import { ReactComponent as MoovyLogo } from '../../svgs/moovy-white.svg';
 
 type props = {
   src: string;
   alt: string;
   id?: string;
-  loading?: string;
+  lazy?: boolean;
   className?: string;
   ref?: any;
   onClick?: any;
@@ -19,35 +20,41 @@ export const Image: React.FC<props> = ({
   onClick,
   ref,
   className,
+  lazy,
   onLoad,
 }) => {
   const [key, setKey] = React.useState(1);
-  const [imageUrl, setImageUrl] = useState(src);
+  const [imageSrc, setImageSrc] = useState(src);
+  const [imageError, setImageError] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setImageUrl(() => src);
+      setImageSrc(() => src);
     }, 1000);
     return () => clearInterval(interval);
   }, [src]);
 
-  function refreshImage() {
-    setKey(key + 1);
-    setImageUrl(MoovyIcon);
-  }
-
   return (
-    <img
-      src={imageUrl}
-      alt={alt}
-      key={key}
-      ref={ref}
-      onError={refreshImage}
-      className={className}
-      id={id}
-      onLoad={onLoad}
-      loading='lazy'
-      onClick={onClick}
-    />
+    <>
+      <img
+        src={imageSrc}
+        alt={alt}
+        key={key}
+        ref={ref}
+        onError={() => setImageError(() => true)}
+        onLoad={() => {
+          setImageError(() => false);
+        }}
+        style={{ display: imageError ? 'none' : 'block' }}
+        className={className}
+        id={id}
+        loading={lazy ? 'lazy' : 'eager'}
+        onClick={onClick}
+      />
+      <div
+        style={{ display: imageError ? 'flex' : 'none', maxHeight: '100px' }}>
+        <MoovyLogo />
+      </div>
+    </>
   );
 };

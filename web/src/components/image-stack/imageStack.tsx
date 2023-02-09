@@ -66,10 +66,10 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
         <div className='one profile-box'>
           {users[0] ? (
             <Tooltip
-              height='120px'
+              height='140px'
               message={TOOLTIP.USER}
               width='200px'
-              data={users[0]}
+              data={users[0]?.id}
               dir={followers ? DIRECTION.BOTTOM_RIGHT : DIRECTION.BOTTOM}>
               <Image
                 src={users[0]?.photoUrl}
@@ -87,9 +87,10 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
         <div className='two profile-box'>
           {users[1] ? (
             <Tooltip
-              height='120px'
-              message={LOGIN}
+              height='140px'
+              message={TOOLTIP.USER}
               width='200px'
+              data={users[1]?.id}
               dir={DIRECTION.BOTTOM}>
               <Image
                 src={users[1]?.photoUrl}
@@ -107,9 +108,10 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
         <div className='three profile-box'>
           {users[2] ? (
             <Tooltip
-              height='120px'
-              message={LOGIN}
+              height='140px'
+              message={TOOLTIP.USER}
               width='200px'
+              data={users[2]?.id}
               dir={following ? DIRECTION.BOTTOM_LEFT : DIRECTION.BOTTOM}>
               <Image
                 src={users[2]?.photoUrl}

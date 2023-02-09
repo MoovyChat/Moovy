@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 
 import CommentCard from '../../../components/comment-card/commentCard';
 import Loading from '../../loading/loading';
-import { StyledFeedComment } from './feedComment.styles';
 import { isServer } from '../../../constants';
 
 type props = {
@@ -19,6 +18,7 @@ const FeedComment: React.FC<props> = ({ id, commentedUserId }) => {
 
   useEffect(() => {
     const { error, data, fetching } = commentQuery;
+    console.log(commentQuery);
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getComment! as Comment;

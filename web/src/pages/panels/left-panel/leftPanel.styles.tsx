@@ -7,6 +7,7 @@ export const LeftParent = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
+  border-right: 0.3px solid #8f8f8f81;
   .profile {
     width: 100px;
     aspect-ratio: 1;
@@ -46,6 +47,7 @@ export const LeftParent = styled.div`
       }
     }
     .active {
+      transition: all 1s;
       .icon {
         svg {
           height: 35px;

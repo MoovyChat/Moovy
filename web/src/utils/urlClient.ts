@@ -16,6 +16,8 @@ import {
 } from './cacheExchanges';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
+  getPaginatedMovieStatsResolver,
+  getUserViewHistoryResolver,
   movieCommentsResolver,
   paginatedFeedResolver,
   paginatedMoviesResolver,
@@ -46,7 +48,10 @@ const cache: Partial<CacheExchangeOpts> = {
     Profile: () => null,
     MovieStats: () => null,
     CommentOrReply: () => null,
+    PaginatedTitles: () => null,
     NotificationObject: () => null,
+    LinkPreview: () => null,
+    PaginatedMovieStats: () => null,
   },
   updates: {
     Mutation: {
@@ -76,6 +81,9 @@ const cache: Partial<CacheExchangeOpts> = {
       getPaginatedShows: paginatedMoviesResolver(),
       getFeed: paginatedFeedResolver(),
       getUserNotifications: paginatedUserNotificationsResolver(),
+      getFavTitles: getPaginatedMovieStatsResolver(),
+      getLikedTitles: getPaginatedMovieStatsResolver(),
+      getUserViewHistory: getUserViewHistoryResolver(),
     },
   },
 };

@@ -13,6 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { compressImage, isImageURLValid } from '../../utils/helpers';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import {
   sliceSetIsPopupOpened,
@@ -32,9 +33,9 @@ import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
 import { batch } from 'react-redux';
 import { imgPreview } from '../image-crop/imagePreview';
-import { isImageURLValid } from '../../utils/helpers';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
+import { useDropzone } from 'react-dropzone';
 import { withUrqlClient } from 'next-urql';
 
 const MsgObjType = {
@@ -67,7 +68,14 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [, saveProfilePhoto] = useSaveProfilePictureMutation();
   const [, saveBg] = useUpdateUserBgMutation();
-
+  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
+    useDropzone({
+      accept: {
+        'image/jpeg': [],
+        'image/jpg': [],
+      },
+      multiple: false,
+    });
   // Change the parent top style.
   useEffect(() => {
     const parentDiv = document.getElementById('popup-child') as HTMLDivElement;
@@ -110,13 +118,26 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     });
     if (selectedOption === 'fromLocal') {
       // Upload the updated blob to firebase storage and get the URL.
-      const blob = await imgPreview(imageRef.current!, completedCrop!);
-      if (!blob) {
+      const _blob = await imgPreview(imageRef.current!, completedCrop!);
+      if (!_blob) {
         console.log('Error creating blob');
+        setLoadingStatus({
+          msg: 'Error creating blob',
+          status: MsgObjType.ERROR,
+        });
+        return;
+      }
+      const compressedBlob = await compressImage(_blob);
+      if (!compressedBlob) {
+        setLoadingStatus({
+          msg: 'Error compressing blob',
+          status: MsgObjType.ERROR,
+        });
+        console.log('Error compressing blob');
         return;
       }
       // 'file' comes from the Blob or File API
-      const _snapshot = await uploadBytes(storageRef, blob);
+      const _snapshot = await uploadBytes(storageRef, compressedBlob);
       const urlSnapShot = await getDownloadURL(storageRef);
       // Saves the URL to the database.
       if (type === ImageChangerTypes.PFP)
@@ -153,6 +174,23 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       setSaved(true);
     }
   };
+
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        setUrl(reader.result?.toString() || '');
+        setSelectedOption('fromLocal');
+        setLoadingStatus({
+          msg: '',
+          status: MsgObjType.INITIAL,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  }, [acceptedFiles]);
+
   const fileUploadHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     const files = e.target.files;
     if (!files) return;
@@ -193,7 +231,6 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       dispatch(sliceSetPopupData(null));
     });
   };
-
   const saveText = saveClicked ? (saved ? `Saved` : `Saving..`) : `Save`;
   return (
     <ImageChangerParent url={url}>
@@ -211,7 +248,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
           {saveText}
         </StyledButton>
       </div>
-      <div className='options'>
+      {/* <div className='options'>
         <div
           className='from url'
           onClick={(e) => {
@@ -243,16 +280,16 @@ const ImageChanger: React.FC<props> = ({ type }) => {
               ref={inputFileRef}
               type='file'
               accept='image/jpeg, image/jpg'
-              placeholder='Upload image'
+              placeholder='Upload image (JPEG*, JPG*)'
               onChange={fileUploadHandler}
             />
           </div>
         </div>
-      </div>
+      </div> */}
       <DisplayImage className='display'>
         <div className='display-container'>
-          {!!url &&
-            (selectedOption === 'fromLocal' ? (
+          {!!url ? (
+            selectedOption === 'fromLocal' ? (
               type === ImageChangerTypes.PFP ? (
                 <ImageCrop
                   url={url}
@@ -270,7 +307,14 @@ const ImageChanger: React.FC<props> = ({ type }) => {
               )
             ) : (
               <img alt='image-crop' src={url} ref={imageRef} />
-            ))}
+            )
+          ) : (
+            <div {...getRootProps({ className: 'dropzone' })}>
+              <input {...getInputProps()} />
+              <p>Drag and Drop the image or Click to upload the Image</p>
+              <p>(Only *.jpeg/*.jpg images will be accepted)</p>
+            </div>
+          )}
         </div>
       </DisplayImage>
       <div className='error'>

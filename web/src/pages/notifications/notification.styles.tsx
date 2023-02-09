@@ -53,12 +53,16 @@ export const NotificationParent = styled.div`
 export const NotificationCardParent = styled.div`
   display: flex;
   position: relative;
-  width: 90%;
+  width: 100%;
   flex-direction: column;
-  padding: 25px;
+  padding: 25px 0px;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border-top: 0.3px solid #8f8f8f81;
+  :nth-last-child(2) {
+    border-bottom: 0.3px solid #8f8f8f81;
+  }
   .first {
     display: flex;
     width: 100%;

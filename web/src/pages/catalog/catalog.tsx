@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-
 import { CatalogContainer } from './catalog.styles';
 import ChildHeader from '../../components/childHeader/childHeader';
 import { NavLink } from 'react-router-dom';
 import NavLinks from '../../components/nav-links/navLinks';
 import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Catalog = () => {
   useEffect(() => {

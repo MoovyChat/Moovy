@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const offset = 55;
+const offset = 60;
 type props = {
   isNavBarOpen: boolean;
 };
@@ -29,7 +29,7 @@ export const PanelsParent = styled.div<props>`
     flex: 1 0 25%;
   }
   .center {
-    flex: 1 0 50%;
+    /* flex: 1 0 50%; */
   }
   .right {
     flex: 1 0 25%;

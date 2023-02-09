@@ -8,5 +8,6 @@ fragment ShortMovie on Movie {
   viewsCount
   platformId
   titleId
+  season
   parentTitleName
 }

@@ -17,16 +17,17 @@ import { NoTitle, SubGroups } from './profile.styles';
 import { ParsedText, getShortDateFormat } from '../../utils/helpers';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageStack from '../../components/image-stack/imageStack';
 import MovieCard from '../../components/movie-card/movieCard';
 import _ from 'lodash';
 import { isServer } from '../../constants';
 import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
-import { useParams } from 'react-router-dom';
 
 const BasicInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [follower, setFollower] = useState<FollowerObject | null>(null);
@@ -86,7 +87,7 @@ const BasicInfo = () => {
       setLikedMovies(_likedMoviesData);
       setVisitedMovies(_visitedMoviesData);
     }
-  }, [miniProfile.fetching, user?.id]);
+  }, [miniProfile, user?.id]);
 
   return (
     <SubGroups>
@@ -156,13 +157,22 @@ const BasicInfo = () => {
         <div className='history box'>
           <div className='hd'>
             <div>Recently watched</div>
-            {visitedMovies.length > 0 && <div className='sm'>Show more</div>}
+            {visitedMovies.length > 0 && (
+              <div
+                className='sm'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/activity/${user?.nickname}/history`);
+                }}>
+                Show more
+              </div>
+            )}
           </div>
           {visitedMovies.length > 0 ? (
             <div className='bd'>
               {visitedMovies.map((movie) => (
                 <div key={movie.id}>
-                  <MovieCard movie={movie} />
+                  <MovieCard movieId={movie.id} />
                 </div>
               ))}
             </div>
@@ -173,13 +183,22 @@ const BasicInfo = () => {
         <div className='fav box'>
           <div className='hd'>
             <div>Favorite Titles</div>
-            {favMovies.length > 0 && <div className='sm'>Show more</div>}
+            {favMovies.length > 0 && (
+              <div
+                className='sm'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/activity/${user?.nickname}/favorites`);
+                }}>
+                Show more
+              </div>
+            )}
           </div>
           {favMovies.length > 0 ? (
             <div className='bd'>
               {favMovies.map((movie) => (
                 <div key={movie.id}>
-                  <MovieCard movie={movie} />
+                  <MovieCard movieId={movie.id} />
                 </div>
               ))}
             </div>
@@ -190,13 +209,22 @@ const BasicInfo = () => {
         <div className='liked box'>
           <div className='hd'>
             <div>Liked Titles</div>
-            {likedMovies.length > 0 && <div className='sm'>Show more</div>}
+            {likedMovies.length > 0 && (
+              <div
+                className='sm'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/activity/${user?.nickname}/liked`);
+                }}>
+                Show more
+              </div>
+            )}
           </div>
           {likedMovies.length > 0 ? (
             <div className='bd'>
               {likedMovies.map((movie) => (
                 <div key={movie.id}>
-                  <MovieCard movie={movie} />
+                  <MovieCard movieId={movie.id} />
                 </div>
               ))}
             </div>

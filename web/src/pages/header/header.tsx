@@ -1,5 +1,4 @@
 import { HeaderButton, HeaderParent } from './header.styles';
-import { MdLightMode, MdNightlight } from 'react-icons/md';
 import React, { useEffect } from 'react';
 import {
   User,
@@ -10,12 +9,7 @@ import {
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { DIRECTION } from '../../utils/enums';
-import { LOGIN } from '../../components/tooltip/constants';
-import Tooltip from '../../components/tooltip/tooltip';
 import { googleSignIn } from '../login/login';
-import { isServer } from '../../constants';
-import { redirect } from 'react-router-dom';
 import { sliceSetTheme } from '../../redux/slices/settingsSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +18,6 @@ import { withUrqlClient } from 'next-urql';
 const Header = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user);
-  const theme = useAppSelector((state) => state.settings.theme);
   const dispatch = useAppDispatch();
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();

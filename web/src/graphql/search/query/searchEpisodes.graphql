@@ -1,0 +1,9 @@
+query SearchEpisodes($page: Float!, $limit: Float!, $search: String!) {
+  searchEpisodes(page: $page, limit: $limit, search: $search) {
+    lastPage
+    page
+    movies {
+      ...FullMovie
+    }
+  }
+}
