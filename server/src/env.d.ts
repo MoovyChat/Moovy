@@ -6,8 +6,9 @@ declare global {
       PORT: string;
       SECRET: string;
       CORS_ORIGIN: string;
+      STRIPE_SECRET_KEY: string;
     }
   }
 }
 
-export {}
+export {};

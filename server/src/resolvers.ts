@@ -7,9 +7,11 @@ import { MovieStatsResolver } from './resolvers/movieStats';
 import { NotificationsResolver } from './resolvers/notifications';
 import { PlatformResolver } from './resolvers/platforms';
 import { ProfileResolver } from './resolvers/profile';
+import { ProxyResolver } from './resolvers/proxy';
 import { ReplyResolver } from './resolvers/replies';
 import { ReplyStatsResolver } from './resolvers/replyStats';
 import { SearchResolver } from './resolvers/search';
+import { StripeResolver } from './resolvers/stripe';
 import { TitleResolver } from './resolvers/movieInfo';
 import { UserResolver } from './resolvers/users';
 import { VisitedResolver } from './resolvers/visited';
@@ -30,4 +32,6 @@ export const resolvers = [
   VisitedResolver,
   ProfileResolver,
   SearchResolver,
+  StripeResolver,
+  ProxyResolver,
 ];

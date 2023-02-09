@@ -19,6 +19,7 @@ import { Movie } from '../entities/Movie';
 import { User } from '../entities/User';
 import { MoreThan } from 'typeorm';
 import { LIKES_AND_COMMENT } from '../constants';
+import { MovieStats } from '../entities/MovieStats';
 
 @InputType()
 class MovieInput {
@@ -62,6 +63,18 @@ class PaginatedMovieComments {
   lastPage: number;
   @Field(() => Int)
   pastLoadedCount: number;
+}
+
+@ObjectType()
+class PaginatedMovieStats {
+  @Field(() => [MovieStats])
+  movieStats: MovieStats[];
+  @Field(() => Int)
+  totalCount: number;
+  @Field(() => Int)
+  lastPage: number;
+  @Field(() => Int)
+  page: number;
 }
 
 @ObjectType()
@@ -195,6 +208,64 @@ export class MovieResolver {
       hasMoreTitles: movies.length === movieCount + 1,
       page: page,
       lastPage: movieCount === 0 ? 1 : Math.ceil(movieCount / limit),
+    };
+  }
+
+  @Query(() => PaginatedMovieStats, { nullable: true })
+  async getFavTitles(
+    @Arg('uid') uid: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<PaginatedMovieStats | null> {
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
+    if (!user) return null;
+    const query = conn
+      .getRepository(MovieStats)
+      .createQueryBuilder('ms')
+      .where('ms.userId = :uid', { uid: user.id })
+      .andWhere('ms.favorite = :fav', { fav: true });
+    const totalCount = await query.getCount();
+    const stats = await query
+      .orderBy('ms.movieId', 'ASC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+    return {
+      totalCount,
+      page,
+      movieStats: stats,
+      lastPage: totalCount === 0 ? 1 : Math.ceil(totalCount / limit),
+    };
+  }
+
+  @Query(() => PaginatedMovieStats, { nullable: true })
+  async getLikedTitles(
+    @Arg('uid') uid: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<PaginatedMovieStats | null> {
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
+    if (!user) return null;
+    const query = conn
+      .getRepository(MovieStats)
+      .createQueryBuilder('ms')
+      .where('ms.userId = :uid', { uid: user.id })
+      .andWhere('ms.like = :like', { like: true });
+    const totalCount = await query.getCount();
+    const stats = await query
+      .orderBy('ms.movieId', 'ASC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+    return {
+      totalCount,
+      page,
+      movieStats: stats,
+      lastPage: totalCount === 0 ? 1 : Math.ceil(totalCount / limit),
     };
   }
 

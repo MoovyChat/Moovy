@@ -61,12 +61,18 @@ export class FollowResolver {
     var result: any;
     if (uid === followingId) return null;
     await conn.transaction(async (manager) => {
+      const followStats = await Follow.findOne({
+        where: { userId: uid, followingId: followingId },
+      });
+      const previousUpdateTimeStamp = followStats?.updatedAt;
+      const createdTimestamp = followStats?.createdAt;
       const res = await manager.getRepository(Follow).upsert(
         [
           {
             userId: uid,
             followingId: followingId,
             follows: follow,
+            updatedAt: new Date(),
           },
         ],
         {
@@ -84,15 +90,27 @@ export class FollowResolver {
           where: { id: uid },
         });
         const message = `${follower?.nickname} stated following you`;
-        await notificationRepo.insert([
-          {
-            toUserId: followingId,
-            fromUser: follower?.nickname,
-            isRead: false,
-            message: message,
-            fromUserPhotoUrl: follower?.photoUrl,
-          },
-        ]);
+        const now = new Date().getTime();
+        const previousTime = previousUpdateTimeStamp?.getTime();
+        if (
+          (previousTime && now - previousTime > 300000) ||
+          previousTime === createdTimestamp?.getTime() ||
+          previousTime === null ||
+          createdTimestamp === null ||
+          createdTimestamp === previousTime ||
+          previousTime === undefined ||
+          createdTimestamp === undefined
+        ) {
+          await notificationRepo.insert([
+            {
+              toUserId: followingId,
+              fromUser: follower?.nickname,
+              isRead: false,
+              message: message,
+              fromUserPhotoUrl: follower?.photoUrl,
+            },
+          ]);
+        }
       } else if (result && !follow) {
         await userRepo.decrement({ id: followingId }, 'followerCount', 1);
         await userRepo.decrement({ id: uid }, 'followingCount', 1);

@@ -46,8 +46,8 @@ export class Reply extends BaseEntity {
   parentReplyId!: string;
 
   @Field(() => String, { nullable: true })
-  @Column()
-  parentRepliedUser!: string;
+  @Column({ nullable: true })
+  parentRepliedUser: string;
 
   @Field(() => String)
   @Column()

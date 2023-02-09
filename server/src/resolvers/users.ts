@@ -169,7 +169,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   getUser(@Arg('uid') uid: string): Promise<User | null> {
-    return User.findOne({ where: { id: uid } });
+    return User.findOne({ where: [{ id: uid }, { nickname: uid }] });
   }
 
   @Mutation(() => User, { nullable: true })
@@ -189,8 +189,8 @@ export class UserResolver {
     @Arg('page') page: number
   ): Promise<MiniCommentFormat[] | null> {
     let result: MiniCommentFormat[] = [];
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
     const queryRunner = conn.createQueryRunner();
     // establish real database connection using our new query runner
     await queryRunner.connect();
@@ -207,7 +207,6 @@ export class UserResolver {
         .andWhere('f.follows = :f', { f: true })
         .execute();
       const updatedIds = [...ids, { id: uid }];
-      console.log(updatedIds);
       await Promise.all(
         updatedIds.map(async (idObject) => {
           let neededUserId = idObject.id;
@@ -220,7 +219,8 @@ export class UserResolver {
             .addSelect('c.updatedAt', 'updatedAt')
             .addSelect('c.type', 'type')
             .where('c.commentedUserId = :id', { id: neededUserId })
-            .andWhere('c.updatedAt >= :date', { date: thirtyDaysAgo })
+            .andWhere('c.updatedAt >= :date', { date: tenDaysAgo })
+            .orderBy('c.updatedAt', 'DESC')
             .offset((page - 1) * limit)
             .limit(limit)
             .execute();
@@ -232,7 +232,8 @@ export class UserResolver {
             .addSelect('r.createdAt', 'createdAt')
             .addSelect('r.updatedAt', 'updatedAt')
             .where('r.commentedUserId = :id', { id: neededUserId })
-            .andWhere('r.updatedAt >= :date', { date: thirtyDaysAgo })
+            .andWhere('r.updatedAt >= :date', { date: tenDaysAgo })
+            .orderBy('r.updatedAt', 'DESC')
             .offset((page - 1) * limit)
             .limit(limit)
             .execute();
@@ -445,19 +446,20 @@ export class UserResolver {
     const user = await User.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
+    console.log(user);
     if (!user) throw new Error('User not found');
-    const query = await conn
+    const query = conn
       .getRepository(Reply)
-      .createQueryBuilder('c')
+      .createQueryBuilder('r')
       .innerJoinAndSelect(
-        'c.commentedUser',
+        'r.commentedUser',
         'user',
-        'user.id = c.commentedUserId'
+        'user.id = r.commentedUserId'
       )
-      .where('c.commentedUserId = :uid', { uid });
+      .where('r.commentedUserId = :uid', { uid: user.id });
     let totalCommentCount = await query.getCount();
     if (time && time !== '') {
-      query.andWhere('c.createdAt < :time', {
+      query.andWhere('r.createdAt < :time', {
         time: new Date(parseInt(time)),
       });
     }
@@ -465,8 +467,9 @@ export class UserResolver {
     const comments = await query
       .offset((page - 1) * limit)
       .limit(limit)
-      .orderBy('c.createdAt', ASC ? 'ASC' : 'DESC')
+      .orderBy('r.createdAt', ASC ? 'ASC' : 'DESC')
       .getMany();
+    console.log(comments);
     return {
       user,
       comments,
@@ -670,7 +673,9 @@ export class UserResolver {
     // User is not logged in.
     console.log(req.session);
     if (!req.session.userId) return null;
-    const user = await User.findOne({ where: { id: req.session.userId } });
+    const user = await User.findOne({
+      where: [{ id: req.session.userId }, { nickname: req.session.userId }],
+    });
     return user;
   }
 
@@ -679,7 +684,9 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await User.findOne({
+      where: [{ id: uid }, { nickname: uid }],
+    });
     if (!user) return { error: 'User does not exist' };
     req.session.userId = user!.id;
     return { user };

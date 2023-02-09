@@ -47,20 +47,36 @@ const main = async () => {
 
   const RedisStore = connectRedis(session);
   const redisClient = createClient({
-    url: '',
+    url: 'redis://localhost:6379',
     legacyMode: true,
   });
   app.set('trust proxy', 1);
+
+  // app.use(
+  //   cors({
+  //     origin: [
+  //       process.env.CORS_ORIGIN,
+  //       'https://studio.apollographql.com',
+  //       'https://localhost:4000/graphql',
+  //       'https://www.netflix.com',
+  //       'https://9c2d-98-47-205-2.ngrok.io',
+  //       'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
+  //       'ws://localhost:4000/graphql',
+  //       process.env.REDIS_URL,
+  //     ],
+  //     credentials: true,
+  //   })
+  // );
   app.use(
     cors({
       origin: [
-        process.env.CORS_ORIGIN,
+        'http://localhost:3000',
         'https://studio.apollographql.com',
-        'https://localhost:4000/graphql',
+        'http://localhost:4000/graphql',
         'https://www.netflix.com',
         'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
         'ws://localhost:4000/graphql',
-        process.env.REDIS_URL,
+        'redis://localhost:6379',
       ],
       credentials: true,
     })
@@ -77,7 +93,7 @@ const main = async () => {
         httpOnly: true,
         sameSite: 'lax', //csrf
         secure: __prod__, // cookie only works in https.
-        domain: __prod__ ? '.codeponder.com' : undefined,
+        domain: __prod__ ? '.moovychat.com' : undefined,
       },
       secret: process.env.SECRET,
       resave: false,

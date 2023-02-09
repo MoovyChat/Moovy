@@ -40,6 +40,9 @@ export class CommentStatsResolver {
     const commentStat = await CommentStats.findOne({
       where: { userId: uid, commentId: cid },
     });
+    let lastUpdatedValue = commentStat?.updatedAt.getTime();
+    const createdTimestamp = commentStat?.createdAt.getTime();
+    let currentTime = new Date().getTime();
     let detail;
     if (!commentStat) {
       const details = await conn
@@ -90,16 +93,25 @@ export class CommentStatsResolver {
             where: { id: comment.commentedUserId },
           });
           const message = `${user?.nickname} liked your comment`;
-          await notifications.insert({
-            toUserId: commentedUser?.id,
-            toUserNickName: commentedUser?.nickname,
-            commentId: cid,
-            replyId: null,
-            isRead: false,
-            message: message,
-            fromUser: uid,
-            fromUserPhotoUrl: user?.photoUrl,
-          });
+          if (
+            (lastUpdatedValue && currentTime - lastUpdatedValue > 300000) ||
+            lastUpdatedValue === null ||
+            createdTimestamp === null ||
+            createdTimestamp === lastUpdatedValue ||
+            lastUpdatedValue === undefined ||
+            createdTimestamp === undefined
+          ) {
+            await notifications.insert({
+              toUserId: commentedUser?.id,
+              toUserNickName: commentedUser?.nickname,
+              commentId: cid,
+              replyId: null,
+              isRead: false,
+              message: message,
+              fromUser: uid,
+              fromUserPhotoUrl: user?.photoUrl,
+            });
+          }
         }
       }
     }

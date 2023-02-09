@@ -36,7 +36,7 @@ export class Follow extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
 }

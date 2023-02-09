@@ -52,7 +52,7 @@ class ReplyInput {
   movieId: string;
   @Field()
   parentCommentId: string;
-  @Field()
+  @Field(() => String, { nullable: true })
   parentRepliedUser: string;
   @Field()
   parentReplyId: string;
@@ -173,7 +173,9 @@ export class ReplyResolver {
               movieId: options.movieId,
               parentCommentId: options.parentCommentId,
               parentReplyId: options.parentReplyId,
-              parentRepliedUser: options.parentRepliedUser,
+              parentRepliedUser: options.parentRepliedUser
+                ? options.parentRepliedUser
+                : '',
               commentedUserId: options.commentedUserId!,
               commentedUserName: options.commentedUserName!,
               platformId: options.platformId,
