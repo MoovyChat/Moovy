@@ -3,24 +3,31 @@ import {
   CustomBorder,
   FilterView,
   OptionGroup,
+  PresetFilter,
   VideoParent,
 } from './videoStyles.styles';
 import {
   ChangeEventHandler,
   FocusEventHandler,
-  MouseEventHandler,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import {
   MdAdd,
+  MdAudiotrack,
   MdBuild,
-  MdFiberManualRecord,
   MdFilterAlt,
   MdOutlineWbIridescent,
 } from 'react-icons/md';
-import { addBorder, applyFilter, borders, filters } from './videoStyles.help';
+import _, { debounce } from 'lodash';
+import {
+  addBorder,
+  applyFilter,
+  borders,
+  filters,
+  presetFilters,
+} from './videoStyles.help';
 import {
   borderType,
   filterType,
@@ -41,33 +48,42 @@ import {
   setStoredVideoFilters,
 } from '../../Utils/storage';
 import {
+  sliceSetAccentColor,
+  sliceSetAutoNextEpisode,
+  sliceSetAutoSkip,
   sliceSetEnableBackground,
-  sliceSetKnobColor,
 } from '../../redux/slices/misc/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import AudioVisualizer from '../../components/audio-visualizer/audioVisualizer';
+import SelectDropDown from '../../components/select/select';
 import Slider from '../../components/slider/slider';
-import _ from 'lodash';
 import { defaultVideoValues } from '../../Utils/defaultValues';
-import { getStreamForWindow } from './mediaRecorder';
 import { getVideoElement } from '../contentScript.utils';
+import { sliceSetManipulation } from '../../redux/slices/videoManipulation';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
-import { title } from 'process';
 
 const VideoStyles = () => {
   const dispatch = useAppDispatch();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
-  const knobColor = useAppSelector((state) => state.misc.knobColor);
+  const knobColor = useAppSelector((state) => state.misc.accentColor);
+  const autoSkip = useAppSelector((state) => state.misc.autoSkip);
+  const autoNextEpisode = useAppSelector((state) => state.misc.autoNextEpisode);
+  const nodes = useAppSelector((state) => state.audioNodes);
   const [canvas, setCanvas] = useState<HTMLElement>();
   const enableBackground = useAppSelector(
     (state) => state.misc.enableBackground
   );
+  const [isNodesValid, setIsNodesValid] = useState<boolean>(false);
+  const manipulation = useAppSelector((state) => state.manipulation);
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
   const [screenSize, setScreenSize] = useState<string>('100');
+  const thumbs = useAppSelector((state) => state.movie.thumbs);
   const [openFilterSection, setOpenFilterSection] = useState<boolean>(false);
   const [openBorderSection, setOpenBorderSection] = useState<boolean>(false);
   const [customBorders, setCustomBorders] = useState<borderType[]>([]);
-  const [filterValues, setFilterValues] = useState<any>({
+  const [filterValues, setFilterValues] = useState<videoFilterSettings>({
     blur: '0',
     contrast: '1',
     brightness: '1',
@@ -77,6 +93,29 @@ const VideoStyles = () => {
     saturate: '100',
     hue: '0',
   });
+
+  useEffect(() => {
+    const {
+      stereo,
+      gain,
+      analyser,
+      audioContext,
+      audioSource,
+      biQuadFilter,
+      distortion,
+    } = nodes;
+    if (
+      !stereo ||
+      !gain ||
+      !analyser ||
+      !audioContext ||
+      !audioSource ||
+      !biQuadFilter ||
+      !distortion
+    ) {
+      setIsNodesValid(() => false);
+    } else setIsNodesValid(() => true);
+  }, [nodes]);
 
   useEffect(() => {
     // Get stored is Filter open boolean value.
@@ -99,7 +138,6 @@ const VideoStyles = () => {
 
     // Set filter values from storage
     getStoredFilterValues().then((filterVal: videoFilterSettings) => {
-      console.log({ filterValues, filterVal });
       if (filterVal) setFilterValues(filterVal);
     });
   }, []);
@@ -109,7 +147,6 @@ const VideoStyles = () => {
     getVideoElement().then((res) => {
       setVideoElem(res[0]);
     });
-    // let playerViewCollection = document.getElementsByClassName('ltr-omkt8s');
     let playerView = document.querySelector('[data-uia="player"]');
     setCanvas(playerView as HTMLElement);
   }, []);
@@ -128,7 +165,6 @@ const VideoStyles = () => {
         filter.isSelected = true;
         setSelectedFilters([...selectedFilters, filter]);
         setStoredVideoFilters([...selectedFilters, filter]);
-        console.log(selectedFilters);
       }
     }
   };
@@ -186,6 +222,54 @@ const VideoStyles = () => {
     step: 1,
   };
 
+  let distortionFilter: filterType = {
+    title: 'Distortion',
+    defaultValue: 0,
+    min: 0,
+    max: 99,
+    step: 1,
+  };
+
+  let playbackFilter: filterType = {
+    title: 'Playback speed',
+    defaultValue: 1,
+    min: 1,
+    max: 15,
+    step: 1,
+  };
+
+  let QValueFilter: filterType = {
+    title: 'Quality Factor',
+    defaultValue: 0,
+    min: 0,
+    max: 100,
+    step: 2,
+  };
+
+  let StereoFilter: filterType = {
+    title: 'Stereo',
+    defaultValue: 0,
+    min: -1,
+    max: 1,
+    step: 1,
+  };
+
+  let AudioFrequency: filterType = {
+    title: 'Audio Frequency',
+    defaultValue: 24000,
+    min: 0,
+    max: 24000,
+    step: 1000,
+  };
+
+  let AudioGain: filterType = {
+    title: 'Amplify Volume',
+    defaultValue: 3,
+    min: 0.1,
+    max: 10,
+    step: 0.1,
+  };
+
   // On screen change resize handler.
   let onChangeScreenSize: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
@@ -217,6 +301,10 @@ const VideoStyles = () => {
     setStoredResizeValue(value);
   };
 
+  const debouncedUpdateColor = debounce((dispatch, color) => {
+    dispatch(sliceSetAccentColor(color));
+  }, 400);
+
   const onColorBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
     let border: borderType = {
       color: e.target.value,
@@ -228,6 +316,46 @@ const VideoStyles = () => {
       let uniqBorders = _.uniqBy(newBorders, 'color');
       if (uniqBorders.length > 10) uniqBorders.pop();
       return uniqBorders;
+    });
+  };
+
+  const setPresetFilter = (filter: filterType) => {
+    // Reset filter values.
+    setFilterValues({
+      blur: '0',
+      contrast: '1',
+      brightness: '1',
+      grayscale: '0',
+      invert: '0',
+      sepia: '0',
+      saturate: '100',
+      hue: '0',
+    });
+    setSelectedFilters(() => []);
+    const filterValue = filter.sampleFilter!;
+    const filtersArray = filterValue.split(' ');
+    let regex = /([a-z-]+)\(([0-9]+(?:\.[0-9]+)?)(deg|%)?\)/;
+    filtersArray.map((value) => {
+      let match = value.match(regex);
+      if (!match) return null;
+      let filterName = match[1];
+      let filterValue: any = null;
+      if (filterName === 'hue-rotate') filterName = 'hue';
+      if (filterName === 'sepia' || filterName === 'saturate') {
+        filterValue = match[2];
+      } else if (filterName === 'hue') {
+        filterValue = parseFloat(match[2]);
+      } else filterValue = parseFloat(match[2]) / 100;
+      setFilterValues((filter) => {
+        let newObj = {
+          ...filter,
+          [filterName]: '' + filterValue,
+        };
+        return newObj;
+      });
+      setSelectedFilters((selected) => [...selected, { title: filterName }]);
+      setStoredFilterValues(filterValues);
+      applyFilter(selectedFilters, filterValues, videoElem);
     });
   };
 
@@ -243,6 +371,38 @@ const VideoStyles = () => {
           </div>
         </div>
         <div className='options'>
+          <div className='tool-option'>
+            <span className='option-text'>Auto Skip</span>
+            <span className='checkBox'>
+              <input
+                type='checkbox'
+                id='autoSk'
+                defaultChecked={autoSkip}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  dispatch(sliceSetAutoSkip(e.target.checked as boolean));
+                }}
+              />
+              <label htmlFor='autoSk'></label>
+            </span>
+          </div>
+          <div className='tool-option'>
+            <span className='option-text'>Auto Next Episode</span>
+            <span className='checkBox'>
+              <input
+                type='checkbox'
+                id='autoNE'
+                defaultChecked={autoNextEpisode}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  dispatch(
+                    sliceSetAutoNextEpisode(e.target.checked as boolean)
+                  );
+                }}
+              />
+              <label htmlFor='autoNE'></label>
+            </span>
+          </div>
           <div className='tool-option'>
             <span className='option-text'>Enable background</span>
             <span className='checkBox'>
@@ -261,22 +421,243 @@ const VideoStyles = () => {
             </span>
           </div>
           <div className='tool-option'>
-            <span className='option-text'>Knob Color</span>
+            <span className='option-text'>Accent Color</span>
             <span className='option-choice'>
-              <CustomBorder style={{ backgroundColor: knobColor }}>
+              <CustomBorder
+                style={{ backgroundColor: knobColor }}
+                className='accent'>
                 <input
                   type='color'
                   id='color-picker'
                   name='color-picker'
                   onChange={(e) => {
                     e.stopPropagation();
-                    dispatch(sliceSetKnobColor(e.target.value));
+                    debouncedUpdateColor(dispatch, e.target.value);
                   }}
                 />
                 <div className='icon' />
               </CustomBorder>
             </span>
           </div>
+        </div>
+      </OptionGroup>
+      <OptionGroup expandGroup={true} isNodesValid={isNodesValid}>
+        <div className='title'>
+          <div className='name'>
+            <div className='name-icon'>
+              <MdAudiotrack />
+            </div>
+            <label>Audio/Video Settings</label>
+            <div className='nodes-status'>
+              {isNodesValid ? 'CONNECTED' : 'NOT CONNECTED'}
+            </div>
+          </div>
+        </div>
+        <AudioVisualizer fftSize={256} canvasRef={canvasRef} />
+        <div className='options'>
+          <FilterView filter={playbackFilter.title} className='option'>
+            <div className='show-val'>{manipulation.playbackRate}x</div>
+            <Slider
+              key={playbackFilter.title}
+              filter={playbackFilter}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'playbackRate',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={(filter) => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'playbackRate',
+                    value: 1,
+                  })
+                );
+              }}
+              rangeValue={manipulation.playbackRate + ''}
+            />
+          </FilterView>
+          <FilterView filter='Audio filter type' className='option'>
+            <div className='show-val'>{manipulation.filterType}</div>
+            <SelectDropDown
+              reset={() => {
+                dispatch(
+                  sliceSetManipulation({ key: 'filterType', value: 'none' })
+                );
+              }}
+              value={manipulation.filterType}
+              setValue={(value: BiquadFilterType) =>
+                dispatch(
+                  sliceSetManipulation({ key: 'filterType', value: value })
+                )
+              }
+              title='Audio filter type'
+              options={
+                [
+                  'lowpass',
+                  'highpass',
+                  'bandpass',
+                  'lowshelf',
+                  'highshelf',
+                  'peaking',
+                  'notch',
+                  'allpass',
+                ] as BiquadFilterType[]
+              }
+            />
+          </FilterView>
+          <FilterView filter={QValueFilter.title} className='option'>
+            <div className='show-val'>{manipulation.QValue}</div>
+            <Slider
+              key={QValueFilter.title}
+              filter={QValueFilter}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'QValue',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={(filter) => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'QValue',
+                    value: 0,
+                  })
+                );
+              }}
+              rangeValue={manipulation.QValue + ''}
+            />
+          </FilterView>
+          <FilterView filter={AudioFrequency.title} className='option'>
+            <div className='show-val'>{manipulation.frequency}</div>
+            <Slider
+              key={AudioFrequency.title}
+              filter={AudioFrequency}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'frequency',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={(filter) => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'frequency',
+                    value: 24000,
+                  })
+                );
+              }}
+              rangeValue={manipulation.frequency + ''}
+            />
+          </FilterView>
+          <FilterView filter={AudioGain.title} className='option'>
+            <div className='show-val'>{manipulation.gain}</div>
+            <Slider
+              key={AudioGain.title}
+              filter={AudioGain}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'gain',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={() => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'gain',
+                    value: 3,
+                  })
+                );
+              }}
+              rangeValue={manipulation.gain + ''}
+            />
+          </FilterView>
+          <FilterView filter={StereoFilter.title} className='option'>
+            <div className='show-val'>{manipulation.stereo}</div>
+            <Slider
+              key={StereoFilter.title}
+              filter={StereoFilter}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'stereo',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={() => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'stereo',
+                    value: 0,
+                  })
+                );
+              }}
+              rangeValue={manipulation.stereo + ''}
+            />
+          </FilterView>
+          <FilterView filter={distortionFilter.title} className='option'>
+            <div className='show-val'>{manipulation.distortionCurve}</div>
+            <Slider
+              key={distortionFilter.title}
+              filter={distortionFilter}
+              onChange={(e) => {
+                e.stopPropagation();
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'distortionCurve',
+                    value: parseInt(e.target.value),
+                  })
+                );
+              }}
+              reset={() => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'distortionCurve',
+                    value: 0,
+                  })
+                );
+              }}
+              rangeValue={manipulation.distortionCurve + ''}
+            />
+          </FilterView>
+          <FilterView filter='Distortion Oversample' className='option'>
+            <div className='show-val'>{manipulation.distortionOverSample}</div>
+            <SelectDropDown
+              reset={() => {
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'distortionOverSample',
+                    value: 'none',
+                  })
+                );
+              }}
+              value={manipulation.distortionOverSample}
+              setValue={(value: BiquadFilterType) =>
+                dispatch(
+                  sliceSetManipulation({
+                    key: 'distortionOverSample',
+                    value: value,
+                  })
+                )
+              }
+              title='Distortion Oversample'
+              options={['2x ', '4x', '8x'] as OverSampleType[]}
+            />
+          </FilterView>
         </div>
       </OptionGroup>
       <OptionGroup expandGroup={openFilterSection}>
@@ -313,7 +694,7 @@ const VideoStyles = () => {
         <div className='options'>
           <FilterView filter={resizeFilter.title} className='option'>
             <div className='photo'>
-              <img src={filters[0].url} alt={filters[0].title} />
+              <img src={thumbs!} alt={filters[0].title} />
             </div>
             <Slider
               key={resizeFilter.title}
@@ -336,18 +717,72 @@ const VideoStyles = () => {
                   filter={filter.sampleFilter}
                   key={index}>
                   <div className='photo'>
-                    <img src={filter.url} alt={filter.title} />
+                    <img src={thumbs!} alt={filter.title} />
                   </div>
                   <Slider
                     key={filter.title}
                     filter={filter}
                     onChange={onChangeFilterValues}
                     reset={(filter) => resetFilter(filter)}
-                    rangeValue={filterValues[filter.title]}
+                    rangeValue={(filterValues as any)[filter.title]}
                   />
                 </FilterView>
               )
           )}
+        </div>
+      </OptionGroup>
+      <OptionGroup expandGroup={openFilterSection}>
+        <div className='title'>
+          <div className='name'>
+            <div className='name-icon'>
+              <MdFilterAlt />
+            </div>
+            <label>Preset Filters</label>
+          </div>
+          <div className='edge'>
+            <div className='checkBox'>
+              <input
+                type='checkbox'
+                id='toggle'
+                checked={openFilterSection}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (e.target.checked) {
+                    setStoredIsFilterOpen(true);
+                    setOpenFilterSection(true);
+                  } else {
+                    setFilter(filters[0]);
+                    setOpenFilterSection(false);
+                    setStoredIsFilterOpen(false);
+                    resetScreenSize('100');
+                  }
+                }}
+              />
+              <label htmlFor='toggle'></label>
+            </div>
+          </div>
+        </div>
+        <div className='presets'>
+          {presetFilters.map((filter, index) => (
+            <PresetFilter
+              selected={
+                selectedFilters.find((f) => f.title === filter.title)
+                  ? true
+                  : false
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setPresetFilter(filter);
+              }}
+              className='option'
+              filter={filter.sampleFilter}
+              key={index}>
+              <div className='photo'>
+                <img src={thumbs!} alt={filter.title} />
+              </div>
+              <div>{filter.title}</div>
+            </PresetFilter>
+          ))}
         </div>
       </OptionGroup>
       <OptionGroup expandGroup={openBorderSection}>

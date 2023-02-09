@@ -23,9 +23,8 @@ import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
 import Loading from '../../components/loading/loading';
-import SmileyWindow from '../../components/smileyWindow/smileyWindow';
+import SmileyWindow from '../../components/smiley-window/smileyWindow';
 import { batch } from 'react-redux';
-import { colorLog } from '../../Utils/utilities';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -39,6 +38,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const initialLoadedTime = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
   );
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   const currentPage = useAppSelector((state) => state.movie.currentPage);
   const newlyLoadedTimeSTamp = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
@@ -74,11 +74,11 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         : new Date().getTime().toString(),
     }).then((res) => {
       const { data, error } = res;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       if (data) {
         const newComments = data.fetchNewComments;
         if (newComments.length === 0) {
-          colorLog('Unable to load new Comments');
+          console.log('Unable to load new Comments');
           return;
         }
         dispatch(sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString()));
@@ -92,7 +92,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
           dispatch(sliceCheckNewCommentsLoaded(true));
           dispatch(sliceSetPastLoadedCount(newComments.length));
         } else {
-          colorLog('Failed to load new comments');
+          console.log('Failed to load new comments');
         }
       }
     });
@@ -107,7 +107,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       time: newlyLoadedTimeSTamp,
     }).then((res) => {
       const { data, error } = res;
-      if (error) colorLog(error.message);
+      if (error) console.log(error.message);
       const commentsFromData = data?.getCommentsOfTheMovie?.comments!;
       const totalCommentCount = data?.getCommentsOfTheMovie?.totalCommentCount!;
       if (currentPage === 1) {
@@ -178,6 +178,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       isTextAreaClicked={isTextAreaFocussed}>
       {totalCommentsCount! > pastLoadedCommentCount! ? (
         <LoadMoreComments
+          accentColor={accentColor}
           className='load-new'
           onClick={(e) => {
             e.stopPropagation();

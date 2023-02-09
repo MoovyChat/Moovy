@@ -48,14 +48,14 @@ const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
   const [userBasicInfo, setUserBasic] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [follower, setFollower] = useState<FollowerObject | null>(null);
-  const [following, setFollowing] = useState<FollowingObject | null>(null);
+  // const [follower, setFollower] = useState<FollowerObject | null>(null);
+  // const [following, setFollowing] = useState<FollowingObject | null>(null);
   const [favMovies, setFavMovies] = useState<favTitles[]>([]);
   const [likedMovies, setLikedMovies] = useState<favTitles[]>([]);
   const [visitedMovies, setVisitedMovies] = useState<favTitles[]>([]);
-  const [historyCount, setHistoryCount] = useState<number>(0);
-  const [likedMoviesCount, setLikedMoviesCount] = useState<number>(0);
-  const [favMoviesCount, setFavMoviesCount] = useState<number>(0);
+  // const [historyCount, setHistoryCount] = useState<number>(0);
+  // const [likedMoviesCount, setLikedMoviesCount] = useState<number>(0);
+  // const [favMoviesCount, setFavMoviesCount] = useState<number>(0);
   const [dobInTime, setDOBInTime] = useState<string>('');
 
   const [userData] = useGetUserQuery({
@@ -104,12 +104,12 @@ const ProfileWindow = () => {
       const _historyCount = _data?.history?.historyCount!;
       const _likedMoviesCount = _data?.likes?.likesCount!;
       const _favoriteMoviesCount = _data?.favorites?.favCount!;
-      setHistoryCount(() => _historyCount);
-      setLikedMoviesCount(() => _likedMoviesCount);
-      setFavMoviesCount(() => _favoriteMoviesCount);
+      // setHistoryCount(() => _historyCount);
+      // setLikedMoviesCount(() => _likedMoviesCount);
+      // setFavMoviesCount(() => _favoriteMoviesCount);
       setProfile(_profileData as Profile);
-      setFollower(() => _followerData);
-      setFollowing(() => _followingData);
+      // setFollower(() => _followerData);
+      // setFollowing(() => _followingData);
       setFavMovies(() => _favMoviesData);
       setLikedMovies(() => _likedMoviesData);
       setVisitedMovies(() => _visitedMoviesData);
@@ -125,8 +125,8 @@ const ProfileWindow = () => {
     });
   };
   if (userData?.fetching || miniProfile?.fetching) return <div>Loading...</div>;
-  if (!userBasicInfo)
-    return <div>Unexpected Error. Please try refreshing the extension.</div>;
+  if (userData.error) return <div>Server Error.</div>;
+  if (!userBasicInfo) return <div>User not found!.</div>;
   return (
     <ProfileParent className='mini-profile'>
       <React.Fragment>

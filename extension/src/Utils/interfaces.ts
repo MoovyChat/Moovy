@@ -179,3 +179,14 @@ export interface MovieFullInformation {
   year?: number;
   seasons: SeasonInfo[] | null;
 }
+
+export interface AudioNodesInterface {
+  audioContext: AudioContext | null;
+  biQuadFilter: BiquadFilterNode | null;
+  stereo: StereoPannerNode | null;
+  analyser: AnalyserNode | null;
+  gain: GainNode | null;
+  audioSource: MediaElementAudioSourceNode | null;
+  pitchShift: any;
+  distortion: WaveShaperNode | null;
+}

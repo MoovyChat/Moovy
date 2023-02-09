@@ -242,41 +242,40 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   return true;
 });
 // Listen to the url change and 'strictly' for update the icons and popup page.
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   chrome.tabs.get(activeInfo.tabId, async (tab) => {
-//     const url = await tab.url!;
-//     const domain = getDomain(url);
-//     switch (domain) {
-//       case domains.LOCALHOST:
-//       case domains.NETFLIX:
-//         // Change Icon when the url is visited.
-//         // injectScriptsOnReload();
-//         console.log('ON ACTIVATED');
-//         chrome.action.setIcon({
-//           path: {
-//             '16': 'Moovy/moovyIcon.png',
-//             '48': 'Moovy/moovyIcon.png',
-//             '128': 'Moovy/moovyIcon.png',
-//           },
-//         });
-//         // Changing the pop up html
-//         chrome.action.setPopup({ popup: 'popup.html' });
-//         break;
-//       default:
-//         // Change icon when url is not visited.
-//         chrome.action.setIcon({
-//           path: {
-//             '16': 'Moovy/moovyIcon.png',
-//             '48': 'Moovy/moovyIcon.png',
-//             '128': 'Moovy/moovyIcon.png',
-//           },
-//         });
-//         // Change the pop up html
-//         chrome.action.setPopup({ popup: 'offsite.html' });
-//         break;
-//     }
-//   });
-// });
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.get(activeInfo.tabId, async (tab) => {
+    const url = await tab.url!;
+    const domain = getDomain(url);
+    switch (domain) {
+      case domains.LOCALHOST:
+      case domains.NETFLIX:
+        // Change Icon when the url is visited.
+        // injectScriptsOnReload();
+        chrome.action.setIcon({
+          path: {
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
+          },
+        });
+        // Changing the pop up html
+        chrome.action.setPopup({ popup: 'popup.html' });
+        break;
+      default:
+        // Change icon when url is not visited.
+        chrome.action.setIcon({
+          path: {
+            '16': 'Moovy/moovyIcon.png',
+            '48': 'Moovy/moovyIcon.png',
+            '128': 'Moovy/moovyIcon.png',
+          },
+        });
+        // Change the pop up html
+        chrome.action.setPopup({ popup: 'offsite.html' });
+        break;
+    }
+  });
+});
 // Condition is for when user is already loggedIn.
 // Sends the user log details whenever user refreshes the page or
 // copy paste the netflix watch link.
@@ -332,6 +331,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log(request);
+  if (request.type === 'SYNC_LOGIN') {
+    let user = request.user;
+    console.log(user);
+  }
+  sendResponse({ farewell: '' });
+  return true;
+});
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // From content script
   if (sender.tab) {

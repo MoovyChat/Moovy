@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 
 import { Like } from '../../../contentScript/commentInterface/commentInterface.styles';
 import MiniCard from '../miniCard';
-import { colorLog } from '../../../Utils/utilities';
 import { urqlClient } from '../../../Utils/urqlClient';
 import { useAppSelector } from '../../../redux/hooks';
 import { useUpdateUserMovieStatusMutation } from '../../../generated/graphql';
@@ -39,6 +38,7 @@ const MovieBody: React.FC<props> = ({ title, id }) => {
 const MovieOptions: React.FC<optionProps> = ({ id }) => {
   const [_r, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const user = useAppSelector((state) => state.user);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [lk, setLike] = useState<boolean>(false);
   const [fav, setFav] = useState<boolean>(false);
   // Set the like and favorite on Initial load.
@@ -49,7 +49,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
       options: {},
     }).then((response) => {
       const { data, error } = response;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       const { like, favorite } = data?.updateUserMovieStats!;
       if (like) setLike(like);
       if (favorite) setFav(favorite);
@@ -63,7 +63,7 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
       options,
     }).then((res) => {
       const { data, error } = res;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       if (!error && data) {
         const { like, favorite } = data.updateUserMovieStats!;
         setLike(like!);
@@ -86,13 +86,14 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
         )}
       </div>
       <Like
+        accentColor={accentColor}
         className='like'
         onClick={(e) => {
           e.stopPropagation();
           LikeAndFav('like', !lk);
         }}>
         {lk ? (
-          <AiFillLike className='icon' size={20} color='#ff005d' />
+          <AiFillLike className='icon' size={20} color={accentColor} />
         ) : (
           <AiOutlineLike size={20} />
         )}

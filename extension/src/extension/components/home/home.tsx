@@ -8,11 +8,10 @@ import { User } from '../../../Utils/interfaces';
 type props = {
   user: User | undefined;
   setUser: (user: User) => void;
-  setSideOpen: Dispatch<any>;
   userLoaded: boolean;
 };
 
-const Home: React.FC<props> = ({ user, setUser, setSideOpen, userLoaded }) => {
+const Home: React.FC<props> = ({ user, setUser, userLoaded }) => {
   const [isUserSet, setIsUserSet] = useState<boolean>(false);
   useEffect(() => {
     if (user && user.id) {
@@ -26,10 +25,7 @@ const Home: React.FC<props> = ({ user, setUser, setSideOpen, userLoaded }) => {
       {!userLoaded ? (
         <></>
       ) : isUserSet ? (
-        <LogOut
-          user={user}
-          setUser={setUser}
-          setSideOpen={setSideOpen}></LogOut>
+        <LogOut user={user} setUser={setUser}></LogOut>
       ) : (
         <LogIn setUser={setUser}></LogIn>
       )}

@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 
 type props = {
   isPopSlideOpen: boolean;
+  openInFull: number;
 };
 export const PopSlideParent = styled.div<props>`
   position: absolute;
@@ -15,11 +16,11 @@ export const PopSlideParent = styled.div<props>`
   animation: ${(p) =>
     p.isPopSlideOpen
       ? css`
-          ${bottomToTop1} 0.5s
+          ${bottomToTop1(p.openInFull)} 0.5s
     cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards
         `
       : css`
-          ${topToBottom1} 0.5s ease-out forwards
+          ${topToBottom1(p.openInFull)} 0.5s ease-out forwards
         `};
   display: flex;
   color: inherit;
@@ -48,12 +49,16 @@ export const PopSlideParent = styled.div<props>`
       }
     }
 
-    .close-icon {
+    .close-icon,
+    .min-max-icon {
       position: absolute;
       right: 20px;
       top: 20px;
       cursor: pointer;
       z-index: 1;
+    }
+    .min-max-icon {
+      left: 20px;
     }
   }
 

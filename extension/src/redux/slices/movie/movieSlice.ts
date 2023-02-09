@@ -1,6 +1,5 @@
 import { Movie, timeMessage } from '../../../Utils/interfaces';
 
-import { colorLog } from '../../../Utils/utilities';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const movieState: Movie = {
@@ -55,10 +54,6 @@ const MovieSlice = createSlice({
     sliceAddMovieName: (state, action) => {
       const { video_id, title } = action.payload;
       if (state.id === video_id) state.name = title;
-      else
-        colorLog(
-          `sliceAddMovieName: Wrong movie id -> stateId: ${state.id} | videoId: ${video_id}`
-        );
     },
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
       return { ...state, totalCommentsCountOfMovie: action.payload || 0 };

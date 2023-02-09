@@ -56,7 +56,10 @@ export const NoCommentBox = styled.div`
   }
 `;
 
-export const LoadMoreComments = styled.div`
+type loadProps = {
+  accentColor: string;
+};
+export const LoadMoreComments = styled.div<loadProps>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -69,7 +72,7 @@ export const LoadMoreComments = styled.div`
     border-radius: 30px;
     font-weight: 700;
     padding: 10px;
-    background-color: #ad2121;
+    background-color: ${(p) => p.accentColor};
     color: white;
     :hover {
       cursor: pointer;

@@ -1,8 +1,5 @@
-import { getStoredFilterValues, getStoredVideoFilters } from '../Utils/storage';
-
-import { domains } from '../constants';
 import { filterType } from '../Utils/interfaces';
-import { resolve } from 'path';
+import { getStoredFilterValues } from '../Utils/storage';
 
 type NotPresentStrategy = 'error' | 'ignore';
 
@@ -73,13 +70,6 @@ export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
 export const getDomain = (url: string) => {
   let _url = new URL(url);
   return _url.hostname;
-};
-
-export const removeNodeFromDomById = (nodeId: string) => {
-  if (!nodeId) return;
-  let node = document.getElementById(nodeId) as Node;
-  let nodeParent = node?.parentNode;
-  nodeParent?.removeChild(node);
 };
 
 export const getVideoElement = (): Promise<

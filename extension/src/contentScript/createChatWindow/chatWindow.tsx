@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
 
-import ChatInterface from '../../components/chatInterface/chatInterface';
+import ChatInterface from '../../components/chat-interface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
 import { urqlClient } from '../../Utils/urqlClient';

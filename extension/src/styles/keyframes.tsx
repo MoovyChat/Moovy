@@ -11,25 +11,27 @@ export const bottomToTop = keyframes`
   }
 `;
 
-export const bottomToTop1 = keyframes`
-  0% {
-    opacity: 0;
-    height: 0%
-  }
-  100% {
-    opacity: 1;
-    height: 75%
-  }
-`;
-
-export const topToBottom1 = keyframes`
+export const topToBottom1 = (isOpenInFull: number) => keyframes`
   0% {
     opacity: 1;
-    height: 75%
+    height: ${isOpenInFull % 2 === 0 ? '75%' : '100%'}
   }
  100% {
     opacity: 0;
-    height: 0%
+    height: ${isOpenInFull % 2 === 0 ? '0%' : '0%'}
+  }
+`;
+
+export const bottomToTop1 = (isOpenInFull: number) => keyframes`
+  0% {
+    height: ${
+      isOpenInFull === 0 ? '0%' : isOpenInFull % 2 === 0 ? '100%' : '75%'
+    }
+  }
+ 100% {
+    height: ${
+      isOpenInFull === 0 ? '75%' : isOpenInFull % 2 === 0 ? '75%' : '100%'
+    }
   }
 `;
 

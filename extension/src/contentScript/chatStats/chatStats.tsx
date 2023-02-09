@@ -9,7 +9,6 @@ import {
   MdThumbUpOffAlt,
 } from 'react-icons/md';
 import React, { Dispatch, MouseEventHandler, useEffect, useState } from 'react';
-import { colorLog, getFormattedNumber } from '../../Utils/utilities';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -29,6 +28,7 @@ import {
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MOOVY_URL } from '../../constants';
+import { getFormattedNumber } from '../../Utils/utilities';
 import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
@@ -49,6 +49,7 @@ const ChatStats: React.FC<props> = () => {
   const commentsCount = useAppSelector(
     (state) => state.movie.totalCommentsCountOfMovie
   );
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
   const [movieLikesSub] = useMovieStatusUpdateSubscription();
@@ -82,7 +83,7 @@ const ChatStats: React.FC<props> = () => {
   });
 
   useEffect(() => {
-    console.log(user);
+    console.log(user.nickname);
   }, [user]);
 
   // Get Likes Data on Initial Load.
@@ -162,7 +163,10 @@ const ChatStats: React.FC<props> = () => {
   };
 
   return (
-    <ChatStatContainer like={like} themeToggled={theme}>
+    <ChatStatContainer
+      like={like}
+      themeToggled={theme}
+      accentColor={accentColor}>
       <div className='capsule'>
         <div
           className='likes'
@@ -177,11 +181,11 @@ const ChatStats: React.FC<props> = () => {
             <MdThumbUpOffAlt size={icon_Size} />
           )}
         </div>
-        <div className='comment'>
+        <div className='div-cmt-count-style'>
           <span>{getFormattedNumber(commentsCount!)}</span>
           <MdOutlineModeComment size={icon_Size} />
         </div>
-        <div className='comment'>
+        <div className='div-cmt-count-style'>
           <span>{getFormattedNumber(movie?.viewsCount!)}</span>
           <MdOutlineRemoveRedEye size={icon_Size} />
         </div>

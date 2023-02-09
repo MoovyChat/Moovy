@@ -12,7 +12,6 @@ import LoginAfter from '../login-after/loginAfter';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
 import constants from '../../../constants';
-import { useCreateUserMutation } from '../../../generated/graphql';
 
 const getGoogleAuthCredential = () => {
   return new Promise<ReturnType<typeof GoogleAuthProvider.credential>>(
@@ -35,7 +34,6 @@ interface Props {
 const LogIn: React.FC<Props> = ({ setUser }) => {
   const [isUserFetched, setIsUserFetched] = useState<boolean>(false);
   const [userFromAuth, setUserFromAuth] = useState<UserCredential>();
-  const [, createUser] = useCreateUserMutation();
   const SignIn = async () => {
     try {
       const credential = await getGoogleAuthCredential();

@@ -24,6 +24,7 @@ import { withUrqlClient } from 'next-urql';
 const ChatTitle = () => {
   const [fav, setFav] = useState<boolean>(false);
   const [favCount, SetFavCount] = useState<number>(0);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   const movieTitle = useAppSelector((state) => state.movie.name);
   const movieId = useAppSelector((state) => state.movie.id);
   const userId = useAppSelector((state) => state.user.id);
@@ -161,7 +162,7 @@ const ChatTitle = () => {
         {!fav ? (
           <MdStarOutline className='star' size={20} />
         ) : (
-          <MdStar className='star' size={20} color='gold' />
+          <MdStar className='star' size={20} color={accentColor} />
         )}
       </div>
     </ChatTitleParent>

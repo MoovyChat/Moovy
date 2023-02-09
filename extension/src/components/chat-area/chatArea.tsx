@@ -8,7 +8,6 @@ import React, {
   useState,
 } from 'react';
 import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
-import { colorLog, getFormattedWordsArray } from '../../Utils/utilities';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
@@ -19,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
 import _ from 'lodash';
+import { getFormattedWordsArray } from '../../Utils/utilities';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -177,7 +177,7 @@ const ChatArea: React.FC<props> = ({
       // Expected response: First three matches.
       getNickNameSuggestions({ search: wordToSearch }).then((res) => {
         const { data, error } = res;
-        if (error) colorLog(error);
+        if (error) console.log(error);
         if (data) {
           const names: { name: string }[] = data?.getTopThreeUserNames!;
           let refined: string[] = [];

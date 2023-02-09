@@ -13,12 +13,20 @@ type filterProps = {
   filter?: string;
   selected?: boolean;
 };
-export const FilterView = styled.div<filterProps>`
+
+export const PresetFilter = styled.div<filterProps>`
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-evenly;
-  .photo {
+  flex-direction: column;
+  cursor: pointer;
+  :hover {
+    .photo {
+      filter: brightness(0.5);
+    }
+  }
+  .photo,
+  .show-val {
     display: flex;
     flex: 1 1 20%;
     justify-content: center;
@@ -31,6 +39,49 @@ export const FilterView = styled.div<filterProps>`
       filter: ${(p) => p.filter};
       width: 40px;
       height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .layover {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid black;
+      color: #ff005d;
+      background-color: rgba(186, 178, 178, 0.824);
+      border-radius: 50%;
+    }
+  }
+`;
+
+export const FilterView = styled.div<filterProps>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-evenly;
+  .show-val {
+    box-shadow: inset 0 0 4px;
+    border-radius: 18px;
+  }
+  .photo,
+  .show-val {
+    display: flex;
+    flex: 1 1 20%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    img {
+      filter: ${(p) => p.filter};
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
     }
     .layover {
       position: absolute;
@@ -113,6 +164,7 @@ export const CustomBorder = styled.div`
 
 type props = {
   expandGroup: boolean;
+  isNodesValid?: boolean;
 };
 export const OptionGroup = styled.div<props>`
   display: flex;
@@ -140,6 +192,19 @@ export const OptionGroup = styled.div<props>`
       }
       label {
         padding-left: 5px;
+      }
+      .nodes-status {
+        padding: 4px;
+        font-size: 7px;
+        border-radius: 18px;
+        font-weight: 900;
+        margin: 0px 4px;
+        background-color: ${(p) =>
+          p.isNodesValid === true
+            ? 'green'
+            : p.isNodesValid === false
+            ? 'red'
+            : ''};
       }
     }
     .edge {
@@ -197,12 +262,23 @@ export const OptionGroup = styled.div<props>`
     }
   }
 
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    overflow: auto;
+    gap: 10px;
+  }
+
   .options {
     height: auto;
     overflow: auto;
     .tool-option {
       display: flex;
       width: 100%;
+      margin: 10px 0;
       justify-content: space-evenly;
       align-items: center;
       .option-text {
@@ -214,6 +290,9 @@ export const OptionGroup = styled.div<props>`
       }
       .option-choice {
         flex: 1 1 0%;
+        .accent {
+          margin: 0;
+        }
       }
       .checkBox {
         display: flex;

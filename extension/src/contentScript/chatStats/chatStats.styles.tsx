@@ -1,11 +1,10 @@
 import { rotate180, rotate180rev } from '../../styles/keyframes';
 import styled, { css } from 'styled-components';
 
-import { globalUIStyles } from '../../Utils/interfaces';
-
 type props = {
   like: boolean;
   themeToggled: string;
+  accentColor: string;
 };
 export const ChatStatContainer = styled.div<props>`
   display: flex;
@@ -16,9 +15,6 @@ export const ChatStatContainer = styled.div<props>`
   color: inherit;
   .capsule {
     box-shadow: inset 0 0 3px ${(p) => p.theme.text};
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
     border-radius: 20px;
     width: 200px;
@@ -27,17 +23,22 @@ export const ChatStatContainer = styled.div<props>`
     align-items: center;
     .likes {
       padding: 5px;
-      background: ${(p) => p.like && ' #ff005d'};
+      background: ${(p) => p.like && p.accentColor};
       box-shadow: ${(p) => p.like && `inset -2px 1px 5px 1px ${p.theme.text}`};
       transition: all 0.5s;
       .icon {
-        color: ${(p) => p.like && p.theme.body};
+        mix-blend-mode: exclusion;
+        color: ${(p) => p.like && 'white'};
       }
       span {
+        mix-blend-mode: exclusion;
         color: ${(p) => p.like && p.theme.body};
       }
+      :hover {
+        box-shadow: inset -2px 1px 5px 1px;
+      }
     }
-    .comment {
+    .div-cmt-count-style {
       padding: 5px;
     }
 
@@ -69,7 +70,7 @@ export const ChatStatContainer = styled.div<props>`
     }
 
     .likes,
-    .comment {
+    .div-cmt-count-style {
       display: -webkit-box;
       display: -webkit-flex;
       display: -ms-flexbox;

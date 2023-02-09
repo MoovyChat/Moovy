@@ -1,17 +1,19 @@
+import { MdOpenInFull, MdOutlineCloseFullscreen } from 'react-icons/md';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import EmojiPicker from '../emojiPicker/emojiPicker';
+import EmojiPicker from '../emoji-picker/emojiPicker';
 import { IoMdCloseCircle } from 'react-icons/io';
-import LikesWindow from '../likesWindow/likesWindow';
+import LikesWindow from '../likes-window/likesWindow';
 import { PopSlideParent } from './popSlide.styles';
-import ProfileWindow from '../profileWindow/profileWindow';
+import ProfileWindow from '../profile-window/profileWindow';
 import VideoStyles from '../../contentScript/videoStyles/videoStyles';
 import { sliceResetPopUp } from '../../redux/slices/settings/settingsSlice';
 
 const PopSlide = () => {
   const dispatch = useAppDispatch();
   const [inputs, setInputs] = useState<any>({});
+  const [openInFull, setOpenInFull] = useState<number>(0);
   const isPopSlideOpen = useAppSelector(
     (state) => state.settings.isPopSlideOpen
   );
@@ -83,8 +85,30 @@ const PopSlide = () => {
   }, [PopSlideContentType]);
 
   return (
-    <PopSlideParent isPopSlideOpen={isPopSlideOpen} className='pop-slide'>
+    <PopSlideParent
+      isPopSlideOpen={isPopSlideOpen}
+      className='pop-slide'
+      openInFull={openInFull}>
       <div className='header'>
+        {openInFull % 2 === 0 ? (
+          <MdOpenInFull
+            className='min-max-icon'
+            size={20}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenInFull((c) => c + 1);
+            }}
+          />
+        ) : (
+          <MdOutlineCloseFullscreen
+            className='min-max-icon'
+            size={20}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenInFull((c) => c + 1);
+            }}
+          />
+        )}
         <div className='section'>
           <div className='title'>{inputs.title}</div>
           <div className='sub'>{inputs.subTitle}</div>

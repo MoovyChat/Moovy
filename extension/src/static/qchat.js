@@ -1,24 +1,36 @@
 // Content script
+let login;
+let sync_login;
 function main() {
   // Set up content script
-  let login = document.getElementById('login-btn');
-  if (!login) return;
-  login.addEventListener('click', async (e) => {
-    const user = localStorage.getItem('user');
-    const userObj = JSON.parse(user);
-    await chrome.storage.local.set({ user: userObj }, (res) => {
-      console.log('RES', res);
+  login = document.getElementById('login-btn');
+  sync_login = document.getElementById('sync-login');
+  if (login) {
+    login.addEventListener('click', async () => {
+      const user = localStorage.getItem('user');
+      const userObj = JSON.parse(user);
+      console.log(userObj);
+      // await chrome.storage.local.set({ user: userObj }, (res) => {});
     });
-  });
+  }
+
+  if (sync_login) {
+    sync_login.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const user = localStorage.getItem('user');
+      const userObj = JSON.parse(user);
+      await chrome.storage.local.set({ user: userObj }, (res) => {});
+      chrome.runtime.sendMessage(
+        { type: 'SYNC_LOGIN', user: userObj },
+        function (response) {}
+      );
+    });
+  }
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'LOGOUT') {
-      console.log('LOGGING OUT...');
       localStorage.removeItem('user');
-      console.log('Removed user from local storage');
-      chrome.runtime.sendMessage({ type: 'DELETE_COOKIE' }, (tabId) => {
-        console.log('SENT MESSAGE FROM: ', tabId);
-      });
+      chrome.runtime.sendMessage({ type: 'DELETE_COOKIE' }, (tabId) => {});
       sendResponse({
         data: 'DELETE_COOKIE',
       });
@@ -37,4 +49,8 @@ var destructionEvent = 'destructmyextension_' + chrome.runtime.id;
 // Unload previous content script if needed
 document.dispatchEvent(new CustomEvent(destructionEvent));
 document.addEventListener(destructionEvent, destructor);
+
+// setInterval(() => {
+//   if (!login || !sync_login) main();
+// }, 100);
 main();

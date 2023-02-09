@@ -1,11 +1,11 @@
 const constants = {
-  title: 'Quiet Chat',
+  title: 'Moovy Chat',
   welcome: 'Welcome',
   footer1: 'Enjoy the Streaming now with Comments!',
   login: 'Log in with Google',
   chrome: 'Log in with Chrome',
   logout: 'Logout',
-  login_sucess: 'You are logged in!',
+  login_success: 'You are logged in!',
   main_color: '#990100',
   record_options: 'Record options',
 };

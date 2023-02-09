@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Emoji } from 'emojibase';
 import { EmojiButtonParent } from './emojiButton.styles';
 import React from 'react';
-import { colorLog } from '../../../Utils/utilities';
 import { db } from '../../../indexedDB/db';
 
 type props = {
@@ -35,9 +34,9 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           emoji,
         });
         if ((await db.recent.count()) > 12) db.recent.delete(2);
-        colorLog(`Successfully added to recent: ${insertEmoji}`);
+        console.log(`Successfully added to recent: ${insertEmoji}`);
       } catch (error) {
-        colorLog('Error', error);
+        console.log('Error', error);
       }
     };
 
@@ -53,7 +52,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
             count: 1,
             emoji,
           });
-          colorLog(`Successfully added: ${id}`);
+          console.log(`Successfully added: ${id}`);
         } else {
           await db.frequent.update(foundEmoji.id!, {
             count: foundEmoji.count! + 1,
@@ -61,7 +60,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           });
         }
       } catch (error) {
-        colorLog(`Failed to add} ${error}`);
+        console.log(`Failed to add} ${error}`);
       }
     };
 

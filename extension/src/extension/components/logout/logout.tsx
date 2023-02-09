@@ -90,9 +90,8 @@ const openSideBar = (
 type props = {
   user: User | undefined;
   setUser: (user: User) => void;
-  setSideOpen: Dispatch<any>;
 };
-const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
+const LogOut: React.FC<props> = ({ user, setUser }) => {
   const [checked, setChecked] = useState<boolean>(false);
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
@@ -154,20 +153,20 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
     });
   }, [checked, setChecked]);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
-    e
-  ) => {
-    e.stopPropagation();
-    setChecked(!checked);
-    setStoredCheckedStatus(!checked);
-    chrome.windows.getCurrent((w) => {
-      chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id!, { checked: true }, (response) => {
-          console.log(response, response?.data);
-        });
-      });
-    });
-  };
+  // const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
+  //   e
+  // ) => {
+  //   e.stopPropagation();
+  //   setChecked(!checked);
+  //   setStoredCheckedStatus(!checked);
+  //   chrome.windows.getCurrent((w) => {
+  //     chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
+  //       chrome.tabs.sendMessage(tabs[0].id!, { checked: true }, (response) => {
+  //         console.log(response, response?.data);
+  //       });
+  //     });
+  //   });
+  // };
 
   const refreshData: MouseEventHandler = (e) => {
     e.stopPropagation();
@@ -204,10 +203,10 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
             {constants.welcome} {user?.name.split(' ')[0]}!
           </div>
         </div>
-        <div className='comment-checkbox'>
+        {/* <div className='comment-checkbox'>
           <h4>Enable comments</h4>
           <input type='checkbox' checked={checked} onChange={handleChange} />
-        </div>
+        </div> */}
         <div className='button-list'>
           <Button
             className='lst'
@@ -217,7 +216,6 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
             text={constants.logout}
             onClick={(e: MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
-              setSideOpen(false);
               signOut(setUser);
             }}
             padding='5px 3px'

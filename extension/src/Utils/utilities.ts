@@ -80,10 +80,6 @@ export const getFormattedWordsArray = (
   });
 };
 
-export const colorLog = (...args: any) => {
-  console.log(`%c[qchat]`, 'color: #00d9ff', ...args);
-};
-
 export const getFormattedNumber = (count: number) => {
   return Intl.NumberFormat('en-US', {
     notation: 'compact',
@@ -121,3 +117,38 @@ export const isImageURLValid = async (url: string) => {
     img.onload = () => resolve(true);
   });
 };
+
+export const makeDistortionCurve = (amount: any) => {
+  let k = typeof amount === 'number' ? amount : 50,
+    n_samples = 44100,
+    curve = new Float32Array(n_samples),
+    deg = Math.PI / 180,
+    i = 0,
+    x;
+  for (; i < n_samples; ++i) {
+    x = (i * 2) / n_samples - 1;
+    curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+  }
+  return curve;
+};
+
+export const hexToRgb = (hex: string) => {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
+};
+
+export function createPitchShiftCurve(pitch: number) {
+  const n = 4096; // Number of samples in the curve
+  const curve = new Float32Array(n);
+  const amount = Math.pow(2, pitch / 12);
+  for (let i = 0; i < n; ++i) {
+    curve[i] = (i - n / 2) * amount;
+  }
+  return curve;
+}

@@ -33,7 +33,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
 import { COMMENT } from '../../redux/actionTypes';
-import ChatArea from '../../components/chatArea/chatArea';
+import ChatArea from '../../components/chat-area/chatArea';
 import { IoArrowForwardCircle } from 'react-icons/io5';
 import { MdTagFaces } from 'react-icons/md';
 import { Pic } from '../../extension/components/logout/logout.styles';
@@ -63,6 +63,7 @@ const MessageBox: React.FC<props> = ({
   const movieIdFromRedux = useAppSelector((state) => state.movie.id);
   const userFromRedux = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -219,6 +220,7 @@ const MessageBox: React.FC<props> = ({
       </div>
       <TextAreaPost>
         <div
+          className='text-send'
           onClick={(e: MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.stopPropagation();
@@ -229,7 +231,7 @@ const MessageBox: React.FC<props> = ({
               setReplyClickResponse
             );
           }}>
-          <IoArrowForwardCircle fill='cyan' size={25} />
+          <IoArrowForwardCircle fill={accentColor} size={25} />
         </div>
       </TextAreaPost>
     </ChatTextBox>

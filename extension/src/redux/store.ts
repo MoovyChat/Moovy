@@ -18,6 +18,8 @@ const enhancer = compose(
 export const store = configureStore({
   reducer: rootReducer,
   enhancers: [enhancer],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
 });
 export const persistor = persistStore(store);
 // Infer the `RootState` and `AppDispatch` types from the store itself

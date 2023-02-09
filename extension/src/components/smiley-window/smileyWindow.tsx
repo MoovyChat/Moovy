@@ -3,7 +3,7 @@ import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import EmojiButton from '../emojiPicker/emojiButton/emojiButton';
+import EmojiButton from '../emoji-picker/emojiButton/emojiButton';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import _ from 'lodash';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
