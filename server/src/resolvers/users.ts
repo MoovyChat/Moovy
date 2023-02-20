@@ -112,6 +112,12 @@ class UserResponse {
 class NicKNameFormat {
   @Field()
   name: string;
+  @Field(() => String, { nullable: true })
+  fullname: string;
+  @Field()
+  id: string;
+  @Field()
+  photoUrl: string;
 }
 
 @ObjectType()
@@ -356,14 +362,17 @@ export class UserResolver {
   async getTopThreeUserNames(
     @Arg('search') search: string
   ): Promise<NicKNameFormat[] | null> {
-    const names: NicKNameFormat[] = await conn
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .select('user.nickname', 'name')
-      .where('LOWER(user.nickname) like LOWER(:name)', { name: `%${search}%` })
-      .orderBy('LOWER(user.nickname)', 'ASC')
-      .limit(3)
-      .getRawMany();
+    const userRepository = conn.getRepository(User);
+    const query = `
+  SELECT "user"."id" AS "id", "user"."photoUrl" AS "photoUrl", "user"."nickname" AS "name", "profile"."fullname" AS "fullname"
+  FROM "user" "user" LEFT JOIN "profile" "profile" ON "user"."id" = "profile"."userId" AND ("profile"."deletedAt" IS NULL)
+  WHERE (LOWER("user"."nickname") LIKE LOWER($1)) AND ("user"."deletedAt" IS NULL)
+  ORDER BY LOWER("user"."nickname") ASC
+  LIMIT 3
+`;
+    const names: NicKNameFormat[] = await userRepository.query(query, [
+      `%${search}%`,
+    ]);
     return names;
   }
 
@@ -469,7 +478,6 @@ export class UserResolver {
       .limit(limit)
       .orderBy('r.createdAt', ASC ? 'ASC' : 'DESC')
       .getMany();
-    console.log(comments);
     return {
       user,
       comments,

@@ -25,9 +25,7 @@ class InputArgs {
   @Field()
   nickname: string;
   @Field()
-  firstname: string;
-  @Field()
-  lastname: string;
+  fullname: string;
   @Field()
   bio: string;
   @Field()
@@ -117,7 +115,7 @@ export class ProfileResolver {
   @Query(() => String, { defaultValue: '' })
   async getUserFullName(@Arg('uid') uid: string) {
     let data = await Profile.findOne({ where: { userId: uid } });
-    return `${data?.firstname} ${data?.lastname}`;
+    return `${data?.fullname}`;
   }
 
   // Get the userProfile, fav and liked titles, followers/Following  and History.
@@ -257,8 +255,7 @@ export class ProfileResolver {
         [
           {
             userId: options.uid,
-            firstname: options.firstname,
-            lastname: options.lastname,
+            fullname: options.fullname,
             bio: options.bio,
             gender: options.gender,
             dob: options.dob,

@@ -21,14 +21,9 @@ export class Profile extends BaseEntity {
   userId!: string;
 
   @Index({ fulltext: true })
-  @Field(() => String)
-  @Column()
-  firstname: string;
-
-  @Index({ fulltext: true })
-  @Field(() => String)
-  @Column()
-  lastname: string;
+  @Field(() => String, { defaultValue: '', nullable: true })
+  @Column({ nullable: true, default: '' })
+  fullname: string;
 
   @Field(() => String, { nullable: true })
   @Column()
