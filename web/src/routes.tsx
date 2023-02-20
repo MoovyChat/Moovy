@@ -1,10 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import AboutUs from './pages/about-us/aboutUs';
 import BasicInfo from './pages/profile/basicInfo';
 import Catalog from './pages/catalog/catalog';
 import CommentThread from './pages/commentThread/commentThread';
 import Comments from './pages/comments/comments';
 import CommentsComponent from './pages/comments/commentsComponent';
+import ContactUs from './pages/contact-us/contactUs';
+import CookiePolicy from './pages/cookie-policy/cookiePolicy';
 import DifferentProfile from './pages/profile/differentProfile';
 import EmptyPage from './components/empty-page/emptyPage';
 import FavTitles from './pages/favorites/favTitles';
@@ -16,6 +19,7 @@ import MoviesCatalog from './pages/catalog/moviesCatalog';
 import NotFound from './pages/notFound/notFound';
 import Notifications from './pages/notifications/NotificationsModule';
 import Premium from './pages/premium/premium';
+import PrivacyPolicy from './pages/privacy-policy/privacyPolicy';
 import Replies from './pages/comments/replies';
 import ReplyThread from './pages/commentThread/replyThread';
 import SearchEpisodes from './pages/search-results/search-episodes';
@@ -27,6 +31,7 @@ import ShowsCatalog from './pages/catalog/showsCatalog';
 import ShowsThread from './pages/shows-thread/showsThread';
 import ShowsThreadComponent from './pages/shows-thread/showsThreadParent.component';
 import SplashScreen from './pages/splash-screen/splashScreen';
+import TermsAndConditions from './pages/terms-and-conditions/termsAndConditions';
 import VisitedTitles from './pages/favorites/visitedTitles';
 import { urqlClient } from './utils/urlClient';
 import { withUrqlClient } from 'next-urql';
@@ -99,6 +104,11 @@ const HomeRouter = () => {
           </Route>
           <Route path='*' element={<NotFound />} />
         </Route>
+        <Route path='/privacy' element={<PrivacyPolicy />} />
+        <Route path='/about-us' element={<AboutUs />} />
+        <Route path='/contact' element={<ContactUs />} />
+        <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
+        <Route path='/cookie-policy' element={<CookiePolicy />} />
         <Route path='/premium' element={<Premium />} />
         {/* <Route path='/welcome' element={<App />} /> */}
       </Routes>

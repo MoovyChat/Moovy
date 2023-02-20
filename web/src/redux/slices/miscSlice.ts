@@ -5,6 +5,7 @@ import { themes } from '../../constants';
 export const miscState = {
   isNavBarOpen: false,
   emojiSearchValue: '',
+  dominantColor: '',
   emojiGroupActive: {
     0: true,
     1: true,
@@ -29,6 +30,9 @@ const MiscSlice = createSlice({
     sliceSetNavBar: (state, action: { payload: boolean }) => {
       return { ...state, isNavBarOpen: action.payload };
     },
+    sliceSetDominantColor: (state, action) => {
+      return { ...state, dominantColor: action.payload };
+    },
     sliceSetEmojiSearchValue: (state, action) => {
       return { ...state, emojiSearchValue: action.payload };
     },
@@ -47,6 +51,7 @@ const MiscSlice = createSlice({
 
 export const {
   sliceSetNavBar,
+  sliceSetDominantColor,
   sliceSetEmojiSearchValue,
   sliceSetEmojiGroupActive,
 } = MiscSlice.actions;

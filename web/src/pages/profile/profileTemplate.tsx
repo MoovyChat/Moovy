@@ -94,9 +94,7 @@ const ProfileTemplate: React.FC<props> = ({
           </div>
           <div className='user-info'>
             <div className='name'>
-              <span className='main'>
-                {profile?.firstname} {profile?.lastname}
-              </span>
+              <span className='main'>{profile?.fullname}</span>
               <span className='us'>@{user.nickname}</span>
               {!isDifferentUser && (
                 <span className='i' onClick={editProfileHandler}>

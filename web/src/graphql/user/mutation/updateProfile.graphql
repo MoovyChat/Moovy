@@ -1,13 +1,5 @@
 mutation updateProfile($options: InputArgs!) {
   upsertProfile(options: $options) {
-    bio
-    userId
-    updatedAt
-    lastname
-    gender
-    firstname
-    dob
-    createdAt
-    deletedAt
+    ...FullProfile
   }
 }

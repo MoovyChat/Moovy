@@ -32,10 +32,10 @@ export const getTimeFrame = (postTime: string) => {
         finalString = `${noOfHours}h`;
       }
     } else {
-      finalString = `${noOfDays}d`;
+      finalString = `${getShortDateFormat(postTime)}`;
     }
   } else {
-    finalString = `${noOfYears}y`;
+    finalString = `${getShortDateFormat(postTime)}`;
   }
   return finalString;
 };

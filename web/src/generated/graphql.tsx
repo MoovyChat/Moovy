@@ -168,9 +168,8 @@ export type HistoryObject = {
 export type InputArgs = {
   bio: Scalars['String'];
   dob: Scalars['String'];
-  firstname: Scalars['String'];
+  fullname: Scalars['String'];
   gender: Scalars['String'];
-  lastname: Scalars['String'];
   nickname: Scalars['String'];
   uid: Scalars['String'];
 };
@@ -241,7 +240,10 @@ export type LinkPreview = {
   __typename?: 'LinkPreview';
   description?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
+  isVideo?: Maybe<Scalars['Boolean']>;
   title?: Maybe<Scalars['String']>;
+  videoSrc?: Maybe<Scalars['String']>;
+  videoType?: Maybe<Scalars['String']>;
 };
 
 export type MiniCommentFormat = {
@@ -546,7 +548,9 @@ export type MutationUpsertProfileArgs = {
 
 export type NicKNameFormat = {
   __typename?: 'NicKNameFormat';
+  id: Scalars['String'];
   name: Scalars['String'];
+  photoUrl: Scalars['String'];
 };
 
 export type NickNameResponse = {
@@ -645,9 +649,8 @@ export type Profile = {
   createdAt: Scalars['String'];
   deletedAt?: Maybe<Scalars['String']>;
   dob?: Maybe<Scalars['String']>;
-  firstname: Scalars['String'];
+  fullname?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
-  lastname: Scalars['String'];
   updatedAt: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -1312,6 +1315,8 @@ export type FullCommentFragment = { __typename: 'Comment', id: string, commented
 
 export type FullMovieFragment = { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null };
 
+export type FullProfileFragment = { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string };
+
 export type FullReplyFragment = { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
 
 export type FullUserFragment = { __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null };
@@ -1464,7 +1469,7 @@ export type GetLinkPreviewQueryVariables = Exact<{
 }>;
 
 
-export type GetLinkPreviewQuery = { __typename?: 'Query', getLinkPreview?: { __typename?: 'LinkPreview', description?: string | null, image?: string | null, title?: string | null } | null };
+export type GetLinkPreviewQuery = { __typename?: 'Query', getLinkPreview?: { __typename?: 'LinkPreview', description?: string | null, image?: string | null, title?: string | null, isVideo?: boolean | null, videoSrc?: string | null, videoType?: string | null } | null };
 
 export type GetUserViewHistoryQueryVariables = Exact<{
   page: Scalars['Float'];
@@ -1663,7 +1668,7 @@ export type UpdateProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProfileMutation = { __typename?: 'Mutation', upsertProfile?: { __typename?: 'Profile', bio?: string | null, userId: string, updatedAt: string, lastname: string, gender?: string | null, firstname: string, dob?: string | null, createdAt: string, deletedAt?: string | null } | null };
+export type UpdateProfileMutation = { __typename?: 'Mutation', upsertProfile?: { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string } | null };
 
 export type GetCommentedUserQueryVariables = Exact<{
   cid: Scalars['String'];
@@ -1704,7 +1709,7 @@ export type GetUserMiniProfileQueryVariables = Exact<{
 }>;
 
 
-export type GetUserMiniProfileQuery = { __typename?: 'Query', getFullUserProfile?: { __typename?: 'FullMiniUser', id: string, followers?: { __typename?: 'FollowerObject', followerCount: number, id: string, followers?: Array<{ __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, following?: { __typename?: 'FollowingObject', followingCount: number, id: string, following?: Array<{ __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, history?: { __typename?: 'HistoryObject', historyCount: number, id: string, history?: Array<{ __typename?: 'Visited', history: Array<string>, deletedAt?: string | null, createdAt: string, movieId: string, updatedAt: string, userId: string, visitCount?: number | null }> | null, recentMovies?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null, profile?: { __typename?: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, firstname: string, gender?: string | null, lastname: string, updatedAt: string, userId: string } | null, likes?: { __typename?: 'LikesMObject', likesCount: number, id: string, likes?: Array<{ __typename?: 'Movie', id: string, likesCount: number, name: string, parentTitleName?: string | null, platformId: number, runtime?: number | null, season?: string | null, stills?: string | null, synopsis?: string | null, thumbs?: string | null, viewsCount: number, year?: number | null, updatedAt: string, titleId: string, commentCount: number, createdAt: string, deletedAt?: string | null, favCount: number }> | null } | null, favorites?: { __typename?: 'FavoriteObject', favCount: number, id: string, favorites?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null } | null };
+export type GetUserMiniProfileQuery = { __typename?: 'Query', getFullUserProfile?: { __typename?: 'FullMiniUser', id: string, followers?: { __typename?: 'FollowerObject', followerCount: number, id: string, followers?: Array<{ __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, following?: { __typename?: 'FollowingObject', followingCount: number, id: string, following?: Array<{ __typename: 'User', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, history?: { __typename?: 'HistoryObject', historyCount: number, id: string, history?: Array<{ __typename?: 'Visited', history: Array<string>, deletedAt?: string | null, createdAt: string, movieId: string, updatedAt: string, userId: string, visitCount?: number | null }> | null, recentMovies?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null, profile?: { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string } | null, likes?: { __typename?: 'LikesMObject', likesCount: number, id: string, likes?: Array<{ __typename?: 'Movie', id: string, likesCount: number, name: string, parentTitleName?: string | null, platformId: number, runtime?: number | null, season?: string | null, stills?: string | null, synopsis?: string | null, thumbs?: string | null, viewsCount: number, year?: number | null, updatedAt: string, titleId: string, commentCount: number, createdAt: string, deletedAt?: string | null, favCount: number }> | null } | null, favorites?: { __typename?: 'FavoriteObject', favCount: number, id: string, favorites?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null } | null };
 
 export type GetUserQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -1732,7 +1737,7 @@ export type GetUserProfileQueryVariables = Exact<{
 }>;
 
 
-export type GetUserProfileQuery = { __typename?: 'Query', getUserProfile?: { __typename?: 'Profile', userId: string, firstname: string, lastname: string, dob?: string | null, bio?: string | null, gender?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
+export type GetUserProfileQuery = { __typename?: 'Query', getUserProfile?: { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string } | null };
 
 export type IsFollowingUserQueryVariables = Exact<{
   fid: Scalars['String'];
@@ -1841,6 +1846,19 @@ export const FullMovieFragmentDoc = gql`
   stills
   synopsis
   year
+}
+    `;
+export const FullProfileFragmentDoc = gql`
+    fragment FullProfile on Profile {
+  __typename
+  bio
+  createdAt
+  deletedAt
+  dob
+  fullname
+  gender
+  updatedAt
+  userId
 }
     `;
 export const FullReplyFragmentDoc = gql`
@@ -2330,6 +2348,9 @@ export const GetLinkPreviewDocument = gql`
     description
     image
     title
+    isVideo
+    videoSrc
+    videoType
   }
 }
     `;
@@ -2708,18 +2729,10 @@ export function useToggleFollowMutation() {
 export const UpdateProfileDocument = gql`
     mutation updateProfile($options: InputArgs!) {
   upsertProfile(options: $options) {
-    bio
-    userId
-    updatedAt
-    lastname
-    gender
-    firstname
-    dob
-    createdAt
-    deletedAt
+    ...FullProfile
   }
 }
-    `;
+    ${FullProfileFragmentDoc}`;
 
 export function useUpdateProfileMutation() {
   return Urql.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument);
@@ -2840,15 +2853,7 @@ export const GetUserMiniProfileDocument = gql`
       id
     }
     profile {
-      bio
-      createdAt
-      deletedAt
-      dob
-      firstname
-      gender
-      lastname
-      updatedAt
-      userId
+      ...FullProfile
     }
     likes {
       likesCount
@@ -2900,7 +2905,8 @@ export const GetUserMiniProfileDocument = gql`
     }
   }
 }
-    ${FullUserFragmentDoc}`;
+    ${FullUserFragmentDoc}
+${FullProfileFragmentDoc}`;
 
 export function useGetUserMiniProfileQuery(options: Omit<Urql.UseQueryArgs<GetUserMiniProfileQueryVariables>, 'query'>) {
   return Urql.useQuery<GetUserMiniProfileQuery, GetUserMiniProfileQueryVariables>({ query: GetUserMiniProfileDocument, ...options });
@@ -2939,18 +2945,10 @@ export function useGetUserFullNameQuery(options: Omit<Urql.UseQueryArgs<GetUserF
 export const GetUserProfileDocument = gql`
     query GetUserProfile($uid: String!) {
   getUserProfile(uid: $uid) {
-    userId
-    firstname
-    lastname
-    dob
-    bio
-    gender
-    createdAt
-    updatedAt
-    deletedAt
+    ...FullProfile
   }
 }
-    `;
+    ${FullProfileFragmentDoc}`;
 
 export function useGetUserProfileQuery(options: Omit<Urql.UseQueryArgs<GetUserProfileQueryVariables>, 'query'>) {
   return Urql.useQuery<GetUserProfileQuery, GetUserProfileQueryVariables>({ query: GetUserProfileDocument, ...options });

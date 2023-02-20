@@ -1,9 +1,12 @@
 export interface Profile {
-  firstName: string;
-  lastName: string;
+  userId: string;
+  fullname: string;
   dob: string;
   gender: string;
   bio?: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
 }
 
 export interface Comment {

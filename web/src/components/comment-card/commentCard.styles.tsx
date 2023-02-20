@@ -111,11 +111,12 @@ export const CardParent = styled.div<props>`
           .time {
             display: flex;
             justify-content: center;
-            height: 80%;
             align-items: flex-end;
+            height: 80%;
             font-weight: 600;
             font-size: 0.7em;
             margin-left: 5px;
+            opacity: 0.6;
           }
         }
         .isReply {

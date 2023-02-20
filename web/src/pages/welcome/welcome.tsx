@@ -1,14 +1,63 @@
 import './welcome.css';
 
 import Dark from '../../static/images/dark-chat.png';
-import DisplayPlatforms from '../../components/display-platforms/displayPlatforms';
+import Features from './features/features';
+import Footer from './footer/footer';
 import { Image } from '../../components/Image/image';
+import InstallationGuide from './installation-guide/installationGuide';
 import Light from '../../static/images/light-chat.png';
+import { LogoSet } from '../../components/display-platforms/displayPlatforms';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
+import Screenshots from './screenshots/screenshots';
 import { WelcomeParent } from './welcome.styles';
 import { home } from '../../constants';
+import { useEffect } from 'react';
 
+export const streamingServices = [
+  {
+    title: 'Netflix',
+    imgUrl:
+      'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI',
+    color: '#E50915',
+    home: 'https://www.netflix.com/',
+    status: 'Available',
+  },
+  {
+    title: 'Disney+',
+    imgUrl:
+      'https://play-lh.googleusercontent.com/xoGGYH2LgLibLDBoxMg-ZE16b-RNfITw_OgXBWRAPin2FZY4FGB9QKBYApR-0rSCkQ=w240-h480-rw',
+    color: '#022B78',
+    home: 'https://www.disneyplus.com/home',
+    status: 'Available soon',
+  },
+  {
+    title: 'Hulu',
+    imgUrl:
+      'https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/bk8cux6dapq8qjzylfaj',
+    color: '#21E684',
+    home: 'https://www.hulu.com/',
+    status: 'Available soon',
+  },
+  {
+    title: 'HBO Max',
+    imgUrl:
+      'https://play-lh.googleusercontent.com/1iyX7VdQ7MlM7iotI9XDtTwgiVmqFGzqwz10L67XVoyiTmJVoHX87QtqvcXgUnb0AC8',
+    color: '#370766',
+    home: 'https://www.hbomax.com/',
+    status: 'Available soon',
+  },
+  {
+    title: 'Amazon Prime Video',
+    imgUrl: 'https://images-na.ssl-images-amazon.com/images/I/41mpv9rBhmL.png',
+    color: '#2b9ec1',
+    home: 'https://www.amazon.com/gp/video/storefront/',
+    status: 'Available soon',
+  },
+];
 const Welcome = () => {
+  useEffect(() => {
+    document.title = 'Moovy';
+  }, []);
   return (
     <WelcomeParent>
       <div className='custom-shape-divider-top-1672047931'>
@@ -36,21 +85,32 @@ const Welcome = () => {
           </div>
         </div>
         <div className='heading'>
-          <div className='company'>MoovyChat is here</div>
+          <div className='company'>
+            <p>Supported Platforms</p>
+            <span className='supported-platforms'>
+              {streamingServices.map(
+                (platform) =>
+                  platform.title === 'Netflix' && (
+                    <LogoSet platform={platform} key={platform.title} />
+                  )
+              )}
+            </span>
+          </div>
           <div className='text'>{home.heading}</div>
           <div className='sub'>{home.sub}</div>
           <div className='sub2'>{home.sub2}</div>
           <div className='get-started'>
             <div className='fill'></div>
-            <label>Get Started</label>
+            <label>Install Extension</label>
             <RiArrowRightCircleFill size={25} />
           </div>
         </div>
+        <div className='embed'>MOOVY</div>
       </div>
-      <div className='supported'>
-        <label className='supported-text'>{home.supported}</label>
-        <DisplayPlatforms />
-      </div>
+      <Screenshots id='screenshots' />
+      <Features id='features' />
+      <InstallationGuide id='install-guide' />
+      <Footer id='footer' />
     </WelcomeParent>
   );
 };

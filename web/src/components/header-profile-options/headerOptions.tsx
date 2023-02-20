@@ -24,9 +24,6 @@ const HeaderOptions = () => {
     e.stopPropagation();
     navigate(`/profile/${user.nickname}`);
   };
-  const syncExtensionHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-  };
   const logOutHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     logout({}).then((res) => {
@@ -46,8 +43,8 @@ const HeaderOptions = () => {
     <StyledHeaderOptions>
       <div className='us'>
         <div className='full'>
-          {profile.firstname !== ''
-            ? `${profile.firstname} ${profile.lastname}`
+          {profile.fullname !== ''
+            ? `${profile.fullname}`
             : userFullName.data?.getUserFullName}
         </div>
         <div className='nick'>@{user.nickname}</div>
@@ -68,7 +65,6 @@ const HeaderOptions = () => {
         className='option'
         onClick={(e) => {
           e.stopPropagation();
-          console.log('syn');
         }}
         id='sync-login'>
         <div className='icon'>

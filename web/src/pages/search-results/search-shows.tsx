@@ -1,12 +1,11 @@
-import React, { useMemo, useRef, useState } from 'react';
 import { Title, useSearchTitlesQuery } from '../../generated/graphql';
+import { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CatalogParent } from '../catalog/catalog.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
 import TitleCard from '../catalog/titleCard';
-import { title } from 'process';
 
 const SearchShows = () => {
   const { search } = useParams();
@@ -33,10 +32,21 @@ const SearchShows = () => {
     }
   }, [data, fetching, error, search]);
 
+  // Scroll handler.
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      if (page !== lastPage) {
+        setPage((page) => page + 1);
+      }
+    }
+  };
+
   if (fetching) return <Loading />;
   if (titles.length <= 0) return <EmptyPage msg='No Shows found' />;
   return (
-    <CatalogParent ref={parentRef}>
+    <CatalogParent ref={parentRef} onScroll={handleScroll}>
       {titles &&
         titles.map((title, index) => (
           <TitleCard

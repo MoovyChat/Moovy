@@ -375,3 +375,111 @@ export const getUserViewHistoryResolver = (): Resolver => {
     return newData;
   };
 };
+
+export const getPaginatedSearchTitles = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    let newTitles = [] as string[];
+    let _page = 0;
+    let _lastPage = 0;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      if (args.search !== fieldArgs.search) return;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const titles = cache.resolve(link, 'titles') as string[];
+      _lastPage = cache.resolve(link, 'lastPage') as number;
+      _page = cache.resolve(link, 'page') as number;
+      newTitles = _.concat(newTitles, titles);
+      newTitles = _.uniq(newTitles);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: 'SearchTitleObject',
+      page: _page,
+      lastPage: _lastPage,
+      titles: newTitles,
+    };
+    return newData;
+  };
+};
+
+export const getPaginatedSearchEpisodes = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    let newTitles = [] as string[];
+    let _page = 0;
+    let _lastPage = 0;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      if (args.search !== fieldArgs.search) return;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const titles = cache.resolve(link, 'movies') as string[];
+      _lastPage = cache.resolve(link, 'lastPage') as number;
+      _page = cache.resolve(link, 'page') as number;
+      newTitles = _.concat(newTitles, titles);
+      newTitles = _.uniq(newTitles);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: 'SearchMovieObject',
+      page: _page,
+      lastPage: _lastPage,
+      movies: newTitles,
+    };
+    return newData;
+  };
+};
+
+export const getPaginatedSearchPeople = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(
+      (info: any) => info.fieldName === fieldName
+    );
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    let newPeople = [] as string[];
+    let _page = 0;
+    let _lastPage = 0;
+    fieldInfos.forEach((fieldInfo: any) => {
+      const { fieldKey, arguments: args } = fieldInfo;
+      if (args.search !== fieldArgs.search) return;
+      const link = cache.resolve(entityKey, fieldKey) as string;
+      const people = cache.resolve(link, 'people') as string[];
+      _lastPage = cache.resolve(link, 'lastPage') as number;
+      _page = cache.resolve(link, 'page') as number;
+      newPeople = _.concat(newPeople, people);
+      newPeople = _.uniq(newPeople);
+    });
+    info.partial = true;
+    let newData = {
+      __typename: 'SearchPeopleObject',
+      page: _page,
+      lastPage: _lastPage,
+      people: newPeople,
+    };
+    return newData;
+  };
+};

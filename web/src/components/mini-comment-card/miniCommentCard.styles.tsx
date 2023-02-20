@@ -38,6 +38,7 @@ export const StyledMiniCommentCard = styled.div<props>`
       gap: 10px;
       .time {
         font-size: 0.6em;
+        opacity: 0.6;
       }
     }
     .msg {

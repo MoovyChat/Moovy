@@ -3,5 +3,8 @@ query GetLinkPreview($url: String!) {
     description
     image
     title
+    isVideo
+    videoSrc
+    videoType
   }
 }

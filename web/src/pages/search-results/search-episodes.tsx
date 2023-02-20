@@ -1,5 +1,5 @@
 import { Movie, useSearchEpisodesQuery } from '../../generated/graphql';
-import { useMemo, useState } from 'react';
+import { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EmptyPage from '../../components/empty-page/emptyPage';
@@ -11,6 +11,8 @@ import { SearchTitles } from './searchResults.styles';
 
 const SearchEpisodes = () => {
   const { search } = useParams();
+  const listRef = useRef<any>(null);
+  const parentRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
@@ -33,10 +35,21 @@ const SearchEpisodes = () => {
     }
   }, [data, fetching, error, search]);
 
+  // Scroll handler.
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      if (page !== lastPage) {
+        setPage((page) => page + 1);
+      }
+    }
+  };
+
   if (fetching) return <Loading />;
   if (titles.length <= 0) return <EmptyPage msg='No Episodes found' />;
   return (
-    <SearchTitles>
+    <SearchTitles onScroll={handleScroll}>
       {titles.map((movie) => (
         <MovieCardParent
           bg={movie?.stills!}

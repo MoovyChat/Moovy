@@ -19,7 +19,7 @@ export const lightTheme: ThemeProps = {
   background: '#ffffff',
 };
 export const darkTheme: ThemeProps = {
-  body: '#531616',
+  body: 'linear-gradient(180deg, #750e0e 10%,#0a0a0a 30%,#000000 55%, #0e756b 70%);',
   text: '#FAFAFA',
   toggleBorder: '#6B8096',
   background: '#000000',

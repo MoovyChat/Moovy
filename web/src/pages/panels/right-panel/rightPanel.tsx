@@ -109,12 +109,41 @@ const RightPanel: React.FC<props> = ({ className }) => {
         </div>
       </div> */}
       <div className='links'>
-        <div>Terms of Service</div>
-        <div>Privacy Policy</div>
-        <div>Cookie Policy</div>
-        <div>EULA</div>
-        <div>About us</div>
-        <div>Contact us</div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/terms-and-conditions', '_blank');
+          }}>
+          Terms of Service
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/privacy', '_blank');
+          }}>
+          Privacy Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/cookie-policy', '_blank');
+          }}>
+          Cookie Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/about-us', '_blank');
+          }}>
+          About us
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/contact', '_blank');
+          }}>
+          Contact us
+        </div>
         <div>© 2023 MoovyChat, Ltd.</div>
       </div>
     </RightParent>
