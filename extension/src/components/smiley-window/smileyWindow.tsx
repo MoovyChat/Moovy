@@ -1,10 +1,22 @@
+import {
+  BUY_ME_A_COFFEE,
+  DISCORD_INVITE_LINK,
+  EXT_URL,
+  INSTAGRAM_LINK,
+  PATREON,
+  TIKTOK_LINK,
+  TWITTER_LINK,
+} from '../../constants';
 import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import EmojiButton from '../emoji-picker/emojiButton/emojiButton';
+import { NameObject } from '../../Utils/interfaces';
+import { Profile } from '../../contentScript/commentInterface/commentInterface.styles';
 import { SmileyWindowParent } from './smileyWindow.styles';
+import TinyUserCard from '../tiny-user-card/tinyUserCard';
 import _ from 'lodash';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -17,6 +29,9 @@ const SmileyWindow = () => {
   const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
     (state) => state.textArea.wordSuggestions
+  );
+  const nameSuggestions: NameObject[] = useAppSelector(
+    (state) => state.textArea.nameSuggestions
   );
   const ems = useLiveQuery(() => {
     if (db.frequent) return db.frequent.toArray();
@@ -56,15 +71,22 @@ const SmileyWindow = () => {
     dispatch(sliceSetTextAreaMessage(msgArr.join(' ')));
   };
 
+  const handleName = (username: string) => {
+    let msgArr = textAreaMessage.split(' ');
+    msgArr.pop();
+    msgArr.push(`@${username}`);
+    dispatch(sliceSetTextAreaMessage(msgArr.join(' ')));
+  };
+
   return (
     <React.Fragment>
       {textAreaFocussed && (
         <SmileyWindowParent>
           <div className='child'>
-            {wordSuggestions.length > 0 && (
+            {(wordSuggestions.length > 0 || nameSuggestions.length > 0) && (
               <div className='section'>
                 <div className='title'>Suggestions</div>
-                <div className='suggestions'>
+                <div className='wn-suggestions'>
                   {wordSuggestions.slice(0, 3).map((word, key) => (
                     <div
                       id='text-focus'
@@ -72,6 +94,18 @@ const SmileyWindow = () => {
                       key={word}
                       onClick={handleWord}>
                       {word}
+                    </div>
+                  ))}
+                  {nameSuggestions.slice(0, 3).map((name, key) => (
+                    <div
+                      id='text-focus'
+                      className='word'
+                      key={name.name}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleName(name.name);
+                      }}>
+                      <TinyUserCard name={name} />
                     </div>
                   ))}
                 </div>
@@ -121,26 +155,90 @@ const SmileyWindow = () => {
             <div className='section'>
               <div className='title'>Socials</div>
               <div className='socials'>
-                <div className='discord'>
-                  <FaDiscord color='cornflowerblue' size={iconSize} />
+                <div
+                  id='text-focus'
+                  className='discord'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(DISCORD_INVITE_LINK, '_blank');
+                  }}>
+                  <FaDiscord
+                    color='cornflowerblue'
+                    size={iconSize}
+                    id='text-focus'
+                  />
                 </div>
-                <div className='twitter'>
-                  <FaTwitter color='deepskyblue' size={iconSize} />
+                <div
+                  className='twitter'
+                  id='text-focus'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(TWITTER_LINK, '_blank');
+                  }}>
+                  <FaTwitter
+                    color='deepskyblue'
+                    size={iconSize}
+                    id='text-focus'
+                  />
                 </div>
-                <div className='tiktok'>
-                  <FaTiktok className='icon' size={iconSize} />
+                <div
+                  className='tiktok'
+                  id='text-focus'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(TIKTOK_LINK, '_blank');
+                  }}>
+                  <FaTiktok className='icon' size={iconSize} id='text-focus' />
                 </div>
-                <div className='instagram'>
-                  <FaInstagram color='hotpink' size={iconSize} />
+                <div
+                  className='instagram'
+                  id='text-focus'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(INSTAGRAM_LINK, '_blank');
+                  }}>
+                  <FaInstagram
+                    color='hotpink'
+                    size={iconSize}
+                    id='text-focus'
+                  />
                 </div>
               </div>
-              {/* <div className='section'>
+              <div className='section'>
                 <div className='title'>Donate & Support</div>
                 <div className='donate'>
-                  <div className='patreon'>Patreon</div>
-                  <div className='stripe'>Stripe</div>
+                  <div
+                    className='patreon'
+                    id='text-focus'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(PATREON, '_blank');
+                    }}>
+                    <div className='logo' id='text-focus'>
+                      <img
+                        src={`${EXT_URL}/patreon-word.png`}
+                        alt='patreon'
+                        id='text-focus'
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className='patreon'
+                    id='text-focus'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(BUY_ME_A_COFFEE, '_blank');
+                    }}>
+                    <div className='logo' id='text-focus'>
+                      <img
+                        src={`${EXT_URL}/bmc.png`}
+                        alt='bmc'
+                        id='text-focus'
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </SmileyWindowParent>

@@ -13,7 +13,8 @@ export const SmileyWindowParent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   .child {
     padding: 20px;
     width: 99%;
@@ -33,7 +34,7 @@ export const SmileyWindowParent = styled.div`
       .title {
         padding: 10px;
       }
-      .suggestions {
+      .wn-suggestions {
         width: 100%;
         display: flex;
         justify-content: space-evenly;
@@ -55,6 +56,19 @@ export const SmileyWindowParent = styled.div`
         width: 100%;
         flex-wrap: wrap;
         justify-content: space-evenly;
+      }
+      .donate {
+        .patreon {
+          display: flex;
+          .logo {
+            width: 100px;
+            cursor: pointer;
+            img {
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+        }
       }
       .emoji-child {
         flex: 1 0 20%;

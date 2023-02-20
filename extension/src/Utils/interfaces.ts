@@ -96,6 +96,14 @@ export interface filterType {
   isSelected?: boolean;
 }
 
+export interface NameObject {
+  __typename?: 'NicKNameFormat' | undefined;
+  id: string;
+  name: string;
+  fullname?: string | null | undefined;
+  photoUrl: string;
+}
+
 export interface videoFilterSettings {
   grayscale?: string;
   contrast?: string;

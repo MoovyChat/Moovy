@@ -1,9 +1,18 @@
+import { NameObject } from '../../../Utils/interfaces';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const textAreaState = {
+type textAreaTypes = {
+  text: string;
+  isTextAreaFocused: boolean;
+  isTextAreaClicked: boolean;
+  nameSuggestions: NameObject[];
+  wordSuggestions: string[];
+};
+export const textAreaState: textAreaTypes = {
   text: '',
   isTextAreaFocused: false,
   isTextAreaClicked: false,
+  nameSuggestions: [],
   wordSuggestions: [],
 };
 
@@ -23,6 +32,9 @@ const TextAreaSlice = createSlice({
     sliceSetWordSuggestions: (state, action) => {
       return { ...state, wordSuggestions: action.payload };
     },
+    sliceSetNameSuggestions: (state, action) => {
+      return { ...state, nameSuggestions: action.payload };
+    },
   },
 });
 
@@ -31,5 +43,6 @@ export const {
   sliceSetIsTextAreaFocused,
   sliceSetIsTextAreaClicked,
   sliceSetWordSuggestions,
+  sliceSetNameSuggestions,
 } = TextAreaSlice.actions;
 export default TextAreaSlice.reducer;

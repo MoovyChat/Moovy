@@ -187,6 +187,7 @@ export const SpoilerTag = styled.span`
 
 export const MessageParent = styled.span`
   white-space: pre-line;
+  word-break: break-word;
   .time,
   .user {
     ${commentStyleMixin()};

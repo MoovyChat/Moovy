@@ -1,4 +1,10 @@
 import { ChatAreaParent, Parent } from './chatArea.styles';
+import {
+  NameObject,
+  User,
+  globalUIStyles,
+  textMap,
+} from '../../Utils/interfaces';
 import React, {
   Dispatch,
   FocusEventHandler,
@@ -7,10 +13,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { User, globalUIStyles, textMap } from '../../Utils/interfaces';
 import {
   sliceSetIsTextAreaClicked,
   sliceSetIsTextAreaFocused,
+  sliceSetNameSuggestions,
   sliceSetTextAreaMessage,
   sliceSetWordSuggestions,
 } from '../../redux/slices/textArea/textAreaSlice';
@@ -99,8 +105,13 @@ const ChatArea: React.FC<props> = ({
   useEffect(() => {
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
-      let target = e.target as any;
-      if (target && (target.id === 'comment' || target.id === 'text-focus')) {
+      let target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.id === 'comment' ||
+          target.id === 'text-focus' ||
+          target.tagName === 'path')
+      ) {
         dispatch(sliceSetIsTextAreaClicked(true));
         dispatch(sliceSetIsTextAreaFocused(true));
       } else {
@@ -142,14 +153,14 @@ const ChatArea: React.FC<props> = ({
   };
 
   useEffect(() => {
-    const scrollHeight = ref.current?.offsetHeight!;
-    setTextAreaHeight(scrollHeight);
+    let scrollHeight = ref.current?.offsetHeight!;
+    setTextAreaHeight(() => scrollHeight);
     if (!text) setTextAreaHeight(17);
     var objDiv = document.getElementById('text-area-background');
     if (textAreaRef.current && objDiv && ref.current) {
       ref.current.scrollTop = textAreaRef.current.scrollTop!;
     }
-  }, [text, textAreaRef.current, ref.current]);
+  }, [text, textAreaRef.current, ref.current, formattedTextMap]);
 
   useEffect(() => {
     let res = getFormattedWordsArray(
@@ -179,12 +190,9 @@ const ChatArea: React.FC<props> = ({
         const { data, error } = res;
         if (error) console.log(error);
         if (data) {
-          const names: { name: string }[] = data?.getTopThreeUserNames!;
-          let refined: string[] = [];
-          for (let key in names) {
-            refined.push(`@${names[key]['name']}`);
-          }
-          dispatch(sliceSetWordSuggestions(refined));
+          const names: NameObject[] = data?.getTopThreeUserNames!;
+          dispatch(sliceSetNameSuggestions(names));
+          dispatch(sliceSetWordSuggestions([]));
         }
       });
     } else {
@@ -219,6 +227,7 @@ const ChatArea: React.FC<props> = ({
             firstWordSuggestions,
             secondWordSuggestions
           );
+          dispatch(sliceSetNameSuggestions([]));
           dispatch(sliceSetWordSuggestions(suggestions));
         });
     }

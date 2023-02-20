@@ -3,7 +3,6 @@ import {
   CustomBorder,
   FilterView,
   OptionGroup,
-  PresetFilter,
   VideoParent,
 } from './videoStyles.styles';
 import {
@@ -15,19 +14,12 @@ import {
 } from 'react';
 import {
   MdAdd,
-  MdAudiotrack,
   MdBuild,
   MdFilterAlt,
   MdOutlineWbIridescent,
 } from 'react-icons/md';
 import _, { debounce } from 'lodash';
-import {
-  addBorder,
-  applyFilter,
-  borders,
-  filters,
-  presetFilters,
-} from './videoStyles.help';
+import { addBorder, applyFilter, borders, filters } from './videoStyles.help';
 import {
   borderType,
   filterType,
@@ -55,12 +47,9 @@ import {
 } from '../../redux/slices/misc/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import AudioVisualizer from '../../components/audio-visualizer/audioVisualizer';
-import SelectDropDown from '../../components/select/select';
 import Slider from '../../components/slider/slider';
 import { defaultVideoValues } from '../../Utils/defaultValues';
 import { getVideoElement } from '../contentScript.utils';
-import { sliceSetManipulation } from '../../redux/slices/videoManipulation';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
 
 const VideoStyles = () => {
@@ -94,7 +83,8 @@ const VideoStyles = () => {
     hue: '0',
   });
 
-  useEffect(() => {
+  /**
+   useEffect(() => {
     const {
       stereo,
       gain,
@@ -116,6 +106,7 @@ const VideoStyles = () => {
       setIsNodesValid(() => false);
     } else setIsNodesValid(() => true);
   }, [nodes]);
+  */
 
   useEffect(() => {
     // Get stored is Filter open boolean value.
@@ -222,53 +213,53 @@ const VideoStyles = () => {
     step: 1,
   };
 
-  let distortionFilter: filterType = {
-    title: 'Distortion',
-    defaultValue: 0,
-    min: 0,
-    max: 99,
-    step: 1,
-  };
+  // let distortionFilter: filterType = {
+  //   title: 'Distortion',
+  //   defaultValue: 0,
+  //   min: 0,
+  //   max: 99,
+  //   step: 1,
+  // };
 
-  let playbackFilter: filterType = {
-    title: 'Playback speed',
-    defaultValue: 1,
-    min: 1,
-    max: 15,
-    step: 1,
-  };
+  // let playbackFilter: filterType = {
+  //   title: 'Playback speed',
+  //   defaultValue: 1,
+  //   min: 1,
+  //   max: 15,
+  //   step: 1,
+  // };
 
-  let QValueFilter: filterType = {
-    title: 'Quality Factor',
-    defaultValue: 0,
-    min: 0,
-    max: 100,
-    step: 2,
-  };
+  // let QValueFilter: filterType = {
+  //   title: 'Quality Factor',
+  //   defaultValue: 0,
+  //   min: 0,
+  //   max: 100,
+  //   step: 2,
+  // };
 
-  let StereoFilter: filterType = {
-    title: 'Stereo',
-    defaultValue: 0,
-    min: -1,
-    max: 1,
-    step: 1,
-  };
+  // let StereoFilter: filterType = {
+  //   title: 'Stereo',
+  //   defaultValue: 0,
+  //   min: -1,
+  //   max: 1,
+  //   step: 1,
+  // };
 
-  let AudioFrequency: filterType = {
-    title: 'Audio Frequency',
-    defaultValue: 24000,
-    min: 0,
-    max: 24000,
-    step: 1000,
-  };
+  // let AudioFrequency: filterType = {
+  //   title: 'Audio Frequency',
+  //   defaultValue: 24000,
+  //   min: 0,
+  //   max: 24000,
+  //   step: 1000,
+  // };
 
-  let AudioGain: filterType = {
-    title: 'Amplify Volume',
-    defaultValue: 3,
-    min: 0.1,
-    max: 10,
-    step: 0.1,
-  };
+  // let AudioGain: filterType = {
+  //   title: 'Amplify Volume',
+  //   defaultValue: 3,
+  //   min: 0.1,
+  //   max: 10,
+  //   step: 0.1,
+  // };
 
   // On screen change resize handler.
   let onChangeScreenSize: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -441,7 +432,7 @@ const VideoStyles = () => {
           </div>
         </div>
       </OptionGroup>
-      <OptionGroup expandGroup={true} isNodesValid={isNodesValid}>
+      {/* <OptionGroup expandGroup={true} isNodesValid={isNodesValid}>
         <div className='title'>
           <div className='name'>
             <div className='name-icon'>
@@ -659,7 +650,7 @@ const VideoStyles = () => {
             />
           </FilterView>
         </div>
-      </OptionGroup>
+      </OptionGroup> */}
       <OptionGroup expandGroup={openFilterSection}>
         <div className='title'>
           <div className='name'>
@@ -731,7 +722,7 @@ const VideoStyles = () => {
           )}
         </div>
       </OptionGroup>
-      <OptionGroup expandGroup={openFilterSection}>
+      {/* <OptionGroup expandGroup={openFilterSection}>
         <div className='title'>
           <div className='name'>
             <div className='name-icon'>
@@ -784,7 +775,7 @@ const VideoStyles = () => {
             </PresetFilter>
           ))}
         </div>
-      </OptionGroup>
+      </OptionGroup> */}
       <OptionGroup expandGroup={openBorderSection}>
         <div className='title'>
           <div className='name'>

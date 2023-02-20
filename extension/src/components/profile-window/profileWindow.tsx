@@ -143,7 +143,7 @@ const ProfileWindow = () => {
             <img src={userBasicInfo?.photoUrl! as string} alt='dp' />
           </div>
           <div className='name' onClick={goToProfile}>
-            <div className='fullName p'>{`${profile?.firstname} ${profile?.lastname}`}</div>
+            <div className='fullName p'>{`${profile?.fullname}`}</div>
             <div className='nickName p'>@{userBasicInfo?.nickname}</div>
             <div className='nickname p'>{`${getFormattedNumber(
               userBasicInfo?.followerCount as number

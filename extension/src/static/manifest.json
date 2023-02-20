@@ -35,7 +35,10 @@
         "Moovy/moovy-logo-black.png",
         "Moovy/moovy-logo-white.jpg",
         "Moovy/moovy-text-logo-white.png",
-        "Moovy/moovy-text-logo-black.png"
+        "Moovy/moovy-text-logo-black.png",
+        "bmc.png",
+        "patreon-logo.png",
+        "patreon-word.png"
       ],
       "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
       "use_dynamic_url": true

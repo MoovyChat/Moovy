@@ -51,7 +51,6 @@ interface props {
 
 const Start: React.FC<props> = () => {
   const [u, setU] = useState<User | null>(null);
-  const canvasRefObj = useRef<HTMLCanvasElement | null>(null);
   const dispatch = useAppDispatch();
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const [{ data, error, fetching }, _] = useGetUserQuery({
@@ -62,22 +61,19 @@ const Start: React.FC<props> = () => {
   const autoNextEpisodeValue = useAppSelector(
     (state) => state.misc.autoNextEpisode
   );
-  const user = useAppSelector((state) => state.user);
-  const manipulation = useAppSelector((state) => state.manipulation);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
-  const nodes = useAppSelector((state) => state.audioNodes);
-  let videoElement = getVideoElement();
+  // const nodes = useAppSelector((state) => state.audioNodes);
   const [visible, setIsVisible] = useState<boolean>(true);
-  const [audioSource, setAudioSource] =
-    useState<MediaElementAudioSourceNode | null>(null);
-  const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
+  // const [audioSource, setAudioSource] =
+  //   useState<MediaElementAudioSourceNode | null>(null);
+  // const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
   const oldIntervalIds = useAppSelector((state) => state.misc.intervalIds);
-  useEffect(() => {
-    if (audioSource || audioCtx) dispatch(sliceResetAudioNodes());
-  }, [user]);
+  // useEffect(() => {
+  //   if (audioSource || audioCtx) dispatch(sliceResetAudioNodes());
+  // }, [user]);
   const stableDispatch = useCallback(
     (args: any) => {
       return dispatch(args);
@@ -101,81 +97,81 @@ const Start: React.FC<props> = () => {
     });
   }, []);
 
-  useEffect(() => {
-    async function manageAudio() {
-      videoElement.then((ele) => {
-        if (!ele) return;
-        ele[0].playbackRate = manipulation.playbackRate;
+  // useEffect(() => {
+  //   async function manageAudio() {
+  //     videoElement.then((ele) => {
+  //       if (!ele) return;
+  //       ele[0].playbackRate = manipulation.playbackRate;
 
-        if (!nodes.audioContext) {
-          const context = new AudioContext();
-          stableDispatch(sliceSetAudioContext(context));
-        }
-        if (!nodes.audioContext) return;
-        if (!nodes.audioSource) {
-          try {
-            const source = nodes.audioContext.createMediaElementSource(ele[0]);
-            stableDispatch(sliceSetAudioSource(source));
-          } catch (e) {}
-        }
-        // Create a MediaElementSourceNode
-        if (!nodes.analyser) {
-          const _analyser = nodes.audioContext.createAnalyser();
-          stableDispatch(sliceSetAnalyser(_analyser));
-        }
-        if (!nodes.stereo) {
-          const stereoPanner = nodes.audioContext.createStereoPanner();
-          stableDispatch(sliceSetStereoPanNode(stereoPanner));
-        }
-        if (!nodes.distortion) {
-          const distortion = nodes.audioContext.createWaveShaper();
-          stableDispatch(sliceSetDistortion(distortion));
-        }
+  //       if (!nodes.audioContext) {
+  //         const context = new AudioContext();
+  //         stableDispatch(sliceSetAudioContext(context));
+  //       }
+  //       if (!nodes.audioContext) return;
+  //       if (!nodes.audioSource) {
+  //         try {
+  //           const source = nodes.audioContext.createMediaElementSource(ele[0]);
+  //           stableDispatch(sliceSetAudioSource(source));
+  //         } catch (e) {}
+  //       }
+  //       // Create a MediaElementSourceNode
+  //       if (!nodes.analyser) {
+  //         const _analyser = nodes.audioContext.createAnalyser();
+  //         stableDispatch(sliceSetAnalyser(_analyser));
+  //       }
+  //       if (!nodes.stereo) {
+  //         const stereoPanner = nodes.audioContext.createStereoPanner();
+  //         stableDispatch(sliceSetStereoPanNode(stereoPanner));
+  //       }
+  //       if (!nodes.distortion) {
+  //         const distortion = nodes.audioContext.createWaveShaper();
+  //         stableDispatch(sliceSetDistortion(distortion));
+  //       }
 
-        if (!nodes.gain) {
-          const _gain = nodes.audioContext.createGain();
-          stableDispatch(sliceSetGain(_gain));
-        }
-        if (!nodes.biQuadFilter) {
-          let filter = nodes.audioContext.createBiquadFilter();
-          stableDispatch(sliceSetBiQuadFilter(filter));
-        }
-        if (
-          nodes.audioSource &&
-          nodes.analyser &&
-          nodes.stereo &&
-          nodes.distortion &&
-          nodes.gain &&
-          nodes.biQuadFilter
-        ) {
-          // Connect the MediaElementSourceNode to the audio graph
-          nodes.audioSource.connect(nodes.distortion);
-          nodes.distortion.connect(nodes.biQuadFilter);
-          nodes.biQuadFilter.connect(nodes.stereo);
-          nodes.stereo.connect(nodes.gain);
-          nodes.gain.connect(nodes.analyser);
-          nodes.analyser.connect(nodes.audioContext.destination);
+  //       if (!nodes.gain) {
+  //         const _gain = nodes.audioContext.createGain();
+  //         stableDispatch(sliceSetGain(_gain));
+  //       }
+  //       if (!nodes.biQuadFilter) {
+  //         let filter = nodes.audioContext.createBiquadFilter();
+  //         stableDispatch(sliceSetBiQuadFilter(filter));
+  //       }
+  //       if (
+  //         nodes.audioSource &&
+  //         nodes.analyser &&
+  //         nodes.stereo &&
+  //         nodes.distortion &&
+  //         nodes.gain &&
+  //         nodes.biQuadFilter
+  //       ) {
+  //         // Connect the MediaElementSourceNode to the audio graph
+  //         nodes.audioSource.connect(nodes.distortion);
+  //         nodes.distortion.connect(nodes.biQuadFilter);
+  //         nodes.biQuadFilter.connect(nodes.stereo);
+  //         nodes.stereo.connect(nodes.gain);
+  //         nodes.gain.connect(nodes.analyser);
+  //         nodes.analyser.connect(nodes.audioContext.destination);
 
-          // Configure filter
-          nodes.biQuadFilter.type = manipulation.filterType as BiquadFilterType;
-          nodes.biQuadFilter.frequency.value = manipulation.frequency;
-          nodes.biQuadFilter.Q.value = manipulation.QValue;
-          nodes.biQuadFilter.gain.value = manipulation.gain;
-          nodes.stereo.pan.value = manipulation.stereo;
-          nodes.gain.gain.value = manipulation.gain;
-          nodes.distortion.curve = makeDistortionCurve(
-            manipulation.distortionCurve
-          );
-          nodes.distortion.oversample =
-            manipulation.distortionOverSample as OverSampleType;
+  //         // Configure filter
+  //         nodes.biQuadFilter.type = manipulation.filterType as BiquadFilterType;
+  //         nodes.biQuadFilter.frequency.value = manipulation.frequency;
+  //         nodes.biQuadFilter.Q.value = manipulation.QValue;
+  //         nodes.biQuadFilter.gain.value = manipulation.gain;
+  //         nodes.stereo.pan.value = manipulation.stereo;
+  //         nodes.gain.gain.value = manipulation.gain;
+  //         nodes.distortion.curve = makeDistortionCurve(
+  //           manipulation.distortionCurve
+  //         );
+  //         nodes.distortion.oversample =
+  //           manipulation.distortionOverSample as OverSampleType;
 
-          setAudioSource(nodes.audioSource);
-          setAudioCtx(nodes.audioContext);
-        }
-      });
-    }
-    manageAudio();
-  }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
+  //         setAudioSource(nodes.audioSource);
+  //         setAudioCtx(nodes.audioContext);
+  //       }
+  //     });
+  //   }
+  //   manageAudio();
+  // }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
 
   // This interval will run continuously through out the session.
   useEffect(() => {
