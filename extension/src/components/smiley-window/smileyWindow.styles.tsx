@@ -20,7 +20,7 @@ export const SmileyWindowParent = styled.div`
     width: 99%;
     height: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     .section {
