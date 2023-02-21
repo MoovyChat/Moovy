@@ -9,6 +9,7 @@ import CommentsComponent from './pages/comments/commentsComponent';
 import ContactUs from './pages/contact-us/contactUs';
 import CookiePolicy from './pages/cookie-policy/cookiePolicy';
 import DifferentProfile from './pages/profile/differentProfile';
+import EmbedContent from './pages/embed-content/embedContent';
 import EmptyPage from './components/empty-page/emptyPage';
 import FavTitles from './pages/favorites/favTitles';
 import Favorites from './pages/favorites/favorites';
@@ -110,6 +111,7 @@ const HomeRouter = () => {
         <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
         <Route path='/cookie-policy' element={<CookiePolicy />} />
         <Route path='/premium' element={<Premium />} />
+        <Route path='/embedded-content' element={<EmbedContent />} />
         {/* <Route path='/welcome' element={<App />} /> */}
       </Routes>
     </BrowserRouter>
