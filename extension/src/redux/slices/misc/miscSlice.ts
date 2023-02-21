@@ -23,10 +23,7 @@ const miscSlice = createSlice({
     sliceSetAutoNextEpisode: (state, action) => {
       return { ...state, autoNextEpisode: action.payload };
     },
-    sliceSetEnableBackground: (
-      state,
-      action: { payload: boolean; type: string }
-    ) => {
+    sliceSetEnableBackground: (state, action) => {
       return { ...state, enableBackground: action.payload };
     },
     sliceSetAccentColor: (state, action) => {

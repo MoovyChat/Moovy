@@ -248,7 +248,6 @@ const ChatInterface: React.FC<props> = ({
               <PopSlide />
             </div>
           </CSSTransition>
-
           <Toast />
         </ChatWindowParent>
       )}

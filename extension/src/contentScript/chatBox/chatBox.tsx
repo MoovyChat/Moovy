@@ -22,6 +22,7 @@ import {
 import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
+import IFrameComponent from '../../components/iframe-component/iframeComponent';
 import Loading from '../../components/loading/loading';
 import SmileyWindow from '../../components/smiley-window/smileyWindow';
 import { batch } from 'react-redux';
@@ -207,6 +208,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         />
       </div>
       <SmileyWindow />
+      <IFrameComponent />
     </ChatBoxContainer>
   );
 };

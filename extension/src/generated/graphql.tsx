@@ -15,6 +15,15 @@ export type Scalars = {
   Float: number;
 };
 
+export type AdminNotifications = {
+  __typename?: 'AdminNotifications';
+  createdAt: Scalars['String'];
+  deletedAt?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   commentedUserId: Scalars['String'];
@@ -322,6 +331,7 @@ export type Mutation = {
   getUserByNickName?: Maybe<User>;
   getUserFollowStats?: Maybe<UserFollowStats>;
   getUserMut?: Maybe<User>;
+  insertAdminNotification: AdminNotifications;
   insertBulkMovie?: Maybe<Scalars['Boolean']>;
   insertComment?: Maybe<Comment>;
   insertMovie?: Maybe<Movie>;
@@ -435,6 +445,11 @@ export type MutationGetUserFollowStatsArgs = {
 
 export type MutationGetUserMutArgs = {
   uid: Scalars['String'];
+};
+
+
+export type MutationInsertAdminNotificationArgs = {
+  message: Scalars['String'];
 };
 
 
@@ -678,6 +693,7 @@ export type Query = {
   getFullUserProfile?: Maybe<FullMiniUser>;
   getIsUserLikedComment?: Maybe<IsUserLikedObject>;
   getIsUserLikedReply?: Maybe<IsUserLikedObject>;
+  getLatestAdminNotification: AdminNotifications;
   getLikedTitles?: Maybe<PaginatedMovieStats>;
   getLinkPreview?: Maybe<LinkPreview>;
   getMovie?: Maybe<Movie>;
@@ -1109,6 +1125,7 @@ export type SearchTitleObject = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  adminNotifications: AdminNotifications;
   commentLikesUpdate: CommentLikesObject;
   likesAndCommentCount: LikesAndComment;
   movieCommentsUpdate: Scalars['Int'];
@@ -1427,6 +1444,16 @@ export type MovieStatusUpdateSubscriptionVariables = Exact<{ [key: string]: neve
 
 
 export type MovieStatusUpdateSubscription = { __typename?: 'Subscription', movieStatusUpdate: { __typename?: 'LikesAndFavObj', userLikesCount?: number | null, userFavoriteCount?: number | null } };
+
+export type AdminNotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AdminNotificationsSubscription = { __typename?: 'Subscription', adminNotifications: { __typename?: 'AdminNotifications', id: string, message?: string | null } };
+
+export type GetLatestAdminNotificationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestAdminNotificationQuery = { __typename?: 'Query', getLatestAdminNotification: { __typename?: 'AdminNotifications', id: string, message?: string | null } };
 
 export type DeleteReplyMutationVariables = Exact<{
   rid: Scalars['String'];
@@ -2001,6 +2028,30 @@ export const MovieStatusUpdateDocument = gql`
 
 export function useMovieStatusUpdateSubscription<TData = MovieStatusUpdateSubscription>(options: Omit<Urql.UseSubscriptionArgs<MovieStatusUpdateSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<MovieStatusUpdateSubscription, TData>) {
   return Urql.useSubscription<MovieStatusUpdateSubscription, TData, MovieStatusUpdateSubscriptionVariables>({ query: MovieStatusUpdateDocument, ...options }, handler);
+};
+export const AdminNotificationsDocument = gql`
+    subscription AdminNotifications {
+  adminNotifications {
+    id
+    message
+  }
+}
+    `;
+
+export function useAdminNotificationsSubscription<TData = AdminNotificationsSubscription>(options: Omit<Urql.UseSubscriptionArgs<AdminNotificationsSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<AdminNotificationsSubscription, TData>) {
+  return Urql.useSubscription<AdminNotificationsSubscription, TData, AdminNotificationsSubscriptionVariables>({ query: AdminNotificationsDocument, ...options }, handler);
+};
+export const GetLatestAdminNotificationDocument = gql`
+    query GetLatestAdminNotification {
+  getLatestAdminNotification {
+    id
+    message
+  }
+}
+    `;
+
+export function useGetLatestAdminNotificationQuery(options?: Omit<Urql.UseQueryArgs<GetLatestAdminNotificationQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetLatestAdminNotificationQuery, GetLatestAdminNotificationQueryVariables>({ query: GetLatestAdminNotificationDocument, ...options });
 };
 export const DeleteReplyDocument = gql`
     mutation DeleteReply($rid: String!) {

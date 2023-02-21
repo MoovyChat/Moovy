@@ -209,24 +209,13 @@ const Start: React.FC<props> = () => {
         } catch (e) {}
       }
     }
-    function autoNextEpisode() {
-      let nextEpisode = document.querySelector(
-        '[data-uia="next-episode-seamless-button"]'
-      ) as HTMLDivElement;
-      if (nextEpisode) {
-        try {
-          nextEpisode.click();
-        } catch (e) {}
-      }
-    }
     let interval = setInterval(() => {
       applyTimeLineStyles();
       toggleCommentButton();
       autoSkipValue && autoSkip('watch-video--skip-content-button');
-      autoNextEpisodeValue && autoNextEpisode();
-    }, 100);
+    }, 150);
     return () => clearInterval(interval);
-  }, [accentColor, visible, autoSkipValue, autoNextEpisodeValue]);
+  }, [accentColor, visible, autoSkipValue]);
 
   // Set the pre-saved video styles.
   useEffect(() => {
