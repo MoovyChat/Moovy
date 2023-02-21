@@ -7,9 +7,15 @@ import {
   Field,
   Int,
   Mutation,
+  PubSub,
+  PubSubEngine,
+  Subscription,
+  Root,
 } from 'type-graphql';
 import { FollowNotifications } from '../entities/FollowNotifications';
 import { LikeNotifications } from '../entities/LikeNotifications';
+import { ADMIN_NOTIFICATION_SUB } from '../constants';
+import { AdminNotifications } from '../entities/AdminNotifications';
 
 @ObjectType()
 class NotificationObject {
@@ -108,5 +114,41 @@ export class NotificationsResolver {
       .where('toUserId = :uid', { uid })
       .execute();
     return true;
+  }
+
+  @Query(() => AdminNotifications)
+  async getLatestAdminNotification() {
+    return await conn
+      .getRepository(AdminNotifications)
+      .createQueryBuilder('a')
+      .orderBy('a.updatedAt', 'DESC')
+      .take(1)
+      .getOne();
+  }
+
+  @Mutation(() => AdminNotifications)
+  async insertAdminNotification(
+    @Arg('message') message: string,
+    @PubSub() pubSub: PubSubEngine
+  ) {
+    const status = await conn
+      .createQueryBuilder()
+      .insert()
+      .into(AdminNotifications)
+      .values([{ message }])
+      .returning('*')
+      .execute();
+    const result = status.raw[0];
+    await pubSub.publish(ADMIN_NOTIFICATION_SUB, { id: result.id });
+    return result;
+  }
+
+  @Subscription(() => AdminNotifications, {
+    topics: ADMIN_NOTIFICATION_SUB,
+  })
+  async adminNotifications(
+    @Root('id') id: string
+  ): Promise<AdminNotifications | null> {
+    return await AdminNotifications.findOne({ where: { id: id } });
   }
 }

@@ -207,7 +207,6 @@ export class CommentResolver {
         .softDelete()
         .returning('*')
         .execute();
-      console.log('Deleted Comment', result);
       deletedComment = result.raw[0];
       if (deletedComment) {
         // Update comment count.

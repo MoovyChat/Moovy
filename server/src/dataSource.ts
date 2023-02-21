@@ -1,5 +1,6 @@
 import 'dotenv-safe/config';
 
+import { AdminNotifications } from './entities/AdminNotifications';
 import { Comment } from './entities/Comment';
 import { CommentStats } from './entities/CommentStat';
 import { DataSource } from 'typeorm';
@@ -41,6 +42,7 @@ export const conn = new DataSource({
     Title,
     Visited,
     Profile,
+    AdminNotifications,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
   migrations: [path.join(__dirname, '../migrations/*')],
