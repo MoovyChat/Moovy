@@ -12,7 +12,7 @@ import {
 } from 'type-graphql';
 import { MyContext } from '../types';
 import _ from 'lodash';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { Comment } from '../entities/Comment';
 import { MovieStats } from '../entities/MovieStats';
 import { Movie } from '../entities/Movie';
@@ -46,14 +46,14 @@ class ErrorField {
 class NickNameResponse {
   @Field(() => [ErrorField], { nullable: true })
   errors?: ErrorField[];
-  @Field(() => User, { nullable: true })
-  user?: User;
+  @Field(() => Users, { nullable: true })
+  user?: Users;
 }
 
 @ObjectType()
 class FullUserMovieStats {
   @Field()
-  user: User;
+  user: Users;
   @Field()
   movie: Movie;
   @Field({ nullable: true })
@@ -86,8 +86,8 @@ class FavMovieObject {
 
 @ObjectType()
 class FullUserObject {
-  @Field(() => User, { nullable: true })
-  user?: User;
+  @Field(() => Users, { nullable: true })
+  user?: Users;
   @Field(() => Int, { defaultValue: 0 })
   totalLikes: number;
   @Field(() => Int, { defaultValue: 0 })
@@ -102,8 +102,8 @@ class FullUserObject {
 
 @ObjectType()
 class UserResponse {
-  @Field(() => User, { nullable: true })
-  user?: User;
+  @Field(() => Users, { nullable: true })
+  user?: Users;
   @Field({ nullable: true })
   error?: string;
 }
@@ -126,8 +126,8 @@ class PaginatedUserComments {
   totalCommentCount: number;
   @Field(() => Int, { defaultValue: 0 })
   pastCount: number;
-  @Field(() => User)
-  user: User;
+  @Field(() => Users)
+  user: Users;
   @Field(() => [Comment])
   comments: Comment[];
   @Field(() => Boolean)
@@ -156,8 +156,8 @@ class PaginatedUserReplies {
   totalCommentCount: number;
   @Field(() => Int, { defaultValue: 0 })
   pastCount: number;
-  @Field(() => User)
-  user: User;
+  @Field(() => Users)
+  user: Users;
   @Field(() => [Reply])
   comments: Reply[];
   @Field(() => Boolean)
@@ -168,24 +168,24 @@ class PaginatedUserReplies {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => [User])
-  users(): Promise<User[]> {
-    return User.find();
+  @Query(() => [Users])
+  users(): Promise<Users[]> {
+    return Users.find();
   }
 
-  @Query(() => User, { nullable: true })
-  getUser(@Arg('uid') uid: string): Promise<User | null> {
-    return User.findOne({ where: [{ id: uid }, { nickname: uid }] });
+  @Query(() => Users, { nullable: true })
+  getUser(@Arg('uid') uid: string): Promise<Users | null> {
+    return Users.findOne({ where: [{ id: uid }, { nickname: uid }] });
   }
 
-  @Mutation(() => User, { nullable: true })
-  getUserByNickName(@Arg('nickname') nickname: string): Promise<User | null> {
-    return User.findOne({ where: { nickname } });
+  @Mutation(() => Users, { nullable: true })
+  getUserByNickName(@Arg('nickname') nickname: string): Promise<Users | null> {
+    return Users.findOne({ where: { nickname } });
   }
 
-  @Query(() => User, { nullable: true })
-  getUserByUserName(@Arg('nickname') nickname: string): Promise<User | null> {
-    return User.findOne({ where: { nickname } });
+  @Query(() => Users, { nullable: true })
+  getUserByUserName(@Arg('nickname') nickname: string): Promise<Users | null> {
+    return Users.findOne({ where: { nickname } });
   }
 
   @Query(() => [MiniCommentFormat], { nullable: true })
@@ -281,7 +281,7 @@ export class UserResolver {
     await queryRunner.startTransaction();
     try {
       //User
-      const user = await User.findOne({ where: { id: uid } });
+      const user = await Users.findOne({ where: { id: uid } });
       //Total comments
       const userCommentCount = await Comment.count({
         where: { commentedUserId: user?.id },
@@ -362,7 +362,7 @@ export class UserResolver {
   async getTopThreeUserNames(
     @Arg('search') search: string
   ): Promise<NicKNameFormat[] | null> {
-    const userRepository = conn.getRepository(User);
+    const userRepository = conn.getRepository(Users);
     const query = `
   SELECT "user"."id" AS "id", "user"."photoUrl" AS "photoUrl", "user"."nickname" AS "name", "profile"."fullname" AS "fullname"
   FROM "user" "user" LEFT JOIN "profile" "profile" ON "user"."id" = "profile"."userId" AND ("profile"."deletedAt" IS NULL)
@@ -376,9 +376,9 @@ export class UserResolver {
     return names;
   }
 
-  @Mutation(() => User, { nullable: true })
-  getUserMut(@Arg('uid') uid: string): Promise<User | null> {
-    return User.findOne({ where: { id: uid } });
+  @Mutation(() => Users, { nullable: true })
+  getUserMut(@Arg('uid') uid: string): Promise<Users | null> {
+    return Users.findOne({ where: { id: uid } });
   }
 
   @Query(() => [Comment], { nullable: true })
@@ -387,7 +387,7 @@ export class UserResolver {
   ): Promise<Comment[] | null> {
     let allComments;
     try {
-      const user = await User.findOne({ where: { id: uid } });
+      const user = await Users.findOne({ where: { id: uid } });
       if (user) {
         allComments = user.comments;
         return allComments;
@@ -407,7 +407,7 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserComments | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     if (!user) throw new Error('User not found');
@@ -452,7 +452,7 @@ export class UserResolver {
     @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
     ASC: boolean
   ): Promise<PaginatedUserReplies | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     console.log(user);
@@ -491,7 +491,7 @@ export class UserResolver {
 
   @Query(() => FullUserMovieStats, { nullable: true })
   async getUserMovieStatus(@Arg('uid') uid: string, @Arg('mid') mid: string) {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) throw new Error('User not found');
     const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error('Movie not found');
@@ -502,14 +502,14 @@ export class UserResolver {
     return { user, movie, movieStats };
   }
 
-  @Mutation(() => User, { nullable: true })
+  @Mutation(() => Users, { nullable: true })
   async createUser(@Arg('options') options: UserInput) {
     let user;
     try {
       const result = await conn
         .createQueryBuilder()
         .insert()
-        .into(User)
+        .into(Users)
         .values([
           {
             id: options.id,
@@ -533,7 +533,7 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Arg('url') url: string
   ): Promise<NickNameResponse> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
@@ -557,7 +557,7 @@ export class UserResolver {
     }
 
     if (typeof url !== undefined) {
-      await User.update({ id: uid }, { photoUrl: url });
+      await Users.update({ id: uid }, { photoUrl: url });
     }
     return {
       user,
@@ -569,7 +569,7 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Arg('url') url: string
   ): Promise<NickNameResponse> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
@@ -593,7 +593,7 @@ export class UserResolver {
     }
 
     if (typeof url !== undefined) {
-      await User.update({ id: uid }, { bg: url });
+      await Users.update({ id: uid }, { bg: url });
     }
     return {
       user,
@@ -605,7 +605,7 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Arg('nickname', () => String, { nullable: true }) nickname: string
   ): Promise<NickNameResponse> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
@@ -628,7 +628,7 @@ export class UserResolver {
       };
     }
 
-    const nickNameExist = await User.findOne({ where: { nickname } });
+    const nickNameExist = await Users.findOne({ where: { nickname } });
     if (nickNameExist) {
       return {
         errors: [
@@ -641,7 +641,7 @@ export class UserResolver {
     }
 
     if (typeof nickname !== undefined) {
-      await User.update({ id: uid }, { nickname });
+      await Users.update({ id: uid }, { nickname });
     }
     return {
       user,
@@ -653,15 +653,15 @@ export class UserResolver {
     @Arg('mid') mid: string,
     @Arg('uid') uid: string
   ): Promise<boolean> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) throw new Error('User not found');
     else {
-      let user = await User.findOne({ where: { id: uid } });
+      let user = await Users.findOne({ where: { id: uid } });
       let watchedMovies = user?.watchedMovies;
       let newList = _.union(watchedMovies, [mid]);
       let res = await conn
         .createQueryBuilder()
-        .update(User)
+        .update(Users)
         .set({ watchedMovies: newList })
         .where('id=:uid', { uid })
         .execute();
@@ -672,16 +672,16 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async deleteUser(@Arg('uid') uid: string): Promise<boolean> {
-    await User.delete(uid);
+    await Users.delete(uid);
     return true;
   }
 
-  @Query(() => User, { nullable: true })
-  async me(@Ctx() { req }: MyContext): Promise<User | null> {
+  @Query(() => Users, { nullable: true })
+  async me(@Ctx() { req }: MyContext): Promise<Users | null> {
     // User is not logged in.
     console.log(req.session);
     if (!req.session.userId) return null;
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: req.session.userId }, { nickname: req.session.userId }],
     });
     return user;
@@ -692,7 +692,7 @@ export class UserResolver {
     @Arg('uid') uid: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     if (!user) return { error: 'User does not exist' };

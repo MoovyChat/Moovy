@@ -16,7 +16,7 @@ import {
 import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { conn } from '../dataSource';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { STATUS_UPDATE } from '../constants';
 
 @ObjectType()
@@ -103,7 +103,7 @@ export class MovieStatsResolver {
   @Subscription(() => LikesAndFavObj, { topics: STATUS_UPDATE })
   async movieStatusUpdate(@Root() root: string): Promise<LikesAndFavObj> {
     const userLikesCount = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid: root,
@@ -111,7 +111,7 @@ export class MovieStatsResolver {
       .where('stats.like = :like', { like: true })
       .getCount();
     const userFavoriteCount = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid: root,

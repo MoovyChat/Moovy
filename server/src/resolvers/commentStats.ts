@@ -11,15 +11,15 @@ import {
 import { Comment } from '../entities/Comment';
 import { conn } from '../dataSource';
 import { COMMENT_LIKES_SUB } from '../constants';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { LikeNotifications } from '../entities/LikeNotifications';
 
 @ObjectType()
 class CommentsStatsObject {
   @Field(() => CommentStats)
   likeStatus: CommentStats;
-  @Field(() => User)
-  user: User;
+  @Field(() => Users)
+  user: Users;
 }
 
 @Resolver()
@@ -33,7 +33,7 @@ export class CommentStatsResolver {
     @PubSub() pubSub: PubSubEngine
   ): Promise<CommentsStatsObject | null> {
     const comment = await Comment.findOne({ where: { id: cid } });
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) throw new Error('You need to login to interact with comment');
     if (!comment) throw new Error('Comment not found');
 
@@ -89,7 +89,7 @@ export class CommentStatsResolver {
         // Insert notifications.
         const notifications = conn.getRepository(LikeNotifications);
         if (uid !== comment.commentedUserId) {
-          const commentedUser = await User.findOne({
+          const commentedUser = await Users.findOne({
             where: { id: comment.commentedUserId },
           });
           const message = `${user?.nickname} liked your comment`;

@@ -17,7 +17,7 @@ import { MovieStats } from './MovieStats';
 import { Platform } from './Platform';
 import { Reply } from './Reply';
 import { Title } from './Title';
-import { User } from './User';
+import { Users } from './Users';
 import { Visited } from './Visited';
 
 @ObjectType()
@@ -92,8 +92,8 @@ export class Movie extends BaseEntity {
   @ManyToOne(() => Title, (info) => info.movie)
   title: Title;
 
-  @ManyToOne(() => User, (user) => user.movies)
-  viewedUsers: User[];
+  @ManyToOne(() => Users, (user) => user.movies)
+  viewedUsers: Users[];
 
   @OneToMany(() => Comment, (comment) => comment.movie)
   comments: Comment[];

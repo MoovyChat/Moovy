@@ -26,8 +26,8 @@ import { Visited } from './Visited';
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
-  @PrimaryColumn({ primaryKeyConstraintName: 'pk_user_id' })
+export class Users extends BaseEntity {
+  @PrimaryColumn({ primaryKeyConstraintName: 'pk_users_id' })
   @Field(() => String)
   id: string;
 

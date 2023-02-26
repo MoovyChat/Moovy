@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -42,8 +42,8 @@ export class FollowNotifications extends BaseEntity {
   @Column()
   isRead!: boolean;
 
-  @ManyToOne(() => User, (user) => user.followNotifications)
-  toUser: User;
+  @ManyToOne(() => Users, (user) => user.followNotifications)
+  toUser: Users;
 
   @Field(() => String)
   @CreateDateColumn()

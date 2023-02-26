@@ -2,14 +2,14 @@ import { ReplyStats } from '../entities/ReplyStats';
 import { Arg, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
 import { Reply } from '../entities/Reply';
 import { conn } from '../dataSource';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 
 @ObjectType()
 class ReplyStatsObject {
   @Field(() => ReplyStats)
   likeStatus: ReplyStats;
-  @Field(() => User)
-  user: User;
+  @Field(() => Users)
+  user: Users;
 }
 @Resolver()
 export class ReplyStatsResolver {
@@ -21,7 +21,7 @@ export class ReplyStatsResolver {
     @Arg('like') like: boolean
   ): Promise<ReplyStatsObject | null> {
     const reply = await Reply.findOne({ where: { id: rid } });
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) throw new Error('You need to login to interact with reply');
     if (!reply) {
       throw new Error('Comment not found');

@@ -2,12 +2,12 @@ import { Arg, Field, ObjectType, Query, Resolver, Int } from 'type-graphql';
 import { conn } from '../dataSource';
 import { Movie } from '../entities/Movie';
 import { Title } from '../entities/Title';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 
 @ObjectType()
 class SearchObject {
-  @Field(() => [User], { nullable: true })
-  users: User[] | null;
+  @Field(() => [Users], { nullable: true })
+  users: Users[] | null;
   @Field(() => [Title], { nullable: true })
   movies: Title[] | null;
   @Field(() => [Movie], { nullable: true })
@@ -38,8 +38,8 @@ class SearchTitleObject {
 
 @ObjectType()
 class SearchPeopleObject {
-  @Field(() => [User], { nullable: true })
-  people: User[] | null;
+  @Field(() => [Users], { nullable: true })
+  people: Users[] | null;
   @Field(() => Int, { defaultValue: 1 })
   page: number;
   @Field(() => Int, { defaultValue: 1 })
@@ -53,14 +53,14 @@ export class SearchResolver {
     @Arg('search') search: string
   ): Promise<SearchObject | null> {
     // We need to get search results from User, Movie, Title tables.
-    let users: User[] | null = null;
+    let users: Users[] | null = null;
     let movies: Title[] | null = null;
     let episodes: Movie[] | null = null;
     let titles: Title[] | null = null;
     search = search.toLowerCase();
     await conn.transaction(async (manager) => {
       users = await manager
-        .getRepository(User)
+        .getRepository(Users)
         .createQueryBuilder('user')
         .select('*')
         .where('LOWER(user.nickname) LIKE :name', { name: `%${search}%` })
@@ -213,7 +213,7 @@ export class SearchResolver {
   ): Promise<SearchPeopleObject | null> {
     search = search.toLowerCase();
     let query = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .select('*')
       .where('LOWER(user.nickname) LIKE :name', { name: `%${search}%` })

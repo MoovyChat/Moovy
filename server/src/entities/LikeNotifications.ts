@@ -13,7 +13,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { Reply } from './Reply';
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -65,8 +65,8 @@ export class LikeNotifications extends BaseEntity {
   @ManyToOne(() => Reply, (reply) => reply.likeNotifications)
   reply: Reply;
 
-  @ManyToOne(() => User, (user) => user.likeNotifications)
-  toUser: User;
+  @ManyToOne(() => Users, (user) => user.likeNotifications)
+  toUser: Users;
 
   @Field(() => String)
   @CreateDateColumn()

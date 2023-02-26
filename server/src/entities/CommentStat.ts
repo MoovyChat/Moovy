@@ -12,7 +12,7 @@ import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { Movie } from './Movie';
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -40,8 +40,8 @@ export class CommentStats extends BaseEntity {
   @ManyToOne(() => Comment, (comment) => comment.commentStats)
   comment: Comment;
 
-  @ManyToOne(() => User, (user) => user.movieStats || user.commentStats)
-  user: User;
+  @ManyToOne(() => Users, (user) => user.movieStats || user.commentStats)
+  user: Users;
 
   @ManyToOne(() => Movie, (movie) => movie.movieStats)
   movie: Movie;

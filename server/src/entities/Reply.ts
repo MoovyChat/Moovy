@@ -16,7 +16,7 @@ import { LikeNotifications } from './LikeNotifications';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
 import { ReplyStats } from './ReplyStats';
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -84,8 +84,8 @@ export class Reply extends BaseEntity {
   @ManyToOne(() => Comment, (comment) => comment.replies)
   parentComment!: Comment;
 
-  @ManyToOne(() => User, (user) => user.replies)
-  commentedUser!: User;
+  @ManyToOne(() => Users, (user) => user.replies)
+  commentedUser!: Users;
 
   @ManyToOne(() => Platform, (platform) => platform.replies)
   platform: Platform;

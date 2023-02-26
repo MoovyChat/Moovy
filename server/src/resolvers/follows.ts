@@ -12,14 +12,14 @@ import {
 import { conn } from '../dataSource';
 import { Follow } from '../entities/Follow';
 import { FollowNotifications } from '../entities/FollowNotifications';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 
 @ObjectType()
 class getFollowers {
-  @Field(() => User, { nullable: true })
-  user: User;
-  @Field(() => [User], { nullable: true })
-  followers: User[];
+  @Field(() => Users, { nullable: true })
+  user: Users;
+  @Field(() => [Users], { nullable: true })
+  followers: Users[];
   @Field(() => Int)
   count: number;
   @Field(() => Int)
@@ -30,10 +30,10 @@ class getFollowers {
 
 @ObjectType()
 class getFollowings {
-  @Field(() => User, { nullable: true })
-  user: User;
-  @Field(() => [User], { nullable: true })
-  followings: User[];
+  @Field(() => Users, { nullable: true })
+  user: Users;
+  @Field(() => [Users], { nullable: true })
+  followings: Users[];
   @Field(() => Int)
   count: number;
   @Field(() => Int)
@@ -81,7 +81,7 @@ export class FollowResolver {
         }
       );
       result = res.raw[0];
-      const userRepo = manager.getRepository(User);
+      const userRepo = manager.getRepository(Users);
       const notificationRepo = manager.getRepository(FollowNotifications);
       if (result && follow) {
         await userRepo.increment({ id: followingId }, 'followerCount', 1);
@@ -147,7 +147,7 @@ export class FollowResolver {
   async getUserFollowStats(
     @Arg('uid') uid: string
   ): Promise<UserFollowStats | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: { id: uid },
     });
     if (!user) return null;
@@ -163,10 +163,10 @@ export class FollowResolver {
     @Arg('page') page: number,
     @Arg('limit') limit: number
   ): Promise<getFollowers | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) return null;
     const query = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoin('user.followers', 'followers')
       .where('followers.followingId = :uid', { uid })
@@ -182,7 +182,7 @@ export class FollowResolver {
       .addSelect('user.deletedAt', 'deletedAt')
       .andWhere('user.id = followers.userId');
     const count = await query.getCount();
-    const followers: User[] = await query
+    const followers: Users[] = await query
       .offset((page - 1) * limit)
       .limit(limit)
       .orderBy('user.nickname', 'ASC')
@@ -202,10 +202,10 @@ export class FollowResolver {
     @Arg('page') page: number,
     @Arg('limit') limit: number
   ): Promise<getFollowings | null> {
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) return null;
     const query = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoin('user.followings', 'followers')
       .where('followers.userId = :uid', { uid })
@@ -221,7 +221,7 @@ export class FollowResolver {
       .addSelect('user.deletedAt', 'deletedAt')
       .andWhere('user.id = followers.followingId');
     const count = await query.getCount();
-    const followings: User[] = await query.getRawMany();
+    const followings: Users[] = await query.getRawMany();
     return {
       user,
       followings,

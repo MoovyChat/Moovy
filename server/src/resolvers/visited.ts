@@ -10,7 +10,7 @@ import {
   Resolver,
 } from 'type-graphql';
 import { conn } from '../dataSource';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 
 import { Visited } from '../entities/Visited';
 
@@ -68,7 +68,7 @@ export class VisitedResolver {
     @Arg('limit') limit: number,
     @Arg('page') page: number
   ): Promise<VisitedObject | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     if (!user) return null;

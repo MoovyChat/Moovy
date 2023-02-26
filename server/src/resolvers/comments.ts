@@ -15,7 +15,7 @@ import {
 } from 'type-graphql';
 
 import { Comment } from '../entities/Comment';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { CommentStats } from '../entities/CommentStat';
 import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../constants';
 import { Movie } from '../entities/Movie';
@@ -47,8 +47,8 @@ export class IsUserLikedObject {
 
 @ObjectType()
 class CommentLikesObject {
-  @Field(() => [User])
-  likes: User[];
+  @Field(() => [Users])
+  likes: Users[];
   @Field(() => Int)
   likesCount: number;
   @Field(() => Int)
@@ -112,11 +112,11 @@ export class CommentResolver {
     return { id: cid, isLiked: commentStat?.like };
   }
 
-  @Query(() => User, { nullable: true })
-  async getCommentedUser(@Arg('cid') cid: string): Promise<User | null> {
+  @Query(() => Users, { nullable: true })
+  async getCommentedUser(@Arg('cid') cid: string): Promise<Users | null> {
     if (!cid) throw new Error('Comment id is empty');
     const user = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect(
         'user.comments',
@@ -138,7 +138,7 @@ export class CommentResolver {
       where: { commentId: cid, like: true },
     });
     const users = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect(
         'user.commentStats',
@@ -234,7 +234,7 @@ export class CommentResolver {
       where: { commentId: cid, like: true },
     });
     const users = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect(
         'user.commentStats',

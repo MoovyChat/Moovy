@@ -11,7 +11,7 @@ import {
 import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Movie } from './Movie';
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -32,8 +32,8 @@ export class Visited extends BaseEntity {
   @Column({ type: 'text', array: true, default: [] })
   history: string[];
 
-  @ManyToOne(() => User, (user) => user.visited)
-  user: User[];
+  @ManyToOne(() => Users, (user) => user.visited)
+  user: Users[];
 
   @ManyToOne(() => Movie, (movie) => movie.visited)
   movie: Movie[];

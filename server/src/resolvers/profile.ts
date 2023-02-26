@@ -14,7 +14,7 @@ import { Follow } from '../entities/Follow';
 import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { Profile } from '../entities/Profile';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { Visited } from '../entities/Visited';
 
 @ObjectType()
@@ -40,8 +40,8 @@ class FollowerObject {
   id: string;
   @Field()
   followerCount: number;
-  @Field(() => [User], { nullable: true })
-  followers: User[];
+  @Field(() => [Users], { nullable: true })
+  followers: Users[];
 }
 
 @ObjectType()
@@ -50,8 +50,8 @@ class FollowingObject {
   id: string;
   @Field()
   followingCount: number;
-  @Field(() => [User], { nullable: true })
-  following: User[];
+  @Field(() => [Users], { nullable: true })
+  following: Users[];
 }
 
 @ObjectType()
@@ -133,7 +133,7 @@ export class ProfileResolver {
     await conn.transaction(async (manager) => {
       // Initialize Repositories.
       let profileRepo = manager.getRepository(Profile);
-      let userRepo = manager.getRepository(User);
+      let userRepo = manager.getRepository(Users);
       let followRepo = manager.getRepository(Follow);
       let MovieStatRepo = manager.getRepository(MovieStats);
       let movieRepo = manager.getRepository(Movie);
@@ -157,8 +157,8 @@ export class ProfileResolver {
       let followersData = await followers.limit(3).getMany();
       let followingCount = await following.getCount();
       let followingData = await following.limit(3).getMany();
-      let followersUserData: User[] = [];
-      let followingUserData: User[] = [];
+      let followersUserData: Users[] = [];
+      let followingUserData: Users[] = [];
       followersData.map(async (data) => {
         let userId = data.userId;
         let userInfo = await userRepo.findOne({ where: { id: userId } });
@@ -268,7 +268,7 @@ export class ProfileResolver {
       );
       await manager
         .createQueryBuilder()
-        .update(User)
+        .update(Users)
         .set({ nickname: options.nickname })
         .where('id = :id', { id: options.uid })
         .execute();

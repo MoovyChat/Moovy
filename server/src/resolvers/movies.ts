@@ -16,7 +16,7 @@ import {
 
 import { Comment } from '../entities/Comment';
 import { Movie } from '../entities/Movie';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { MoreThan } from 'typeorm';
 import { LIKES_AND_COMMENT } from '../constants';
 import { MovieStats } from '../entities/MovieStats';
@@ -81,8 +81,8 @@ class PaginatedMovieStats {
 export class LikesObject {
   @Field(() => String)
   id: string;
-  @Field(() => [User], { defaultValue: [] })
-  likes: User[];
+  @Field(() => [Users], { defaultValue: [] })
+  likes: Users[];
   @Field(() => Int)
   likesCount: number;
 }
@@ -217,7 +217,7 @@ export class MovieResolver {
     @Arg('limit', () => Int) limit: number,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieStats | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     if (!user) return null;
@@ -246,7 +246,7 @@ export class MovieResolver {
     @Arg('limit', () => Int) limit: number,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieStats | null> {
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     if (!user) return null;
@@ -285,7 +285,7 @@ export class MovieResolver {
   @Query(() => LikesObject, { nullable: true })
   async getMovieLikes(@Arg('mid') mid: string): Promise<LikesObject> {
     const qb = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
         mid,

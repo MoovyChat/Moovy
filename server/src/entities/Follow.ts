@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -26,11 +26,11 @@ export class Follow extends BaseEntity {
   @Column()
   follows: boolean;
 
-  @ManyToOne(() => User, (user) => user.followers)
-  user: User;
+  @ManyToOne(() => Users, (user) => user.followers)
+  user: Users;
 
-  @ManyToOne(() => User, (user) => user.followings)
-  following: User;
+  @ManyToOne(() => Users, (user) => user.followings)
+  following: Users;
 
   @Field(() => String)
   @CreateDateColumn()

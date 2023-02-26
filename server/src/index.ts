@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import 'dotenv-safe/config';
 
 import { COOKIE_NAME, __prod__ } from './constants';
+import Redis, { RedisOptions } from 'ioredis';
 
 import { ApolloServer } from 'apollo-server-express';
 import { MyContext } from './types';
-import Redis from 'ioredis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { buildSchema } from 'type-graphql';
 import { conn } from './dataSource';
@@ -19,25 +19,41 @@ import session from 'express-session';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import ws from 'ws';
 
-const options = {
-  // Your Redis Options.
-  // You can leave it blank if you're just using the redis server installed on your system.
-};
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const regex = /^redis:\/\/(?::(.*)@)?(.*):(\d+)$/;
+const matchResult = redisUrl.match(regex);
+if (!matchResult) {
+  throw new Error('Invalid Redis connection string');
+}
 
+const [_, password, host, portStr] = matchResult;
+const port = parseInt(portStr, 10);
+const options: RedisOptions = {
+  host,
+  port,
+  password: password ?? '',
+};
+const redisClient = createClient({
+  url: redisUrl,
+});
 const getConfiguredRedisPubSub = new RedisPubSub({
   publisher: new Redis(options),
   subscriber: new Redis(options),
 });
 
 const main = async () => {
-  conn
-    .initialize()
-    .then(async () => {
-      // here you can start to work with your database
-      conn.runMigrations();
-    })
-    .catch((error) => console.log(error));
+  await conn.initialize();
+  await conn.runMigrations();
   const app = express();
+  // Load the SSL certificate and private key
+  // const certsPath = '/home/dokku/api/letsencrypt/certs/current/certificates';
+  // const serverOptions: ServerOptions<
+  //   typeof IncomingMessage,
+  //   typeof ServerResponse
+  // > = {
+  //   key: fs.readFileSync(`${certsPath}/api.moovychat.com.key`),
+  //   cert: fs.readFileSync(`${certsPath}/api.moovychat.com.crt`),
+  // };
   const server = createServer(app);
   const schema = await buildSchema({
     resolvers: resolvers as any,
@@ -46,41 +62,27 @@ const main = async () => {
   });
 
   const RedisStore = connectRedis(session);
-  const redisClient = createClient({
-    url: 'redis://localhost:6379',
-    legacyMode: true,
-  });
+  const corsOptions = {
+    origin: [
+      process.env.CORS_ORIGIN as string,
+      'https://studio.apollographql.com',
+      'https://server.moovychat.com/graphql',
+      'ws://server.moovychat.com/graphql',
+      'wss://server.moovychat.com/graphql',
+      'ws://localhost:4000/graphql',
+      'https://www.netflix.com',
+      'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
+      process.env.REDIS_URL as string,
+    ],
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  };
   app.set('trust proxy', 1);
+  app.options('/graphql', cors(corsOptions));
+  app.use(cors(corsOptions));
 
-  // app.use(
-  //   cors({
-  //     origin: [
-  //       process.env.CORS_ORIGIN,
-  //       'https://studio.apollographql.com',
-  //       'https://localhost:4000/graphql',
-  //       'https://www.netflix.com',
-  //       'https://9c2d-98-47-205-2.ngrok.io',
-  //       'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
-  //       'ws://localhost:4000/graphql',
-  //       process.env.REDIS_URL,
-  //     ],
-  //     credentials: true,
-  //   })
-  // );
-  app.use(
-    cors({
-      origin: [
-        'http://localhost:3000',
-        'https://studio.apollographql.com',
-        'http://localhost:4000/graphql',
-        'https://www.netflix.com',
-        'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
-        'ws://localhost:4000/graphql',
-        'redis://localhost:6379',
-      ],
-      credentials: true,
-    })
-  );
   app.use(
     session({
       name: COOKIE_NAME,
@@ -95,14 +97,21 @@ const main = async () => {
         secure: __prod__, // cookie only works in https.
         domain: __prod__ ? '.moovychat.com' : undefined,
       },
-      secret: process.env.SECRET,
+      secret: process.env.SESSION_SECRET as string,
       resave: false,
       saveUninitialized: false,
     })
   );
+
+  const wsServer = new ws.Server({
+    server,
+    path: '/graphql',
+  });
+
   const apolloServer = new ApolloServer({
     schema,
     context: ({ req, res }): MyContext => ({ req, res }),
+    persistedQueries: false,
     plugins: [
       {
         async serverWillStart() {
@@ -115,20 +124,27 @@ const main = async () => {
       },
     ],
   });
-  await redisClient.connect();
-  await apolloServer.start();
+  try {
+    await redisClient.connect();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+
+  try {
+    await apolloServer.start();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
   apolloServer.applyMiddleware({
     app,
     cors: false,
   });
-  const wsServer = new ws.Server({
-    server,
-    path: '/graphql',
-  });
-
-  server.listen(parseInt(process.env.PORT), () => {
+  const port = process.env.PORT || '5000';
+  server.listen(parseInt(port as string), () => {
+    console.log(`server started on localhost:${port}`);
     useServer({ schema }, wsServer);
-    console.log(`server started on localhost:${process.env.PORT}`);
   });
 };
 
