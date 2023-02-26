@@ -46,6 +46,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
+import EmptyPage from '../../components/empty-page/emptyPage';
 import FollowButton from '../../components/follow-button/followButton';
 import { Image } from '../../components/Image/image';
 import MiniCommentCard from '../../components/mini-comment-card/miniCommentCard';
@@ -435,7 +436,9 @@ const CommentTemplate: React.FC<props> = ({
                   />
                 ))
               ) : (
-                <div className='no-data'>No Replies yet</div>
+                <div className='no-data'>
+                  <EmptyPage msg='No Replies yet' />
+                </div>
               )}
             </div>
           </div>

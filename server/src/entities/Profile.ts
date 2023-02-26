@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
-import { User } from './User';
+import { Users } from './Users';
 
 @ObjectType()
 @Entity()
@@ -21,14 +21,9 @@ export class Profile extends BaseEntity {
   userId!: string;
 
   @Index({ fulltext: true })
-  @Field(() => String)
-  @Column()
-  firstname: string;
-
-  @Index({ fulltext: true })
-  @Field(() => String)
-  @Column()
-  lastname: string;
+  @Field(() => String, { defaultValue: '', nullable: true })
+  @Column({ nullable: true, default: '' })
+  fullname: string;
 
   @Field(() => String, { nullable: true })
   @Column()
@@ -42,8 +37,8 @@ export class Profile extends BaseEntity {
   @Column()
   gender: string;
 
-  @OneToOne(() => User, (user) => user.profile)
-  user: User;
+  @OneToOne(() => Users, (user) => user.profile)
+  user: Users;
 
   @Field(() => String)
   @CreateDateColumn()

@@ -1,5 +1,4 @@
 import { HeaderButton, HeaderParent } from './header.styles';
-import { MdLightMode, MdNightlight } from 'react-icons/md';
 import React, { useEffect } from 'react';
 import {
   User,
@@ -10,12 +9,8 @@ import {
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { DIRECTION } from '../../utils/enums';
-import { LOGIN } from '../../components/tooltip/constants';
-import Tooltip from '../../components/tooltip/tooltip';
+import MoovyLogo from '../../svgs/moovy-white.svg';
 import { googleSignIn } from '../login/login';
-import { isServer } from '../../constants';
-import { redirect } from 'react-router-dom';
 import { sliceSetTheme } from '../../redux/slices/settingsSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +19,6 @@ import { withUrqlClient } from 'next-urql';
 const Header = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user);
-  const theme = useAppSelector((state) => state.settings.theme);
   const dispatch = useAppDispatch();
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();
@@ -45,27 +39,56 @@ const Header = () => {
   };
   const loginHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
-    const signedInUser = await googleSignIn();
-    loginAction({ uid: signedInUser.id }).then((res) => {
-      const { data } = res;
-      const user = data?.login?.user;
-      if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
-        dispatch(sliceSetUser(user as User));
-      }
-      navigate('/');
-    });
+    window.open('/google-login', '_blank');
   };
+
   const logOutHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     const result = await logOutAction({});
     const data = result.data;
     if (data) dispatch(sliceSetUser(userState));
   };
+
+  const scrollIntoView = (id: string) => {
+    const divElement = document.getElementById(id);
+    if (divElement) {
+      const elementRect = divElement.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.pageYOffset;
+      const middle = absoluteElementTop - window.innerHeight / 6;
+      window.scrollTo({ top: middle, behavior: 'smooth' });
+    }
+  };
   return (
     <HeaderParent>
-      <div className='header'></div>
+      <div className='header'>
+        <div className='logo-image'>
+          <img
+            className='image'
+            src={MoovyLogo}
+            alt='QuietChat'
+            id='blur-escape'
+            loading='lazy'
+          />
+          <div className='beta'>(beta)</div>
+        </div>
+      </div>
       <div className='header-buttons'>
+        <HeaderButton
+          className='install-button hb'
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollIntoView('screenshots');
+          }}>
+          Screenshots
+        </HeaderButton>
+        <HeaderButton
+          className='install-button hb'
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollIntoView('features');
+          }}>
+          Features
+        </HeaderButton>
         {user && user.id ? (
           <HeaderButton className='hb' id='logout-btn' onClick={logOutHandler}>
             Logout

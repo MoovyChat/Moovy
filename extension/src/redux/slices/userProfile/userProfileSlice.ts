@@ -3,8 +3,7 @@ import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const userProfileState: Profile = {
-  firstname: '',
-  lastname: '',
+  fullname: '',
   dob: '',
   gender: '',
   bio: '',

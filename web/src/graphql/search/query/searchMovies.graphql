@@ -1,0 +1,9 @@
+query SearchMovies($page: Float!, $limit: Float!, $search: String!) {
+  searchMovies(page: $page, limit: $limit, search: $search) {
+    page
+    lastPage
+    titles {
+      ...FullTitle
+    }
+  }
+}

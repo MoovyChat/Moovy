@@ -49,7 +49,7 @@ const streamingServices = [
 
 const Offsite = () => {
   return (
-    <AppWindow className='app' id='app'>
+    <AppWindow className='app' id='app' color={constants.main_color}>
       <div className='floatRight'>
         <Header></Header>
         <OffsiteContent>

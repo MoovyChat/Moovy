@@ -1,10 +1,9 @@
-import { CommentList, CommentsParent } from './comments.styles';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { CSSTransition } from 'react-transition-group';
 import CommentCard from '../commentCard/commentCard';
 import { CommentInfo } from '../../Utils/interfaces';
+import Loading from '../../components/loading/loading';
 import { ShowMoreComments } from '../chatBox/chatBox.styles';
 import { ViewportList } from 'react-viewport-list';
 import { sliceSetCurrentPage } from '../../redux/slices/movie/movieSlice';
@@ -20,10 +19,13 @@ const Comments: React.FC<props> = ({
   chatBoxRef,
 }) => {
   const commentsList = useAppSelector((state) => state.comments.comments);
+  const commentsLoaded = useAppSelector(
+    (state) => state.loading.isCommentsLoaded
+  );
   const { currentPage, lastPage } = useAppSelector((state) => state.movie!);
   const dispatch = useAppDispatch();
-  const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
+  if (!commentsLoaded) return <Loading />;
   return (
     <React.Fragment>
       {commentsList.length !== 0 && (

@@ -13,7 +13,7 @@ export interface User {
   followingCount?: number | null | undefined;
   watchedMovies?: string[] | null | undefined;
   favorites?: string[];
-  __typename?: 'User' | undefined;
+  __typename?: 'Users' | undefined;
 }
 
 export interface timeMessage {
@@ -96,6 +96,14 @@ export interface filterType {
   isSelected?: boolean;
 }
 
+export interface NameObject {
+  __typename?: 'NicKNameFormat' | undefined;
+  id: string;
+  name: string;
+  fullname?: string | null | undefined;
+  photoUrl: string;
+}
+
 export interface videoFilterSettings {
   grayscale?: string;
   contrast?: string;
@@ -118,7 +126,6 @@ export interface SettingsInterface {
   popSlideContentType: string;
   popSlideUserId: string;
   popSlideData: { data: any };
-  theme: string;
 }
 
 export interface videoBorderSettings {
@@ -139,6 +146,13 @@ export interface loadingInterface {
   isCommentsLoaded: boolean;
   isRepliesLoaded: boolean;
   isEditNameBoxOpen: boolean;
+  isMovieExists: boolean;
+  isMovieLoaded: boolean;
+  isMovieInsertionFinished: boolean;
+  loadingText: string;
+  isNewCommentsLoaded: boolean;
+  isNextCommentsLoaded: boolean;
+  networkError: boolean;
 }
 
 export interface borderType {
@@ -172,4 +186,15 @@ export interface MovieFullInformation {
   runtime?: number;
   year?: number;
   seasons: SeasonInfo[] | null;
+}
+
+export interface AudioNodesInterface {
+  audioContext: AudioContext | null;
+  biQuadFilter: BiquadFilterNode | null;
+  stereo: StereoPannerNode | null;
+  analyser: AnalyserNode | null;
+  gain: GainNode | null;
+  audioSource: MediaElementAudioSourceNode | null;
+  pitchShift: any;
+  distortion: WaveShaperNode | null;
 }

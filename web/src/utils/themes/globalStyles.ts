@@ -25,9 +25,9 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   /* Style for hover state */
-  a:hover {
-    color: red;
-  }
+  /* a:hover {
+    color: #00ffe5;
+  } */
 
   ::-webkit-scrollbar {
     width: 5px;

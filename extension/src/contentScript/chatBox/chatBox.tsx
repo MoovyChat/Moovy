@@ -1,6 +1,10 @@
 import { ChatBoxContainer, LoadMoreComments } from './chatBox.styles';
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
+  sliceCheckCommentsLoaded,
+  sliceCheckNewCommentsLoaded,
+} from '../../redux/slices/loading/loadingSlice';
+import {
   sliceSetCommentsLoadedCount,
   sliceSetFetchingComments,
   sliceSetLastPage,
@@ -18,9 +22,10 @@ import {
 import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
-import SmileyWindow from '../../components/smileyWindow/smileyWindow';
+import IFrameComponent from '../../components/iframe-component/iframeComponent';
+import Loading from '../../components/loading/loading';
+import SmileyWindow from '../../components/smiley-window/smileyWindow';
 import { batch } from 'react-redux';
-import { colorLog } from '../../Utils/utilities';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -34,6 +39,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
   const initialLoadedTime = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
   );
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   const currentPage = useAppSelector((state) => state.movie.currentPage);
   const newlyLoadedTimeSTamp = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
@@ -55,9 +61,11 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
     (state) => state.movie.pastLoadedCount
   );
   const lastPage = useAppSelector((state) => state.movie.lastPage);
-  const _dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
-
+  const isNewCommentsLoaded = useAppSelector(
+    (state) => state.loading.isNewCommentsLoaded
+  );
   // New comments
   const getComments = () => {
     fetchNewComments({
@@ -67,33 +75,32 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         : new Date().getTime().toString(),
     }).then((res) => {
       const { data, error } = res;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       if (data) {
         const newComments = data.fetchNewComments;
-        console.log(newComments);
         if (newComments.length === 0) {
-          colorLog('Unable to load new Comments');
+          console.log('Unable to load new Comments');
           return;
         }
-        _dispatch(
-          sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString())
-        );
+        dispatch(sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString()));
         if (newComments && newComments.length !== 0) {
-          _dispatch(
+          dispatch(
             sliceComment({
               payload: newComments,
               type: COMMENT.ADD_COMMENTS_FIRST,
             })
           );
-          _dispatch(sliceSetPastLoadedCount(newComments.length));
+          dispatch(sliceCheckNewCommentsLoaded(true));
+          dispatch(sliceSetPastLoadedCount(newComments.length));
         } else {
-          colorLog('Failed to load new comments');
+          console.log('Failed to load new comments');
         }
       }
     });
   };
 
-  const loadMovieComments = useMemo(() => {
+  // Load default  movie comments.
+  useMemo(() => {
     getMovieComments({
       limit: 25,
       mid,
@@ -101,7 +108,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       time: newlyLoadedTimeSTamp,
     }).then((res) => {
       const { data, error } = res;
-      if (error) colorLog(error.message);
+      if (error) console.log(error.message);
       const commentsFromData = data?.getCommentsOfTheMovie?.comments!;
       const totalCommentCount = data?.getCommentsOfTheMovie?.totalCommentCount!;
       if (currentPage === 1) {
@@ -110,36 +117,35 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
           data && data.getCommentsOfTheMovie
             ? data.getCommentsOfTheMovie.lastPage!
             : 1;
-        _dispatch(
-          sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString())
-        );
+        dispatch(sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString()));
         // Redux: Add last comments last page.
-        _dispatch(sliceSetLastPage(lastPage));
+        dispatch(sliceSetLastPage(lastPage));
         // Redux: Add the loaded total comments before the initial time stamp.
-        _dispatch(sliceSetPastLoadedCount(pastLoadedCount));
+        dispatch(sliceSetPastLoadedCount(pastLoadedCount));
       }
 
       batch(() => {
         // Redux: Add total comment count of the movie.
         if (totalCommentsCount)
-          _dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
+          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount));
         // Redux: Add the initial 25 comments of the movie.
-        _dispatch(
+        dispatch(
           sliceComment({
             payload: commentsFromData,
             type: COMMENT.ADD_ALL_COMMENTS,
           })
         );
         // Redux: Add total loaded comments.
-        _dispatch(
+        dispatch(
           sliceSetCommentsLoadedCount(
             commentsFromData ? commentsFromData!.length : 0
           )
         );
-        _dispatch(sliceSetFetchingComments(fetching));
+        dispatch(sliceCheckCommentsLoaded(true));
+        dispatch(sliceSetFetchingComments(fetching));
       });
     });
-  }, [currentPage]);
+  }, [currentPage, mid]);
 
   // Handle scroll position.
   useEffect(() => {
@@ -162,7 +168,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       });
       sessionStorage.setItem('scrollPosition', '0');
     }
-    _dispatch(sliceSetLoadNew(new Date().getTime()));
+    dispatch(sliceSetLoadNew(new Date().getTime()));
     getComments();
   };
 
@@ -173,6 +179,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       isTextAreaClicked={isTextAreaFocussed}>
       {totalCommentsCount! > pastLoadedCommentCount! ? (
         <LoadMoreComments
+          accentColor={accentColor}
           className='load-new'
           onClick={(e) => {
             e.stopPropagation();
@@ -201,6 +208,7 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
         />
       </div>
       <SmileyWindow />
+      <IFrameComponent />
     </ChatBoxContainer>
   );
 };

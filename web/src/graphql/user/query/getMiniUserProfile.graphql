@@ -49,15 +49,7 @@ query getUserMiniProfile($uid: String!) {
       id
     }
     profile {
-      bio
-      createdAt
-      deletedAt
-      dob
-      firstname
-      gender
-      lastname
-      updatedAt
-      userId
+      ...FullProfile
     }
     likes {
       likesCount

@@ -12,7 +12,6 @@ export const settingsState: SettingsInterface = {
   popSlideContentType: '',
   popSlideUserId: '',
   popSlideData: { data: null },
-  theme: 'light',
 };
 
 const SettingsSlice = createSlice({
@@ -58,9 +57,6 @@ const SettingsSlice = createSlice({
         popSlideData: { data: null },
       };
     },
-    sliceSetTheme: (state, action) => {
-      return { ...state, theme: action.payload };
-    },
     sliceResetSettings: () => {
       return settingsState;
     },
@@ -79,6 +75,5 @@ export const {
   sliceResetPopUp,
   sliceSetPopSlideData,
   sliceSetPopSlideUserId,
-  sliceSetTheme,
 } = SettingsSlice.actions;
 export default SettingsSlice.reducer;

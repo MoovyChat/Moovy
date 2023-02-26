@@ -1,8 +1,6 @@
 import { HeaderBlock, LogoBlock, Perimeter } from './header.styles';
 import constants, { EXT_URL } from '../../../constants';
 
-import React from 'react';
-
 const Header = () => {
   return (
     <Perimeter>

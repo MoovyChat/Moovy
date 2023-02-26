@@ -7,7 +7,7 @@ interface prop {
 
 export const SetTop = styled.div`
   width: 100%;
-  height: 100%;
+  height: 120%;
   display: flex;
   flex-direction: column;
   display: center;
@@ -15,20 +15,19 @@ export const SetTop = styled.div`
   justify-content: center;
   position: relative;
   z-index: 10;
+  gap: 10px;
   color: white;
   .welcome {
     display: flex;
     width: 100%;
-    justify-content: flex-start;
+    justify-content: center;
     text-align: center;
     align-items: center;
     .pic {
-      flex: 1 1 30%;
       display: flex;
       justify-content: flex-end;
     }
     .message {
-      flex: 1 1 70%;
       height: 100%;
       display: flex;
       justify-content: flex-start;

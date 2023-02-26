@@ -1,6 +1,6 @@
 import { EntitySubscriberInterface, EventSubscriber } from 'typeorm';
 
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 
 @EventSubscriber()
-export class userSubscriber implements EntitySubscriberInterface<User> {}
+export class userSubscriber implements EntitySubscriberInterface<Users> {}

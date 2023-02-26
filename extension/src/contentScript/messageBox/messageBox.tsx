@@ -33,7 +33,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
 import { COMMENT } from '../../redux/actionTypes';
-import ChatArea from '../../components/chatArea/chatArea';
+import ChatArea from '../../components/chat-area/chatArea';
 import { IoArrowForwardCircle } from 'react-icons/io5';
 import { MdTagFaces } from 'react-icons/md';
 import { Pic } from '../../extension/components/logout/logout.styles';
@@ -42,6 +42,7 @@ import { batch } from 'react-redux';
 import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
+import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -62,6 +63,7 @@ const MessageBox: React.FC<props> = ({
   const movieIdFromRedux = useAppSelector((state) => state.movie.id);
   const userFromRedux = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
 
@@ -82,7 +84,6 @@ const MessageBox: React.FC<props> = ({
     replyWindowResponse: any,
     setReplyClickResponse: (e: any) => void
   ) => {
-    console.log(replyWindowResponse);
     if (replyWindowResponse) {
       let newReply: ReplyInput = {
         commentedUserId: userFromRedux.id,
@@ -104,13 +105,19 @@ const MessageBox: React.FC<props> = ({
           options: newReply,
         })
           .then((response) => {
-            const data = response.data;
-            const insertedReply = data?.insertReply;
-            // Adds the new comment to redux store.
-            batch(() => {
-              dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
-              // dispatch(sliceSetPastLoadedCount(1));
-            });
+            const { data, error } = response;
+            if (error) {
+              console.log({ error });
+              if (error.networkError) dispatch(sliceSetNetworkError(true));
+            }
+            if (data) {
+              const insertedReply = data?.insertReply;
+              // Adds the new comment to redux store.
+              batch(() => {
+                dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
+                // dispatch(sliceSetPastLoadedCount(1));
+              });
+            }
             setIsReply(false);
             setReplyClickResponse(undefined);
           })
@@ -131,21 +138,24 @@ const MessageBox: React.FC<props> = ({
         insertComment({
           options: newComment,
         }).then((response) => {
-          const data = response.data;
-          const insertedComment = data?.insertComment;
-          // Adds the new comment to redux store.
-          batch(() => {
-            // dispatch(
-            //   sliceAddComment({ ...insertedComment, isReplyWindowOpen: false })
-            // );
-            dispatch(
-              sliceComment({
-                payload: { ...insertedComment, isReplyWindowOpen: false },
-                type: COMMENT.ADD_COMMENT,
-              })
-            );
-            dispatch(sliceSetPastLoadedCount(1));
-          });
+          const { error, data } = response;
+          if (error) {
+            console.log({ error });
+            if (error.networkError) dispatch(sliceSetNetworkError(true));
+          }
+          if (data) {
+            const insertedComment = data?.insertComment;
+            // Adds the new comment to redux store.
+            batch(() => {
+              dispatch(
+                sliceComment({
+                  payload: { ...insertedComment, isReplyWindowOpen: false },
+                  type: COMMENT.ADD_COMMENT,
+                })
+              );
+              dispatch(sliceSetPastLoadedCount(1));
+            });
+          }
           setIsReply(false);
           setReplyClickResponse(undefined);
         });
@@ -210,6 +220,7 @@ const MessageBox: React.FC<props> = ({
       </div>
       <TextAreaPost>
         <div
+          className='text-send'
           onClick={(e: MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.stopPropagation();
@@ -220,7 +231,7 @@ const MessageBox: React.FC<props> = ({
               setReplyClickResponse
             );
           }}>
-          <IoArrowForwardCircle fill='cyan' size={25} />
+          <IoArrowForwardCircle fill={accentColor} size={25} />
         </div>
       </TextAreaPost>
     </ChatTextBox>

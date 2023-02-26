@@ -1,5 +1,6 @@
 import 'dotenv-safe/config';
 
+import { AdminNotifications } from './entities/AdminNotifications';
 import { Comment } from './entities/Comment';
 import { CommentStats } from './entities/CommentStat';
 import { DataSource } from 'typeorm';
@@ -14,7 +15,7 @@ import { Profile } from './entities/Profile';
 import { Reply } from './entities/Reply';
 import { ReplyStats } from './entities/ReplyStats';
 import { Title } from './entities/Title';
-import { User } from './entities/User';
+import { Users } from './entities/Users';
 import { Visited } from './entities/Visited';
 import path from 'path';
 import { userSubscriber } from './subscriptions/user.subscription';
@@ -25,9 +26,9 @@ export const conn = new DataSource({
   port: 5432,
   url: process.env.DATABASE_URL,
   logging: true,
-  synchronize: true,
+  // synchronize: true,
   entities: [
-    User,
+    Users,
     Comment,
     Movie,
     Reply,
@@ -41,7 +42,8 @@ export const conn = new DataSource({
     Title,
     Visited,
     Profile,
+    AdminNotifications,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
-  migrations: [path.join(__dirname, '../migrations/*')],
+  migrations: [path.join('dist/migrations/*.js')],
 });

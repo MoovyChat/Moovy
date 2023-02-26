@@ -1,14 +1,15 @@
-fragment FullUser on User {
+fragment FullUser on Users {
   __typename
   id
-  email
   name
-  nickname
+  email
   photoUrl
   bg
-  watchedMovies
+  nickname
   followerCount
   followingCount
+  watchedMovies
   joinedAt
   updatedAt
+  deletedAt
 }

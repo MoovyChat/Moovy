@@ -19,6 +19,10 @@ export const SliderParent = styled.div`
     min-width: 10%;
     font-weight: 800;
     flex: 1 1 10%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 10px;
     :hover {
       cursor: pointer;
     }

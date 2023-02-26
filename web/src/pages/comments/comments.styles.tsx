@@ -26,8 +26,8 @@ export const CommentParent = styled.div`
     }
   }
   .child {
-    height: calc(100% - 40px);
-    width: 95%;
+    height: calc(100% - 10px);
+    width: 100%;
     overflow: auto;
     .extra {
       display: flex;

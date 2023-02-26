@@ -25,6 +25,7 @@ export const MovieCardParent = styled.div<props>`
     .thumbs {
       flex: 1 1 15%;
       padding: 0 10px;
+      overflow: hidden;
       img {
         height: 120px;
         width: 100%;

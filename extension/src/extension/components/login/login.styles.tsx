@@ -11,6 +11,7 @@ export const WithOutLoginWindow = styled.div`
   justify-content: center;
   position: relative;
   z-index: 999;
+  gap: 10px;
 `;
 export const Welcome = styled.div`
   flex-basis: 20%;
@@ -22,6 +23,5 @@ export const Welcome = styled.div`
 export const ButtonParent = styled.div`
   width: 70%;
   flex-basis: 50%;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 `;

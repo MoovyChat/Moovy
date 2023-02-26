@@ -1,5 +1,8 @@
 mutation getNickNameSuggestions($search: String!) {
   getTopThreeUserNames(search: $search) {
+    id
     name
+    fullname
+    photoUrl
   }
 }

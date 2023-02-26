@@ -43,9 +43,8 @@ query getUserMiniProfile($uid: String!) {
     profile {
       bio
       dob
-      firstname
+      fullname
       gender
-      lastname
     }
     likes {
       likesCount

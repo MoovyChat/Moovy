@@ -84,6 +84,13 @@ export const TextAreaPost = styled.div`
   font-size: 13px;
   color: inherit;
   border-radius: 10px;
+  .text-send {
+    svg {
+      stroke-width: 10px;
+      stroke: white;
+      mix-blend-mode: exclusion;
+    }
+  }
   :hover {
     cursor: pointer;
     filter: drop-shadow(0 0 15px white);

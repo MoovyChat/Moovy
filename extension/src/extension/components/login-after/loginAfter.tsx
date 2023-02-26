@@ -38,15 +38,16 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
     if (error) console.log(error);
     if (!fetching) {
       const { uid, email, displayName, photoURL } = userFromAuth.user;
+      const nickName = displayName?.split(' ').pop();
       let user: User = {
         name: displayName!,
         email: email!,
         photoUrl: photoURL!,
-        nickname: displayName!,
+        nickname: nickName!,
         id: uid,
       };
       // User doesn't exist in the database yet.
-      if (data!.getUser === null) {
+      if (!data || data!.getUser === null) {
         createUser({
           options: user as any,
         })

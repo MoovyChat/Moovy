@@ -9,5 +9,8 @@ query GetSearchResults($search: String!) {
     users {
       ...ShortUser
     }
+    episodes {
+      ...ShortMovie
+    }
   }
 }

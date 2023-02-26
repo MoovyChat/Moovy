@@ -1,8 +1,28 @@
-export enum direction {
+export enum DIRECTION {
   LEFT = 'left',
   RIGHT = 'right',
   TOP = 'top',
   BOTTOM = 'bottom',
+  BOTTOM_RIGHT = 'bottom-right',
+  TOP_RIGHT = 'top-right',
+  TOP_LEFT = 'top-left',
+  BOTTOM_LEFT = 'bottom-left',
+}
+
+export enum TOOLTIP {
+  USER = 'USER',
+  MSG = 'MSG',
+}
+
+export enum AUDIO_FILTER_TYPES {
+  LOWPASS = 'lowpass',
+  HIGHPASS = 'highpass',
+  BANDPASS = 'bandpass',
+  LOWSHELF = 'lowshelf',
+  HIGHSHELF = 'highshelf',
+  PEAKING = 'peaking',
+  NOTCH = 'notch',
+  ALLPASS = 'allpass',
 }
 
 export enum msgPlace {

@@ -8,6 +8,7 @@ export const RightParent = styled.div`
   justify-content: center;
   align-items: center;
   overflow: auto;
+  border-left: 0.3px solid #8f8f8f81;
   .adblock {
     position: absolute;
     display: flex;
@@ -27,20 +28,52 @@ export const RightParent = styled.div`
     margin: 20px;
     border-radius: 20px;
     overflow: hidden;
+    box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
     .content {
       display: flex;
       height: calc(100% - 40px);
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: space-between;
       overflow: auto;
       .item {
-        padding: 0 20px;
+        padding: 0px 20px;
+        display: flex;
+        flex-direction: column;
         .title {
           font-weight: 600;
+          :hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
         }
         .count {
           font-size: 0.7em;
           opacity: 0.8;
+        }
+      }
+      .purchase {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ff002693;
+        cursor: pointer;
+        padding: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        :hover {
+          background-color: #ff0026f1;
+        }
+        .price {
+          position: relative;
+          .limited {
+            position: absolute;
+            margin-left: 10px;
+          }
+        }
+        .warning {
+          font-size: 10px;
+          font-weight: 400;
         }
       }
     }
@@ -58,8 +91,33 @@ export const RightParent = styled.div`
   }
   .titles {
     top: 35%;
+    .content {
+      justify-content: space-evenly;
+    }
   }
-  .hashtags {
+  .premium {
+    top: 35%;
+    background: ${(p) => p.theme.premium};
+    svg {
+      color: ${(p) => (p.theme.themeType === 'dark' ? '#ffffff' : '#000000')};
+    }
+  }
+  .links {
+    position: absolute;
     top: 90%;
+    width: 70%;
+    padding: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    line-height: 15px;
+    color: #71767b;
+    display: flex;
+    gap: 10px;
+    div {
+      cursor: pointer;
+      :hover {
+        text-decoration: underline;
+      }
+    }
   }
 `;

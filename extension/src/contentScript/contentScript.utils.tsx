@@ -1,7 +1,5 @@
-import { getStoredFilterValues, getStoredVideoFilters } from '../Utils/storage';
-
-import { domains } from '../constants';
 import { filterType } from '../Utils/interfaces';
+import { getStoredFilterValues } from '../Utils/storage';
 
 type NotPresentStrategy = 'error' | 'ignore';
 
@@ -41,43 +39,37 @@ export const getVideoTitleFromNetflixWatch = () => {
   return video_title;
 };
 
-export const getIdFromNetflixURL = (url: string): string => {
-  const regex = /((http|https):\/\/)(www.netflix.com\/watch\/)(\d*)/gm;
-  let m;
-  let matchedGroup = '';
-  while ((m = regex.exec(url)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-
-    // The result can be accessed through the `m`-variable.
-    m.forEach((match, groupIndex) => {
-      console.log(`Found match, group ${groupIndex}: ${match}`);
-      if (groupIndex === 4) {
-        matchedGroup = match;
+export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
+  return new Promise((resolve, reject) => {
+    const regex = /((http|https):\/\/)(www.netflix.com\/watch\/)(\d*)/gm;
+    let m;
+    let matchedGroup = '';
+    while ((m = regex.exec(url)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
       }
-    });
-  }
-  console.log(
-    '%c[qchat]',
-    'color: #00d9ff',
-    'Retrieved movie id',
-    matchedGroup
-  );
-  return matchedGroup ? matchedGroup! : '';
+
+      // The result can be accessed through the `m`-variable.
+      m.forEach((match, groupIndex) => {
+        if (groupIndex === 4) {
+          matchedGroup = match;
+        }
+      });
+    }
+    try {
+      let netflixId = parseInt(matchedGroup);
+      if (!isNaN(netflixId)) resolve(netflixId);
+    } catch (e) {
+      resolve(null);
+    }
+    resolve(null);
+  });
 };
 
 export const getDomain = (url: string) => {
   let _url = new URL(url);
   return _url.hostname;
-};
-
-export const removeNodeFromDomById = (nodeId: string) => {
-  if (!nodeId) return;
-  let node = document.getElementById(nodeId) as Node;
-  let nodeParent = node?.parentNode;
-  nodeParent?.removeChild(node);
 };
 
 export const getVideoElement = (): Promise<

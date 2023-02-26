@@ -22,38 +22,54 @@ import {
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
-import { domains } from '../constants';
 import { requestTypes } from '../Utils/enums';
 
+export {};
 const MOOVY_URL = 'http://localhost:3000';
-const injectScriptsOnReload = async () => {
-  for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
-    for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-      const url = tab.url!;
-      const _url = getDomain(url);
-      switch (_url) {
-        case domains.NETFLIX:
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id! },
-            files: ['netflix.js'],
-          });
-          break;
-        case domains.LOCALHOST:
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id! },
-            files: ['qchat.js'],
-          });
-          break;
-      }
-    }
-  }
-};
-
-chrome.runtime.onInstalled.addListener(async () => {
-  injectScriptsOnReload();
+// When the extension in installed.
+chrome.runtime.onInstalled.addListener(() => {
+  let user: User = {
+    name: '',
+    email: '',
+    photoUrl: '',
+    nickname: '',
+    id: '',
+    comments: [],
+    replies: [],
+    joinedAt: '0',
+    watchedMovies: [],
+    favorites: [],
+  };
+  setStoredUserLoginDetails(user);
+  console.log('ON INSTALLED');
 });
-
-var getMovieInfo = (movieId: string) => {
+// const injectScriptsOnReload = async () => {
+//   for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
+//     for (const tab of await chrome.tabs.query({ url: cs.matches })) {
+//       if (!tab) return;
+//       const url = tab.url!;
+//       const _url = getDomain(url);
+//       switch (_url) {
+//         case domains.NETFLIX:
+//           chrome.scripting.executeScript({
+//             target: { tabId: tab.id! },
+//             files: ['netflix.js'],
+//           });
+//           break;
+//         case domains.LOCALHOST:
+//           chrome.scripting.executeScript({
+//             target: { tabId: tab.id! },
+//             files: ['qchat.js'],
+//           });
+//           break;
+//       }
+//     }
+//   }
+// };
+// chrome.runtime.onInstalled.addListener(async () => {
+//   injectScriptsOnReload();
+// });
+var getMovieInfo = (movieId: number) => {
   let netflixApi = (window as any).netflix;
   // let videoState = netflixApi.appContext?.getPlayerApp().getState();
   let api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
@@ -113,7 +129,6 @@ var getMovieInfo = (movieId: string) => {
   };
   return finalResult;
 };
-
 var timeSkipForNetflix = (time: string) => {
   // Conversion of time to milliseconds
   if (time !== '') {
@@ -150,7 +165,6 @@ var timeSkipForNetflix = (time: string) => {
     }
   }
 };
-
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.text === 'SEEK_VIDEO') {
     console.log('Seeking Video');
@@ -225,138 +239,61 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   return true;
 });
 
-// When the extension in installed.
-chrome.runtime.onInstalled.addListener(() => {
-  let user: User = {
-    name: '',
-    email: '',
-    photoUrl: '',
-    nickname: '',
-    id: '',
-    comments: [],
-    replies: [],
-    joinedAt: '0',
-    watchedMovies: [],
-    favorites: [],
-  };
-  setStoredUserLoginDetails(user);
-  console.log('ON INSTALLED');
-});
-
-// Listen to the url change and 'strictly' for update the icons and popup page.
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.get(activeInfo.tabId, async (tab) => {
-    const url = await tab.url!;
-    const domain = getDomain(url);
-    switch (domain) {
-      case domains.LOCALHOST:
-      case domains.NETFLIX:
-        // Change Icon when the url is visited.
-        // injectScriptsOnReload();
-        console.log('ON ACTIVATED');
-        chrome.action.setIcon({
-          path: {
-            '16': 'Moovy/moovyIcon.png',
-            '48': 'Moovy/moovyIcon.png',
-            '128': 'Moovy/moovyIcon.png',
-          },
-        });
-        // Changing the pop up html
-        chrome.action.setPopup({ popup: 'popup.html' });
-        break;
-      default:
-        // Change icon when url is not visited.
-        chrome.action.setIcon({
-          path: {
-            '16': 'Moovy/moovyIcon.png',
-            '48': 'Moovy/moovyIcon.png',
-            '128': 'Moovy/moovyIcon.png',
-          },
-        });
-        // Change the pop up html
-        chrome.action.setPopup({ popup: 'offsite.html' });
-        break;
+// Communication with the external websites.
+chrome.runtime.onMessageExternal.addListener(
+  (message, _sender, _sendResponse) => {
+    if (message.type === 'EXTENSION_LOG_IN') {
+      const user = message.user;
+      setStoredUserLoginDetails(user);
     }
-  });
-});
-
-let updateListener = function listener(
-  tabId: number,
-  changeInfo: chrome.tabs.TabChangeInfo,
-  tab: chrome.tabs.Tab
-) {
-  console.log('CHANGED -> ', changeInfo);
-  if (
-    (changeInfo.status === 'complete' &&
-      getDomain(tab.url!) === domains.LOCALHOST) ||
-    domains.NETFLIX
-  ) {
-    // injectScriptsOnReload();
+    return true;
   }
-  let domain = getDomain(changeInfo.url!);
-  // read changeInfo data and do something with it (like read the url)
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    let activeTab = tabs[0];
-    switch (domain) {
-      case domains.LOCALHOST:
-      case domains.NETFLIX:
-        chrome.tabs.sendMessage(
-          activeTab.id!,
-          { type: 'REFRESH_SCRIPT', msg: 'Hi from background script' },
-          (res) => {
-            console.log(res);
-          }
-        );
-        chrome.action.setIcon({
-          path: {
-            '16': 'Moovy/moovyIcon.png',
-            '48': 'Moovy/moovyIcon.png',
-            '128': 'Moovy/moovyIcon.png',
-          },
-        });
-        // Changing the pop up html
-        chrome.action.setPopup({ popup: 'popup.html' });
-        break;
-      default:
-        // Change icon when url is not visited.
-        chrome.action.setIcon({
-          path: {
-            '16': 'Moovy/moovyIcon.png',
-            '48': 'Moovy/moovyIcon.png',
-            '128': 'Moovy/moovyIcon.png',
-          },
-        });
-        // Change the pop up html
-        chrome.action.setPopup({ popup: 'offsite.html' });
-    }
-  });
-};
+);
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.type === 'GET_DOMAIN') {
+    const domains = {
+      NETFLIX: 'www.netflix.com',
+      LOCALHOST: 'localhost',
+      DISNEY: 'www.disneyplus.com',
+      AMAZON: 'www.amazon.com',
+      AHA: 'www.aha.video',
+    };
+    // Do something with the message here
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var url = tabs[0].url;
+      // Do something with the URL here
+      if (url) {
+        const domain = getDomain(url);
+        switch (domain) {
+          case domains.LOCALHOST:
+            sendResponse({ domain: 'MOOVYCHAT' });
+            break;
+          case domains.NETFLIX:
+            sendResponse({ domain: 'NETFLIX' });
+            break;
+          case domains.AMAZON:
+            sendResponse({ domain: 'AMAZON' });
+            break;
+          case domains.DISNEY:
+            sendResponse({ domain: 'DISNEY' });
+            break;
+          case domains.AHA:
+            sendResponse({ domain: 'AHA' });
+            break;
+          default:
+            sendResponse({ domain: 'OTHER' });
+        }
+      }
+    });
+  }
+});
 
 // Condition is for when user is already loggedIn.
 // Sends the user log details whenever user refreshes the page or
 // copy paste the netflix watch link.
 chrome.tabs.onCreated.addListener(() => {
-  chrome.tabs.onUpdated.addListener(updateListener);
   chrome.action.setBadgeText({ text: '' });
-});
-// chrome.tabs.onUpdated.addListener(updateListener);
-chrome.tabs.onUpdated.addListener((_a, changeInfo, tab) => {
-  injectScriptsOnReload();
-  let domain = getDomain(changeInfo.url!);
-  // read changeInfo data and do something with it (like read the url)
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    let activeTab = tabs[0];
-    if (domain === domains.NETFLIX) {
-      let movieId = getIdFromNetflixURL(changeInfo.url!);
-      chrome.tabs.sendMessage(
-        activeTab.id!,
-        { type: 'RESET_MOVIE_ID', movieId },
-        (res) => {
-          console.log(res);
-        }
-      );
-    }
-  });
 });
 // Listeners
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -366,25 +303,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         active: true,
         currentWindow: true,
       },
-      (tabs) => {
+      async (tabs) => {
         var tab = tabs[0];
         var url = tab.url;
-        const id = getIdFromNetflixURL(url!);
-        if (id === '') return;
+        const id = await getIdFromNetflixURL(url!);
+        if (!id) return;
         setTimeout(function () {
           sendResponse({ id: id });
         }, 1);
       }
     );
     return true;
-  } else if (request.type === 'MOVIE_INFO') {
+  } else if (request.type === 'REQUEST_MOVIE_INFO') {
     if (sender.tab) {
       const tabId = sender.tab?.id!;
+      if (request.movieId === '') return;
       chrome.scripting.executeScript(
         {
           target: { tabId: tabId, allFrames: true },
           func: getMovieInfo,
-          args: [request.movieId],
+          args: [parseInt(request.movieId)],
           world: 'MAIN',
         },
         (e) => {
@@ -394,6 +332,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       );
     }
     return true;
+  } else if (request.type === 'CHANGE_MOVIE_ID') {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var activeTab = tabs[0];
+      if (!activeTab) return;
+      chrome.tabs.sendMessage(activeTab.id!, {
+        type: 'SET_MOVIE_ID',
+        movieId: request.movieId,
+      });
+    });
+  } else if (request.type === 'GOOGLE_LOGIN_IN_BCK') {
+    // Use the chrome.windows.create method to open a new Chrome window
+    chrome.windows.create(
+      {
+        url: 'http://localhost:3000/google-login',
+        type: 'popup',
+        focused: true,
+        width: 360,
+        height: 640,
+        top: 0,
+        left: 0,
+      },
+      function (window) {
+        // chrome.windows.update(window?.id, {
+        //   state: 'fullscreen',
+        // });
+      }
+    );
   }
 });
 
@@ -412,5 +377,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         break;
     }
+  }
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // check if the URL of the tab has changed
+  if (changeInfo.url) {
+    // do something with the new URL
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var activeTab = tabs[0];
+      if (!activeTab) return;
+      if (activeTab.id === undefined) return;
+      chrome.tabs.sendMessage(activeTab.id, {
+        type: 'NEW_URL',
+        url: changeInfo.url,
+      });
+    });
   }
 });

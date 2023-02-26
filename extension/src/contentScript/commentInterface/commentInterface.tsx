@@ -46,7 +46,6 @@ import { MdDeleteForever } from 'react-icons/md';
 import { OperationResult } from 'urql';
 import ReplyWindow from '../replyWindow/replyWindow';
 import { batch } from 'react-redux';
-import { colorLog } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -80,6 +79,7 @@ const CommentInterface: React.FC<props> = ({
   className,
 }) => {
   const mounted = useRef<boolean>(false);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   const movieId = useAppSelector((state) => state.movie.id);
   // Check if the passed component is comment or reply.
   if (!commentOrReply) return <div>Invalid comment</div>;
@@ -137,7 +137,7 @@ const CommentInterface: React.FC<props> = ({
     if (isComment) {
       _executeQuery();
       const { data, error, fetching } = getReplyQuery;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       if (!fetching && data) {
         const { replies, repliesCount, lastPage } = data.getRepliesOfComment;
         setRepliesCount(repliesCount);
@@ -178,9 +178,7 @@ const CommentInterface: React.FC<props> = ({
       console.log('Seeking video to the time', message.message);
       chrome.runtime.sendMessage(
         { text: 'SEEK_VIDEO', time: message.message },
-        (tabId) => {
-          console.log('My tabId is', tabId);
-        }
+        (tabId) => {}
       );
     } else if (message.type === textMapTypes.USER) {
       profileClickHandler(message.message.slice(1));
@@ -203,7 +201,7 @@ const CommentInterface: React.FC<props> = ({
   const profileClickHandler = (username: string) => {
     getUserByNickName({ nickname: username }).then((res) => {
       const { error, data } = res;
-      if (error) colorLog(error);
+      if (error) console.log(error);
       const userId = data?.getUserByNickName?.id!;
       batch(() => {
         dispatch(sliceSetPopSlide(true));
@@ -232,14 +230,9 @@ const CommentInterface: React.FC<props> = ({
     commonDelete().then((res) => {
       let { data, error } = res;
       if (error) console.log(error);
-      console.log('delete comment', res);
+
       if (data) {
         setDelete(false);
-        colorLog(
-          `${message} ${
-            isComment ? data.deleteComment?.id : data.deleteReply?.id
-          }`
-        );
         isComment &&
           dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount! - 1));
         batch(() => {
@@ -277,7 +270,7 @@ const CommentInterface: React.FC<props> = ({
   return (
     <CSSTransition
       in={mounted.current && del}
-      classNames='comment'
+      classNames='css-cmt-transition'
       timeout={300}
       nodeRef={commentRef}>
       <CommentCardContainer
@@ -287,6 +280,7 @@ const CommentInterface: React.FC<props> = ({
         <div className='card-parent'>
           {commentedUser?.id === userId && (
             <Delete
+              accentColor={accentColor}
               deleteFlag={deleteFlag}
               onClick={(e: any) => {
                 e.stopPropagation();
@@ -309,10 +303,9 @@ const CommentInterface: React.FC<props> = ({
               }}>
               <Profile profilePic={commentedUser?.photoUrl!}></Profile>
             </div>
-
             <div className='container'>
               <div className='text'>
-                <Comment className='comment'>
+                <Comment>
                   <div style={{ margin: '2px' }}>
                     <span
                       className='username'
@@ -380,6 +373,7 @@ const CommentInterface: React.FC<props> = ({
               </Stats>
             </div>
             <Like
+              accentColor={accentColor}
               className='like'
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}

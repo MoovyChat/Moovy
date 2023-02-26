@@ -4,15 +4,16 @@ import {
   UserCredential,
   signInWithCredential,
 } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
 import LoginAfter from '../login-after/loginAfter';
+import { OTTType } from '../app/app';
+import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
 import constants from '../../../constants';
-import { useCreateUserMutation } from '../../../generated/graphql';
 
 const getGoogleAuthCredential = () => {
   return new Promise<ReturnType<typeof GoogleAuthProvider.credential>>(
@@ -31,11 +32,18 @@ const getGoogleAuthCredential = () => {
 
 interface Props {
   setUser: (user: User) => void;
+  OTTSite: OTTType;
 }
-const LogIn: React.FC<Props> = ({ setUser }) => {
+const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
+  let BrowserType = {
+    Chrome: 'Chrome',
+    Edge: 'Edge',
+  };
+
   const [isUserFetched, setIsUserFetched] = useState<boolean>(false);
   const [userFromAuth, setUserFromAuth] = useState<UserCredential>();
-  const [, createUser] = useCreateUserMutation();
+  const [browserModel, SetBrowser] = useState<string>(BrowserType.Chrome);
+
   const SignIn = async () => {
     try {
       const credential = await getGoogleAuthCredential();
@@ -47,33 +55,48 @@ const LogIn: React.FC<Props> = ({ setUser }) => {
     }
   };
 
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.indexOf('Edg') !== -1) {
+      SetBrowser(BrowserType.Edge);
+    } else if (userAgent.indexOf('Chrome') !== -1) {
+      SetBrowser(BrowserType.Chrome);
+    }
+  }, []);
+
   return (
     <WithOutLoginWindow>
       <Welcome>{constants.welcome}</Welcome>
+      <Ott OTTSite={OTTSite} />
       {!isUserFetched && !userFromAuth ? (
         <React.Fragment>
+          {browserModel === BrowserType.Chrome && (
+            <ButtonParent>
+              <Button
+                className=''
+                bgColor='#990100'
+                textColor='white'
+                iconSize={25}
+                text={constants.chrome}
+                padding='10px 0px'
+                onClick={async () => SignIn()}
+                Icon={FcGoogle}
+                textShadow='0 0 6px black, 0 0 5px #0000ff'
+              />
+            </ButtonParent>
+          )}
           <ButtonParent>
             <Button
-              className=''
-              bgColor='#990100'
-              textColor='white'
-              iconSize={25}
-              text={constants.chrome}
-              padding='10px 0px'
-              onClick={async () => SignIn()}
-              Icon={FcGoogle}
-              textShadow='0 0 6px black, 0 0 5px #0000ff'
-            />
-          </ButtonParent>
-          <ButtonParent>
-            <Button
+              id='google-log-in'
               className=''
               bgColor='#990100'
               textColor='white'
               iconSize={25}
               text={constants.login}
               padding='10px 0px'
-              onClick={async () => SignIn()}
+              onClick={() => {
+                chrome.runtime.sendMessage({ type: 'GOOGLE_LOGIN_IN_BCK' });
+              }}
               Icon={FcGoogle}
               textShadow='0 0 6px black, 0 0 5px #0000ff'
             />

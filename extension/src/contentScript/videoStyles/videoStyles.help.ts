@@ -73,7 +73,7 @@ export const filters: filterType[] = [
   {
     title: 'saturate',
     min: 0,
-    max: 100,
+    max: 200,
     step: 1,
     defaultValue: 100,
     sampleFilter: 'saturate(50)',
@@ -87,6 +87,161 @@ export const filters: filterType[] = [
     step: 0.01,
     defaultValue: 0,
     sampleFilter: 'hue-rotate(0.5turn)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+];
+
+export const presetFilters: filterType[] = [
+  {
+    title: '1977',
+    sampleFilter: 'sepia(50%) hue-rotate(-30deg) saturate(140%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Ashby',
+    sampleFilter: 'sepia(50%) contrast(120%) saturate(180%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Brooklyn',
+    sampleFilter: 'sepia(25%) contrast(125%) brightness(125%) hue-rotate(5deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Moon',
+    sampleFilter: 'brightness(140%) contrast(95%) saturate(0%) sepia(35%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Crema',
+    sampleFilter:
+      'sepia(50%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(-2deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'EarlyBird',
+    sampleFilter:
+      'sepia(25%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(-5deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Amaro',
+    sampleFilter: 'sepia(35%) contrast(110%) brightness(120%) saturate(130%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Nashville',
+    sampleFilter:
+      'sepia(25%) contrast(150%) brightness(90%) hue-rotate(-15deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Juno',
+    sampleFilter: 'sepia(35%) contrast(115%) brightness(115%) saturate(180%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Clarendon',
+    sampleFilter: 'contrast(150%) brightness(150%) saturate(150%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Gingham',
+    sampleFilter: 'brightness(150%) saturate(150%) sepia(20%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Lark',
+    sampleFilter:
+      'brightness(120%) saturate(90%) contrast(90%) hue-rotate(10deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Moon',
+    sampleFilter: 'brightness(150%) saturate(80%) contrast(90%) sepia(20%);',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Reyes',
+    sampleFilter: 'brightness(150%) saturate(100%) contrast(100%) sepia(20%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Perpetua',
+    sampleFilter: 'brightness(125%) saturate(110%) contrast(110%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Slumber',
+    sampleFilter: 'brightness(80%) contrast(80%) sepia(20%) hue-rotate(180deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Toaster',
+    sampleFilter:
+      'brightness(95%) contrast(150%) sepia(25%) hue-rotate(-15deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'X-Pro II',
+    sampleFilter:
+      'brightness(175%) contrast(125%) saturate(130%) sepia(45%) hue-rotate(-5deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Lo-Fi',
+    sampleFilter: 'contrast(150%) saturate(110%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Aden',
+    sampleFilter: 'brightness(115%) saturate(140%) sepia(20%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Hudson',
+    sampleFilter:
+      'brightness(120%) contrast(120%) saturate(105%) sepia(25%) hue-rotate(-15deg)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Valencia',
+    sampleFilter: 'brightness(110%) contrast(110%) sepia(25%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Willow',
+    sampleFilter: 'brightness(120%) contrast(85%) saturate(5%) sepia(20%)',
+    isSelected: false,
+    url: samplePhotoUrl,
+  },
+  {
+    title: 'Sierra',
+    sampleFilter:
+      'brightness(90%) contrast(150%) sepia(25%) hue-rotate(-15deg)',
     isSelected: false,
     url: samplePhotoUrl,
   },
@@ -125,7 +280,6 @@ export const applyFilter = (
   filterValues: any,
   videoElem: HTMLVideoElement | undefined
 ) => {
-  console.log({ selectedFilters, filterValues, videoElem });
   let filterText = selectedFilters
     .map((f) => {
       switch (f.title) {

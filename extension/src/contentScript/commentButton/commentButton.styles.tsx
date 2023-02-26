@@ -4,6 +4,7 @@ type props = {
   chatWindowSize: string;
   openChatWindow: boolean;
   isVisible?: boolean;
+  accentColor: string;
 };
 export const CommentHeader = styled.div<props>`
   .videoStyles {
@@ -11,18 +12,21 @@ export const CommentHeader = styled.div<props>`
     visibility: hidden;
     overflow: hidden;
   }
-
+  svg {
+    mix-blend-mode: difference;
+    stroke-width: 0.2;
+  }
   position: fixed;
   right: ${(p) => p.chatWindowSize}%;
   top: 180px;
-  height: 70px;
-  width: 70px;
   cursor: pointer;
   display: ${(p) => (p.isVisible ? 'flex' : 'none')};
   justify-content: center;
   z-index: 99999;
   align-items: center;
   color: white;
+  overflow: hidden;
+
   /* transition: all 0.1s ease-in-out; */
   animation: ${(p) =>
     p.openChatWindow
@@ -34,8 +38,8 @@ export const CommentHeader = styled.div<props>`
 
   @keyframes smallIcon {
     0% {
-      height: 70px;
-      width: 70px;
+      height: 58px;
+      width: 58px;
     }
 
     100% {
@@ -56,8 +60,8 @@ export const CommentHeader = styled.div<props>`
     }
 
     100% {
-      height: 70px;
-      width: 70px;
+      height: 58px;
+      width: 58px;
       background-color: none;
       padding: 0px;
       border-radius: none;

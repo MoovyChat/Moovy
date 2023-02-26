@@ -1,8 +1,8 @@
+import { DIRECTION, FOCUS_WINDOW } from '../../utils/enums';
 import { MdMenu, MdOutlineClose } from 'react-icons/md';
 import React, { MouseEventHandler } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { FOCUS_WINDOW } from '../../utils/enums';
 import FocusWindow from '../../components/focus-window/focusWindow';
 import { HomeHeaderParent } from './homeHeader.styles';
 import { Image } from '../../components/Image/image';
@@ -28,13 +28,21 @@ const HomeHeader: React.FC<props> = ({ className }) => {
     <HomeHeaderParent className={className}>
       <div className='logo'>
         <div className='logo-image'>
-          <Image
+          <img
             className='image'
             src={MoovyLogo}
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'
           />
+          <p
+            style={{
+              fontWeight: 600,
+              fontSize: '12px',
+              alignSelf: 'flex-end',
+            }}>
+            (Beta)
+          </p>
         </div>
         <div className='logo-icon' onClick={navBarHandler}>
           {isNavBarOpen ? (
@@ -49,8 +57,9 @@ const HomeHeader: React.FC<props> = ({ className }) => {
       </div>
       <FocusWindow
         message={FOCUS_WINDOW.HEADER_OPTIONS}
-        height='100px'
-        width='120px'>
+        dir={DIRECTION.BOTTOM_LEFT}
+        height='200px'
+        width='220px'>
         <div className='user'>
           <div className='logo-image'>
             <Image className='image' src={user.photoUrl} alt='user' />

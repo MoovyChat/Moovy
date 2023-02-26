@@ -41,6 +41,8 @@ import {
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
 import { IoMdRefresh } from 'react-icons/io';
+import { OTTType } from '../app/app';
+import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
 import { WithOutLoginWindow } from '../login/login.styles';
 import { getSupportedMimeTypes } from '../../utils';
@@ -90,9 +92,9 @@ const openSideBar = (
 type props = {
   user: User | undefined;
   setUser: (user: User) => void;
-  setSideOpen: Dispatch<any>;
+  OTTSite: OTTType;
 };
-const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
+const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
   const [checked, setChecked] = useState<boolean>(false);
   const [root, setRoot] = useState<HTMLElement | null>();
   const [showNickNameEdit, setShowNickNameEdit] = useState<boolean>(false);
@@ -154,20 +156,20 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
     });
   }, [checked, setChecked]);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
-    e
-  ) => {
-    e.stopPropagation();
-    setChecked(!checked);
-    setStoredCheckedStatus(!checked);
-    chrome.windows.getCurrent((w) => {
-      chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id!, { checked: true }, (response) => {
-          console.log(response, response?.data);
-        });
-      });
-    });
-  };
+  // const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
+  //   e
+  // ) => {
+  //   e.stopPropagation();
+  //   setChecked(!checked);
+  //   setStoredCheckedStatus(!checked);
+  //   chrome.windows.getCurrent((w) => {
+  //     chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
+  //       chrome.tabs.sendMessage(tabs[0].id!, { checked: true }, (response) => {
+  //         console.log(response, response?.data);
+  //       });
+  //     });
+  //   });
+  // };
 
   const refreshData: MouseEventHandler = (e) => {
     e.stopPropagation();
@@ -204,9 +206,9 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
             {constants.welcome} {user?.name.split(' ')[0]}!
           </div>
         </div>
+
         <div className='comment-checkbox'>
-          <h4>Enable comments</h4>
-          <input type='checkbox' checked={checked} onChange={handleChange} />
+          <Ott OTTSite={OTTSite} />
         </div>
         <div className='button-list'>
           <Button
@@ -217,14 +219,13 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
             text={constants.logout}
             onClick={(e: MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
-              setSideOpen(false);
               signOut(setUser);
             }}
             padding='5px 3px'
             Icon={FcGoogle}
             textShadow='0 0 6px black, 0 0 5px #0000ff'
           />
-          <Button
+          {/* <Button
             className='lst'
             bgColor='hsl(0, 70%, 30%)'
             textColor='white'
@@ -239,8 +240,8 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
             }}
             padding='5px 3px'
             textShadow='0 0 6px black, 0 0 5px #0000ff'
-          />
-          <RecordOptions showOptions={showRecordOptions}>
+          /> */}
+          {/* <RecordOptions showOptions={showRecordOptions}>
             <div className='record-option'>
               <div className='key'>Resolution</div>
               <div className='value'>
@@ -295,9 +296,9 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
                 </select>
               </div>
             </div>
-          </RecordOptions>
+          </RecordOptions> */}
         </div>
-        <SideArrowButton
+        {/* <SideArrowButton
           isRecording={isRecording}
           onClick={(e) => {
             e.stopPropagation();
@@ -326,7 +327,7 @@ const LogOut: React.FC<props> = ({ user, setUser, setSideOpen }) => {
         </SideArrowButton>
         <Refresh onClick={refreshData}>
           <IoMdRefresh size={40} />
-        </Refresh>
+        </Refresh> */}
       </SetTop>
     </WithOutLoginWindow>
   );

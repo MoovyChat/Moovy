@@ -2,20 +2,20 @@ import './commentCard.css';
 
 import { CardParent, SpoilerTag } from './commentCard.styles';
 import {
+  LinkPreview,
+  Movie,
+  Title,
+  User,
+  useGetMovieQuery,
+  useGetTitleInfoMutation,
+  useGetUserQuery,
+} from '../../generated/graphql';
+import {
   MdDelete,
   MdFavorite,
   MdOutlineFavoriteBorder,
   MdReply,
 } from 'react-icons/md';
-import {
-  Movie,
-  Title,
-  User,
-  useGetIsUserLikedCommentQuery,
-  useGetMovieQuery,
-  useGetTitleInfoMutation,
-  useGetUserQuery,
-} from '../../generated/graphql';
 import {
   ParsedText,
   getFormattedNumber,
@@ -33,6 +33,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { CSSTransition } from 'react-transition-group';
 import CardTemplateLoader from './cardTemplateLoader';
 import { Image } from '../Image/image';
+import LinkPreviewComponent from '../link-preview/linkPreview';
 import MovieInfo from './movieInfo';
 import ProfilePic from '../profilePic/profilePic';
 import { batch } from 'react-redux';
@@ -101,7 +102,7 @@ const CardTemplate: React.FC<props> = ({
     return () => {
       mounted.current = false;
     };
-  }, []);
+  }, [mounted.current]);
 
   const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -371,6 +372,9 @@ const CardTemplate: React.FC<props> = ({
             )}
           </div>
         </div>
+        {!showEpisodeInfo && !showTitleInfo && (
+          <LinkPreviewComponent text={comment.message} />
+        )}
         {!showEpisodeInfo && !showTitleInfo && (
           <div className='options'>
             <div className='likes c'>

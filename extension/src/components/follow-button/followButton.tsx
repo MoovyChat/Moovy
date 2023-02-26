@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import {
-  User,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
-} from '../../generated/graphql';
-import {
   sliceSetToastBody,
   sliceSetToastVisible,
 } from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  useIsFollowingUserQuery,
+  useToggleFollowMutation,
+} from '../../generated/graphql';
 
 import { StyledButton } from './followButton.styles';
 import { batch } from 'react-redux';

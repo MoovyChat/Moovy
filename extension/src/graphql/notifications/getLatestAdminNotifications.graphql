@@ -1,0 +1,6 @@
+query GetLatestAdminNotification {
+  getLatestAdminNotification {
+    id
+    message
+  }
+}

@@ -14,6 +14,7 @@ export const StyledMiniCommentCard = styled.div<props>`
   box-shadow: 0 0 2px 1px;
   border-radius: 18px;
   transition: max-height 0.3s;
+  cursor: pointer;
   .photo {
     align-self: flex-start;
     margin-top: 10px;
@@ -37,6 +38,7 @@ export const StyledMiniCommentCard = styled.div<props>`
       gap: 10px;
       .time {
         font-size: 0.6em;
+        opacity: 0.6;
       }
     }
     .msg {
@@ -46,6 +48,7 @@ export const StyledMiniCommentCard = styled.div<props>`
       margin-left: 10px;
       white-space: pre-line;
       padding-bottom: 10px;
+      width: 98%;
       overflow: hidden;
       transition: max-height 0.5s;
     }

@@ -20,8 +20,7 @@ import { sliceSetUserNickName } from '../../redux/slices/userSlice';
 
 interface ErrorIn {
   nickname: string;
-  firstname: string;
-  lastname: string;
+  fullname: string;
   gender: string;
 }
 const EditProfile = () => {
@@ -36,8 +35,7 @@ const EditProfile = () => {
   const [, updateProfile] = useUpdateProfileMutation();
   const [errors, setErrors] = useState<ErrorIn>({
     nickname: '',
-    firstname: '',
-    lastname: '',
+    fullname: '',
     gender: '',
   });
 
@@ -48,16 +46,14 @@ const EditProfile = () => {
   }, [errors, setHasError]);
 
   useEffect(() => {
-    if (tempProfile.firstname.length < 2) {
-      setErrors((err) => ({ ...err, firstname: 'Invalid firstname' }));
+    if (
+      tempProfile &&
+      tempProfile.fullname &&
+      tempProfile.fullname.length < 2
+    ) {
+      setErrors((err) => ({ ...err, fullname: 'Invalid name' }));
     } else {
-      setErrors((err) => ({ ...err, firstname: '' }));
-    }
-
-    if (tempProfile.lastname.length < 2) {
-      setErrors((err) => ({ ...err, lastname: 'Invalid last name' }));
-    } else {
-      setErrors((err) => ({ ...err, lastname: '' }));
+      setErrors((err) => ({ ...err, fullname: '' }));
     }
 
     if (tempProfile.gender === '') {
@@ -80,16 +76,14 @@ const EditProfile = () => {
       options: {
         uid: user.id,
         nickname: nickname,
-        lastname: tempProfile.lastname,
         gender: tempProfile.gender as string,
-        firstname: tempProfile.firstname,
+        fullname: tempProfile.fullname as string,
         dob: tempProfile.dob as string,
         bio: tempProfile.bio as string,
       },
     })
       .then((res) => {
         const { data, error } = res;
-        console.log(data, error);
         if (error?.message) {
           setSaving(() => false);
           console.log(
@@ -177,22 +171,12 @@ const EditProfile = () => {
       </div>
       <div className='first ext'>
         <ProfileTextBox
-          title='First Name*'
+          title='Full Name*'
           type='text'
-          keyItem='firstname'
-          value={tempProfile.firstname}
+          keyItem='fullname'
+          value={tempProfile.fullname as string}
           setValue={setValue}
-          error={errors!.firstname}
-        />
-      </div>
-      <div className='last ext'>
-        <ProfileTextBox
-          title='Last Name*'
-          type='text'
-          keyItem='lastname'
-          value={tempProfile.lastname}
-          setValue={setValue}
-          error={errors!.lastname}
+          error={errors!.fullname}
         />
       </div>
       <div className='dob ext'>

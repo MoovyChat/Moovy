@@ -12,6 +12,16 @@ export const HeaderParent = styled.div`
   font-family: 'Prompt', sans-serif;
   padding: 15px 0px;
   backdrop-filter: blur(10px);
+  .logo-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 20px;
+    .beta {
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
   .header-buttons {
     display: flex;
     position: relative;
@@ -19,6 +29,8 @@ export const HeaderParent = styled.div`
     float: right;
     margin-right: 20px;
     gap: 10;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-end;
     .hb {
       :hover {
         box-shadow: 0 0 2px;
@@ -26,11 +38,8 @@ export const HeaderParent = styled.div`
     }
   }
   .header {
-    background-image: url('https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/qc.png?alt=media&token=f1b435bb-446b-4ea9-8c3c-9084a35397e1');
     height: 40px;
     aspect-ratio: 1;
-    background-repeat: no-repeat;
-    background-size: cover;
     position: absolute;
     top: 10px;
     left: 10px;

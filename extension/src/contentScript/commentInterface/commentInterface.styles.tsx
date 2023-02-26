@@ -26,24 +26,24 @@ export const CommentCardContainer = styled.div`
   }
 
   // Enter from
-  &.comment-enter {
+  &.css-cmt-transition-enter {
     opacity: 0;
     transition: opacity 300ms ease-in;
   }
   //Enter to
-  &.comment-enter-active {
+  &.css-cmt-transition-enter-active {
     opacity: 1;
     transition: opacity 300ms ease-in;
   }
 
   // exit from
-  &.comment-exit {
+  &.css-cmt-transition-exit {
     opacity: 1;
     transition: opacity 300ms ease-in;
   }
 
   // exit to
-  &.comment-exit-active {
+  &.css-cmt-transition-exit-active {
     background-color: #ff005d;
     opacity: 0;
     transition: opacity 300ms ease-in;
@@ -74,7 +74,6 @@ export const Card = styled.div<cardProps>`
     flex-basis: 80%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
   }
   .like {
     flex-basis: 10%;
@@ -105,6 +104,13 @@ export const Comment = styled.div`
   padding: 1px 4px;
   font-size: 12px;
   word-break: break-all;
+  .cmt-tool-tip-container {
+    margin: 2px;
+    display: flex;
+    .tooltip-wrapper {
+      margin-right: 4px;
+    }
+  }
   .username {
     font-weight: 800;
     margin-right: 0 4px;
@@ -115,7 +121,10 @@ export const Comment = styled.div`
   }
 `;
 
-export const Like = styled.div`
+type likeProps = {
+  accentColor: string;
+};
+export const Like = styled.div<likeProps>`
   position: relative;
   display: flex;
   align-items: center;
@@ -126,14 +135,14 @@ export const Like = styled.div`
   :focus,
   :hover {
     cursor: pointer;
-    color: #ff005d;
+    color: ${(p) => p.accentColor};
   }
   :active {
     transform: rotate(0.1deg) scale(1);
     transition: transform 0.25s cubic-bezier(0.5, 400, 0.5, -400);
   }
   .fill {
-    color: #ff005d;
+    color: ${(p) => p.accentColor};
   }
 `;
 export const Stats = styled.div`
@@ -178,6 +187,7 @@ export const SpoilerTag = styled.span`
 
 export const MessageParent = styled.span`
   white-space: pre-line;
+  word-break: break-word;
   .time,
   .user {
     ${commentStyleMixin()};
@@ -191,11 +201,12 @@ export const MessageParent = styled.span`
 
 type deleteProps = {
   deleteFlag: boolean;
+  accentColor: string;
 };
 export const Delete = styled.div<deleteProps>`
   position: relative;
   z-index: 3;
-  background-color: #ff005d;
+  background-color: ${(p) => p.accentColor};
   display: flex;
   max-width: 0px;
   align-items: center;
@@ -205,15 +216,4 @@ export const Delete = styled.div<deleteProps>`
   :hover {
     cursor: pointer;
   }
-`;
-
-export const UserToolTip = styled.div`
-  position: absolute;
-  color: blueviolet;
-  background: white;
-  top: -30px;
-  z-index: 99999;
-  padding: 10px;
-  width: 100px;
-  border-radius: 10px;
 `;

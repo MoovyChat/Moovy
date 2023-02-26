@@ -14,6 +14,7 @@ type props = {
   Icon?: IconType;
   textShadow?: string;
   className: string;
+  id?: string;
 };
 const Button: React.FC<props> = ({
   iconSize,
@@ -25,9 +26,11 @@ const Button: React.FC<props> = ({
   Icon,
   textShadow,
   className,
+  id,
 }) => {
   return (
     <ButtonWindow
+      id={id}
       className={className}
       bgColor={bgColor}
       textColor={textColor}

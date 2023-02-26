@@ -1,9 +1,12 @@
 export interface Profile {
-  firstName: string;
-  lastName: string;
+  userId: string;
+  fullname: string;
   dob: string;
   gender: string;
   bio?: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
 }
 
 export interface Comment {
@@ -79,4 +82,10 @@ export interface timeMessage {
   message: string;
   madeBy: string;
   timeStamp: number;
+}
+
+export interface VisitedInterface {
+  id: string;
+  visitTime: number;
+  watchTime: number;
 }

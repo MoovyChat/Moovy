@@ -1,10 +1,7 @@
 import { DIRECTION, TOOLTIP } from '../../utils/enums';
-import { GET_CONSTANT, LOGIN } from './constants';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import Login from './tooltip-components/login/login';
 import { ToolTipParent } from './tooltip.styles';
-import { User } from '../../generated/graphql';
 import UserTip from './tooltip-components/usertip/usertip';
 
 interface props {
@@ -36,7 +33,7 @@ const Tooltip: React.FC<props> = ({
   const SelectedElement = useCallback(() => {
     switch (message) {
       case TOOLTIP.USER:
-        return <UserTip user={data as User} />;
+        return <UserTip userId={data as string} />;
       default:
         return <div></div>;
     }

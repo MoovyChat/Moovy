@@ -1,13 +1,32 @@
+import React, { useMemo, useState } from 'react';
+import { User, useGetUserQuery } from '../../../../generated/graphql';
+
+import FollowButton from '../../../follow-button/followButton';
+import Loading from '../../../../pages/loading/loading';
 import ProfilePic from '../../../profilePic/profilePic';
-import React from 'react';
-import { User } from '../../../../generated/graphql';
 import { UserTipParent } from './userTip.styles';
 import { getShortDateFormat } from '../../../../utils/helpers';
+import { isServer } from '../../../../constants';
 
 type props = {
-  user?: User;
+  userId: string;
 };
-const UserTip: React.FC<props> = ({ user }) => {
+const UserTip: React.FC<props> = ({ userId }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [getUser] = useGetUserQuery({
+    variables: { uid: userId! },
+    pause: isServer(),
+  });
+  useMemo(() => {
+    const { data, error, fetching } = getUser;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getUser as User;
+      setUser(() => _data);
+    }
+  }, [getUser]);
+  if (getUser.fetching) return <Loading />;
+  if (getUser.error) return <>Error</>;
   return (
     <UserTipParent bg={user?.bg!}>
       <div className='container'>
@@ -21,6 +40,9 @@ const UserTip: React.FC<props> = ({ user }) => {
           </div>
         </div>
         <div className='second'>
+          <div className='sec-follow'>
+            <FollowButton userId={user?.id!} nickName={user?.nickname!} />
+          </div>
           <div className='batch'>
             <div className='name'>Followers</div>
             <div className='count'>

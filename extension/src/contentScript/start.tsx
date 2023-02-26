@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { User, filterType } from '../Utils/interfaces';
 import { addBorder, applyFilter } from './videoStyles/videoStyles.help';
+import { createPitchShiftCurve, makeDistortionCurve } from '../Utils/utilities';
 import {
   getStoredBorder,
   getStoredFilterValues,
@@ -9,61 +10,212 @@ import {
   getStoredVideoFilters,
 } from '../Utils/storage';
 import {
-  sliceAddMovie,
-  sliceAddMovieId,
-  sliceResetMovie,
-  sliceUpdateViewsCount,
-} from '../redux/slices/movie/movieSlice';
+  sliceResetAudioNodes,
+  sliceSetAnalyser,
+  sliceSetAudioContext,
+  sliceSetAudioSource,
+  sliceSetBiQuadFilter,
+  sliceSetDistortion,
+  sliceSetGain,
+  sliceSetStereoPanNode,
+} from '../redux/slices/audioNodes';
 import {
   sliceResetSettings,
   sliceSetSmoothWidth,
   sliceSetVideoSize,
 } from '../redux/slices/settings/settingsSlice';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  useGetMovieQuery,
-  useGetUserQuery,
-  useUpdateMovieViewCountMutation,
-} from '../generated/graphql';
+  sliceSetNetworkError,
+  sliceValidateMovieLoading,
+} from '../redux/slices/loading/loadingSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
+import AudioVisualizer from '../components/audio-visualizer/audioVisualizer';
 import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
-import { colorLog } from '../Utils/utilities';
+import { StyledStart } from './start.styles';
 import { getVideoElement } from './contentScript.utils';
-import { isNumber } from '../constants';
+import { isServerSide } from '../constants';
+import { sliceAddMovieId } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser } from '../redux/slices/user/userSlice';
 import { sliceComment } from '../redux/slices/comment/commentSlice';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
 import { urqlClient } from '../Utils/urqlClient';
+import { useFetchMovie } from './hooks/useFetchMovie';
+import { useGetUserQuery } from '../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
 interface props {
-  video_id: string;
-  userDetails: User;
+  userDetails?: User;
 }
 
-const Start: React.FC<props> = ({ video_id, userDetails }) => {
-  const [u, setU] = useState<User>(userDetails);
-  const movie = useAppSelector((state) => state.movie);
+const Start: React.FC<props> = () => {
+  const [u, setU] = useState<User | null>(null);
   const dispatch = useAppDispatch();
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const [{ data, error, fetching }, _] = useGetUserQuery({
-    variables: { uid: u?.id },
+    variables: { uid: u?.id! },
+    pause: isServerSide(),
   });
-  const [movieId, setMovieId] = useState<string>(video_id);
-  const [getMovieInfo] = useGetMovieQuery({ variables: { mid: movieId } });
-  const [movieFetched, setMovieFetched] = useState<number>(0);
+  const autoSkipValue = useAppSelector((state) => state.misc.autoSkip);
+  const autoNextEpisodeValue = useAppSelector(
+    (state) => state.misc.autoNextEpisode
+  );
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
-
-  const [, incrementMovieViewCount] = useUpdateMovieViewCountMutation();
-
+  // const nodes = useAppSelector((state) => state.audioNodes);
+  const [visible, setIsVisible] = useState<boolean>(true);
+  // const [audioSource, setAudioSource] =
+  //   useState<MediaElementAudioSourceNode | null>(null);
+  // const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
+  const oldIntervalIds = useAppSelector((state) => state.misc.intervalIds);
+  // useEffect(() => {
+  //   if (audioSource || audioCtx) dispatch(sliceResetAudioNodes());
+  // }, [user]);
   const stableDispatch = useCallback(
     (args: any) => {
       return dispatch(args);
     },
     [dispatch]
   );
+
+  useEffect(() => {
+    oldIntervalIds.forEach((interval) => clearInterval(interval));
+  }, []);
+
+  useEffect(() => {
+    // Clear redux cache.
+    dispatch(sliceComment({ type: COMMENT.RESET }));
+    dispatch(sliceResetReply());
+    dispatch(sliceResetSettings());
+    dispatch(sliceResetAudioNodes());
+    dispatch(sliceValidateMovieLoading(false));
+    getStoredUserLoginDetails().then((res) => {
+      setU(res);
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   async function manageAudio() {
+  //     videoElement.then((ele) => {
+  //       if (!ele) return;
+  //       ele[0].playbackRate = manipulation.playbackRate;
+
+  //       if (!nodes.audioContext) {
+  //         const context = new AudioContext();
+  //         stableDispatch(sliceSetAudioContext(context));
+  //       }
+  //       if (!nodes.audioContext) return;
+  //       if (!nodes.audioSource) {
+  //         try {
+  //           const source = nodes.audioContext.createMediaElementSource(ele[0]);
+  //           stableDispatch(sliceSetAudioSource(source));
+  //         } catch (e) {}
+  //       }
+  //       // Create a MediaElementSourceNode
+  //       if (!nodes.analyser) {
+  //         const _analyser = nodes.audioContext.createAnalyser();
+  //         stableDispatch(sliceSetAnalyser(_analyser));
+  //       }
+  //       if (!nodes.stereo) {
+  //         const stereoPanner = nodes.audioContext.createStereoPanner();
+  //         stableDispatch(sliceSetStereoPanNode(stereoPanner));
+  //       }
+  //       if (!nodes.distortion) {
+  //         const distortion = nodes.audioContext.createWaveShaper();
+  //         stableDispatch(sliceSetDistortion(distortion));
+  //       }
+
+  //       if (!nodes.gain) {
+  //         const _gain = nodes.audioContext.createGain();
+  //         stableDispatch(sliceSetGain(_gain));
+  //       }
+  //       if (!nodes.biQuadFilter) {
+  //         let filter = nodes.audioContext.createBiquadFilter();
+  //         stableDispatch(sliceSetBiQuadFilter(filter));
+  //       }
+  //       if (
+  //         nodes.audioSource &&
+  //         nodes.analyser &&
+  //         nodes.stereo &&
+  //         nodes.distortion &&
+  //         nodes.gain &&
+  //         nodes.biQuadFilter
+  //       ) {
+  //         // Connect the MediaElementSourceNode to the audio graph
+  //         nodes.audioSource.connect(nodes.distortion);
+  //         nodes.distortion.connect(nodes.biQuadFilter);
+  //         nodes.biQuadFilter.connect(nodes.stereo);
+  //         nodes.stereo.connect(nodes.gain);
+  //         nodes.gain.connect(nodes.analyser);
+  //         nodes.analyser.connect(nodes.audioContext.destination);
+
+  //         // Configure filter
+  //         nodes.biQuadFilter.type = manipulation.filterType as BiquadFilterType;
+  //         nodes.biQuadFilter.frequency.value = manipulation.frequency;
+  //         nodes.biQuadFilter.Q.value = manipulation.QValue;
+  //         nodes.biQuadFilter.gain.value = manipulation.gain;
+  //         nodes.stereo.pan.value = manipulation.stereo;
+  //         nodes.gain.gain.value = manipulation.gain;
+  //         nodes.distortion.curve = makeDistortionCurve(
+  //           manipulation.distortionCurve
+  //         );
+  //         nodes.distortion.oversample =
+  //           manipulation.distortionOverSample as OverSampleType;
+
+  //         setAudioSource(nodes.audioSource);
+  //         setAudioCtx(nodes.audioContext);
+  //       }
+  //     });
+  //   }
+  //   manageAudio();
+  // }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
+
+  // This interval will run continuously through out the session.
+  useEffect(() => {
+    async function applyTimeLineStyles() {
+      let timelineBar = document.querySelector('[data-uia="timeline-bar"]');
+      if (timelineBar) {
+        const firstChild = timelineBar.firstChild as HTMLElement;
+        const secondChild = timelineBar.childNodes[1] as HTMLElement;
+        firstChild.style.backgroundColor = accentColor;
+        firstChild.style.opacity = '0.5';
+        secondChild.style.backgroundColor = accentColor;
+      }
+      let knowView = document.querySelector('[data-uia="timeline-knob"]');
+      let knobElement = knowView as HTMLElement;
+      if (knobElement) {
+        knobElement.style.backgroundColor = accentColor;
+      }
+    }
+    async function toggleCommentButton() {
+      let activeIconsSelector = document.querySelector('[data-uia="player"]');
+      if (activeIconsSelector) {
+        let activeIconSelectorClassName = activeIconsSelector?.className;
+        let exactRegex = /\bactive\b/i;
+        if (activeIconSelectorClassName?.match(exactRegex))
+          setIsVisible(() => true);
+        else setIsVisible(() => false);
+      }
+    }
+    async function autoSkip(className: string) {
+      const buttonElements = document.getElementsByClassName(className);
+      if (buttonElements) {
+        let btn = buttonElements[0] as HTMLDivElement;
+        try {
+          btn.click();
+        } catch (e) {}
+      }
+    }
+    let interval = setInterval(() => {
+      applyTimeLineStyles();
+      toggleCommentButton();
+      autoSkipValue && autoSkip('watch-video--skip-content-button');
+    }, 150);
+    return () => clearInterval(interval);
+  }, [accentColor, visible, autoSkipValue]);
 
   // Set the pre-saved video styles.
   useEffect(() => {
@@ -97,11 +249,21 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   }, [movieId, videoElem]);
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
-      if (isNumber(movieId)) {
-        setMovieId(() => request.movieId);
-        dispatch(sliceSetSmoothWidth(0));
-      }
+    if (!sender.tab && request.type === 'SET_MOVIE_ID') {
+      // Clear redux cache.
+      dispatch(sliceComment({ type: COMMENT.RESET }));
+      dispatch(sliceResetReply());
+      dispatch(sliceResetSettings());
+      dispatch(sliceResetAudioNodes());
+      dispatch(sliceValidateMovieLoading(false));
+      setMovieId(() => request.movieId + '');
+      dispatch(sliceSetSmoothWidth(0));
+      sendResponse({
+        data: 'Movie ID got reset',
+      });
+    } else if (!sender.tab && request.type === 'RESET_MOVIE_ID') {
+      setMovieId(() => request.movieId + '');
+      dispatch(sliceSetSmoothWidth(0));
       sendResponse({
         data: 'Movie ID got reset',
       });
@@ -110,26 +272,11 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
   });
 
   useEffect(() => {
-    colorLog('"Start" component initiated');
-    colorLog('Cleared Redux storage');
-    // Clear redux cache.
-    dispatch(sliceComment({ type: COMMENT.RESET }));
-    dispatch(sliceResetReply());
-    dispatch(sliceResetSettings());
-    dispatch(sliceResetMovie());
-    if (userDetails.id === '') {
-      // console.log('Checking details', userDetails);
-      getStoredUserLoginDetails().then((res) => {
-        // console.log('Checking user', res);
-        setU(res);
-      });
-    } else {
-      setU(userDetails);
+    if (error) {
+      const networkError = error.networkError;
+      if (networkError) dispatch(sliceSetNetworkError(true));
+      else dispatch(sliceSetNetworkError(false));
     }
-  }, []);
-
-  useEffect(() => {
-    if (error) colorLog(error);
     if (!fetching && data) {
       let _u = data.getUser as User;
       stableDispatch(sliceAddUser(_u));
@@ -137,29 +284,7 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     return () => {};
   }, [stableDispatch, fetching, data, error]);
 
-  useMemo(() => {
-    let { data, error, fetching } = getMovieInfo;
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _data = data.getMovie;
-      if (_data) {
-        dispatch(sliceAddMovie(_data));
-        // Increase views count
-        incrementMovieViewCount({ mid: _data.id }).then((res) => {
-          const { error, data } = res;
-          if (error) colorLog(error);
-          if (data) {
-            const _data = data.updateMovieViewCount!;
-            dispatch(sliceUpdateViewsCount(_data as number));
-          }
-        });
-
-        setMovieFetched(1);
-      } else {
-        setMovieFetched(2);
-      }
-    }
-  }, [getMovieInfo, stableDispatch, movieId]);
+  useFetchMovie(movieId);
 
   useEffect(() => {
     //Redux: Add new movie id
@@ -167,11 +292,14 @@ const Start: React.FC<props> = ({ video_id, userDetails }) => {
     return () => {};
   }, [stableDispatch, movieId]);
 
+  if (!videoElem) return <></>;
   return (
-    <CommentButton
-      movieFetched={movieFetched}
-      setMovieFetched={setMovieFetched}
-    />
+    <StyledStart visible={visible}>
+      <CommentButton visible={visible} />
+      {/* <div className='main-audio'>
+        <AudioVisualizer fftSize={1024} canvasRef={canvasRefObj} />
+      </div> */}
+    </StyledStart>
   );
 };
 

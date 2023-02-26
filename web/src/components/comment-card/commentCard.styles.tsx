@@ -26,11 +26,12 @@ export const CardParent = styled.div<props>`
   align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
   background-color: transparent;
   overflow: hidden;
-  margin: 10px 2px;
-  box-shadow: 0 0 4px ${(p) => p.theme.text},
-    inset 0 0 4px ${(p) => p.theme.trendingTiles};
   cursor: pointer;
   font-size: 15px;
+  border-top: 0.3px solid #8f8f8f81;
+  :nth-last-child(3) {
+    border-bottom: 0.3px solid #8f8f8f81;
+  }
   :first-child {
     margin-top: 10px;
   }
@@ -110,11 +111,12 @@ export const CardParent = styled.div<props>`
           .time {
             display: flex;
             justify-content: center;
-            height: 80%;
             align-items: flex-end;
+            height: 80%;
             font-weight: 600;
             font-size: 0.7em;
             margin-left: 5px;
+            opacity: 0.6;
           }
         }
         .isReply {
@@ -291,18 +293,24 @@ export const MovieInfoParent = styled.div`
   .title {
     font-size: 1.1rem;
     font-weight: 700;
-    :hover {
-      cursor: pointer;
-      text-decoration: underline;
+    span {
+      display: inline-block;
+      :hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
     }
   }
   .parent {
     font-size: 0.6rem;
     font-weight: 600;
     margin: 4px 0;
-    :hover {
-      text-decoration: underline;
-      cursor: pointer;
+    span {
+      display: inline-block;
+      :hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
     }
   }
   .group {
@@ -312,7 +320,7 @@ export const MovieInfoParent = styled.div`
     .runtime {
       padding: 5px 10px;
       border-radius: 3px;
-      border: 1px solid #d01323;
+      border: 1px solid ${(p) => p.theme.border};
       margin: 2px;
     }
   }
@@ -335,32 +343,45 @@ export const MovieInfoParent = styled.div`
       -webkit-box-orient: vertical;
     }
   }
-  .stats {
+  .stats-container {
     display: flex;
-    margin: 5px 0;
-
-    .likes,
-    .comments,
-    .views {
+    width: 100%;
+    justify-content: space-between;
+    .stats {
       display: flex;
-      margin: 3px 5px;
-      justify-content: center;
-      align-items: center;
-      .count {
-        font-weight: 600;
-        margin-right: 2px;
+      margin: 5px 0;
+
+      .history {
+        .icon {
+          margin-right: 5px;
+        }
+        .count {
+          font-size: 10px;
+        }
       }
-      .icon {
+      .likes,
+      .comments,
+      .views {
         display: flex;
+        margin: 3px 5px;
         justify-content: center;
         align-items: center;
+        .count {
+          font-weight: 600;
+          margin-right: 2px;
+        }
+        .icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
       }
-    }
-    .likes {
-      .icon {
-        svg {
-          animation: ${animateHeart} 0.3s linear forwards;
-          :hover {
+      .likes {
+        .icon {
+          svg {
+            animation: ${animateHeart} 0.3s linear forwards;
+            :hover {
+            }
           }
         }
       }

@@ -16,6 +16,11 @@ import {
 } from './cacheExchanges';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import {
+  getPaginatedMovieStatsResolver,
+  getPaginatedSearchEpisodes,
+  getPaginatedSearchPeople,
+  getPaginatedSearchTitles,
+  getUserViewHistoryResolver,
   movieCommentsResolver,
   paginatedFeedResolver,
   paginatedMoviesResolver,
@@ -29,8 +34,12 @@ import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
 import { retryExchange } from '@urql/exchange-retry';
 
+const CUSTOM_DOMAIN = 'server.moovychat.com';
+
+const wsUrl = `wss://${CUSTOM_DOMAIN}/graphql`;
+const serverUrl = `https://${CUSTOM_DOMAIN}/graphql`;
 const wsClient = createWSClient({
-  url: 'ws://localhost:4000/graphql',
+  url: wsUrl,
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
@@ -46,7 +55,13 @@ const cache: Partial<CacheExchangeOpts> = {
     Profile: () => null,
     MovieStats: () => null,
     CommentOrReply: () => null,
+    PaginatedTitles: () => null,
     NotificationObject: () => null,
+    LinkPreview: () => null,
+    PaginatedMovieStats: () => null,
+    SearchMovieObject: () => null,
+    SearchTitleObject: () => null,
+    SearchPeopleObject: () => null,
   },
   updates: {
     Mutation: {
@@ -76,12 +91,19 @@ const cache: Partial<CacheExchangeOpts> = {
       getPaginatedShows: paginatedMoviesResolver(),
       getFeed: paginatedFeedResolver(),
       getUserNotifications: paginatedUserNotificationsResolver(),
+      getFavTitles: getPaginatedMovieStatsResolver(),
+      getLikedTitles: getPaginatedMovieStatsResolver(),
+      getUserViewHistory: getUserViewHistoryResolver(),
+      searchTitles: getPaginatedSearchTitles(),
+      searchMovies: getPaginatedSearchTitles(),
+      searchEpisodes: getPaginatedSearchEpisodes(),
+      searchPeople: getPaginatedSearchPeople(),
     },
   },
 };
 
 export const urqlClient: any = (ssrExchange: any) => ({
-  url: 'http://localhost:4000/graphql',
+  url: serverUrl,
   fetchOptions: {
     credentials: 'include',
   },

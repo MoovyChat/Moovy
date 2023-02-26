@@ -2,84 +2,85 @@ import styled from 'styled-components';
 
 export const SearchBarParent = styled.div`
   width: 100%;
-  border: 1px solid;
   overflow: hidden;
   border-radius: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0;
+  overflow: auto;
+  backdrop-filter: contrast(0.8);
   .icon {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 50px;
   }
-  input {
-    background: transparent;
-    border: none;
-    font-size: 1rem;
-    padding: 0.7rem 1rem;
-    border-radius: 0.25rem;
-    outline: none;
+  form {
     width: calc(100% - 50px);
-    color: ${(p) => p.theme.text};
+    input {
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 0.25rem;
+      outline: none;
+      width: calc(100% - 50px);
+      color: ${(p) => p.theme.text};
+    }
   }
-  .search-results {
-    position: absolute;
-    width: 50%;
-    height: 70vh;
-    overflow: auto;
-    top: 7%;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    z-index: 99;
-    border-radius: 20px;
-    box-shadow: 0 0 5px, inset 0 0 5px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    @media (max-width: 767px) {
-      width: 100%;
-    }
-    .heading {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-left: 20px;
-      margin-top: 20px;
-    }
-    .content {
-      margin-left: 20px;
-      margin-top: 20px;
-      width: 100%;
-      .content-container {
-        width: 100%;
-        .people,
-        .movies,
-        .shows {
-          margin-top: 15px;
-          margin-bottom: 10px;
-          font-size: 1em;
-          font-weight: 600;
-        }
-        .users-content {
-          display: flex;
-          gap: 1em;
-        }
-        .movies-content {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-        }
-      }
-      .more {
-        margin: 15px 0;
+`;
+
+export const StyledSearchResults = styled.div`
+  position: absolute;
+  width: 50%;
+  height: 70vh;
+  overflow: auto;
+  top: 7%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  z-index: 99;
+  border-radius: 20px;
+  box-shadow: 0 0 5px, inset 0 0 5px;
+  backdrop-filter: blur(10px) brightness(0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  .heading {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+  .content {
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 97%;
+    .content-container {
+      width: 98%;
+      .people,
+      .movies,
+      .shows {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        font-size: 1em;
         font-weight: 600;
-        :hover {
-          cursor: pointer;
-          text-decoration: underline;
-        }
+      }
+      .users-content {
+        display: flex;
+        gap: 1em;
+      }
+      .movies-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+    .more {
+      margin: 15px 0;
+      font-weight: 600;
+      :hover {
+        cursor: pointer;
+        text-decoration: underline;
       }
     }
   }

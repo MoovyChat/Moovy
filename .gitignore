@@ -3,7 +3,7 @@ server/dist
 server/.vscode
 server/.yarn.lock
 server/yarn-error.log
-
+.DS_Store
 extension/node_modules
 extension/dist
 extension/.vscode

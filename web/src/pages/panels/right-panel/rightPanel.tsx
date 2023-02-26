@@ -1,88 +1,150 @@
-import { FaHashtag } from 'react-icons/fa';
-import { MdLocalFireDepartment } from 'react-icons/md';
-import React from 'react';
+import { MdLocalFireDepartment, MdOutlineStar } from 'react-icons/md';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import {
+  TrendingObject,
+  useCreateChargeMutation,
+  useGetTrendingMoviesQuery,
+} from '../../../generated/graphql';
+
+import Ads from '../../../components/ads/ads';
+import Loading from '../../loading/loading';
 import { RightParent } from './rightPanel.styles';
+import { getFormattedNumber } from '../../../utils/helpers';
+import { useAppSelector } from '../../../redux/hooks';
 import useIsAuth from '../../../utils/isAuthUser';
+import { useNavigate } from 'react-router-dom';
 
 type props = {
   className: string;
 };
-const fakeTitles = [
-  {
-    title: 'F.R.I.E.N.D.S',
-    views: '1.2K',
-  },
-  {
-    title: 'Breaking Bad',
-    views: '1.15K',
-  },
-  {
-    title: 'The Office',
-    views: '1K',
-  },
-  {
-    title: 'The Witcher',
-    views: '900',
-  },
-  {
-    title: 'House of cards',
-    views: '800',
-  },
-];
-const fakeHashTags = [
-  {
-    tag: '#MichaelJackson',
-    mentions: '10.3K',
-  },
-  {
-    tag: '#freecodefridaycontest',
-    mentions: '10.3K',
-  },
-  {
-    tag: '#OnePiece',
-    mentions: '10.3K',
-  },
-  {
-    tag: '#BreakingBad',
-    mentions: '10.3K',
-  },
-  {
-    tag: '#Imaginedragons',
-    mentions: '10.3K',
-  },
-];
+
 const RightPanel: React.FC<props> = ({ className }) => {
+  const [, createCharge] = useCreateChargeMutation();
+  const [trendingMovies, setTrendingMovies] = useState<TrendingObject[] | null>(
+    null
+  );
+  const navigate = useNavigate();
+  const userId = useAppSelector((state) => state.user.id);
   useIsAuth();
+
+  const [trendingMoviesQuery] = useGetTrendingMoviesQuery({
+    variables: {
+      limit: 5,
+    },
+  });
+
+  const purchasePremium: MouseEventHandler<HTMLDivElement> = async (e) => {
+    e.stopPropagation();
+    const res = await createCharge({ userId: userId });
+    const { data, error } = res;
+    if (error) console.log(error);
+    if (data) {
+      const url = data.createCharge as string;
+      window.open(url, '_open');
+    }
+  };
+
+  useEffect(() => {
+    const { data, error, fetching } = trendingMoviesQuery;
+    if (error) console.log(error);
+    if (!fetching && data) {
+      const _data = data.getTrendingMovies;
+      setTrendingMovies(() => _data as TrendingObject[]);
+    }
+  }, [trendingMoviesQuery]);
   return (
     <RightParent className={className}>
-      <div className='adblock'>Advertisements goes here</div>
+      <div className='adblock'>
+        <Ads />
+      </div>
       <div className='trending titles'>
         <div className='heading'>
           <MdLocalFireDepartment color='#fc0404' size={20} />
-          <div className='sub'>Trending titles</div>
+          <div className='sub'>Trending Movies</div>
         </div>
         <div className='content'>
-          {fakeTitles.map((title) => (
-            <div className='item' key={title.title}>
-              <div className='title'>{title.title}</div>
-              <div className='count'>{title.views} views</div>
-            </div>
-          ))}
+          {!trendingMoviesQuery.fetching ? (
+            trendingMovies &&
+            trendingMovies.map((title) => (
+              <div
+                className='item'
+                key={title.title}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/movie/${title.id}`);
+                }}>
+                <div className='title'>{title.title}</div>
+                <div className='count'>
+                  {getFormattedNumber(title.viewsCount)} views
+                </div>
+              </div>
+            ))
+          ) : (
+            <Loading />
+          )}
         </div>
       </div>
-      <div className='trending hashtags'>
+      {/* <div className='trending premium'>
         <div className='heading'>
-          <FaHashtag color='#00b7ff' size={20} />
-          <div className='sub'>Trending hashtags</div>
+          <MdOutlineStar size={20} />
+          <div className='sub'>Premium features</div>
         </div>
         <div className='content'>
           {fakeHashTags.map((tag) => (
             <div className='item' key={tag.tag}>
               <div className='title'>{tag.tag}</div>
-              <div className='count'>{tag.mentions} mentions</div>
+              <div className='count'>{tag.mentions}</div>
             </div>
           ))}
+          <div className='item purchase' onClick={purchasePremium}>
+            <div className='title'>Purchase</div>
+            <div className='price'>
+              <span>$1.50</span>
+              <del className='limited'>($2.00)</del>
+            </div>
+            <div className='warning'>
+              <span>*Valid only for a limited time.</span>
+            </div>
+          </div>
         </div>
+      </div> */}
+      <div className='links'>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/terms-and-conditions', '_blank');
+          }}>
+          Terms of Service
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/privacy', '_blank');
+          }}>
+          Privacy Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/cookie-policy', '_blank');
+          }}>
+          Cookie Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/about-us', '_blank');
+          }}>
+          About us
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/contact', '_blank');
+          }}>
+          Contact us
+        </div>
+        <div>© 2023 MoovyChat, Ltd.</div>
       </div>
     </RightParent>
   );

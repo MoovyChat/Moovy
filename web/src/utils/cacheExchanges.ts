@@ -14,8 +14,12 @@ import {
   GetCommentsOfTheUserQuery,
   GetIsUserLikedCommentDocument,
   GetIsUserLikedCommentQuery,
+  GetLikedTitlesDocument,
+  GetLikedTitlesQuery,
   GetMovieDocument,
   GetMovieQuery,
+  GetOnlyUserMovieStatsDocument,
+  GetOnlyUserMovieStatsQuery,
   GetRepliesOfCommentDocument,
   GetRepliesOfCommentQuery,
   GetRepliesOfReplyDocument,
@@ -246,7 +250,6 @@ export const profileUpdateChanges = (
                 profile: _result.upsertProfile,
               },
             };
-
             return newData;
           }
         );
@@ -778,10 +781,18 @@ export const updateMovieLikesChanges = (
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
     getMovie: 'getMovie',
+    getOnlyUserMovieStats: 'getOnlyUserMovieStats',
+    getLikedTitles: 'getLikedTitles',
   };
 
   const getMovieFields = allFields.filter(
     (field) => field.fieldName === fieldsInfos.getMovie
+  );
+  const getOnlyUserMovieStatsFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getOnlyUserMovieStats
+  );
+  const getLikedTitlesFields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getLikedTitles
   );
   getMovieFields.forEach((fieldInfo) => {
     if ((fieldInfo.arguments as any).mid === args.mid) {
@@ -806,6 +817,69 @@ export const updateMovieLikesChanges = (
                 : likesCount - 1,
             },
           };
+        }
+      );
+    }
+  });
+  getOnlyUserMovieStatsFields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).mid === args.mid) {
+      cache.updateQuery(
+        {
+          query: GetOnlyUserMovieStatsDocument,
+          variables: fieldInfo.arguments,
+        },
+        (data: GetOnlyUserMovieStatsQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getOnlyUserMovieStats = data.getOnlyUserMovieStats!;
+          const likeFromArg = (args.options as any).like!;
+          return {
+            ...data,
+            getOnlyUserMovieStats: {
+              ...getOnlyUserMovieStats,
+              like: likeFromArg,
+            },
+          };
+        }
+      );
+    }
+  });
+  getLikedTitlesFields.forEach((fieldInfo) => {
+    console.log(fieldInfo, args);
+    if ((fieldInfo.arguments as any).uid === args.uid) {
+      cache.updateQuery(
+        {
+          query: GetLikedTitlesDocument,
+          variables: fieldInfo.arguments,
+        },
+        (data: GetLikedTitlesQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getLikedTitles = data.getLikedTitles!;
+          const likeFromArg = (args.options as any).like!;
+          const movieStats = getLikedTitles.movieStats!;
+          return {
+            ...data,
+            getLikedTitles: {
+              ...getLikedTitles,
+              movieStats: [
+                ...movieStats,
+                {
+                  userId: args.uid,
+                  like: likeFromArg,
+                  favorite: _result.updateUserMovieStats?.favorite,
+                  movieId: args?.mid,
+                  __typename: 'MovieStats',
+                  createdAt: new Date().getTime().toString(),
+                  updatedAt: new Date().getTime().toString(),
+                },
+              ],
+            },
+          } as GetLikedTitlesQuery;
         }
       );
     }

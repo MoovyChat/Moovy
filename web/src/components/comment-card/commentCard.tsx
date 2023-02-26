@@ -21,6 +21,7 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
   const navigate = useNavigate();
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
+
   const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
   const [, setCommentLike] = useSetCommentLikeMutation();
   const [isUserLikedQuery] = useGetIsUserLikedCommentQuery({

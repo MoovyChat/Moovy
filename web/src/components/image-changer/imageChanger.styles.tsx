@@ -165,12 +165,24 @@ export const DisplayImage = styled.div`
   justify-content: center;
   overflow: hidden;
   .display-container {
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
     overflow: auto;
+    .dropzone {
+      width: 99%;
+      height: 99%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      :hover {
+        backdrop-filter: contrast(0.7);
+        cursor: pointer;
+      }
+    }
     img {
       width: 100%;
       height: 100%;

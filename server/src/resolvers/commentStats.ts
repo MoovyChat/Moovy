@@ -11,15 +11,15 @@ import {
 import { Comment } from '../entities/Comment';
 import { conn } from '../dataSource';
 import { COMMENT_LIKES_SUB } from '../constants';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { LikeNotifications } from '../entities/LikeNotifications';
 
 @ObjectType()
 class CommentsStatsObject {
   @Field(() => CommentStats)
   likeStatus: CommentStats;
-  @Field(() => User)
-  user: User;
+  @Field(() => Users)
+  user: Users;
 }
 
 @Resolver()
@@ -33,13 +33,16 @@ export class CommentStatsResolver {
     @PubSub() pubSub: PubSubEngine
   ): Promise<CommentsStatsObject | null> {
     const comment = await Comment.findOne({ where: { id: cid } });
-    const user = await User.findOne({ where: { id: uid } });
+    const user = await Users.findOne({ where: { id: uid } });
     if (!user) throw new Error('You need to login to interact with comment');
     if (!comment) throw new Error('Comment not found');
 
     const commentStat = await CommentStats.findOne({
       where: { userId: uid, commentId: cid },
     });
+    let lastUpdatedValue = commentStat?.updatedAt.getTime();
+    const createdTimestamp = commentStat?.createdAt.getTime();
+    let currentTime = new Date().getTime();
     let detail;
     if (!commentStat) {
       const details = await conn
@@ -86,20 +89,29 @@ export class CommentStatsResolver {
         // Insert notifications.
         const notifications = conn.getRepository(LikeNotifications);
         if (uid !== comment.commentedUserId) {
-          const commentedUser = await User.findOne({
+          const commentedUser = await Users.findOne({
             where: { id: comment.commentedUserId },
           });
           const message = `${user?.nickname} liked your comment`;
-          await notifications.insert({
-            toUserId: commentedUser?.id,
-            toUserNickName: commentedUser?.nickname,
-            commentId: cid,
-            replyId: null,
-            isRead: false,
-            message: message,
-            fromUser: uid,
-            fromUserPhotoUrl: user?.photoUrl,
-          });
+          if (
+            (lastUpdatedValue && currentTime - lastUpdatedValue > 300000) ||
+            lastUpdatedValue === null ||
+            createdTimestamp === null ||
+            createdTimestamp === lastUpdatedValue ||
+            lastUpdatedValue === undefined ||
+            createdTimestamp === undefined
+          ) {
+            await notifications.insert({
+              toUserId: commentedUser?.id,
+              toUserNickName: commentedUser?.nickname,
+              commentId: cid,
+              replyId: null,
+              isRead: false,
+              message: message,
+              fromUser: uid,
+              fromUserPhotoUrl: user?.photoUrl,
+            });
+          }
         }
       }
     }

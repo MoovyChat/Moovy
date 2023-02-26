@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ChildHeaderStyles = styled.div`
   position: sticky;
   top: 0;
-  padding: 2% 0;
+  padding: 5px 0;
   display: flex;
   align-items: center;
   z-index: 5;
@@ -14,7 +14,7 @@ export const ChildHeaderStyles = styled.div`
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    padding: 5px;
+    padding: 4px;
     margin-left: 2px;
     :hover {
       cursor: pointer;

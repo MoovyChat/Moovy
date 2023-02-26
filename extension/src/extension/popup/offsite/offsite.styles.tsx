@@ -4,6 +4,7 @@ export const OffsiteContent = styled.div`
   color: white;
   width: 100%;
   display: flex;
+  padding: 15px 0px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -12,5 +13,6 @@ export const OffsiteContent = styled.div`
   }
   .services {
     display: flex;
+    gap: 5px;
   }
 `;

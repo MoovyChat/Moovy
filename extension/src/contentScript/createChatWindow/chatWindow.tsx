@@ -1,11 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
 
-import ChatInterface from '../../components/chatInterface/chatInterface';
+import ChatInterface from '../../components/chat-interface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
+import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
 import useFetchEmojis from '../hooks/useFetchEmojis';
+import { withUrqlClient } from 'next-urql';
 
 // Chat window component -> Renders ChatInterface component.
 const ChatWindow = () => {
@@ -17,7 +19,7 @@ const ChatWindow = () => {
     (state) => state.settings.openChatWindow
   );
   // React: useState hook.
-  const theme = useAppSelector((state) => state.settings.theme);
+  const theme = useAppSelector((state) => state.misc.theme);
   // React: useRef hook.
   const divRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -46,4 +48,4 @@ const ChatWindow = () => {
   );
 };
 
-export default ChatWindow;
+export default withUrqlClient(urqlClient)(ChatWindow);

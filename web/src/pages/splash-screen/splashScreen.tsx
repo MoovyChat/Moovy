@@ -1,25 +1,28 @@
 import { User, useMeQuery } from '../../generated/graphql';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useMemo } from 'react';
 
 import App from '../app/app';
 import Home from '../home/home';
-import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from './splashScreen.styles';
 import { sliceSetUser } from '../../redux/slices/userSlice';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../redux/hooks';
+import { useLocation } from 'react-router-dom';
 
 const SplashScreen = () => {
   const [{ data, fetching, error }] = useMeQuery();
+  const location = useLocation();
   const dispatch = useAppDispatch();
-  useEffect(() => {
+
+  useMemo(() => {
     if (error) console.log(error);
     if (!fetching && data) {
       const user = data?.me as User;
-      if (!user) {
+      // console.log('splashscreen', user);
+      if (user) {
         dispatch(sliceSetUser(user));
+        localStorage.setItem('user', JSON.stringify(user));
       }
     }
   }, [fetching, data, error]);
@@ -29,7 +32,7 @@ const SplashScreen = () => {
     return (
       <StyledSplashScreen>
         <div className='logo'>
-          <Image src={Moovy} alt='Moovy' />
+          <img src={Moovy} alt='Moovy' />
         </div>
         <div className='loading'>
           <Loading />

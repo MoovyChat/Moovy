@@ -17,14 +17,16 @@ type props = {
   isMain?: boolean;
 };
 const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
-  const movieId = comment.movieId;
+  const movieId = comment && comment.movieId;
   const navigate = useNavigate();
-  const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
+  const [likeCount, setLikeCount] = useState<number>(
+    comment ? comment.likesCount! : 0
+  );
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [, setReplyLike] = useSetReplyLikeMutation();
   const [isUserLikedQuery] = useGetIsUserLikedReplyQuery({
-    variables: { uid: loggedInUser.id, rid: comment.id },
+    variables: { uid: loggedInUser.id, rid: comment && comment.id },
     pause: isServer(),
   });
 
@@ -60,15 +62,19 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
   };
 
   return (
-    <CardTemplate
-      type='reply'
-      isMain={isMain}
-      updateLike={updateLike}
-      likeCount={likeCount}
-      like={like}
-      goToComment={goToReply}
-      comment={comment}
-    />
+    <>
+      {comment && (
+        <CardTemplate
+          type='reply'
+          isMain={isMain}
+          updateLike={updateLike}
+          likeCount={likeCount}
+          like={like}
+          goToComment={goToReply}
+          comment={comment}
+        />
+      )}
+    </>
   );
 };
 

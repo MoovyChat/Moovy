@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 
-export const AppParent = styled.div`
+type props = {
+  dominantColor: string;
+};
+export const AppParent = styled.div<props>`
   font-family: 'Karla', sans-serif;
 `;

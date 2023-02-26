@@ -1,4 +1,3 @@
-import { EventHandler, KeyboardEventHandler, useEffect, useMemo } from 'react';
 import { HomeParent, PanelsParent } from './home.styles';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
@@ -7,6 +6,7 @@ import {
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useMemo } from 'react';
 
 import CenterPanel from '../panels/center-panel/centerPanel';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
@@ -18,19 +18,10 @@ import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { themes } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
-import useIsAuth from '../../utils/isAuthUser';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const Home = () => {
-  useEffect(() => {
-    if (screen.orientation) {
-      // The screen.orientation API is available, so you can use it
-      screen.orientation.lock('portrait');
-    } else {
-      // The screen.orientation API is not available, so you may want to fall back to another solution
-    }
-  }, []);
   useEffect(() => {
     document.title = 'Moovy';
   }, []);

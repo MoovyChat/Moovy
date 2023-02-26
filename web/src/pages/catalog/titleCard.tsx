@@ -1,6 +1,5 @@
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 
-import { Image } from '../../components/Image/image';
 import { StyledTitle } from './catalog.styles';
 import { Title } from '../../generated/graphql';
 import { useNavigate } from 'react-router-dom';
@@ -112,7 +111,7 @@ const TitleCard: React.FC<props> = ({
       onMouseLeave={() => hoverHandler(false)}>
       <div className='container' ref={childRef}>
         <div className='title-bg'>
-          <Image src={title.artwork as string} alt='title' loading='lazy' />
+          <img src={title.artwork as string} alt='title' loading='lazy' />
         </div>
         {hovered && (
           <div className='info'>

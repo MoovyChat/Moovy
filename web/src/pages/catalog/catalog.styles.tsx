@@ -60,7 +60,7 @@ export const CatalogParent = styled.div`
   max-width: 100%;
   min-width: 0;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 type props = {

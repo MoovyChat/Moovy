@@ -1,7 +1,7 @@
 import Dexie, { Table } from 'dexie';
 
 import { Emoji } from 'emojibase';
-import { refinedG } from '../components/emojiPicker/emojiPicker';
+import { refinedG } from '../components/emoji-picker/emojiPicker';
 
 export interface Emojis {
   id?: number;

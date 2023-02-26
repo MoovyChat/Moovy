@@ -1,10 +1,6 @@
 import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { User, textMap } from '../../Utils/interfaces';
-import {
-  colorLog,
-  getFormattedWordsArray,
-  getTimeFrame,
-} from '../../Utils/utilities';
+import { getFormattedWordsArray, getTimeFrame } from '../../Utils/utilities';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useCommentLikesSubscription,
@@ -68,7 +64,7 @@ const CommentCard: React.FC<props> = ({
 
   useEffect(() => {
     const { data, fetching, error } = commentLikeCountQuery;
-    if (error) colorLog(error);
+    if (error) console.log(error);
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
@@ -89,7 +85,7 @@ const CommentCard: React.FC<props> = ({
   //Set Comment likes count
   useEffect(() => {
     const { data, fetching, error } = commentLikesSub;
-    if (error) colorLog(error);
+    if (error) console.log(error);
     if (!fetching && data) {
       const commentLikesCount = data.commentLikesUpdate?.likesCount;
       setLikesCount(commentLikesCount!);
@@ -120,10 +116,10 @@ const CommentCard: React.FC<props> = ({
   // Set commented user info.
   useMemo(() => {
     let { data, fetching, error } = commentedUser;
-    if (error) colorLog(error);
+    if (error) console.log(error);
     if (!fetching && data) {
       const commentData = data.getCommentedUser;
-      if (!commentData) colorLog('Comment data is not available');
+      if (!commentData) console.log('Comment data is not available');
       setCommentedUser(commentData as User);
     }
     return () => {};
@@ -201,8 +197,7 @@ const CommentCard: React.FC<props> = ({
         like: !like,
       }).then((res) => {
         const { error, data } = res;
-        if (error) colorLog(error);
-        console.log(res);
+        if (error) console.log(error);
         setLike(data?.setCommentLike?.likeStatus?.like!);
       });
     }

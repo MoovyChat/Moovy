@@ -21,16 +21,16 @@ const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
     <React.Fragment>
       {tooltip ? (
         <ProfilePicParent onClick={navigateToUser} id='blur-escape'>
-          <Image src={src} alt='profilePic' id='blur-escape' loading='lazy' />
+          <img src={src} alt='profilePic' id='blur-escape' loading='lazy' />
         </ProfilePicParent>
       ) : (
         <Tooltip
-          height='120px'
+          height='140px'
           width='200px'
-          data={user as User}
+          data={user?.id}
           message={TOOLTIP.USER}>
           <ProfilePicParent id='blur-escape'>
-            <Image src={src} alt='profilePic' loading='lazy' />
+            <Image src={src} alt='profilePic' lazy />
           </ProfilePicParent>
         </Tooltip>
       )}

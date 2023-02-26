@@ -1,12 +1,10 @@
 import * as DOMPurify from 'dompurify';
 
-import { textMap, timeMessage } from './interfaces';
-
-import { Dispatch } from 'redux';
 import HtmlParser from 'react-html-parser';
-import { msgPlace } from './enums';
+import { textMap } from './interfaces';
 import { textMapTypes } from '../constants';
 
+const algorithm = 'aes-256-cbc';
 // Calculates the time between current time and the user's comment
 export const getTimeFrame = (postTime: string) => {
   let currentTime = Date.now();
@@ -34,10 +32,10 @@ export const getTimeFrame = (postTime: string) => {
         finalString = `${noOfHours}h`;
       }
     } else {
-      finalString = `${noOfDays}d`;
+      finalString = `${getShortDateFormat(postTime)}`;
     }
   } else {
-    finalString = `${noOfYears}y`;
+    finalString = `${getShortDateFormat(postTime)}`;
   }
   return finalString;
 };
@@ -140,3 +138,26 @@ export const ParsedText = (text: string) => {
   });
   return HtmlParser(clean);
 };
+
+export async function compressImage(inputBlob: Blob): Promise<Blob | null> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.src = URL.createObjectURL(inputBlob);
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(null);
+        },
+        'image/jpeg',
+        0.5
+      );
+    };
+  });
+}

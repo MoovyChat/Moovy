@@ -4,7 +4,8 @@ export const VideoParent = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: auto;
+  height: 100%;
+  justify-content: flex-start;
   overflow: auto;
 `;
 
@@ -12,12 +13,20 @@ type filterProps = {
   filter?: string;
   selected?: boolean;
 };
-export const FilterView = styled.div<filterProps>`
+
+export const PresetFilter = styled.div<filterProps>`
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-evenly;
-  .photo {
+  flex-direction: column;
+  cursor: pointer;
+  :hover {
+    .photo {
+      filter: brightness(0.5);
+    }
+  }
+  .photo,
+  .show-val {
     display: flex;
     flex: 1 1 20%;
     justify-content: center;
@@ -30,6 +39,49 @@ export const FilterView = styled.div<filterProps>`
       filter: ${(p) => p.filter};
       width: 40px;
       height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .layover {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid black;
+      color: #ff005d;
+      background-color: rgba(186, 178, 178, 0.824);
+      border-radius: 50%;
+    }
+  }
+`;
+
+export const FilterView = styled.div<filterProps>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-evenly;
+  .show-val {
+    box-shadow: inset 0 0 4px;
+    border-radius: 18px;
+  }
+  .photo,
+  .show-val {
+    display: flex;
+    flex: 1 1 20%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    img {
+      filter: ${(p) => p.filter};
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
     }
     .layover {
       position: absolute;
@@ -112,6 +164,7 @@ export const CustomBorder = styled.div`
 
 type props = {
   expandGroup: boolean;
+  isNodesValid?: boolean;
 };
 export const OptionGroup = styled.div<props>`
   display: flex;
@@ -120,7 +173,6 @@ export const OptionGroup = styled.div<props>`
   padding: 10px 0;
   border-radius: 4px;
   max-height: ${(p) => (p.expandGroup ? '600px' : '40px')};
-  overflow: hidden;
   margin: 10px;
   transition: max-height 0.5s linear;
   .title {
@@ -140,6 +192,19 @@ export const OptionGroup = styled.div<props>`
       }
       label {
         padding-left: 5px;
+      }
+      .nodes-status {
+        padding: 4px;
+        font-size: 7px;
+        border-radius: 18px;
+        font-weight: 900;
+        margin: 0px 4px;
+        background-color: ${(p) =>
+          p.isNodesValid === true
+            ? 'green'
+            : p.isNodesValid === false
+            ? 'red'
+            : ''};
       }
     }
     .edge {
@@ -197,9 +262,84 @@ export const OptionGroup = styled.div<props>`
     }
   }
 
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    overflow: auto;
+    gap: 10px;
+  }
+
   .options {
     height: auto;
     overflow: auto;
+    .tool-option {
+      display: flex;
+      width: 100%;
+      margin: 10px 0;
+      justify-content: space-evenly;
+      align-items: center;
+      .option-text {
+        font-size: 14px;
+        flex: 1 1 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .option-choice {
+        flex: 1 1 0%;
+        .accent {
+          margin: 0;
+        }
+      }
+      .checkBox {
+        display: flex;
+        padding: 0 5px;
+        flex: 1 1 0%;
+        input {
+          width: 0;
+          height: 0;
+          visibility: hidden;
+          :checked + label {
+            background: #242424;
+            ::after {
+              transform: translateX(100%);
+              background: linear-gradient(180deg, #777, #3a3a3a);
+            }
+          }
+        }
+        label {
+          width: 40px;
+          height: 20px;
+          position: relative;
+          display: block;
+          background: #c9c9c9;
+          border-radius: 200px;
+          box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          transition: all 0.5s;
+          overflow: hidden;
+          :active:after {
+            width: 23px;
+          }
+          :after {
+            content: '';
+            height: 20px;
+            width: 20px;
+            position: absolute;
+            top: 0;
+            left: 0px;
+            background: linear-gradient(180deg, #cbcbcb, #ededed);
+            border-radius: 180px;
+            box-shadow: inset 0px 5px 15px rgba(0, 0, 0, 0.4),
+              inset 0px -5px 15px rgba(255, 255, 255, 0.4);
+            transition: all 0.5s;
+          }
+        }
+      }
+    }
     .ready {
       display: flex;
       flex-direction: column;

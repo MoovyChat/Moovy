@@ -1,7 +1,9 @@
-import constants from '../../../constants';
 import styled from 'styled-components';
 
-export const AppWindow = styled.div`
+type props = {
+  color: string;
+};
+export const AppWindow = styled.div<props>`
   text-align: center;
   font-family: 'Lexend', sans-serif;
   width: 300px;
@@ -14,7 +16,7 @@ export const AppWindow = styled.div`
     width: 300px;
     height: 100%;
     float: left;
-    background-image: linear-gradient(black 30%, ${constants.main_color});
+    background-image: linear-gradient(black 30%, ${(p) => p.color});
     animation: none;
     z-index: 999;
   }

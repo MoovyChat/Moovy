@@ -4,6 +4,7 @@ import { fillUp } from '../../styles/keyframes';
 
 type props = {
   visible: boolean;
+  accentColor: string;
 };
 export const ToastParent = styled.div<props>`
   position: absolute;
@@ -42,7 +43,7 @@ export const ToastParent = styled.div<props>`
     .fill {
       position: absolute;
 
-      background: red;
+      background: ${(p) => p.accentColor};
       top: 0;
       left: 0;
       right: 0;

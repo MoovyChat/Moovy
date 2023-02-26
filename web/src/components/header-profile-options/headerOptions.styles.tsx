@@ -10,6 +10,21 @@ export const StyledHeaderOptions = styled.div`
   background: ${({ theme }) => theme.body};
   box-shadow: 0 0 3px;
   border-radius: 5px;
+  margin-bottom: 10px;
+  .us {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    gap: 5px;
+    font-weight: 600;
+    .full {
+      font-size: 14px;
+    }
+    .nick {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  }
   .option {
     width: 100%;
     height: 20px;
@@ -18,13 +33,14 @@ export const StyledHeaderOptions = styled.div`
     margin: 0 10px;
     padding: 10px 0;
     .icon {
-      flex: 1 1 40%;
+      flex: 1 1 20%;
       display: flex;
       justify-content: center;
       align-items: center;
+      pointer-events: none;
     }
     .text {
-      flex: 1 1 60%;
+      flex: 1 1 80%;
       font-size: 0.9em;
       font-weight: 500;
     }

@@ -14,7 +14,7 @@ import { Follow } from '../entities/Follow';
 import { Movie } from '../entities/Movie';
 import { MovieStats } from '../entities/MovieStats';
 import { Profile } from '../entities/Profile';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { Visited } from '../entities/Visited';
 
 @ObjectType()
@@ -25,9 +25,7 @@ class InputArgs {
   @Field()
   nickname: string;
   @Field()
-  firstname: string;
-  @Field()
-  lastname: string;
+  fullname: string;
   @Field()
   bio: string;
   @Field()
@@ -42,8 +40,8 @@ class FollowerObject {
   id: string;
   @Field()
   followerCount: number;
-  @Field(() => [User], { nullable: true })
-  followers: User[];
+  @Field(() => [Users], { nullable: true })
+  followers: Users[];
 }
 
 @ObjectType()
@@ -52,8 +50,8 @@ class FollowingObject {
   id: string;
   @Field()
   followingCount: number;
-  @Field(() => [User], { nullable: true })
-  following: User[];
+  @Field(() => [Users], { nullable: true })
+  following: Users[];
 }
 
 @ObjectType()
@@ -114,6 +112,12 @@ export class ProfileResolver {
     return data;
   }
 
+  @Query(() => String, { defaultValue: '' })
+  async getUserFullName(@Arg('uid') uid: string) {
+    let data = await Profile.findOne({ where: { userId: uid } });
+    return `${data?.fullname}`;
+  }
+
   // Get the userProfile, fav and liked titles, followers/Following  and History.
   @Query(() => FullMiniUser, { nullable: true })
   async getFullUserProfile(
@@ -129,7 +133,7 @@ export class ProfileResolver {
     await conn.transaction(async (manager) => {
       // Initialize Repositories.
       let profileRepo = manager.getRepository(Profile);
-      let userRepo = manager.getRepository(User);
+      let userRepo = manager.getRepository(Users);
       let followRepo = manager.getRepository(Follow);
       let MovieStatRepo = manager.getRepository(MovieStats);
       let movieRepo = manager.getRepository(Movie);
@@ -153,8 +157,8 @@ export class ProfileResolver {
       let followersData = await followers.limit(3).getMany();
       let followingCount = await following.getCount();
       let followingData = await following.limit(3).getMany();
-      let followersUserData: User[] = [];
-      let followingUserData: User[] = [];
+      let followersUserData: Users[] = [];
+      let followingUserData: Users[] = [];
       followersData.map(async (data) => {
         let userId = data.userId;
         let userInfo = await userRepo.findOne({ where: { id: userId } });
@@ -251,8 +255,7 @@ export class ProfileResolver {
         [
           {
             userId: options.uid,
-            firstname: options.firstname,
-            lastname: options.lastname,
+            fullname: options.fullname,
             bio: options.bio,
             gender: options.gender,
             dob: options.dob,
@@ -265,7 +268,7 @@ export class ProfileResolver {
       );
       await manager
         .createQueryBuilder()
-        .update(User)
+        .update(Users)
         .set({ nickname: options.nickname })
         .where('id = :id', { id: options.uid })
         .execute();

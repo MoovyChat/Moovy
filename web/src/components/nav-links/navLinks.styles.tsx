@@ -19,10 +19,13 @@ export const StyledNavLinks = styled.div`
     line-height: 20px;
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
+    div {
+      padding: 4px 10px;
+    }
     :hover {
       cursor: pointer;
       div {
-        padding: 4px 10px;
         border-radius: 15px;
         box-shadow: 0 0 1px;
       }
@@ -30,7 +33,6 @@ export const StyledNavLinks = styled.div`
   }
   .active {
     div {
-      padding: 4px 10px;
       border-radius: 15px;
       box-shadow: 0 0 5px;
     }

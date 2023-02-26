@@ -20,7 +20,6 @@ export interface allCommentsInterface {
 
 const Comments = () => {
   const { id } = useParams();
-
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [lastPage, setLastPage] = useState<number>(1);
@@ -71,11 +70,9 @@ const Comments = () => {
     return () => profileParent?.removeEventListener('scroll', scrollComments);
   }, [page, lastPage]);
 
-  if (!id) return <NotFound />;
   if (fetching) {
     return <Loading />;
   }
-  if (!data?.getCommentsOfTheUser) return <NotFound />;
   const { comments } = data?.getCommentsOfTheUser!;
   if (comments.length <= 0) {
     return <EmptyPage msg='No Comments!' />;

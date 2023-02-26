@@ -13,15 +13,15 @@ import {
 import { Reply } from '../entities/Reply';
 import { conn } from '../dataSource';
 import { ReplyStats } from '../entities/ReplyStats';
-import { User } from '../entities/User';
+import { Users } from '../entities/Users';
 import { REPLY_LIKES_SUB } from '../constants';
 import { Comment } from '../entities/Comment';
 import { IsUserLikedObject } from './comments';
 
 @ObjectType()
 class replyLikesObject {
-  @Field(() => [User])
-  likes: User[];
+  @Field(() => [Users])
+  likes: Users[];
   @Field(() => Int)
   likesCount: number;
   @Field(() => Int)
@@ -52,7 +52,7 @@ class ReplyInput {
   movieId: string;
   @Field()
   parentCommentId: string;
-  @Field()
+  @Field(() => String, { nullable: true })
   parentRepliedUser: string;
   @Field()
   parentReplyId: string;
@@ -83,11 +83,11 @@ export class ReplyResolver {
     return { id: rid, isLiked: replyStat?.like };
   }
 
-  @Query(() => User, { nullable: true })
-  async getRepliedUser(@Arg('rid') rid: string): Promise<User | null> {
+  @Query(() => Users, { nullable: true })
+  async getRepliedUser(@Arg('rid') rid: string): Promise<Users | null> {
     if (!rid) throw new Error('Reply id is empty');
     const user = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect(
         'user.replies',
@@ -173,7 +173,9 @@ export class ReplyResolver {
               movieId: options.movieId,
               parentCommentId: options.parentCommentId,
               parentReplyId: options.parentReplyId,
-              parentRepliedUser: options.parentRepliedUser,
+              parentRepliedUser: options.parentRepliedUser
+                ? options.parentRepliedUser
+                : '',
               commentedUserId: options.commentedUserId!,
               commentedUserName: options.commentedUserName!,
               platformId: options.platformId,
@@ -213,7 +215,7 @@ export class ReplyResolver {
       where: { replyId: rid, like: true },
     });
     const users = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.replyStats', 'stats', 'stats.userId = user.id')
       .where('stats.like = :like', { like: true })
@@ -273,7 +275,7 @@ export class ReplyResolver {
       where: { replyId: rid, like: true },
     });
     const users = await conn
-      .getRepository(User)
+      .getRepository(Users)
       .createQueryBuilder('user')
       .innerJoinAndSelect('user.replyStats', 'stats', 'stats.userId = user.id')
       .where('stats.like = :like', { like: true })
