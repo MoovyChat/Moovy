@@ -2,7 +2,7 @@ import {
   FollowerObject,
   FollowingObject,
   Profile,
-  User,
+  Users,
   useGetUserMiniProfileQuery,
   useGetUserQuery,
 } from '../../generated/graphql';
@@ -46,7 +46,7 @@ interface favTitles {
 
 const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
-  const [userBasicInfo, setUserBasic] = useState<User | null>(null);
+  const [userBasicInfo, setUserBasic] = useState<Users | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   // const [follower, setFollower] = useState<FollowerObject | null>(null);
   // const [following, setFollowing] = useState<FollowingObject | null>(null);
@@ -72,7 +72,7 @@ const ProfileWindow = () => {
   useMemo(() => {
     const { data, error, fetching } = userData;
     if (!fetching && data) {
-      const _data = data?.getUser as User;
+      const _data = data?.getUser as Users;
       setUserBasic(() => _data);
     }
   }, [userData]);

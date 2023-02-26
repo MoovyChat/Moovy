@@ -1,4 +1,4 @@
-fragment FullUser on User {
+fragment FullUser on Users {
   __typename
   id
   name

@@ -8,8 +8,13 @@ import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
 import { retryExchange } from '@urql/exchange-retry';
 
+const CUSTOM_DOMAIN = 'server.moovychat.com';
+
+const wsUrl = `wss://${CUSTOM_DOMAIN}/graphql`;
+const serverUrl = `https://${CUSTOM_DOMAIN}/graphql`;
+
 const wsClient = createWSClient({
-  url: 'ws://localhost:4000/graphql',
+  url: wsUrl,
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
@@ -35,7 +40,7 @@ const cache: Partial<CacheExchangeOpts> = {
 };
 
 export const urqlClient: NextUrqlClientConfig = (ssrExchange: any) => ({
-  url: 'http://localhost:4000/graphql',
+  url: serverUrl,
   fetchOptions: {
     credentials: 'include',
   },

@@ -47,7 +47,7 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
         id: uid,
       };
       // User doesn't exist in the database yet.
-      if (data!.getUser === null) {
+      if (!data || data!.getUser === null) {
         createUser({
           options: user as any,
         })

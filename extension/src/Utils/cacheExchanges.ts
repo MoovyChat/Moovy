@@ -5,7 +5,6 @@ import {
   GetCommentsOfTheUserQuery,
   GetMovieDocument,
   GetMovieQuery,
-  GetUserByNickNameDocument,
   IsFollowingUserDocument,
   IsFollowingUserQuery,
   ToggleFollowMutation,

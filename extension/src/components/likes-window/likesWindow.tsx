@@ -18,7 +18,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
 interface MiniUser {
-  __typename?: 'User' | undefined;
+  __typename?: 'Users' | undefined;
   id: string;
   name: string;
   nickname: string;

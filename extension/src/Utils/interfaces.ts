@@ -13,7 +13,7 @@ export interface User {
   followingCount?: number | null | undefined;
   watchedMovies?: string[] | null | undefined;
   favorites?: string[];
-  __typename?: 'User' | undefined;
+  __typename?: 'Users' | undefined;
 }
 
 export interface timeMessage {

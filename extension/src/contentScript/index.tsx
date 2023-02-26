@@ -1,4 +1,3 @@
-import { Provider, createClient } from 'urql';
 import {
   getElementByDataUIA,
   getIdFromNetflixURL,
@@ -8,6 +7,7 @@ import { persistor, store } from '../redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import Start from './start';
+import { createClient } from 'urql';
 import { createRoot } from 'react-dom/client';
 
 export {};

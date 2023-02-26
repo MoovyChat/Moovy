@@ -22,7 +22,6 @@ import {
   setStoredUserLoginDetails,
 } from '../Utils/storage';
 
-import { domains } from '../constants';
 import { requestTypes } from '../Utils/enums';
 
 export {};
@@ -239,41 +238,57 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
   return true;
 });
-// // Listen to the url change and 'strictly' for update the icons and popup page.
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   chrome.tabs.get(activeInfo.tabId, async (tab) => {
-//     const url = await tab.url!;
-//     const domain = getDomain(url);
-//     switch (domain) {
-//       case domains.LOCALHOST:
-//       case domains.NETFLIX:
-//         // Change Icon when the url is visited.
-//         // injectScriptsOnReload();
-//         chrome.action.setIcon({
-//           path: {
-//             '16': 'Moovy/moovyIcon.png',
-//             '48': 'Moovy/moovyIcon.png',
-//             '128': 'Moovy/moovyIcon.png',
-//           },
-//         });
-//         // Changing the pop up html
-//         chrome.action.setPopup({ popup: 'popup.html' });
-//         break;
-//       default:
-//         // Change icon when url is not visited.
-//         chrome.action.setIcon({
-//           path: {
-//             '16': 'Moovy/moovyIcon.png',
-//             '48': 'Moovy/moovyIcon.png',
-//             '128': 'Moovy/moovyIcon.png',
-//           },
-//         });
-//         // Change the pop up html
-//         chrome.action.setPopup({ popup: 'offsite.html' });
-//         break;
-//     }
-//   });
-// });
+
+// Communication with the external websites.
+chrome.runtime.onMessageExternal.addListener(
+  (message, _sender, _sendResponse) => {
+    if (message.type === 'EXTENSION_LOG_IN') {
+      const user = message.user;
+      setStoredUserLoginDetails(user);
+    }
+    return true;
+  }
+);
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.type === 'GET_DOMAIN') {
+    const domains = {
+      NETFLIX: 'www.netflix.com',
+      LOCALHOST: 'localhost',
+      DISNEY: 'www.disneyplus.com',
+      AMAZON: 'www.amazon.com',
+      AHA: 'www.aha.video',
+    };
+    // Do something with the message here
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var url = tabs[0].url;
+      // Do something with the URL here
+      if (url) {
+        const domain = getDomain(url);
+        switch (domain) {
+          case domains.LOCALHOST:
+            sendResponse({ domain: 'MOOVYCHAT' });
+            break;
+          case domains.NETFLIX:
+            sendResponse({ domain: 'NETFLIX' });
+            break;
+          case domains.AMAZON:
+            sendResponse({ domain: 'AMAZON' });
+            break;
+          case domains.DISNEY:
+            sendResponse({ domain: 'DISNEY' });
+            break;
+          case domains.AHA:
+            sendResponse({ domain: 'AHA' });
+            break;
+          default:
+            sendResponse({ domain: 'OTHER' });
+        }
+      }
+    });
+  }
+});
+
 // Condition is for when user is already loggedIn.
 // Sends the user log details whenever user refreshes the page or
 // copy paste the netflix watch link.
@@ -326,16 +341,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         movieId: request.movieId,
       });
     });
+  } else if (request.type === 'GOOGLE_LOGIN_IN_BCK') {
+    // Use the chrome.windows.create method to open a new Chrome window
+    chrome.windows.create(
+      {
+        url: 'http://localhost:3000/google-login',
+        type: 'popup',
+        focused: true,
+        width: 360,
+        height: 640,
+        top: 0,
+        left: 0,
+      },
+      function (window) {
+        // chrome.windows.update(window?.id, {
+        //   state: 'fullscreen',
+        // });
+      }
+    );
   }
-});
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'SYNC_LOGIN') {
-    let user = request.user;
-    console.log(user);
-    sendResponse({ farewell: '' });
-  }
-  return true;
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

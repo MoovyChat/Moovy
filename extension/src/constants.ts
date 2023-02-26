@@ -31,6 +31,8 @@ export const isServerSide = () => typeof window === 'undefined';
 export const domains = {
   NETFLIX: 'www.netflix.com',
   LOCALHOST: 'localhost',
+  DISNEY: 'www.disneyplus.com',
+  AMAZON: 'www.amazon.com',
 };
 
 export const isNumber = (x: string) => /\d/.test(x);

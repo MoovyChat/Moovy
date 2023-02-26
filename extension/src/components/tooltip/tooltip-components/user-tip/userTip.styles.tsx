@@ -1,4 +1,3 @@
-import { User } from '../../../../generated/graphql';
 import styled from 'styled-components';
 
 type props = {

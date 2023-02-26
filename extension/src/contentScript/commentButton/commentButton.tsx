@@ -1,10 +1,9 @@
-import { MdChevronRight, MdKeyboardArrowRight } from 'react-icons/md';
 import {
   getIdFromNetflixURL,
   getPlayerViewElement,
 } from '../contentScript.utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
@@ -12,7 +11,6 @@ import { GoCommentDiscussion } from 'react-icons/go';
 import { IoMdArrowDroprightCircle } from 'react-icons/io';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createRoot } from 'react-dom/client';
-import { getStoredCheckedStatus } from '../../Utils/storage';
 import { sliceSetIntervalIds } from '../../redux/slices/misc/miscSlice';
 import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { store } from '../../redux/store';
