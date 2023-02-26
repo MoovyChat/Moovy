@@ -8,7 +8,7 @@ import ambience from '../../../static/images/ambience.png';
 import filter from '../../../static/images/filters.png';
 import spoiler from '../../../static/images/spoiler.png';
 import themes from '../../../static/images/themes.png';
-import { useSpring } from 'react-spring';
+import { useSpring } from '@react-spring/web';
 
 type props = {
   id: string;
@@ -27,8 +27,8 @@ const Features: React.FC<props> = ({ id }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const animProps = useSpring({
-    opacity: isVisible ? 1 : 0,
-    transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
+    from: { opacity: 0 },
+    to: { opacity: 1 },
   });
   const content = {
     filters: {

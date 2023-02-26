@@ -65,6 +65,13 @@ const HeaderOptions = () => {
         className='option'
         onClick={(e) => {
           e.stopPropagation();
+          chrome.runtime.sendMessage(
+            'dmipflcbflebldjbgfnkcjnobneebmpo',
+            { type: 'EXTENSION_LOG_IN', user: user },
+            (response) => {
+              console.log('response', response);
+            }
+          );
         }}
         id='sync-login'>
         <div className='icon'>

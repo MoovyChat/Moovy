@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import ImageSlider from '../image-slider/imageSlider';
 import { StyledScreenShots } from './screenshots.styles';
-import { useSpring } from 'react-spring';
+import { useSpring } from '@react-spring/web';
 
 type props = {
   id: string;
@@ -21,8 +21,8 @@ const Screenshots: React.FC<props> = ({ id }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const animProps = useSpring({
-    opacity: isVisible ? 1 : 0,
-    transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
+    from: { opacity: 0 },
+    to: { opacity: 1 },
   });
   return (
     <StyledScreenShots id={id} ref={ref} style={animProps}>

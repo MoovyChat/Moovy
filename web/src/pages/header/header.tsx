@@ -39,17 +39,9 @@ const Header = () => {
   };
   const loginHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
-    const signedInUser = await googleSignIn();
-    loginAction({ uid: signedInUser.id }).then((res) => {
-      const { data } = res;
-      const user = data?.login?.user;
-      if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
-        dispatch(sliceSetUser(user as User));
-      }
-      navigate('/');
-    });
+    window.open('/google-login', '_blank');
   };
+
   const logOutHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     const result = await logOutAction({});

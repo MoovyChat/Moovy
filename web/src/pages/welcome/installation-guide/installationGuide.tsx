@@ -7,7 +7,7 @@ import Step2 from '../../../static/gifs/step2.gif';
 import Step3 from '../../../static/gifs/step3.gif';
 import Step5 from '../../../static/gifs/step5.gif';
 import { StyledInstallationGuide } from './installationGuide.styles';
-import { useSpring } from 'react-spring';
+import { useSpring } from '@react-spring/web';
 
 type props = {
   id: string;
@@ -28,8 +28,8 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const animProps = useSpring({
-    opacity: isVisible ? 1 : 0,
-    transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
+    from: { opacity: 0 },
+    to: { opacity: 1 },
   });
 
   useEffect(() => {

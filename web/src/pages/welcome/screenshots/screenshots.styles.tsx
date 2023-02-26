@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 
 export const welcomeHeaderColumn = css`
   display: flex;
