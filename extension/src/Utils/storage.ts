@@ -2,17 +2,14 @@ import {
   User,
   borderType,
   filterType,
-  globalUIStyles,
   videoFilterSettings,
 } from './interfaces';
 
 import _ from 'lodash';
-import { defaultUIValues } from './defaultValues';
 
 // Used to communicate data between popup and content script
-export interface LocalStorage {
+interface LocalStorage {
   user?: User;
-  watched?: number;
   volume?: boolean;
   pause?: boolean;
   checked?: boolean;
@@ -23,11 +20,9 @@ export interface LocalStorage {
   border?: borderType;
   customBorders?: borderType[];
   filterValues?: videoFilterSettings;
-  uiStyles?: globalUIStyles;
-  chatIconPosition?: string;
   resizeValue?: string;
 }
-export type LocalStorageKeys = keyof LocalStorage;
+type LocalStorageKeys = keyof LocalStorage;
 
 export function setStoredUserLoginDetails(user: User): Promise<void> {
   const vals: LocalStorage = {
@@ -49,25 +44,14 @@ export function getStoredUserLoginDetails(): Promise<User> {
   });
 }
 
-export function setStoredWatchedTitles(watched: number): Promise<void> {
-  const vals: LocalStorage = {
-    watched,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
-
-export function getStoredWatchedTitles(): Promise<string> {
-  const keys: LocalStorageKeys[] = ['watched'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.watched ?? []);
-    });
-  });
-}
+// export function getStoredWatchedTitles(): Promise<string> {
+//   const keys: LocalStorageKeys[] = ['watched'];
+//   return new Promise((resolve) => {
+//     chrome.storage.local.get(keys, (res) => {
+//       resolve(res.watched ?? []);
+//     });
+//   });
+// }
 
 export function setStoredIsFilterOpen(isFilterOn: boolean): Promise<void> {
   const vals: LocalStorage = {
@@ -209,25 +193,25 @@ export function getStoredVideoFilters(): Promise<filterType[]> {
   });
 }
 
-export function setStoredVideoFilterText(filterText: string): Promise<void> {
-  const vals: LocalStorage = {
-    filterText,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
+// export function setStoredVideoFilterText(filterText: string): Promise<void> {
+//   const vals: LocalStorage = {
+//     filterText,
+//   };
+//   return new Promise((resolve) => {
+//     chrome.storage.local.set(vals, () => {
+//       resolve();
+//     });
+//   });
+// }
 
-export function getStoredVideoFilterText(): Promise<string> {
-  const keys: LocalStorageKeys[] = ['filterText'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.filterText ?? 'none');
-    });
-  });
-}
+// export function getStoredVideoFilterText(): Promise<string> {
+//   const keys: LocalStorageKeys[] = ['filterText'];
+//   return new Promise((resolve) => {
+//     chrome.storage.local.get(keys, (res) => {
+//       resolve(res.filterText ?? 'none');
+//     });
+//   });
+// }
 
 export function setStoredBorder(border: borderType): Promise<void> {
   const vals: LocalStorage = {
@@ -295,50 +279,6 @@ export function getStoredFilterValues(): Promise<videoFilterSettings> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.filterValues ?? undefined);
-    });
-  });
-}
-
-export function setStoredGlobalUIStyles(
-  uiStyles: globalUIStyles
-): Promise<void> {
-  const vals: LocalStorage = {
-    uiStyles,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
-
-export function getStoredGlobalUIStyles(): Promise<globalUIStyles> {
-  const keys: LocalStorageKeys[] = ['uiStyles'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.uiStyles ?? defaultUIValues);
-    });
-  });
-}
-
-export function setStoredChatIconPosition(
-  chatIconPosition: string
-): Promise<void> {
-  const vals: LocalStorage = {
-    chatIconPosition,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
-
-export function getStoredChatIconPosition(): Promise<string> {
-  const keys: LocalStorageKeys[] = ['uiStyles'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.chatIconPosition ?? '');
     });
   });
 }

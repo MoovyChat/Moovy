@@ -23,17 +23,17 @@ export const durations: { [key: string]: number } = {
   '4min': 240,
 };
 
-export const videoFormats = {
-  webm: 'video/webm',
-  'x-matroska': 'video/x-matroska',
-  mp4: 'video/mp4',
-};
+// export const videoFormats = {
+//   webm: 'video/webm',
+//   'x-matroska': 'video/x-matroska',
+//   mp4: 'video/mp4',
+// };
 
-export const codecs = {
-  none: '',
-  vp8: ';codecs=vp8',
-  vp9: ';codecs=vp9',
-  h264: ';codecs=h264',
-  opus: ';codecs=opus',
-  pcm: ';codecs=pcm',
-};
+// export const codecs = {
+//   none: '',
+//   vp8: ';codecs=vp8',
+//   vp9: ';codecs=vp9',
+//   h264: ';codecs=h264',
+//   opus: ';codecs=opus',
+//   pcm: ';codecs=pcm',
+// };

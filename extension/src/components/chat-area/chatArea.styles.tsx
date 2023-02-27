@@ -1,14 +1,12 @@
 import styled, { css } from 'styled-components';
 
 import { commentStyleMixin } from '../../Utils/mixins';
-import { globalUIStyles } from '../../Utils/interfaces';
 
 type props = {
-  styles: globalUIStyles;
   textAreaHeight: number;
 };
 
-export const textAreaMixin = () => css<props>`
+const textAreaMixin = () => css<props>`
   overflow-x: hidden;
   overflow-y: auto;
   border: none;

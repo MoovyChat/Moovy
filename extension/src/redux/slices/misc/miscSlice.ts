@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const miscState = {
+const miscState = {
   theme: 'light',
   enableBackground: true,
   accentColor: '#ff005d',
@@ -29,9 +29,6 @@ const miscSlice = createSlice({
     sliceSetAccentColor: (state, action) => {
       return { ...state, accentColor: action.payload };
     },
-    sliceSetSubTitleColor: (state, action) => {
-      return { ...state, subTitleColor: action.payload };
-    },
     sliceResetMisc: () => {
       return miscState;
     },
@@ -46,7 +43,6 @@ export const {
   sliceSetAutoNextEpisode,
   sliceSetAutoSkip,
   sliceSetEnableBackground,
-  sliceSetSubTitleColor,
   sliceSetAccentColor,
   sliceResetMisc,
   sliceSetIntervalIds,

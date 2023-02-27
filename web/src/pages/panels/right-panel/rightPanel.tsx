@@ -1,4 +1,3 @@
-import { MdLocalFireDepartment, MdOutlineStar } from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
   TrendingObject,
@@ -8,6 +7,7 @@ import {
 
 import Ads from '../../../components/ads/ads';
 import Loading from '../../loading/loading';
+import { MdLocalFireDepartment } from 'react-icons/md';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';

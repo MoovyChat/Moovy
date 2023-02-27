@@ -2,9 +2,9 @@ import { SettingsInterface } from '../../../Utils/interfaces';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const settingsState: SettingsInterface = {
+const settingsState: SettingsInterface = {
   chatWindowSize: '30',
-  videoParentSize: '70',
+  videoParentSize: '70', //Remove
   videoSize: '70',
   openChatWindow: false,
   smoothWidth: 0,
@@ -23,9 +23,6 @@ const SettingsSlice = createSlice({
     },
     sliceSetVideoSize: (state, action) => {
       return { ...state, videoSize: action.payload };
-    },
-    sliceSetVideoParentSize: (state, action) => {
-      return { ...state, videoParentSize: action.payload };
     },
     sliceSetIsOpenChatWindow: (state, action) => {
       return { ...state, openChatWindow: action.payload };
@@ -66,7 +63,6 @@ const SettingsSlice = createSlice({
 export const {
   sliceSetChatWindowSize,
   sliceSetVideoSize,
-  sliceSetVideoParentSize,
   sliceSetIsOpenChatWindow,
   sliceSetSmoothWidth,
   sliceResetSettings,

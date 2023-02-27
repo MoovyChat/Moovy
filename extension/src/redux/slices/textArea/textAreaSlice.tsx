@@ -8,7 +8,7 @@ type textAreaTypes = {
   nameSuggestions: NameObject[];
   wordSuggestions: string[];
 };
-export const textAreaState: textAreaTypes = {
+const textAreaState: textAreaTypes = {
   text: '',
   isTextAreaFocused: false,
   isTextAreaClicked: false,

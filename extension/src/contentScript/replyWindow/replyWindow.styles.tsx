@@ -41,23 +41,6 @@ export const ReplyParent = styled.div<replyParentProps>`
   }
 `;
 
-export const ReplyMessage = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  .line {
-    width: 30px;
-    height: 1px;
-    background: white;
-    margin: auto 20px;
-  }
-  .replies-count {
-    :hover {
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-`;
-
 export const ShowReplyText = styled.div`
   padding: 5px 0;
   font-weight: 800;

@@ -81,36 +81,36 @@ export const getVideoElement = (): Promise<
   });
 };
 
-export const setVideoFilters = () => {
-  getVideoElement().then((element) => {
-    const videoElem = element[0];
-    getStoredFilterValues().then((filters) => {
-      console.log(filters);
-      let filtersD = filters as any;
-      let filterText = filtersD
-        .map((f: filterType) => {
-          switch (f.title) {
-            case 'grayscale':
-            case 'contrast':
-            case 'brightness':
-            case 'invert':
-              return `${f.title}(${filtersD[f.title]})`;
-            case 'blur':
-              return `${f.title}(${filtersD[f.title]}px)`;
-            case 'sepia':
-            case 'saturate':
-              return `${f.title}(${filtersD[f.title]}%)`;
-            case 'hue':
-              return `hue-rotate(${filtersD.hue}turn)`;
-            default:
-              break;
-          }
-        })
-        .join(' ');
-      if (videoElem) videoElem.style['filter'] = filterText;
-    });
-  });
-};
+// const setVideoFilters = () => {
+//   getVideoElement().then((element) => {
+//     const videoElem = element[0];
+//     getStoredFilterValues().then((filters) => {
+//       console.log(filters);
+//       let filtersD = filters as any;
+//       let filterText = filtersD
+//         .map((f: filterType) => {
+//           switch (f.title) {
+//             case 'grayscale':
+//             case 'contrast':
+//             case 'brightness':
+//             case 'invert':
+//               return `${f.title}(${filtersD[f.title]})`;
+//             case 'blur':
+//               return `${f.title}(${filtersD[f.title]}px)`;
+//             case 'sepia':
+//             case 'saturate':
+//               return `${f.title}(${filtersD[f.title]}%)`;
+//             case 'hue':
+//               return `hue-rotate(${filtersD.hue}turn)`;
+//             default:
+//               break;
+//           }
+//         })
+//         .join(' ');
+//       if (videoElem) videoElem.style['filter'] = filterText;
+//     });
+//   });
+// };
 
 export const getPlayerViewElement = () => {
   const videoParents = document.getElementsByClassName(

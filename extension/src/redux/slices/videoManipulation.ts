@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const manipulationState = {
+const manipulationState = {
   playbackRate: 1,
   filterType: 'lowpass',
   QValue: 1,

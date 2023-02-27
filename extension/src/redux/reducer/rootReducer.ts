@@ -6,7 +6,6 @@ import commentReducer from '../slices/comment/commentSlice';
 import loadingReducer from '../slices/loading/loadingSlice';
 import manipulationReducer from '../slices/videoManipulation';
 import movieReducer from '../slices/movie/movieSlice';
-import profileReducer from '../slices/userProfile/userProfileSlice';
 import replyReducer from '../slices/reply/replySlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import storage from 'redux-persist/lib/storage';
@@ -21,7 +20,7 @@ const persistConfig = {
 
 const persistedSettingsReducer = persistReducer(persistConfig, MiscReducer);
 
-export const rootReducer = {
+const rootReducer = {
   movie: movieReducer,
   user: userReducer,
   comments: commentReducer,
@@ -30,7 +29,6 @@ export const rootReducer = {
   loading: loadingReducer,
   textArea: textAreaReducer,
   toast: toastReducer,
-  profile: profileReducer,
   misc: persistedSettingsReducer,
   manipulation: manipulationReducer,
   audioNodes: audioNodesReducer,

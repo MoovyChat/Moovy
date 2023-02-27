@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loadingInterface } from '../../../Utils/interfaces';
 
-export const loadingState: loadingInterface = {
+const loadingState: loadingInterface = {
   isCommentsLoaded: false,
   isRepliesLoaded: false,
   isEditNameBoxOpen: false,

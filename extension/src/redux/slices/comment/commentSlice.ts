@@ -3,7 +3,7 @@ import { CommentInfo } from '../../../Utils/interfaces';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const commentState = {
+const commentState = {
   comments: [] as CommentInfo[],
 };
 

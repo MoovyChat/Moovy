@@ -34,28 +34,6 @@ export const ShowMoreComments = styled.div`
   }
 `;
 
-export const NoCommentBox = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  align-items: flex-start;
-  font-weight: 800;
-  h4,
-  p {
-    text-align: center;
-    width: 100%;
-  }
-  h4 {
-    padding-top: 10%;
-    font-size: 1em;
-  }
-  p {
-    font-size: 0.9em;
-  }
-`;
-
 type loadProps = {
   accentColor: string;
 };

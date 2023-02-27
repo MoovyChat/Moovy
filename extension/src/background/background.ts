@@ -4,19 +4,10 @@ import {
   SeasonInfo,
   User,
 } from '../Utils/interfaces';
-import { durations, resolutions } from '../optionsPage/utils';
 import {
   getDomain,
   getIdFromNetflixURL,
 } from '../contentScript/contentScript.utils';
-import {
-  getStoredIsRecording,
-  getStoredResolution,
-  getStoredVideoDuration,
-  getStoredVideoFormat,
-  setStoredBlobURL,
-  setStoredIsRecording,
-} from '../optionsPage/storage';
 import {
   getStoredUserLoginDetails,
   setStoredUserLoginDetails,
@@ -25,7 +16,6 @@ import {
 import { requestTypes } from '../Utils/enums';
 
 export {};
-const MOOVY_URL = 'http://localhost:3000';
 // When the extension in installed.
 chrome.runtime.onInstalled.addListener(() => {
   let user: User = {
@@ -182,57 +172,59 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     );
 
     sendResponse({ tab: sender.tab?.id! });
-  } else if (msg.type === 'RECORD_TAB') {
-    let tabId = msg.tabId;
-    let streamId = msg.streamId;
-    let isRecording = msg.isRecording;
-    getStoredVideoFormat().then((format) => {
-      getStoredResolution().then((resolution) => {
-        getStoredVideoDuration().then((d) => {
-          // Send the streamId to the tab
-          let { height, width } = resolutions[resolution];
-          let duration = durations[d];
-          chrome.tabs.sendMessage(tabId, {
-            type: 'RECORD',
-            streamId,
-            height,
-            width,
-            duration,
-            format,
-            isRecording,
-          });
+  }
+  // if (msg.type === 'RECORD_TAB') {
+  // let tabId = msg.tabId;
+  // let streamId = msg.streamId;
+  // let isRecording = msg.isRecording;
+  // getStoredVideoFormat().then((format) => {
+  //   getStoredResolution().then((resolution) => {
+  //     getStoredVideoDuration().then((d) => {
+  //       // Send the streamId to the tab
+  //       let { height, width } = resolutions[resolution];
+  //       let duration = durations[d];
+  //       chrome.tabs.sendMessage(tabId, {
+  //         type: 'RECORD',
+  //         streamId,
+  //         height,
+  //         width,
+  //         duration,
+  //         format,
+  //         isRecording,
+  //       });
 
-          let timeCount = duration;
-          let interval = setInterval(() => {
-            timeCount--;
-            getStoredIsRecording().then((res) => {
-              if (!res) {
-                chrome.action.setBadgeText({ text: '' });
-                timeCount = 0;
-                clearInterval(interval);
-              } else {
-                if (timeCount <= 0) {
-                  chrome.action.setBadgeText({ text: '' });
-                  clearInterval(interval);
-                } else {
-                  chrome.action.setBadgeBackgroundColor({
-                    color: '#FE0000',
-                  });
-                  chrome.action.setBadgeText({ text: timeCount + '' });
-                }
-              }
-            });
-          }, 1000);
-        });
-      });
-    });
-  } else if (msg.type === 'RECORD_COMPLETE') {
-    const blobUrl = msg.data as string[];
-    setStoredBlobURL(blobUrl);
-    chrome.tabs.create({ url: '/options.html' });
-    chrome.action.setBadgeText({ text: '' });
-    setStoredIsRecording(false);
-  } else if (msg.type === 'OPEN_LINK') {
+  //       let timeCount = duration;
+  //       let interval = setInterval(() => {
+  //         timeCount--;
+  //         getStoredIsRecording().then((res) => {
+  //           if (!res) {
+  //             chrome.action.setBadgeText({ text: '' });
+  //             timeCount = 0;
+  //             clearInterval(interval);
+  //           } else {
+  //             if (timeCount <= 0) {
+  //               chrome.action.setBadgeText({ text: '' });
+  //               clearInterval(interval);
+  //             } else {
+  //               chrome.action.setBadgeBackgroundColor({
+  //                 color: '#FE0000',
+  //               });
+  //               chrome.action.setBadgeText({ text: timeCount + '' });
+  //             }
+  //           }
+  //         });
+  //       }, 1000);
+  //     });
+  //   });
+  // });
+  // } else if (msg.type === 'RECORD_COMPLETE') {
+  //   const blobUrl = msg.data as string[];
+  //   setStoredBlobURL(blobUrl);
+  //   chrome.tabs.create({ url: '/options.html' });
+  //   chrome.action.setBadgeText({ text: '' });
+  //   setStoredIsRecording(false);
+  // } else
+  else if (msg.type === 'OPEN_LINK') {
     chrome.tabs.create({ url: msg.url });
   }
 

@@ -167,9 +167,6 @@ export const Stats = styled.div`
     }
   }
 `;
-export const Reply = styled.div`
-  position: relative;
-`;
 
 export const SpoilerTag = styled.span`
   filter: blur(2px);

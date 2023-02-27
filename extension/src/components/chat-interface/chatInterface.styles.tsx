@@ -84,23 +84,6 @@ export const ChatWindowParent = styled.div<chatWindowProps>`
   }
 `;
 
-export const SettingsScreen = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  top: 0;
-  right: 0;
-  z-index: 99999;
-  background-color: transparent;
-  filter: blur(0.5);
-  color: inherit; ;
-`;
-
 export const NoUserScreen = styled.div`
   display: flex;
   justify-content: center;

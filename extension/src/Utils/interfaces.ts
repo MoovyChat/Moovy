@@ -53,9 +53,6 @@ export interface Movie {
   fetched?: boolean;
 }
 
-export interface CommonInfo {
-  id?: string;
-}
 export interface CommentInfo {
   id: string;
   commentedUserId?: string;
@@ -74,14 +71,6 @@ export interface CommentInfo {
   createdAt?: any;
   updatedAt?: any;
   __typename?: any;
-}
-
-export interface _users {
-  __typename?: 'User' | undefined;
-  id: string;
-  name: string;
-  nickname: string;
-  photoUrl: string;
 }
 
 export interface filterType {
@@ -128,14 +117,9 @@ export interface SettingsInterface {
   popSlideData: { data: any };
 }
 
-export interface videoBorderSettings {
-  color?: string;
-}
-
-export interface globalUIStyles {
-  backgroundColor?: string;
-  textColor?: string;
-}
+// export interface videoBorderSettings {
+//   color?: string;
+// }
 
 export interface textMap {
   message: string;

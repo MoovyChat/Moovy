@@ -22,14 +22,6 @@ import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
-export interface likedTitles {
-  __typename?: 'LikedMovieObject' | undefined;
-  movieId: string;
-  userId: string;
-  like: boolean;
-  movieName: string;
-}
-
 interface favTitles {
   __typename?: 'Movie' | undefined;
   id: string;

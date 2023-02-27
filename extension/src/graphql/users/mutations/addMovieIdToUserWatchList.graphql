@@ -1,3 +1,0 @@
-mutation addMovieIdToUserWatchList($uid: String!, $mid: String!) {
-  addMovieIdToTheUserWatchList(uid: $uid, mid: $mid)
-}

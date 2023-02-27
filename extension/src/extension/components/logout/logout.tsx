@@ -1,18 +1,5 @@
-import {
-  MdFiberManualRecord,
-  MdKeyboardArrowDown,
-  MdKeyboardArrowRight,
-  MdKeyboardArrowUp,
-} from 'react-icons/md';
-import {
-  Pic,
-  RecordOptions,
-  Refresh,
-  SetTop,
-  SideArrowButton,
-} from './logout.styles';
+import { Pic, SetTop } from './logout.styles';
 import React, {
-  ChangeEventHandler,
   Dispatch,
   MouseEvent,
   MouseEventHandler,
@@ -21,26 +8,13 @@ import React, {
   useState,
 } from 'react';
 import constants, { MOOVY_URL } from '../../../constants';
-import { durations, resolutions } from '../../../optionsPage/utils';
 import {
   getStoredCheckedStatus,
-  setStoredCheckedStatus,
   setStoredUserLoginDetails,
 } from '../../../Utils/storage';
-import {
-  getStoredIsRecording,
-  getStoredResolution,
-  getStoredVideoDuration,
-  getStoredVideoFormat,
-  setStoredIsRecording,
-  setStoredResolution,
-  setStoredVideoDuration,
-  setStoredVideoFormat,
-} from '../../../optionsPage/storage';
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
-import { IoMdRefresh } from 'react-icons/io';
 import { OTTType } from '../app/app';
 import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
@@ -139,10 +113,10 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
 
   useEffect(() => {
     // Get stored resolution and duration values from storage.
-    getStoredResolution().then((val) => setSelectedResolution(val));
-    getStoredVideoDuration().then((val) => setSelectedDuration(val));
-    getStoredVideoFormat().then((val) => setSelectedVideoFormat(val));
-    getStoredIsRecording().then((val) => setIsRecording(val));
+    // getStoredResolution().then((val) => setSelectedResolution(val));
+    // getStoredVideoDuration().then((val) => setSelectedDuration(val));
+    // getStoredVideoFormat().then((val) => setSelectedVideoFormat(val));
+    // getStoredIsRecording().then((val) => setIsRecording(val));
   }, []);
 
   useEffect(() => {

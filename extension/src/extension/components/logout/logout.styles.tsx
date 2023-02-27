@@ -72,33 +72,6 @@ export const Pic = styled.div<prop>`
   }
 `;
 
-export const WelcomeMessage = styled.div`
-  position: relative;
-  flex-basis: 80%;
-  margin-left: 10px;
-  text-align: center;
-  justify-content: center;
-  top: 10px;
-  left: 90px;
-`;
-
-export const ButtonParentInLogin = styled.div`
-  width: 40%;
-  flex-basis: 30%;
-`;
-
-export const EmailInLogin = styled.div`
-  position: relative;
-  display: flex;
-  top: 31px;
-  left: 100px;
-  color: white;
-  font-size: 10px;
-  word-break: break-all;
-  width: 150px;
-  text-align: center;
-`;
-
 type recordProps = {
   isRecording: boolean;
 };

@@ -122,11 +122,3 @@ export const ChatStatContainer = styled.div<props>`
     }
   }
 `;
-
-export const EditNickNameInput = styled.input`
-  color: inherit;
-  border: none;
-  border-bottom: 1px solid white;
-  background: none;
-  font-size: 10px;
-`;

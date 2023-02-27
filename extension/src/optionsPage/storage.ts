@@ -9,25 +9,25 @@ export interface OptionsLocalStorage {
 }
 export type OptionsLocalStorageKeys = keyof OptionsLocalStorage;
 
-export function setStoredRecordTime(recordTime: number): Promise<void> {
-  const vals: OptionsLocalStorage = {
-    recordTime,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
+// export function setStoredRecordTime(recordTime: number): Promise<void> {
+//   const vals: OptionsLocalStorage = {
+//     recordTime,
+//   };
+//   return new Promise((resolve) => {
+//     chrome.storage.local.set(vals, () => {
+//       resolve();
+//     });
+//   });
+// }
 
-export function getStoredRecordTime(): Promise<number> {
-  const keys: OptionsLocalStorageKeys[] = ['recordTime'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.recordTime ?? 0);
-    });
-  });
-}
+// export function getStoredRecordTime(): Promise<number> {
+//   const keys: OptionsLocalStorageKeys[] = ['recordTime'];
+//   return new Promise((resolve) => {
+//     chrome.storage.local.get(keys, (res) => {
+//       resolve(res.recordTime ?? 0);
+//     });
+//   });
+// }
 
 export function setStoredIsRecording(isRecording: boolean): Promise<void> {
   const vals: OptionsLocalStorage = {
@@ -109,42 +109,42 @@ export function getStoredVideoDuration(): Promise<string> {
   });
 }
 
-export function setStoredVideoType(videoType: string): Promise<void> {
-  const vals: OptionsLocalStorage = {
-    videoType,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
+// export function setStoredVideoType(videoType: string): Promise<void> {
+//   const vals: OptionsLocalStorage = {
+//     videoType,
+//   };
+//   return new Promise((resolve) => {
+//     chrome.storage.local.set(vals, () => {
+//       resolve();
+//     });
+//   });
+// }
 
-export function getStoredVideoType(): Promise<string> {
-  const keys: OptionsLocalStorageKeys[] = ['videoType'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.videoType ?? '');
-    });
-  });
-}
+// export function getStoredVideoType(): Promise<string> {
+//   const keys: OptionsLocalStorageKeys[] = ['videoType'];
+//   return new Promise((resolve) => {
+//     chrome.storage.local.get(keys, (res) => {
+//       resolve(res.videoType ?? '');
+//     });
+//   });
+// }
 
-export function setStoredVideoFormat(videoFormat: string): Promise<void> {
-  const vals: OptionsLocalStorage = {
-    videoFormat,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
+// export function setStoredVideoFormat(videoFormat: string): Promise<void> {
+//   const vals: OptionsLocalStorage = {
+//     videoFormat,
+//   };
+//   return new Promise((resolve) => {
+//     chrome.storage.local.set(vals, () => {
+//       resolve();
+//     });
+//   });
+// }
 
-export function getStoredVideoFormat(): Promise<string> {
-  const keys: OptionsLocalStorageKeys[] = ['videoFormat'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.videoFormat ?? 'video/webm');
-    });
-  });
-}
+// export function getStoredVideoFormat(): Promise<string> {
+//   const keys: OptionsLocalStorageKeys[] = ['videoFormat'];
+//   return new Promise((resolve) => {
+//     chrome.storage.local.get(keys, (res) => {
+//       resolve(res.videoFormat ?? 'video/webm');
+//     });
+//   });
+// }
