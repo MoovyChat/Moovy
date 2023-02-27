@@ -6,7 +6,7 @@ import Footer from './footer/footer';
 import { Image } from '../../components/Image/image';
 import InstallationGuide from './installation-guide/installationGuide';
 import Light from '../../static/images/light-chat.png';
-import { LogoSet } from '../../components/display-platforms/displayPlatforms';
+import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
 import { WelcomeParent } from './welcome.styles';

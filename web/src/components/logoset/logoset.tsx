@@ -1,10 +1,5 @@
-import {
-  DisplayPlatformsStyles,
-  LogoSetParent,
-} from './displayPlatforms.styles';
-
 import { Image } from '../Image/image';
-import React from 'react';
+import { LogoSetParent } from './logoset.styles';
 import { streamingServices } from '../../pages/welcome/welcome';
 
 type logoSetProp = {
@@ -19,15 +14,3 @@ export const LogoSet: React.FC<logoSetProp> = ({ platform }) => {
     </LogoSetParent>
   );
 };
-
-const DisplayPlatforms = () => {
-  return (
-    <DisplayPlatformsStyles className='platform-buttons'>
-      {streamingServices.map((platform) => (
-        <LogoSet platform={platform} key={platform.title} />
-      ))}
-    </DisplayPlatformsStyles>
-  );
-};
-
-export default DisplayPlatforms;

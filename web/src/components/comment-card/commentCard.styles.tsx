@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { animateHeart } from '../../utils/keyframes';
 
-export const commentStyleMixin = () => css`
+const commentStyleMixin = () => css`
   color: ${(p) => p.theme.mention};
 `;
 
@@ -273,14 +273,6 @@ export const CardParent = styled.div<props>`
       }
     }
   }
-`;
-
-export const ReplyWindow = styled.div<props>`
-  overflow: auto;
-  width: 90%;
-  position: relative;
-  align-self: flex-end;
-  border-left: 0.3px solid;
 `;
 
 export const MovieInfoParent = styled.div`
