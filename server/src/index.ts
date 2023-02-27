@@ -35,6 +35,7 @@ const options: RedisOptions = {
 };
 const redisClient = createClient({
   url: redisUrl,
+  legacyMode: true,
 });
 const getConfiguredRedisPubSub = new RedisPubSub({
   publisher: new Redis(options),
@@ -67,6 +68,7 @@ const main = async () => {
       process.env.CORS_ORIGIN as string,
       'https://studio.apollographql.com',
       'https://server.moovychat.com/graphql',
+      'https://www.moovychat.com',
       'ws://server.moovychat.com/graphql',
       'wss://server.moovychat.com/graphql',
       'ws://localhost:4000/graphql',
@@ -74,13 +76,9 @@ const main = async () => {
       'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
       process.env.REDIS_URL as string,
     ],
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 200,
   };
   app.set('trust proxy', 1);
-  app.options('/graphql', cors(corsOptions));
   app.use(cors(corsOptions));
 
   app.use(

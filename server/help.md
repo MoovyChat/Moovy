@@ -10,7 +10,7 @@ INSERT INTO "platform"("name", "url", "createdAt", "updatedAt", "deletedAt") VAL
 5.0.5 failed
 5.0.6 failed
 5.0.7 failed
-5.0.8 works
+5.0.8 failed
 5.0.9 failed
 5.1.0 failed
 5.1.1 failed
@@ -22,3 +22,12 @@ INSERT INTO "platform"("name", "url", "createdAt", "updatedAt", "deletedAt") VAL
 5.1.7 failed
 5.2.0 failed
 5.2.1 Perfect
+5.2.5 perfect
+5.2.6 failed (default nginx failed)
+5.2.7 ok
+5.2.8 failed
+5.2.9 failed
+5.3.0 ok
+5.3.2 failed
+5.3.3 failed
+5.3.4 failed
