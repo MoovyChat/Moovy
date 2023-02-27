@@ -7,7 +7,11 @@ import {
   useState,
 } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Profile, User, useGetUserProfileQuery } from '../../generated/graphql';
+import {
+  Profile,
+  Users,
+  useGetUserProfileQuery,
+} from '../../generated/graphql';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import FollowButton from '../../components/follow-button/followButton';
@@ -18,8 +22,8 @@ import ProfilePic from '../../components/profilePic/profilePic';
 import { getShortDateFormat } from '../../utils/helpers';
 
 type props = {
-  user: User;
-  currentUser: User;
+  user: Users;
+  currentUser: Users;
   bgChangeHandler?: MouseEventHandler<HTMLDivElement>;
   profilePicChangeHandler?: MouseEventHandler<HTMLDivElement>;
   editProfileHandler?: MouseEventHandler<HTMLSpanElement>;
@@ -83,7 +87,7 @@ const ProfileTemplate: React.FC<props> = ({
           <div className='user-container'>
             <ProfilePic
               src={user.photoUrl!}
-              user={user as User}
+              user={user as Users}
               tooltip={true}
             />
             {!isDifferentUser && (

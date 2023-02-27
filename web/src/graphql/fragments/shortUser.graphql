@@ -1,4 +1,4 @@
-fragment ShortUser on User {
+fragment ShortUser on Users {
   id
   name
   photoUrl

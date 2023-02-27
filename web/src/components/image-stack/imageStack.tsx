@@ -11,22 +11,22 @@ import { ImageStackParent } from './imageStack.style';
 import { LOGIN } from '../tooltip/constants';
 import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import Tooltip from '../tooltip/tooltip';
-import { User } from '../../generated/graphql';
+import { Users } from '../../generated/graphql';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
-  user: User;
-  followers?: User[];
-  following?: User[];
+  user: Users;
+  followers?: Users[];
+  following?: Users[];
   count: number;
 };
 const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  let [users, setUsers] = useState<User[]>([]);
+  let [users, setUsers] = useState<Users[]>([]);
   let [isFollowerSection, setIsFollowerSection] = useState<boolean>(false);
   const redirectToUserProfile = (id: string) => {
     navigate(`/profile/${id}`);

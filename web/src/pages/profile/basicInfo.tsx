@@ -3,7 +3,7 @@ import {
   FollowingObject,
   Movie,
   Profile,
-  User,
+  Users,
   useGetUserByNickNameQuery,
   useGetUserMiniProfileQuery,
 } from '../../generated/graphql';
@@ -28,7 +28,7 @@ import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 const BasicInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Users | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [follower, setFollower] = useState<FollowerObject | null>(null);
   const [following, setFollowing] = useState<FollowingObject | null>(null);
@@ -52,7 +52,7 @@ const BasicInfo = () => {
 
   useEffect(() => {
     if (error) console.log(error);
-    if (data) setUser(data?.getUserByUserName as User);
+    if (data) setUser(data?.getUserByUserName as Users);
   }, [fetching, id]);
 
   useMemo(() => {
@@ -134,7 +134,7 @@ const BasicInfo = () => {
             {user && (
               <ImageStack
                 user={user}
-                followers={follower?.followers as User[]}
+                followers={follower?.followers as Users[]}
                 count={user.followerCount ? user.followerCount : 0}
               />
             )}
@@ -146,7 +146,7 @@ const BasicInfo = () => {
             {user && (
               <ImageStack
                 user={user}
-                following={following?.following as User[]}
+                following={following?.following as Users[]}
                 count={user.followingCount ? user.followingCount : 0}
               />
             )}

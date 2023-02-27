@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  User,
+  Users,
   useLoginMutation,
   useMeQuery,
 } from '../../../../generated/graphql';

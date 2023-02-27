@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { User, useGetUserQuery } from '../../../../generated/graphql';
+import { Users, useGetUserQuery } from '../../../../generated/graphql';
 
 import FollowButton from '../../../follow-button/followButton';
 import Loading from '../../../../pages/loading/loading';
@@ -12,7 +12,7 @@ type props = {
   userId: string;
 };
 const UserTip: React.FC<props> = ({ userId }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Users | null>(null);
   const [getUser] = useGetUserQuery({
     variables: { uid: userId! },
     pause: isServer(),
@@ -21,7 +21,7 @@ const UserTip: React.FC<props> = ({ userId }) => {
     const { data, error, fetching } = getUser;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getUser as User;
+      const _data = data.getUser as Users;
       setUser(() => _data);
     }
   }, [getUser]);

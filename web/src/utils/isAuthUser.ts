@@ -1,4 +1,4 @@
-import { User, useMeQuery } from '../generated/graphql';
+import { Users, useMeQuery } from '../generated/graphql';
 
 import { sliceSetUser } from '../redux/slices/userSlice';
 import { useAppDispatch } from '../redux/hooks';
@@ -12,7 +12,7 @@ const useIsAuth = () => {
   useEffect(() => {
     if (error) console.log(error);
     if (!fetching && data) {
-      const user = data?.me as User;
+      const user = data?.me as Users;
       if (!user) navigate('/');
       dispatch(sliceSetUser(user));
     }

@@ -3,7 +3,7 @@ import {
   ShortMovieFragment,
   ShortTitleFragment,
   Title,
-  User,
+  Users,
   useGetSearchResultsQuery,
 } from '../../generated/graphql';
 import React, {

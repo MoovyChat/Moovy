@@ -8,8 +8,8 @@ const firebaseConfig = {
   projectId: 'netflix-comments-357200',
   storageBucket: 'netflix-comments-357200.appspot.com',
   messagingSenderId: '596322814794',
-  appId: '1:596322814794:web:abfb1a5ee5732ae28dcfb3',
-  measurementId: 'G-N7MNCE11FQ',
+  appId: '1:596322814794:web:7ff40e1b178548308dcfb3',
+  measurementId: 'G-D9XS9MB3K3',
 };
 
 export const app = initializeApp(firebaseConfig);

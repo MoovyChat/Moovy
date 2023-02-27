@@ -19,7 +19,7 @@ import {
 import { LeftParent } from './leftPanel.styles';
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
-import { User } from '../../../generated/graphql';
+import { Users } from '../../../generated/graphql';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
@@ -71,7 +71,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
       <div className='profile'>
         <ProfilePic
           src={user?.photoUrl!}
-          user={user as User}
+          user={user as Users}
           tooltip={true}></ProfilePic>
       </div>
       <div className='options'>

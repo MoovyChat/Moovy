@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import {
-  User,
+  Users,
   useGetCommentLikesQuery,
   useGetCommentQuery,
   useGetCommentedUserQuery,
@@ -30,7 +30,7 @@ const CommentThread = () => {
   useEffect(() => {
     document.title = 'Comment - Moovy';
   }, []);
-  const userRef = useRef<User | null>(null);
+  const userRef = useRef<Users | null>(null);
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
@@ -86,7 +86,7 @@ const CommentThread = () => {
     const { data, error, fetching } = commentedQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getCommentedUser as User;
+      const _data = data.getCommentedUser as Users;
       userRef.current = _data;
     }
   }, [commentedQueryResult]);

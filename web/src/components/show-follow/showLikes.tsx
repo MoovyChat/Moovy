@@ -1,6 +1,6 @@
 import { MouseEventHandler, UIEventHandler, useEffect, useState } from 'react';
 import {
-  User,
+  Users,
   useGetCommentLikesQuery,
   useGetReplyLikesQuery,
 } from '../../generated/graphql';
@@ -23,7 +23,7 @@ const ShowLikes = () => {
   const type = (popup.popupData as any).type;
   const isReply = (popup.popupData as any).isReply as boolean;
   const dispatch = useAppDispatch();
-  const [users, setLikedUsers] = useState<User[]>([]);
+  const [users, setLikedUsers] = useState<Users[]>([]);
   const [likesCount, setLikesCount] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
@@ -54,7 +54,7 @@ const ShowLikes = () => {
       const _users = data.getCommentLikes?.likes;
       const _lastPage = data.getCommentLikes.lastPage!;
       setLastPage(_lastPage);
-      setLikedUsers(_users! as User[]);
+      setLikedUsers(_users! as Users[]);
       setLikesCount(_count);
     }
   }, [commentLikeCountQuery.fetching]);
@@ -68,7 +68,7 @@ const ShowLikes = () => {
       const _users = data.getReplyLikes?.likes;
       const _lastPage = data.getReplyLikes.lastPage!;
       setLastPage(_lastPage);
-      setLikedUsers(_users! as User[]);
+      setLikedUsers(_users! as Users[]);
       setLikesCount(_count);
     }
   }, [replyLikeQuery.fetching]);

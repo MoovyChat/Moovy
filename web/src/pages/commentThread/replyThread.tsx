@@ -1,6 +1,6 @@
 import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import {
-  User,
+  Users,
   useGetRepliedUserQuery,
   useGetRepliesOfReplyQuery,
   useGetReplyLikesQuery,
@@ -23,7 +23,7 @@ const ReplyThread = () => {
   useEffect(() => {
     document.title = 'Reply - Moovy';
   }, []);
-  const userRef = useRef<User | null>(null);
+  const userRef = useRef<Users | null>(null);
   const loggedInUser = useAppSelector((state) => state.user);
   const [page, setPage] = useState<number>(1);
   const [like, setLike] = useState<boolean>(false);
@@ -89,7 +89,7 @@ const ReplyThread = () => {
     const { data, error, fetching } = commentedQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getRepliedUser as User;
+      const _data = data.getRepliedUser as Users;
       userRef.current = _data;
     }
   }, [commentedQueryResult]);
