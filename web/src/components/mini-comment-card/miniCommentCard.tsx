@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  User,
+  Users,
   useGetCommentOrReplyQuery,
   useGetUserMutMutation,
 } from '../../generated/graphql';
@@ -92,7 +92,7 @@ const MiniCommentCard: React.FC<props> = ({
           <div className='photo'>
             <ProfilePic
               src={user?.photoUrl!}
-              user={user as User}
+              user={user as Users}
               tooltip={true}
             />
           </div>

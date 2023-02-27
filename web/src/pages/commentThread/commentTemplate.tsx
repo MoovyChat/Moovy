@@ -13,7 +13,7 @@ import {
 import {
   Movie,
   Title,
-  User,
+  Users,
   useGetCommentOrReplyQuery,
   useGetCommentQuery,
   useGetMovieQuery,
@@ -64,13 +64,13 @@ type props = {
   type: string;
   comment: any;
   replies: any;
-  userRef: MutableRefObject<User | null>;
+  userRef: MutableRefObject<Users | null>;
   page?: number | 1;
   lastPage?: number | 1;
   setPage?: any;
   like: boolean;
   likesCount: number;
-  likedUsers?: User[];
+  likedUsers?: Users[];
   updateLike: MouseEventHandler<HTMLSpanElement>;
 };
 
@@ -253,7 +253,7 @@ const CommentTemplate: React.FC<props> = ({
                 <div className='user'>
                   <ProfilePic
                     src={userRef.current?.photoUrl!}
-                    user={userRef.current as User}
+                    user={userRef.current as Users}
                     tooltip={true}
                   />
                 </div>

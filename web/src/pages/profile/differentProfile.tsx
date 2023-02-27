@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import { User, useGetUserByNickNameQuery } from '../../generated/graphql';
+import { Users, useGetUserByNickNameQuery } from '../../generated/graphql';
 import { isServer, popupStates } from '../../constants';
 import {
   sliceSetIsPopupOpened,
@@ -19,7 +19,7 @@ const DifferentProfile = () => {
   useEffect(() => {
     document.title = 'Profile - Moovy';
   }, []);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Users | null>(null);
   const userFromRedux = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const isSameUser = id !== userFromRedux.nickname;
@@ -54,7 +54,7 @@ const DifferentProfile = () => {
   useEffect(() => {
     if (error) console.log(error);
     if (data) {
-      setUser(() => data?.getUserByUserName as User);
+      setUser(() => data?.getUserByUserName as Users);
     }
   }, [fetching, data, error, id]);
 

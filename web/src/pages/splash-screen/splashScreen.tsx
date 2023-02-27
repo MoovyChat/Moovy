@@ -1,4 +1,4 @@
-import { User, useMeQuery } from '../../generated/graphql';
+import { Users, useMeQuery } from '../../generated/graphql';
 import { useEffect, useMemo } from 'react';
 
 import App from '../app/app';
@@ -18,7 +18,7 @@ const SplashScreen = () => {
   useMemo(() => {
     if (error) console.log(error);
     if (!fetching && data) {
-      const user = data?.me as User;
+      const user = data?.me as Users;
       // console.log('splashscreen', user);
       if (user) {
         dispatch(sliceSetUser(user));

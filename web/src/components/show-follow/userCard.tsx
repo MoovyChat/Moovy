@@ -1,12 +1,12 @@
 import FollowButton from '../follow-button/followButton';
 import ProfilePic from '../profilePic/profilePic';
 import { StyledUserCard } from './show.styles';
-import { User } from '../../generated/graphql';
+import { Users } from '../../generated/graphql';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
-  user: User;
+  user: Users;
 };
 export const UserCard: React.FC<props> = ({ user }) => {
   const currentUser = useAppSelector((state) => state.user);

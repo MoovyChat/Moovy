@@ -3,12 +3,12 @@ import { ProfilePicParent } from './profilePic.styles';
 import React from 'react';
 import { TOOLTIP } from '../../utils/enums';
 import Tooltip from '../tooltip/tooltip';
-import { User } from '../../generated/graphql';
+import { Users } from '../../generated/graphql';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
   src: string;
-  user?: User;
+  user?: Users;
   tooltip?: boolean;
 };
 const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {

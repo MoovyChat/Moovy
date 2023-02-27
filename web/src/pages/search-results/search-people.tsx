@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, useSearchPeopleQuery } from '../../generated/graphql';
+import { Users, useSearchPeopleQuery } from '../../generated/graphql';
 
 import EmptyPage from '../../components/empty-page/emptyPage';
 import Loading from '../loading/loading';
@@ -11,7 +11,7 @@ const SearchPeople = () => {
   const { search } = useParams();
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
-  const [people, setPeople] = useState<User[]>([]);
+  const [people, setPeople] = useState<Users[]>([]);
   const [{ data, fetching, error }] = useSearchPeopleQuery({
     variables: {
       search: search!,

@@ -2,7 +2,7 @@ import {
   FollowNotifications,
   LikeNotifications,
   MovieStats,
-  User,
+  Users,
   Visited,
 } from '../generated/graphql';
 
@@ -84,7 +84,7 @@ export const userCommentsResolver = (): Resolver => {
     let _totalCommentCount = 0;
     let _pastLoadedCount = 0;
     let _hasMoreComments = true;
-    let _user: User | null = null;
+    let _user: Users | null = null;
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
       if (args.uid !== fieldArgs.uid) return;
@@ -95,7 +95,7 @@ export const userCommentsResolver = (): Resolver => {
       _lastPage = cache.resolve(link, 'lastPage') as number;
       _totalCommentCount = cache.resolve(link, 'totalCommentCount') as number;
       _pastLoadedCount = cache.resolve(link, 'pastCount') as number;
-      _user = cache.resolve(link, 'user') as User;
+      _user = cache.resolve(link, 'user') as Users;
       let hasMore = cache.resolve(link, 'hasMoreComments') as boolean;
       if (hasMore === false) {
         _hasMoreComments = false;
@@ -132,7 +132,7 @@ export const userRepliesResolver = (): Resolver => {
     let _totalCommentCount = 0;
     let _pastLoadedCount = 0;
     let _hasMoreComments = true;
-    let _user: User | null = null;
+    let _user: Users | null = null;
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
       if (args.uid !== fieldArgs.uid) return;
@@ -143,7 +143,7 @@ export const userRepliesResolver = (): Resolver => {
       _lastPage = cache.resolve(link, 'lastPage') as number;
       _totalCommentCount = cache.resolve(link, 'totalCommentCount') as number;
       _pastLoadedCount = cache.resolve(link, 'pastCount') as number;
-      _user = cache.resolve(link, 'user') as User;
+      _user = cache.resolve(link, 'user') as Users;
       let hasMore = cache.resolve(link, 'hasMoreComments') as boolean;
       if (hasMore === false) {
         _hasMoreComments = false;

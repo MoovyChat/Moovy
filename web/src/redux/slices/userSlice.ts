@@ -1,8 +1,8 @@
-import { User } from '../../generated/graphql';
+import { Users } from '../../generated/graphql';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const userState: User = {
+export const userState: Users = {
   id: '',
   name: '',
   email: '',
@@ -21,7 +21,7 @@ const UserSlice = createSlice({
   name: 'user',
   initialState: userState,
   reducers: {
-    sliceSetUser: (state, action: { payload: User; type: string }) => {
+    sliceSetUser: (state, action: { payload: Users; type: string }) => {
       return action.payload;
     },
     sliceSetUserNickName: (

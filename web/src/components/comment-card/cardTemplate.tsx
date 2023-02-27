@@ -5,7 +5,7 @@ import {
   LinkPreview,
   Movie,
   Title,
-  User,
+  Users,
   useGetMovieQuery,
   useGetTitleInfoMutation,
   useGetUserQuery,
@@ -70,7 +70,7 @@ const CardTemplate: React.FC<props> = ({
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
   const movieRef = useRef<Movie | null>(null);
   const titleRef = useRef<Title | null>(null);
-  const userRef = useRef<User | null>(null);
+  const userRef = useRef<Users | null>(null);
   let episodeEntered = useRef<boolean>(false);
   const commentRef = useRef<HTMLDivElement | null>(null);
   let titleEntered = useRef<boolean>(false);
@@ -158,7 +158,7 @@ const CardTemplate: React.FC<props> = ({
     const { data, fetching, error } = userInfo;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _user = data.getUser as User;
+      const _user = data.getUser as Users;
       userRef.current = _user;
     }
   }, [userRef.current, userInfo]);
@@ -273,7 +273,7 @@ const CardTemplate: React.FC<props> = ({
                 user={
                   isSameUserAsLoggedIn
                     ? loggedInUser
-                    : (userRef.current as User)
+                    : (userRef.current as Users)
                 }
                 tooltip={true}
               />

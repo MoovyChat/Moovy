@@ -1,7 +1,7 @@
 import { HeaderButton, HeaderParent } from './header.styles';
 import React, { useEffect } from 'react';
 import {
-  User,
+  Users,
   useLoginMutation,
   useLogoutMutation,
   useMeQuery,
@@ -30,7 +30,7 @@ const Header = () => {
       console.log(error);
     }
     if (!fetching && data) {
-      dispatch(sliceSetUser(data.me as User));
+      dispatch(sliceSetUser(data.me as Users));
     }
   }, [me.fetching]);
   const themeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -39,7 +39,16 @@ const Header = () => {
   };
   const loginHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
-    window.open('/google-login', '_blank');
+    const signedInUser = await googleSignIn();
+    loginAction({ uid: signedInUser.id }).then((res) => {
+      const { data } = res;
+      const user = data?.login?.user;
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch(sliceSetUser(user as Users));
+      }
+      navigate('/');
+    });
   };
 
   const logOutHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {

@@ -1,6 +1,6 @@
 import { MouseEventHandler, UIEventHandler, useEffect, useState } from 'react';
 import {
-  User,
+  Users,
   useGetFollowersQuery,
   useGetFollowingsQuery,
 } from '../../generated/graphql';
@@ -19,7 +19,7 @@ const ShowFollow = () => {
   const isFollower = (popup.popupData as any).isFollower as boolean;
   console.log({ userId, type, isFollower });
   const dispatch = useAppDispatch();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<Users[]>([]);
   const [usersCount, setUsersCount] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);

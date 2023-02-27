@@ -2,11 +2,11 @@ import FollowButton from '../follow-button/followButton';
 import ProfilePic from '../profilePic/profilePic';
 import React from 'react';
 import { StyledPeopleCard } from './peopleCard.styles';
-import { User } from '../../generated/graphql';
+import { Users } from '../../generated/graphql';
 import { useNavigate } from 'react-router-dom';
 
 type props = {
-  user: User;
+  user: Users;
 };
 const PeopleCard: React.FC<props> = ({ user }) => {
   const navigate = useNavigate();
