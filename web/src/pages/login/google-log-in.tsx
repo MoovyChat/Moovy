@@ -4,10 +4,12 @@ import {
   getRedirectResult,
   signInWithRedirect,
 } from 'firebase/auth';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { Users, useLoginMutation, useMeQuery } from '../../generated/graphql';
-import { useEffect, useState } from 'react';
 
 import { app } from '../../firebase';
+import { googleSignIn } from './login';
+import { sliceSetUser } from '../../redux/slices/userSlice';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,21 +21,25 @@ const GoogleLogIn = () => {
 
   var provider = new GoogleAuthProvider();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkLogin = async () => {
+  const loginHandler: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.stopPropagation();
+    const signedInUser = await googleSignIn();
+    loginAction({ uid: signedInUser.id }).then((res) => {
+      const { data } = res;
+      const _user = data?.login?.user;
       if (user) {
-        window.close();
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch(sliceSetUser(_user as Users));
+        setUser(() => _user as Users);
       }
-      try {
-        await signInWithRedirect(auth, provider);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    checkLogin();
-  }, [user]);
-  return <div>Logging in...</div>;
+      navigate('/');
+    });
+  };
+  return (
+    <div>
+      <button onClick={loginHandler}>Log in</button>
+    </div>
+  );
 };
 
 export default GoogleLogIn;
