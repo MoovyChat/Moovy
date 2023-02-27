@@ -16,17 +16,10 @@ const GoogleLogIn = () => {
   const [user, setUser] = useState<Users | null>(null);
   const dispatch = useAppDispatch();
   const auth = getAuth(app);
-  const [{ data, fetching, error }] = useMeQuery();
+
   var provider = new GoogleAuthProvider();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (error) console.log(error);
-    if (!fetching && data) {
-      const _user = data?.me as Users;
-      setUser(() => _user);
-    }
-  }, [fetching, data, error]);
   useEffect(() => {
     const checkLogin = async () => {
       if (user) {
