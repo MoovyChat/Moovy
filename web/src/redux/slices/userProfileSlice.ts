@@ -2,7 +2,7 @@ import { Profile } from '../../generated/graphql';
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const userProfileState: Profile = {
+const userProfileState: Profile = {
   fullname: '',
   dob: '',
   gender: '',
