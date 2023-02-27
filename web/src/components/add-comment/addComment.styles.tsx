@@ -200,7 +200,7 @@ export const AddCommentParent = styled.div<props>`
   }
 `;
 
-export const textAreaMixin = () => css`
+const textAreaMixin = () => css`
   overflow-x: hidden;
   overflow-y: auto;
   white-space: pre-wrap;
