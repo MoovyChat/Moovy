@@ -6,7 +6,7 @@ import {
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
-import { CommentInfo, User, globalUIStyles } from '../../Utils/interfaces';
+import { CommentInfo, User } from '../../Utils/interfaces';
 import React, {
   Dispatch,
   MouseEvent,
@@ -39,7 +39,6 @@ import { MdTagFaces } from 'react-icons/md';
 import { Pic } from '../../extension/components/logout/logout.styles';
 import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
@@ -68,7 +67,6 @@ const MessageBox: React.FC<props> = ({
   const dispatch = useAppDispatch();
 
   // React: useState hooks.
-  const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
 
@@ -184,10 +182,7 @@ const MessageBox: React.FC<props> = ({
   }, [replyWindowResponse]);
 
   return (
-    <ChatTextBox
-      className='chat-text-box'
-      isReply={isReply}
-      styles={globalStyles!}>
+    <ChatTextBox className='chat-text-box' isReply={isReply}>
       <TextAreaIcon className='text-area-icon'>
         <Profile profilePic={userFromRedux?.photoUrl!}></Profile>
       </TextAreaIcon>

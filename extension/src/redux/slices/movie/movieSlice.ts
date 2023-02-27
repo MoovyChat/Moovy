@@ -2,7 +2,7 @@ import { Movie, timeMessage } from '../../../Utils/interfaces';
 
 import { createSlice } from '@reduxjs/toolkit';
 
-export const movieState: Movie = {
+const movieState: Movie = {
   id: '',
   name: '',
   platformId: 1,

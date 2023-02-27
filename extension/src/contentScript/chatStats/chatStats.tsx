@@ -29,7 +29,6 @@ import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MOOVY_URL } from '../../constants';
 import { getFormattedNumber } from '../../Utils/utilities';
-import { globalUIStyles } from '../../Utils/interfaces';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetTheme } from '../../redux/slices/misc/miscSlice';

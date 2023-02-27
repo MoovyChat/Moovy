@@ -142,26 +142,3 @@ export const ProfileParent = styled.div`
     }
   }
 `;
-
-type props = {
-  profilePic: string;
-};
-export const ProfileImage = styled.div<props>`
-  display: inline-block;
-  display: flex;
-  border-radius: 50%;
-  justify-content: center;
-  background: url('${(p) => p.profilePic}');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-`;
-
-export const NoTitles = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 500;
-  font-size: 1.5em;
-  height: 100%;
-`;

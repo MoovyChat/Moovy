@@ -4,6 +4,12 @@ import { Dispatch } from 'redux';
 import { msgPlace } from './enums';
 import { textMapTypes } from '../constants';
 
+const isNumber = (c: string) => {
+  let parsedInt = parseInt(c);
+  if (isNaN(parsedInt)) return false;
+  else return true;
+};
+
 // Calculates the time between current time and the user's comment
 export const getTimeFrame = (postTime: string) => {
   let currentTime = Date.now();
@@ -37,12 +43,6 @@ export const getTimeFrame = (postTime: string) => {
     finalString = `${noOfYears}y`;
   }
   return finalString;
-};
-
-export const isNumber = (c: string) => {
-  let parsedInt = parseInt(c);
-  if (isNaN(parsedInt)) return false;
-  else return true;
 };
 
 export const getFormattedWordsArray = (
@@ -107,15 +107,6 @@ export const getShortDateFormat = (time: string | undefined) => {
     day: 'numeric',
   }).format(intTime);
   return intlFormat.toString();
-};
-
-export const isImageURLValid = async (url: string) => {
-  const img = new Image();
-  img.src = url;
-  return new Promise((resolve) => {
-    img.onerror = () => resolve(false);
-    img.onload = () => resolve(true);
-  });
 };
 
 export const makeDistortionCurve = (amount: any) => {

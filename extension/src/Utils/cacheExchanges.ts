@@ -1,8 +1,6 @@
 import { Cache, ResolveInfo, Variables } from '@urql/exchange-graphcache';
 import {
   DeleteCommentMutation,
-  GetCommentsOfTheUserDocument,
-  GetCommentsOfTheUserQuery,
   GetMovieDocument,
   GetMovieQuery,
   IsFollowingUserDocument,
@@ -86,39 +84,10 @@ export const deleteCommentChanges = (
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
-    getCommentsOfTheUser: 'getCommentsOfTheUser',
     getCommentsOfTheMovie: 'getCommentsOfTheMovie',
     getMovie: 'getMovie',
     getComment: 'getComment',
   };
-  const getCommentsOfTheUserFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getCommentsOfTheUser
-  );
-  getCommentsOfTheUserFields.forEach((fieldInfo) => {
-    cache.updateQuery(
-      { query: GetCommentsOfTheUserDocument, variables: fieldInfo.arguments },
-      (data: GetCommentsOfTheUserQuery | null) => {
-        if (!data) {
-          console.log('Data is null, returning');
-          return null;
-        }
-        const getCommentsOfTheUser = data.getCommentsOfTheUser!;
-        const comments = getCommentsOfTheUser.comments!;
-        const totalCommentCount = getCommentsOfTheUser.totalCommentCount!;
-        const pastCount = getCommentsOfTheUser.pastCount!;
-        return {
-          ...data,
-          getCommentsOfTheUser: {
-            ...getCommentsOfTheUser,
-            comments: comments.filter((comment) => comment.id !== args.cid),
-            totalCommentCount:
-              totalCommentCount - 1 < 0 ? 0 : totalCommentCount - 1,
-            pastCount: pastCount - 1 < 0 ? 0 : pastCount - 1,
-          },
-        };
-      }
-    );
-  });
 
   const getMovieFields = allFields.filter(
     (field) => field.fieldName === fieldsInfos.getMovie

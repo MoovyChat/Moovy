@@ -2,13 +2,17 @@
   "short_name": "Moovy Chat",
   "name": "Moovy Chat",
   "description": "Enjoy the Streaming now with the Comments",
-  "version": "1.0.5",
+  "version": "1.0.1",
   "manifest_version": 3,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAokvPCfupK0jKcWnO5HXobk4g92gWiyyIvK9gkdbZ/w2ikGZLHL5tmDDIBbsjPK+NSC842+b+N73oFyXspGpwIASv5vsNuYc0TwIrdaE4LrokM8XOy6QvuYKzvjkYBwW6hSfcjWtYWaW7tILLsotdA3Bj2w12DhIjkCq/fMrMCXrAwSg4eUwWl3sb2bq4DAF9KkZcMFOFEaSCke3FW6uJYen4rIAfSapKgObFKPNmVldnAVYnhgdodb0B/HpgYMa+PgStrj6+Gm/hAVhJqaBOiKb3wMwgClAaWQ6MzM8qgteeXT+fxINmfcYgwJk8AQd6IfHJSEJ/s4kUpfnj4v6EJQIDAQAB",
-  "permissions": ["identity", "storage", "tabs", "scripting", "activeTab"],
+  "permissions": ["identity", "storage", "tabs", "scripting"],
   "content_scripts": [
     {
-      "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
+      "matches": [
+        "https://www.netflix.com/*",
+        "http://localhost:3000/*",
+        "https://moovychat.com/*"
+      ],
       "js": ["index.js", "netflix.js", "record.js"],
       "run_at": "document_idle"
     }
@@ -30,14 +34,26 @@
         "patreon-logo.png",
         "patreon-word.png"
       ],
-      "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"],
+      "matches": [
+        "https://www.netflix.com/*",
+        "http://localhost:3000/*",
+        "https://moovychat.com/*"
+      ],
       "use_dynamic_url": true
     }
   ],
   "externally_connectable": {
-    "matches": ["https://www.netflix.com/*", "http://localhost:3000/*"]
+    "matches": [
+      "https://www.netflix.com/*",
+      "http://localhost:3000/*",
+      "https://moovychat.com/*"
+    ]
   },
-  "host_permissions": ["https://www.netflix.com/*", "http://localhost:3000/*"],
+  "host_permissions": [
+    "https://www.netflix.com/*",
+    "http://localhost:3000/*",
+    "https://moovychat.com/*"
+  ],
   "icons": {
     "16": "Moovy/moovyIcon.png",
     "48": "Moovy/moovyIcon.png",

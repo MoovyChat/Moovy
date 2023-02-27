@@ -1,10 +1,5 @@
 import { ChatAreaParent, Parent } from './chatArea.styles';
-import {
-  NameObject,
-  User,
-  globalUIStyles,
-  textMap,
-} from '../../Utils/interfaces';
+import { NameObject, User, textMap } from '../../Utils/interfaces';
 import React, {
   Dispatch,
   FocusEventHandler,
@@ -25,7 +20,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { AnyAction } from 'redux';
 import _ from 'lodash';
 import { getFormattedWordsArray } from '../../Utils/utilities';
-import { getStoredGlobalUIStyles } from '../../Utils/storage';
 import { msgPlace } from '../../Utils/enums';
 import { urqlClient } from '../../Utils/urqlClient';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
@@ -50,7 +44,7 @@ const ChatArea: React.FC<props> = ({
     'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
   const user = useAppSelector((state) => state.user);
   const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
-  const [globalStyles, setGlobalStyles] = useState<globalUIStyles>();
+
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
@@ -64,9 +58,6 @@ const ChatArea: React.FC<props> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textAreaHeight, setTextAreaHeight] = useState<number>(17);
   const [formattedTextMap, setFormattedTextMap] = useState<textMap[]>([]);
-  useEffect(() => {
-    getStoredGlobalUIStyles().then((styles) => setGlobalStyles(styles));
-  }, [globalStyles]);
 
   useEffect(() => {
     if (textAreaFocussed) textAreaRef.current?.focus();
@@ -234,10 +225,9 @@ const ChatArea: React.FC<props> = ({
   };
 
   return (
-    <Parent styles={globalStyles!} textAreaHeight={textAreaHeight}>
+    <Parent textAreaHeight={textAreaHeight}>
       <ChatAreaParent
         ref={textAreaRef}
-        styles={globalStyles!}
         textAreaHeight={textAreaHeight}
         autoFocus={false}
         key='editor'

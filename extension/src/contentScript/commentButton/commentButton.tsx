@@ -33,7 +33,7 @@ const Loader = (chatElement: HTMLDivElement) => {
   }
 };
 
-export const createChatWindow = (_chatWindowSize: string) => {
+const createChatWindow = (_chatWindowSize: string) => {
   let chatElement = document.createElement('div');
   let chatElementId = 'NComments';
   chatElement.id = chatElementId;

@@ -14,48 +14,48 @@ type filterProps = {
   selected?: boolean;
 };
 
-export const PresetFilter = styled.div<filterProps>`
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-direction: column;
-  cursor: pointer;
-  :hover {
-    .photo {
-      filter: brightness(0.5);
-    }
-  }
-  .photo,
-  .show-val {
-    display: flex;
-    flex: 1 1 20%;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    img {
-      filter: ${(p) => p.filter};
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    .layover {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 50px;
-      height: 50px;
-      border: 1px solid black;
-      color: #ff005d;
-      background-color: rgba(186, 178, 178, 0.824);
-      border-radius: 50%;
-    }
-  }
-`;
+// export const PresetFilter = styled.div<filterProps>`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-evenly;
+//   flex-direction: column;
+//   cursor: pointer;
+//   :hover {
+//     .photo {
+//       filter: brightness(0.5);
+//     }
+//   }
+//   .photo,
+//   .show-val {
+//     display: flex;
+//     flex: 1 1 20%;
+//     justify-content: center;
+//     align-items: center;
+//     position: relative;
+//     width: 40px;
+//     height: 40px;
+//     overflow: hidden;
+//     img {
+//       filter: ${(p) => p.filter};
+//       width: 40px;
+//       height: 40px;
+//       object-fit: cover;
+//       border-radius: 50%;
+//     }
+//     .layover {
+//       position: absolute;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       width: 50px;
+//       height: 50px;
+//       border: 1px solid black;
+//       color: #ff005d;
+//       background-color: rgba(186, 178, 178, 0.824);
+//       border-radius: 50%;
+//     }
+//   }
+// `;
 
 export const FilterView = styled.div<filterProps>`
   display: flex;

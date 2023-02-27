@@ -1,9 +1,4 @@
-import {
-  Cache,
-  QueryInput,
-  ResolveInfo,
-  Variables,
-} from '@urql/exchange-graphcache';
+import { Cache, ResolveInfo, Variables } from '@urql/exchange-graphcache';
 import {
   GetCommentLikesDocument,
   GetCommentLikesQuery,
@@ -12,31 +7,6 @@ import {
   SetCommentLikeMutation,
   SetReplyLikeMutation,
 } from '../generated/graphql';
-
-import { DocumentNode } from 'graphql';
-
-export function betterUpdateQuery<Result, Query>(
-  cache: Cache,
-  args: Variables,
-  qi: DocumentNode,
-  fieldName: string,
-  fn: (q: Query | null) => Query | null
-) {
-  cache
-    .inspectFields('Query')
-    .filter((field) => field.fieldName === fieldName)
-    .forEach((field) => {
-      if (args.cid === field?.arguments?.cid) {
-        cache.updateQuery(
-          {
-            query: qi,
-            variables: field.arguments,
-          },
-          (data: Query | null) => fn(data)
-        );
-      }
-    });
-}
 
 export const commentLikeChanges = (
   _result: SetCommentLikeMutation,

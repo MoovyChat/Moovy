@@ -1,10 +1,5 @@
 import { MdEdit, MdOutlineSave } from 'react-icons/md';
-import {
-  getStoredBlobURL,
-  getStoredResolution,
-  getStoredVideoDuration,
-  getStoredVideoFormat,
-} from '../storage';
+import { getStoredBlobURL, getStoredResolution } from '../storage';
 import { useEffect, useRef, useState } from 'react';
 
 import OptionsHeader from '../header/header';
@@ -33,7 +28,7 @@ const OptionsHome = () => {
     });
 
     getStoredResolution().then((res) => setResolution(res));
-    getStoredVideoFormat().then((res) => setFormat(res));
+    // getStoredVideoFormat().then((res) => setFormat(res));
   }, [b]);
 
   useEffect(() => {

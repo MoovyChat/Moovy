@@ -1,12 +1,7 @@
-import { globalUIStyles } from '../../Utils/interfaces';
 import styled from 'styled-components';
 
 type mBoxProps = {
   isReply: boolean;
-  styles: globalUIStyles;
-};
-type styleProps = {
-  styles: globalUIStyles;
 };
 export const ChatTextBox = styled.div<mBoxProps>`
   display: flex;
@@ -39,29 +34,6 @@ export const MessageBoxParent = styled.div`
   flex-direction: column;
   width: 100%;
   outline: none;
-`;
-
-type props = {
-  count: number;
-  styles?: globalUIStyles;
-};
-
-export const TextAreaCount = styled.div<props>`
-  position: relative;
-  color: ${(p) => (p.styles ? p.styles.backgroundColor : 'black')};
-  background-color: ${(p) =>
-    p.count < 10 ? '#ff7474 ' : p.styles ? p.styles.textColor : 'white'};
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-weight: 600;
-  font-size: 0.9rem;
-  height: 7px;
-  width: 7px;
-  padding: 9px;
-  box-shadow: inset 0px 0px 4px black;
 `;
 
 export const TextAreaIcon = styled.div`

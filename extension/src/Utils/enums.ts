@@ -14,16 +14,16 @@ export enum TOOLTIP {
   MSG = 'MSG',
 }
 
-export enum AUDIO_FILTER_TYPES {
-  LOWPASS = 'lowpass',
-  HIGHPASS = 'highpass',
-  BANDPASS = 'bandpass',
-  LOWSHELF = 'lowshelf',
-  HIGHSHELF = 'highshelf',
-  PEAKING = 'peaking',
-  NOTCH = 'notch',
-  ALLPASS = 'allpass',
-}
+// export enum AUDIO_FILTER_TYPES {
+//   LOWPASS = 'lowpass',
+//   HIGHPASS = 'highpass',
+//   BANDPASS = 'bandpass',
+//   LOWSHELF = 'lowshelf',
+//   HIGHSHELF = 'highshelf',
+//   PEAKING = 'peaking',
+//   NOTCH = 'notch',
+//   ALLPASS = 'allpass',
+// }
 
 export enum msgPlace {
   TEXTAREA = 'textArea',
