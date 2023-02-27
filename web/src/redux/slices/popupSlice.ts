@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
-import { themes } from '../../constants';
 
-export const popupState = {
+const popupState = {
   isPopupOpened: false,
   selectedElement: '',
   popupData: {},
