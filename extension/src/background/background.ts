@@ -16,6 +16,8 @@ import {
 import { requestTypes } from '../Utils/enums';
 
 export {};
+
+const newTabUrl = 'http://localhost:3000/google-login';
 // When the extension in installed.
 chrome.runtime.onInstalled.addListener(() => {
   let user: User = {
@@ -245,6 +247,7 @@ chrome.runtime.onMessageExternal.addListener(
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.type === 'GET_DOMAIN') {
     const domains = {
+      MOOVYCHAT: 'www.moovychat.com',
       NETFLIX: 'www.netflix.com',
       LOCALHOST: 'localhost',
       DISNEY: 'www.disneyplus.com',
@@ -258,6 +261,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       if (url) {
         const domain = getDomain(url);
         switch (domain) {
+          case domains.MOOVYCHAT:
           case domains.LOCALHOST:
             sendResponse({ domain: 'MOOVYCHAT' });
             break;
@@ -335,22 +339,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   } else if (request.type === 'GOOGLE_LOGIN_IN_BCK') {
     // Use the chrome.windows.create method to open a new Chrome window
-    chrome.windows.create(
-      {
-        url: 'http://localhost:3000/google-login',
+    chrome.system.display.getInfo(function (displays) {
+      var screenWidth = 0;
+      var screenHeight = 0;
+      displays.forEach(function (display) {
+        screenWidth += display.bounds.width;
+        screenHeight += display.bounds.height;
+      });
+      var windowWidth = 360;
+      var windowHeight = 640;
+      var top = Math.max(0, (screenHeight - windowHeight) / 2);
+      var left = Math.max(0, (screenWidth - windowWidth) / 2);
+
+      chrome.windows.create({
+        url: newTabUrl,
         type: 'popup',
         focused: true,
-        width: 360,
-        height: 640,
-        top: 0,
-        left: 0,
-      },
-      function (window) {
-        // chrome.windows.update(window?.id, {
-        //   state: 'fullscreen',
-        // });
-      }
-    );
+        width: windowWidth,
+        height: windowHeight,
+        top: top,
+        left: left,
+      });
+    });
   }
 });
 

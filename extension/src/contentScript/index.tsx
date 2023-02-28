@@ -30,7 +30,6 @@ chrome.runtime.onMessage.addListener(async function (
 
 async function main(id: number | null) {
   let netflixId = id;
-  const client = createClient({ url: 'http://localhost:4000/graphql' });
   const currentURL = window.location.href;
   if (!netflixId) netflixId = await getIdFromNetflixURL(currentURL);
   const CHAT_ICON = 'moovyAI';

@@ -66,6 +66,8 @@ const Start: React.FC<props> = () => {
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
   // const nodes = useAppSelector((state) => state.audioNodes);
+  const [isBottomControlsVisible, setIsBottomControlsVisible] =
+    useState<boolean>(false);
   const [visible, setIsVisible] = useState<boolean>(true);
   // const [audioSource, setAudioSource] =
   //   useState<MediaElementAudioSourceNode | null>(null);
@@ -174,6 +176,47 @@ const Start: React.FC<props> = () => {
   // }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
 
   // This interval will run continuously through out the session.
+
+  useEffect(() => {
+    let observer: MutationObserver | null = null;
+
+    const handleMutation = (
+      mutationsList: MutationRecord[],
+      observer: MutationObserver
+    ) => {
+      for (const mutation of mutationsList) {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'style'
+        ) {
+          const bottomControls = document.querySelector(
+            '.watch-video--bottom-controls-container'
+          ) as HTMLElement | null;
+          if (bottomControls) {
+            setIsBottomControlsVisible(() => true);
+          } else {
+            setIsBottomControlsVisible(() => false);
+          }
+        }
+      }
+    };
+
+    const startObserver = () => {
+      observer = new MutationObserver(handleMutation);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        subtree: true,
+      });
+    };
+
+    startObserver();
+
+    return () => {
+      observer?.disconnect();
+      observer = null;
+    };
+  }, []);
+
   useEffect(() => {
     async function applyTimeLineStyles() {
       let timelineBar = document.querySelector('[data-uia="timeline-bar"]');
@@ -190,16 +233,7 @@ const Start: React.FC<props> = () => {
         knobElement.style.backgroundColor = accentColor;
       }
     }
-    async function toggleCommentButton() {
-      let activeIconsSelector = document.querySelector('[data-uia="player"]');
-      if (activeIconsSelector) {
-        let activeIconSelectorClassName = activeIconsSelector?.className;
-        let exactRegex = /\bactive\b/i;
-        if (activeIconSelectorClassName?.match(exactRegex))
-          setIsVisible(() => true);
-        else setIsVisible(() => false);
-      }
-    }
+
     async function autoSkip(className: string) {
       const buttonElements = document.getElementsByClassName(className);
       if (buttonElements) {
@@ -209,13 +243,12 @@ const Start: React.FC<props> = () => {
         } catch (e) {}
       }
     }
-    let interval = setInterval(() => {
+
+    if (isBottomControlsVisible) {
       applyTimeLineStyles();
-      toggleCommentButton();
       autoSkipValue && autoSkip('watch-video--skip-content-button');
-    }, 150);
-    return () => clearInterval(interval);
-  }, [accentColor, visible, autoSkipValue]);
+    }
+  }, [isBottomControlsVisible, accentColor, visible, autoSkipValue]);
 
   // Set the pre-saved video styles.
   useEffect(() => {
@@ -294,8 +327,8 @@ const Start: React.FC<props> = () => {
 
   if (!videoElem) return <></>;
   return (
-    <StyledStart visible={visible}>
-      <CommentButton visible={visible} />
+    <StyledStart visible={isBottomControlsVisible}>
+      <CommentButton visible={isBottomControlsVisible} />
       {/* <div className='main-audio'>
         <AudioVisualizer fftSize={1024} canvasRef={canvasRefObj} />
       </div> */}
