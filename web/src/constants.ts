@@ -38,3 +38,11 @@ export const Fonts = {
   Lora: 'Lora',
   Libra: 'Libre Franklin',
 };
+export const __prod__ = process.env.NODE_ENV === 'production';
+
+export const CUSTOM_DOMAIN = __prod__
+  ? 'server.moovychat.com'
+  : 'localhost:4000';
+export const wsUrl = `ws://${CUSTOM_DOMAIN}/graphql`;
+export const serverUrl = `http://${CUSTOM_DOMAIN}/graphql`;
+export const EXT_ID = 'dmipflcbflebldjbgfnkcjnobneebmpo';

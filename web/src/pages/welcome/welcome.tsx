@@ -58,6 +58,21 @@ const Welcome = () => {
   useEffect(() => {
     document.title = 'Moovy';
   }, []);
+  const handleReloadMessage = () => {
+    // reload the page
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    // listen for a message to reload the page
+    const reloadTabsChannel = new BroadcastChannel('reloadTabsChannel');
+    reloadTabsChannel.addEventListener('message', handleReloadMessage);
+
+    return () => {
+      // cleanup: remove the event listener
+      reloadTabsChannel.removeEventListener('message', handleReloadMessage);
+    };
+  }, []);
   return (
     <WelcomeParent>
       <div className='custom-shape-divider-top-1672047931'>

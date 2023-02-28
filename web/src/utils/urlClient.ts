@@ -29,15 +29,12 @@ import {
   userCommentsResolver,
   userRepliesResolver,
 } from './resolvers';
+import { serverUrl, wsUrl } from '../constants';
 
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
 import { retryExchange } from '@urql/exchange-retry';
 
-const CUSTOM_DOMAIN = 'server.moovychat.com';
-
-const wsUrl = `wss://${CUSTOM_DOMAIN}/graphql`;
-const serverUrl = `https://${CUSTOM_DOMAIN}/graphql`;
 const wsClient = createWSClient({
   url: wsUrl,
 });

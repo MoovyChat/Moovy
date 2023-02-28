@@ -1,3 +1,4 @@
+import { EXT_ID, isServer } from '../../constants';
 import { MdOutlineExitToApp, MdPerson, MdSync } from 'react-icons/md';
 import React, { MouseEventHandler } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -7,7 +8,6 @@ import {
 } from '../../generated/graphql';
 
 import { StyledHeaderOptions } from './headerOptions.styles';
-import { isServer } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 
 const HeaderOptions = () => {
@@ -66,7 +66,7 @@ const HeaderOptions = () => {
         onClick={(e) => {
           e.stopPropagation();
           chrome.runtime.sendMessage(
-            'dmipflcbflebldjbgfnkcjnobneebmpo',
+            EXT_ID,
             { type: 'EXTENSION_LOG_IN', user: user },
             (response) => {
               console.log('response', response);
