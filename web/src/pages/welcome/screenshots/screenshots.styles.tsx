@@ -10,7 +10,7 @@ export const welcomeHeaderColumn = css`
   margin-left: 20px;
   letter-spacing: 10px;
   color: transparent;
-  -webkit-text-stroke: 2px #8c8c8c;
+  -webkit-text-stroke: 2px ${(p) => p.theme.text};
   word-break: break-all;
   @media (max-width: 500px) {
     font-size: 2rem;
@@ -24,6 +24,7 @@ export const StyledScreenShots = styled(animated.div)`
   gap: 20px;
   min-height: 100vh;
   min-height: 100dvh;
+  justify-content: space-evenly;
   .heading {
     ${welcomeHeaderColumn}
   }

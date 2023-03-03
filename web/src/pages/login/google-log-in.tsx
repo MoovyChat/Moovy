@@ -29,6 +29,8 @@ const GoogleLogIn = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [loggedInError, setLoggedInError] = useState<boolean>(false);
+  const [loggedInSuccess, setLoggedInSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     const img = new Image();
@@ -53,16 +55,21 @@ const GoogleLogIn = () => {
     const { data } = res;
     const _user = data?.login?.user;
     if (_user) {
-      chrome.runtime.sendMessage(
-        EXT_ID,
-        {
-          type: 'EXTENSION_LOG_IN',
-          user: _user as Users,
-        },
-        (response) => {
-          console.log('response', response);
-        }
-      );
+      try {
+        chrome.runtime.sendMessage(
+          EXT_ID,
+          { type: 'EXTENSION_LOG_IN', user: _user as Users },
+          (response) => {
+            if (response.loggedIn) {
+              setLoggedInSuccess(true);
+            } else {
+              setLoggedInError(true);
+            }
+          }
+        );
+      } catch (e) {
+        console.log(e);
+      }
       localStorage.setItem('user', JSON.stringify(user));
       dispatch(sliceSetUser(_user as Users));
       setUser(() => _user as Users);
@@ -87,7 +94,11 @@ const GoogleLogIn = () => {
               EXT_ID,
               { type: 'EXTENSION_LOG_IN', user: _data as Users },
               (response) => {
-                console.log('response', response);
+                if (response.loggedIn) {
+                  setLoggedInSuccess(true);
+                } else {
+                  setLoggedInError(true);
+                }
               }
             );
           } catch (e) {
@@ -141,6 +152,8 @@ const GoogleLogIn = () => {
       <button className='popup-spl-btn' onClick={loginHandler}>
         Log in
       </button>
+      {loggedInError && <div>Login Error</div>}
+      {loggedInSuccess && <div>Login Success</div>}
       <div className='text-msg'>
         <div>**Currently, only Netflix is supported</div>
         <div>MoovyChat, 2023</div>
