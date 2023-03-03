@@ -239,6 +239,7 @@ chrome.runtime.onMessageExternal.addListener(
     if (message.type === 'EXTENSION_LOG_IN') {
       const user = message.user;
       setStoredUserLoginDetails(user);
+      _sendResponse({ loggedIn: true });
     }
     return true;
   }
