@@ -50,3 +50,5 @@ export const serverUrl = __prod__
   ? `https://${CUSTOM_DOMAIN}/graphql`
   : `http://${CUSTOM_DOMAIN}/graphql`;
 export const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
+export const EXTENSION_URL =
+  'https://chrome.google.com/webstore/detail/moovy-chat/ilkpekdilkpahngoeanmpnkegideejip';
