@@ -1,5 +1,7 @@
 import './welcome.css';
 
+import { EXTENSION_URL, home } from '../../constants';
+
 import Dark from '../../static/images/dark-chat.png';
 import Features from './features/features';
 import Footer from './footer/footer';
@@ -10,7 +12,6 @@ import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
 import { WelcomeParent } from './welcome.styles';
-import { home } from '../../constants';
 import { useEffect } from 'react';
 
 export const streamingServices = [
@@ -114,7 +115,12 @@ const Welcome = () => {
           <div className='text'>{home.heading}</div>
           <div className='sub'>{home.sub}</div>
           <div className='sub2'>{home.sub2}</div>
-          <div className='get-started'>
+          <div
+            className='get-started'
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(EXTENSION_URL, '_blank');
+            }}>
             <div className='fill'></div>
             <label>Install Extension</label>
             <RiArrowRightCircleFill size={25} />

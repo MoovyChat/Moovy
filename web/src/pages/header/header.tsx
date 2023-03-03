@@ -10,6 +10,7 @@ import {
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
+import { EXTENSION_URL } from '../../constants';
 import MoovyLogo from '../../svgs/moovy-white.svg';
 import { googleSignIn } from '../login/login';
 import { sliceSetTheme } from '../../redux/slices/settingsSlice';
@@ -135,7 +136,10 @@ const Header = () => {
         )}
         <HeaderButton
           className='install-button hb'
-          onClick={() => window.open('', '_blank')}>
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(EXTENSION_URL, '_blank');
+          }}>
           Install Extension
         </HeaderButton>
       </div>
