@@ -89,23 +89,6 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const [saved, setSaved] = useState<boolean>(false);
   const [saveClicked, setSaveClicked] = useState<boolean>(false);
 
-  const urlHandler: ChangeEventHandler<HTMLInputElement> = async (e) => {
-    setUrl(e.target.value);
-    const res = (await isImageURLValid(e.target.value)) as unknown as boolean;
-    if (!res) {
-      setLoadingStatus({
-        msg: 'No image found in the URL provided',
-        status: MsgObjType.ERROR,
-      });
-    } else {
-      setLoadingStatus({
-        msg: '',
-        status: MsgObjType.INITIAL,
-      });
-    }
-    setURLValid(res);
-  };
-
   const savePhotoFromUrl: MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     setSaveClicked(true);
@@ -172,6 +155,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         status: MsgObjType.SUCCESS,
       });
       setSaved(true);
+      window.location.reload();
     }
   };
 

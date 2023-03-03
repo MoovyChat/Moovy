@@ -2,6 +2,7 @@ import { HeaderButton, HeaderParent } from './header.styles';
 import React, { useEffect } from 'react';
 import {
   Users,
+  useCreateUserMutation,
   useLoginMutation,
   useLogoutMutation,
   useMeQuery,
@@ -20,6 +21,7 @@ const Header = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const [_userResult, createUser] = useCreateUserMutation();
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();
   const [me, _] = useMeQuery({});
@@ -46,6 +48,30 @@ const Header = () => {
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
         dispatch(sliceSetUser(user as Users));
+      } else {
+        const { name, email, photoUrl, nickname, id } = signedInUser;
+        let user: Users = {
+          name: name!,
+          email: email!,
+          photoUrl: photoUrl!,
+          nickname: nickname!,
+          id: id!,
+        };
+        createUser({
+          options: user as any,
+        })
+          .then((res) => {
+            const { data, error } = res;
+            if (error) console.log(error);
+            const _data = data?.createUser;
+            localStorage.setItem('user', JSON.stringify(_data));
+            dispatch(sliceSetUser(_data as Users));
+            loginAction({ uid: _data?.id! });
+            navigate('/');
+          })
+          .catch((err: any) => {
+            console.log('ERR: Unable to create user', err);
+          });
       }
       navigate('/');
     });
