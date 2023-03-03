@@ -5,9 +5,9 @@ import Screenshot8 from '../../../static/images/screenshot8.png';
 import { StyledFeatures } from './features.styles';
 import accent from '../../../static/images/accent.png';
 import ambience from '../../../static/images/ambience.png';
+import autoSkip from '../../../static/images/skipIntro.png';
 import filter from '../../../static/images/filters.png';
 import spoiler from '../../../static/images/spoiler.png';
-import themes from '../../../static/images/themes.png';
 import { useSpring } from '@react-spring/web';
 
 type props = {
@@ -61,11 +61,11 @@ const Features: React.FC<props> = ({ id }) => {
       content:
         'Foster a sense of community around your videos with our built-in sign-up feature, encouraging your viewers to become members and engage with your content on a deeper level.',
     },
-    themes: {
-      title: 'Themes',
-      src: themes,
+    autoSkip: {
+      title: 'Skip Intro',
+      src: autoSkip,
       content:
-        "Switch seamlessly between light and dark modes with our app, providing a personalized viewing experience that's easy on the eyes in any lighting condition.",
+        '"Skip Intro" feature allows viewers to automatically skip the opening credits of a TV show, saving time and allowing for uninterrupted binge-watching.',
     },
   };
   return (
@@ -77,7 +77,7 @@ const Features: React.FC<props> = ({ id }) => {
         <HomeCard info={content.ambience} />
         <HomeCard info={content.spoiler} />
         <HomeCard info={content.community} />
-        <HomeCard info={content.themes} />
+        <HomeCard info={content.autoSkip} />
       </div>
     </StyledFeatures>
   );
