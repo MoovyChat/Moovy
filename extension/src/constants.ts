@@ -1,9 +1,9 @@
 const constants = {
   title: 'Moovy Chat',
   welcome: 'Welcome',
-  footer1: 'Enjoy the Streaming now with Comments!',
+  footer1: 'Enjoy the Streaming, now with Comments!',
   login: 'Log in with Google',
-  chrome: 'Log in with Chrome',
+  chrome: '1-Click Chrome Login',
   logout: 'Logout',
   login_success: 'You are logged in!',
   main_color: '#990100',
@@ -11,7 +11,7 @@ const constants = {
 };
 export const __prod__ = process.env.NODE_ENV === 'production';
 
-const EXT_ID = 'dmipflcbflebldjbgfnkcjnobneebmpo';
+const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 export const MOOVY_URL = __prod__
   ? 'https://www.moovychat.com'
   : 'http://localhost:3000.com';

@@ -1,0 +1,13 @@
+mutation CreateUser($options: UserInput!) {
+  createUser(options: $options) {
+    id
+    email
+    nickname
+    name
+    photoUrl
+    joinedAt
+    watchedMovies
+    joinedAt
+    updatedAt
+  }
+}

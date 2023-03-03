@@ -23,21 +23,21 @@ export const Image: React.FC<props> = ({
   lazy,
   onLoad,
 }) => {
-  const [key, setKey] = React.useState(1);
-  const [imageSrc, setImageSrc] = useState(src);
+  const [key, setKey] = useState<string>('1');
   const [imageError, setImageError] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setImageSrc(() => src);
-    }, 1000);
+      setKey(Math.random().toString(36).substring(7) as string);
+    }, 5000); // refresh every 5 seconds
+
     return () => clearInterval(interval);
-  }, [src]);
+  }, []);
 
   return (
     <>
       <img
-        src={imageSrc}
+        src={src}
         alt={alt}
         key={key}
         ref={ref}

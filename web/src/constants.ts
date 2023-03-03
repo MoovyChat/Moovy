@@ -45,4 +45,4 @@ export const CUSTOM_DOMAIN = __prod__
   : 'localhost:4000';
 export const wsUrl = `ws://${CUSTOM_DOMAIN}/graphql`;
 export const serverUrl = `http://${CUSTOM_DOMAIN}/graphql`;
-export const EXT_ID = 'dmipflcbflebldjbgfnkcjnobneebmpo';
+export const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';

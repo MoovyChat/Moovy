@@ -21,7 +21,6 @@ const ChatWindow = () => {
   // React: useState hook.
   const theme = useAppSelector((state) => state.misc.theme);
   // React: useRef hook.
-  const divRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
@@ -35,7 +34,6 @@ const ChatWindow = () => {
         <React.Fragment>
           <GlobalStyles />
           <ChatInterface
-            divRef={divRef}
             dragRef={dragRef}
             widthRef={widthRef}
             videoWidthRef={videoWidthRef}

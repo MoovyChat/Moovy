@@ -344,7 +344,7 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
   width: 100%;
   height: 100%;
   .title {
-    flex: 1 1 30%;
+    flex: 1 1 20%;
     font-size: 0.8rem;
     font-weight: 600;
     display: flex;
@@ -354,7 +354,7 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     color: ${(p) => (p.error && p.error !== 'none' ? 'red' : p.theme.text)};
   }
   .in {
-    flex: 1 1 50%;
+    flex: 1 1 60%;
     display: flex;
     justify-content: center;
     align-items: center;

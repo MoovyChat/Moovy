@@ -1637,6 +1637,13 @@ export type CreateChargeMutationVariables = Exact<{
 
 export type CreateChargeMutation = { __typename?: 'Mutation', createCharge?: string | null };
 
+export type CreateUserMutationVariables = Exact<{
+  options: UserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser?: { __typename?: 'Users', id: string, email: string, nickname: string, name: string, photoUrl: string, joinedAt?: string | null, watchedMovies?: Array<string> | null, updatedAt?: string | null } | null };
+
 export type GetUserMutMutationVariables = Exact<{
   uid: Scalars['String'];
 }>;
@@ -2646,6 +2653,25 @@ export const CreateChargeDocument = gql`
 
 export function useCreateChargeMutation() {
   return Urql.useMutation<CreateChargeMutation, CreateChargeMutationVariables>(CreateChargeDocument);
+};
+export const CreateUserDocument = gql`
+    mutation CreateUser($options: UserInput!) {
+  createUser(options: $options) {
+    id
+    email
+    nickname
+    name
+    photoUrl
+    joinedAt
+    watchedMovies
+    joinedAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCreateUserMutation() {
+  return Urql.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument);
 };
 export const GetUserMutDocument = gql`
     mutation GetUserMut($uid: String!) {

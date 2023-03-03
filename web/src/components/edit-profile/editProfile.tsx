@@ -1,6 +1,12 @@
 import { MdError, MdReportGmailerrorred } from 'react-icons/md';
 import { Profile, useUpdateProfileMutation } from '../../generated/graphql';
-import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import React, {
+  FormEventHandler,
+  MouseEventHandler,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
@@ -17,6 +23,7 @@ import Loading from '../../pages/loading/loading';
 import ProfileTextBox from '../../pages/profile/profileTextBox';
 import { batch } from 'react-redux';
 import { sliceSetUserNickName } from '../../redux/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface ErrorIn {
   nickname: string;
@@ -33,6 +40,7 @@ const EditProfile = () => {
   const [serverError, setServerError] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
   const [, updateProfile] = useUpdateProfileMutation();
+  const navigate = useNavigate();
   const [errors, setErrors] = useState<ErrorIn>({
     nickname: '',
     fullname: '',
@@ -69,7 +77,7 @@ const EditProfile = () => {
     }
   }, [tempProfile, nickname, setErrors, setHasError]);
 
-  const updateValues: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const updateValues: FormEventHandler<HTMLFormElement> = (e) => {
     e.stopPropagation();
     setSaving(() => true);
     updateProfile({
@@ -103,7 +111,9 @@ const EditProfile = () => {
           dispatch(sliceSetIsPopupOpened(false));
           dispatch(sliceSetSelectedElement(''));
         });
+        navigate(`/profile/${nickname}`);
         setSaving(() => false);
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error);
@@ -153,70 +163,72 @@ const EditProfile = () => {
     );
   return (
     <EditProfileParent hasError={hasError}>
-      <div id='title'>
-        <span id='ic'>
-          <FaUserEdit size={25} />
-        </span>
-        <span>Edit Profile</span>
-      </div>
-      <div className='nickname ext'>
-        <ProfileTextBox
-          title='Username*'
-          type='text'
-          value={nickname}
-          keyItem='nickname'
-          setValue={setValue}
-          error={errors!.nickname}
-        />
-      </div>
-      <div className='first ext'>
-        <ProfileTextBox
-          title='Full Name*'
-          type='text'
-          keyItem='fullname'
-          value={tempProfile.fullname as string}
-          setValue={setValue}
-          error={errors!.fullname}
-        />
-      </div>
-      <div className='dob ext'>
-        <ProfileTextBox
-          title='DOB'
-          type='date'
-          keyItem='dob'
-          value={tempProfile.dob as string}
-          setValue={setValue}
-          error='none'
-        />
-      </div>
-      <div className='gender ext'>
-        <ProfileTextBox
-          title='Gender*'
-          type='select'
-          keyItem='gender'
-          value={tempProfile.gender as string}
-          setValue={setValue}
-          error={errors!.gender}
-        />
-      </div>
-      <div className='gender ext'>
-        <ProfileTextBox
-          title='Bio'
-          type='textarea'
-          keyItem='bio'
-          value={tempProfile.bio as string}
-          setValue={setValue}
-          error='none'
-        />
-      </div>
-      <div className='ext'>
-        <button id='save' onClick={updateValues}>
-          Save
-        </button>
-        <button id='cancel' onClick={cancelButtonHandler}>
-          Cancel
-        </button>
-      </div>
+      <form onSubmit={updateValues}>
+        <div id='title'>
+          <span id='ic'>
+            <FaUserEdit size={25} />
+          </span>
+          <span>Edit Profile</span>
+        </div>
+        <div className='nickname ext'>
+          <ProfileTextBox
+            title='Username*'
+            type='text'
+            value={nickname}
+            keyItem='nickname'
+            setValue={setValue}
+            error={errors!.nickname}
+          />
+        </div>
+        <div className='first ext'>
+          <ProfileTextBox
+            title='Full Name*'
+            type='text'
+            keyItem='fullname'
+            value={tempProfile.fullname as string}
+            setValue={setValue}
+            error={errors!.fullname}
+          />
+        </div>
+        <div className='dob ext'>
+          <ProfileTextBox
+            title='DOB'
+            type='date'
+            keyItem='dob'
+            value={tempProfile.dob as string}
+            setValue={setValue}
+            error='none'
+          />
+        </div>
+        <div className='gender ext'>
+          <ProfileTextBox
+            title='Gender*'
+            type='select'
+            keyItem='gender'
+            value={tempProfile.gender as string}
+            setValue={setValue}
+            error={errors!.gender}
+          />
+        </div>
+        <div className='gender ext'>
+          <ProfileTextBox
+            title='Bio'
+            type='textarea'
+            keyItem='bio'
+            value={tempProfile.bio as string}
+            setValue={setValue}
+            error='none'
+          />
+        </div>
+        <div className='ext'>
+          <button id='save' type='submit'>
+            Save
+          </button>
+          <button id='cancel' onClick={cancelButtonHandler}>
+            Cancel
+          </button>
+        </div>
+      </form>
     </EditProfileParent>
   );
 };

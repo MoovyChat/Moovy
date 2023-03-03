@@ -12,6 +12,17 @@ export const WithOutLoginWindow = styled.div`
   position: relative;
   z-index: 999;
   gap: 10px;
+  .login-agreement {
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    margin: 10px 0px;
+  }
+
+  .login-agreement a {
+    color: blue;
+    text-decoration: underline;
+  }
 `;
 export const Welcome = styled.div`
   flex-basis: 20%;

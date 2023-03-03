@@ -11,6 +11,7 @@ import { FcGoogle } from 'react-icons/fc';
 import LoginAfter from '../login-after/loginAfter';
 import { OTTType } from '../app/app';
 import Ott from '../ott/ott';
+import { RiChromeFill } from 'react-icons/ri';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
 import constants from '../../../constants';
@@ -80,7 +81,7 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
                 text={constants.chrome}
                 padding='10px 0px'
                 onClick={async () => SignIn()}
-                Icon={FcGoogle}
+                Icon={RiChromeFill}
                 textShadow='0 0 6px black, 0 0 5px #0000ff'
               />
             </ButtonParent>
@@ -105,6 +106,13 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
       ) : (
         <LoginAfter setUser={setUser} userFromAuth={userFromAuth!} />
       )}
+      <div className='login-agreement'>
+        By logging in, you agree to our{' '}
+        <a href='https://www.moovychat.com/terms-and-conditions'>
+          Terms and Conditions
+        </a>{' '}
+        and <a href='https://www.moovychat.com/privacy'>Privacy Policy</a>.
+      </div>
     </WithOutLoginWindow>
   );
 };

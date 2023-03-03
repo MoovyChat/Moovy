@@ -5,7 +5,12 @@ import {
   signInWithRedirect,
 } from 'firebase/auth';
 import { MouseEventHandler, useEffect, useState } from 'react';
-import { Users, useLoginMutation, useMeQuery } from '../../generated/graphql';
+import {
+  Users,
+  useCreateUserMutation,
+  useLoginMutation,
+  useMeQuery,
+} from '../../generated/graphql';
 
 import { EXT_ID } from '../../constants';
 import Loading from '../loading/loading';
@@ -19,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 
 const GoogleLogIn = () => {
   const [, loginAction] = useLoginMutation();
+  const [_userResult, createUser] = useCreateUserMutation();
   const [user, setUser] = useState<Users | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -49,7 +55,10 @@ const GoogleLogIn = () => {
     if (_user) {
       chrome.runtime.sendMessage(
         EXT_ID,
-        { type: 'EXTENSION_LOG_IN', user: _user },
+        {
+          type: 'EXTENSION_LOG_IN',
+          user: _user as Users,
+        },
         (response) => {
           console.log('response', response);
         }
@@ -57,11 +66,49 @@ const GoogleLogIn = () => {
       localStorage.setItem('user', JSON.stringify(user));
       dispatch(sliceSetUser(_user as Users));
       setUser(() => _user as Users);
+    } else {
+      const { name, email, photoUrl, nickname, id } = signedInUser;
+      let user: Users = {
+        name: name!,
+        email: email!,
+        photoUrl: photoUrl!,
+        nickname: nickname!,
+        id: id!,
+      };
+      createUser({
+        options: user as any,
+      })
+        .then((res) => {
+          const { data, error } = res;
+          if (error) console.log(error);
+          const _data = data?.createUser;
+          try {
+            chrome.runtime.sendMessage(
+              EXT_ID,
+              { type: 'EXTENSION_LOG_IN', user: _data as Users },
+              (response) => {
+                console.log('response', response);
+              }
+            );
+          } catch (e) {
+            console.log(e);
+          }
+          localStorage.setItem('user', JSON.stringify(_data));
+          dispatch(sliceSetUser(_data as Users));
+          loginAction({ uid: _data?.id! });
+        })
+        .catch((err: any) => {
+          console.log('ERR: Unable to create user', err);
+        });
+    }
+    try {
       // send a message to all open tabs to reload
       const reloadTabsChannel = new BroadcastChannel('reloadTabsChannel');
       reloadTabsChannel.postMessage('reload');
-      window.close();
+    } catch (e) {
+      console.log(e);
     }
+    window.close();
     navigate('/');
   };
   if (!loaded)
