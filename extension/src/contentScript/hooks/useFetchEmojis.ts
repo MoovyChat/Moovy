@@ -1,6 +1,6 @@
 import { Emoji, fetchFromCDN } from 'emojibase';
 import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { refinedG } from '../../components/emoji-picker/emojiPicker';
 
@@ -51,9 +51,14 @@ const useFetchEmojis = () => {
         if (!record) {
           const refGroups = await fetchEmojis();
           setRefinedGroups(refGroups);
-          await db.emojis.add({
-            emojis: refGroups,
-          });
+          try {
+            await db.emojis.add({
+              emojis: refGroups,
+            });
+          } catch (e) {
+            console.log(`Failed to add emojiDB ${e}`);
+          }
+
           const emojis = refGroups[0];
           const forFrequent = emojis[0].slice(0, 10).map((emoji, key) => ({
             id: key,
@@ -65,11 +70,23 @@ const useFetchEmojis = () => {
             emoji,
           })) as RecentEmoji[];
 
-          await db.frequent.bulkAdd(forFrequent);
-          await db.recent.bulkAdd(forRecent);
+          try {
+            await db.frequent.bulkAdd(forFrequent);
+          } catch (e) {
+            console.log(`Failed to add emojiDB ${e}`);
+          }
+          try {
+            await db.recent.bulkAdd(forRecent);
+          } catch (e) {
+            console.log(`Failed to add emojiDB ${e}`);
+          }
         } else {
-          const refGroups = await db.emojis.get(1);
-          await setRefinedGroups(refGroups?.emojis as refinedG);
+          try {
+            const refGroups = await db.emojis.get(1);
+            await setRefinedGroups(refGroups?.emojis as refinedG);
+          } catch (e) {
+            console.log(`Failed to add emojiDB ${e}`);
+          }
         }
       } catch (error) {
         console.log(`Failed to add emojiDB ${error}`);

@@ -6,6 +6,7 @@ type props = {
   OTTSite: OTTType;
 };
 const Ott: React.FC<props> = ({ OTTSite }) => {
+  if (OTTSite.title === 'Other') return <></>;
   return (
     <StyledOtt>
       <div className='ott'>

@@ -4,6 +4,7 @@ import {
   useGetUserQuery,
 } from '../../../generated/graphql';
 
+import Loading from '../../../components/loading/loading';
 import { User } from '../../../Utils/interfaces';
 import { UserCredential } from 'firebase/auth';
 import { isServerSide } from '../../../constants';
@@ -76,7 +77,13 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
     }
   }, [data, userFromAuth, fetching]);
 
-  return <div style={{ color: 'white' }}>Singing In</div>;
+  return (
+    <div style={{ color: 'white' }}>
+      <p>Singing In</p>
+      <Loading />
+      <p>Do not close this window</p>
+    </div>
+  );
 };
 
 export default withUrqlClient(urqlClient)(LoginAfter);

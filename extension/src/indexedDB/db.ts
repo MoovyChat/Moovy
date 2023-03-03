@@ -28,11 +28,15 @@ export class EmojiDB extends Dexie {
 
   constructor() {
     super('emojiDB');
-    this.version(1).stores({
-      emojis: '++id, emojis',
-      frequent: '++id, count, emoji',
-      recent: '++id, recent',
-    });
+    try {
+      this.version(1).stores({
+        emojis: '++id, emojis',
+        frequent: '++id, count, emoji',
+        recent: '++id, recent',
+      });
+    } catch (e) {
+      console.error('Error creating or upgrading database:', e);
+    }
   }
 }
 

@@ -6,7 +6,13 @@ import {
   TextAreaContainer,
 } from './chatInterface.styles';
 import { CommentInfo, User } from '../../Utils/interfaces';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
@@ -35,43 +41,68 @@ type props = {
 };
 const ChatInterface: React.FC<props> = ({
   user,
-  divRef,
   dragRef,
   widthRef,
   videoWidthRef,
   openChatWindow,
 }) => {
   let commentIcon = document.getElementById('comment-header');
-  const movie = useAppSelector((state) => state.movie);
-  const networkError = useAppSelector((state) => state.loading.networkError);
-  const isMovieLoaded = useAppSelector((state) => state.loading.isMovieLoaded);
-  const isMovieInserted = useAppSelector(
-    (state) => state.loading.isMovieInsertionFinished
-  );
+  const { movie, loading, misc, settings } = useAppSelector((state) => state);
+  const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
+  const { enableBackground } = misc;
+  const { isPopSlideOpen } = settings;
+  let chatWindowSize = settings.chatWindowSize || '30';
+  let thumbs = movie.thumbs!;
+  const divRef = useRef<HTMLDivElement | null>(null);
+
   let videoElem = getPlayerViewElement();
-  const enableBackground = useAppSelector(
-    (state) => state.misc.enableBackground
-  );
+
   let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
-  let thumbs = useAppSelector((state) => state.movie.thumbs!);
   const dispatch = useAppDispatch();
   const position = useMousePosition();
-  // Redux: App selectors.
-  const chatWindowSize = useAppSelector(
-    (state) => state.settings.chatWindowSize
-  );
-  const isPopSlideOpen = useAppSelector(
-    (state) => state.settings.isPopSlideOpen
-  );
 
   // React:useState hooks.
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [display, setDisplay] = useState<boolean>(true);
 
   // Set the response to the global text area.
-  const responseFromReplyWindow = (comment: CommentInfo) => {
+  // const responseFromReplyWindow = (comment: CommentInfo) => {
+  //   setReplyClickResponse(comment);
+  // };
+
+  const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
     setReplyClickResponse(comment);
-  };
+  }, []);
+
+  // Animations on initial button click.
+  useEffect(() => {
+    if (!divRef || !commentIcon || !videoElem) return;
+    if (openChatWindow) {
+      commentIcon!.style.cssText = `
+        right: ${chatWindowSize}%;
+        transition: all 1s ${windowTransition};
+      `;
+      divRef.current!.style.cssText = `
+        max-width: ${chatWindowSize || 30}%;
+      `;
+      videoElem.style.cssText = `
+        max-width: ${100 - parseInt(chatWindowSize) || 70}% !important;
+        transition: max-width 1s ${windowTransition};
+      `;
+    } else {
+      commentIcon!.style.cssText = `
+        right: 0%;
+        transition: all 1s ${windowTransition};
+      `;
+      divRef.current!.style.cssText = `
+        max-width: 0%;
+      `;
+      videoElem.style.cssText = `
+        max-width: 100% !important;
+        transition: max-width 1s ${windowTransition};
+      `;
+    }
+  }, [openChatWindow, divRef?.current, commentIcon, videoElem]);
 
   // Drag the chat window
   useMemo(() => {
@@ -143,46 +174,13 @@ const ChatInterface: React.FC<props> = ({
     }
   }, [position.x, position.y]);
 
-  // Animations on initial button click.
-  useEffect(() => {
-    if (!divRef || !commentIcon || !videoElem) return;
-    if (openChatWindow) {
-      commentIcon!.style.cssText = `
-        right: ${chatWindowSize}%;
-        transition: all 1s ${windowTransition};
-      `;
-      divRef.current!.style.cssText = `
-        max-width: ${chatWindowSize}%;
-      `;
-      videoElem.style.cssText = `
-        max-width: ${100 - parseInt(chatWindowSize)}% !important;
-        transition: max-width 1s ${windowTransition};
-      `;
-    } else {
-      commentIcon!.style.cssText = `
-        right: 0%;
-        transition: all 1s ${windowTransition};
-      `;
-      divRef.current!.style.cssText = `
-        max-width: 0%;
-      `;
-      videoElem.style.cssText = `
-        max-width: 100% !important;
-        transition: max-width 1s ${windowTransition};
-      `;
-    }
-  }, [openChatWindow]);
-
   // Animation detection
-  useEffect(() => {
-    setDisplay(false);
-    let timeout = setTimeout(() => {
-      if (!openChatWindow) setDisplay(false);
-      else setDisplay(true);
-      clearTimeout(timeout);
-    }, 1000);
 
-    return () => clearTimeout(timeout);
+  useEffect(() => {
+    setDisplay((prevDisplay) => {
+      if (!openChatWindow) return false;
+      return true;
+    });
   }, [openChatWindow]);
 
   useEffect(() => {
@@ -198,18 +196,14 @@ const ChatInterface: React.FC<props> = ({
     <Perimeter
       className='chat-perimeter'
       thumbs={thumbs}
-      enableBackground={enableBackground}
-      ref={divRef}
-      chatWindowSize={chatWindowSize}
-      openChatWindow={openChatWindow!}>
+      enableBackground={enableBackground.toString()}
+      ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
-      {!isMovieLoaded || !isMovieInserted || networkError ? (
+      {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
         <LogoLoading />
       ) : (
         <ChatWindowParent
           className='chat-interface'
-          openChatWindow={openChatWindow!}
-          chatWindowSize={chatWindowSize}
           onClick={(e) => e.stopPropagation()}
           windowOpened={display}>
           {user ? (

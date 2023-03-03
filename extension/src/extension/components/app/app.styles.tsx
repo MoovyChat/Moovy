@@ -50,4 +50,5 @@ export const Footer = styled.div`
   text-align: center;
   color: white;
   z-index: 999;
+  margin-bottom: 10px;
 `;

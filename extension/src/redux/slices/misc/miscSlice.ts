@@ -1,6 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const miscState = {
+type props = {
+  theme: string;
+  enableBackground: boolean;
+  accentColor: string;
+  subTitleColor: string;
+  autoSkip: boolean;
+  autoNextEpisode: boolean;
+  intervalIds: NodeJS.Timeout[];
+};
+
+const miscState: props = {
   theme: 'light',
   enableBackground: true,
   accentColor: '#ff005d',
