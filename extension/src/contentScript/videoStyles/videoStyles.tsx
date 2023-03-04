@@ -41,7 +41,6 @@ import {
 } from '../../Utils/storage';
 import {
   sliceSetAccentColor,
-  sliceSetAutoNextEpisode,
   sliceSetAutoSkip,
   sliceSetEnableBackground,
 } from '../../redux/slices/misc/miscSlice';
@@ -55,6 +54,7 @@ import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
 const VideoStyles = () => {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const autoSkipRef = useRef<HTMLDivElement | null>(null);
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
   const knobColor = useAppSelector((state) => state.misc.accentColor);
   const autoSkip = useAppSelector((state) => state.misc.autoSkip);
@@ -361,56 +361,7 @@ const VideoStyles = () => {
             <label>Tools</label>
           </div>
         </div>
-        <div className='options'>
-          <div className='tool-option'>
-            <span className='option-text'>Auto Skip</span>
-            <span className='checkBox'>
-              <input
-                type='checkbox'
-                id='autoSk'
-                defaultChecked={autoSkip}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  dispatch(sliceSetAutoSkip(e.target.checked as boolean));
-                }}
-              />
-              <label htmlFor='autoSk'></label>
-            </span>
-          </div>
-          <div className='tool-option'>
-            <span className='option-text'>Auto Next Episode</span>
-            <span className='checkBox'>
-              <input
-                type='checkbox'
-                id='autoNE'
-                defaultChecked={autoNextEpisode}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  dispatch(
-                    sliceSetAutoNextEpisode(e.target.checked as boolean)
-                  );
-                }}
-              />
-              <label htmlFor='autoNE'></label>
-            </span>
-          </div>
-          <div className='tool-option'>
-            <span className='option-text'>Enable background</span>
-            <span className='checkBox'>
-              <input
-                type='checkbox'
-                id='bg'
-                defaultChecked={enableBackground}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  dispatch(
-                    sliceSetEnableBackground(e.target.checked as boolean)
-                  );
-                }}
-              />
-              <label htmlFor='bg'></label>
-            </span>
-          </div>
+        <div className='options' ref={autoSkipRef}>
           <div className='tool-option'>
             <span className='option-text'>Accent Color</span>
             <span className='option-choice'>
@@ -428,6 +379,63 @@ const VideoStyles = () => {
                 />
                 <div className='icon' />
               </CustomBorder>
+            </span>
+          </div>
+          <div className='tool-option'>
+            <span className='option-text'>Auto Skip</span>
+            <span className='checkBox'>
+              <input
+                type='checkbox'
+                id='autoSk'
+                defaultChecked={autoSkip}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  dispatch(sliceSetAutoSkip(e.target.checked as boolean));
+                  // Add a new div element to the DOM
+                  // Check if the div element already exists
+                  const existingDiv =
+                    document.getElementById('valueChangedDiv');
+                  if (!existingDiv) {
+                    // Add a new div element to the DOM after the first element
+
+                    const secondDiv = autoSkipRef.current
+                      ?.children[1] as HTMLDivElement;
+                    const newDiv = document.createElement('div');
+                    newDiv.id = 'valueChangedDiv';
+                    newDiv.className = 'tool-option';
+                    newDiv.innerHTML = 'Reload the page to take effect!';
+
+                    newDiv.style.cssText = `
+                    box-shadow: 0 0 4px;
+                    padding: 10px 0px;
+                    font-weight: 600;
+                    font-size: 12px;
+                    `;
+                    autoSkipRef.current?.insertBefore(
+                      newDiv,
+                      secondDiv.nextSibling
+                    );
+                  }
+                }}
+              />
+              <label htmlFor='autoSk'></label>
+            </span>
+          </div>
+          <div className='tool-option'>
+            <span className='option-text'>Enable background</span>
+            <span className='checkBox'>
+              <input
+                type='checkbox'
+                id='bg'
+                defaultChecked={enableBackground}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  dispatch(
+                    sliceSetEnableBackground(e.target.checked as boolean)
+                  );
+                }}
+              />
+              <label htmlFor='bg'></label>
             </span>
           </div>
         </div>
@@ -660,26 +668,23 @@ const VideoStyles = () => {
             <label>Filters</label>
           </div>
           <div className='edge'>
-            <div className='checkBox'>
+            <span className='checkBox'>
               <input
                 type='checkbox'
-                id='toggle'
-                checked={openFilterSection}
+                id='tg'
+                defaultChecked={openFilterSection}
                 onChange={(e) => {
                   e.stopPropagation();
-                  if (e.target.checked) {
-                    setStoredIsFilterOpen(true);
-                    setOpenFilterSection(true);
-                  } else {
+                  setStoredIsFilterOpen(e.target.checked);
+                  setOpenFilterSection(e.target.checked);
+                  if (!e.target.checked) {
                     setFilter(filters[0]);
-                    setOpenFilterSection(false);
-                    setStoredIsFilterOpen(false);
                     resetScreenSize('100');
                   }
                 }}
               />
-              <label htmlFor='toggle'></label>
-            </div>
+              <label htmlFor='tg'></label>
+            </span>
           </div>
         </div>
         <div className='options'>
@@ -785,25 +790,22 @@ const VideoStyles = () => {
             <label>Ambience</label>
           </div>
           <div className='edge'>
-            <div className='checkBox'>
+            <span className='checkBox'>
               <input
                 type='checkbox'
-                id='toggle-border'
-                checked={openBorderSection}
+                id='bd'
+                defaultChecked={openBorderSection}
                 onChange={(e) => {
                   e.stopPropagation();
-                  if (e.target.checked) {
-                    setStoredIsBorderOpen(true);
-                    setOpenBorderSection(true);
-                  } else {
+                  setStoredIsBorderOpen(e.target.checked);
+                  setOpenBorderSection(e.target.checked);
+                  if (!e.target.checked) {
                     addBorder(canvas, screenSize, borders[0]);
-                    setStoredIsBorderOpen(false);
-                    setOpenBorderSection(false);
                   }
                 }}
               />
-              <label htmlFor='toggle-border'></label>
-            </div>
+              <label htmlFor='bd'></label>
+            </span>
           </div>
         </div>
         <div className='options'>

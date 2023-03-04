@@ -1,4 +1,10 @@
-import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
+import React, {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { User, textMap } from '../../Utils/interfaces';
 import { getFormattedWordsArray, getTimeFrame } from '../../Utils/utilities';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -181,27 +187,45 @@ const CommentCard: React.FC<props> = ({
   }, [message]);
 
   // Update likes
-  const subjectLike = (e: MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    if (type === 'comment') {
-      // Instant update to user.
-      setLike(!like);
-      setLikedUser(
-        like ? likedUsers.filter((u) => u.id !== uid) : [...likedUsers, user]
-      );
-      setLikesCount(like ? likesCount - 1 : likesCount + 1);
-      setCommentLike({
-        cid: id!,
-        uid,
-        mid,
-        like: !like,
-      }).then((res) => {
-        const { error, data } = res;
-        if (error) console.log(error);
-        setLike(data?.setCommentLike?.likeStatus?.like!);
-      });
-    }
-  };
+  const subjectLike = useCallback(
+    (e: MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      if (type === 'comment') {
+        setLike((prevLike) => !prevLike);
+        setLikedUser((prevLikedUsers) =>
+          like
+            ? prevLikedUsers.filter((u) => u.id !== uid)
+            : [...prevLikedUsers, user]
+        );
+        setLikesCount((prevLikesCount) =>
+          like ? prevLikesCount - 1 : prevLikesCount + 1
+        );
+        setCommentLike({
+          cid: id!,
+          uid,
+          mid,
+          like: !like,
+        }).then((res) => {
+          const { error, data } = res;
+          if (error) console.log(error);
+          setLike(data?.setCommentLike?.likeStatus?.like!);
+        });
+      }
+    },
+    [
+      id,
+      mid,
+      type,
+      uid,
+      user,
+      like,
+      setLike,
+      setLikedUser,
+      setLikesCount,
+      setCommentLike,
+    ]
+  );
+
   return (
     <CommentInterface
       className={className}

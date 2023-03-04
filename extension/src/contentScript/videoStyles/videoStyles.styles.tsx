@@ -129,9 +129,9 @@ export const BoxShadows = styled.div<shadowProps>`
 export const CustomBorder = styled.div`
   position: relative;
   align-self: center;
-  border-radius: 50%;
+  border-radius: 18px;
   display: flex;
-  width: 20px;
+  width: 40px;
   margin: 10px;
   border: 1px solid #363537;
   height: 20px;
@@ -149,7 +149,7 @@ export const CustomBorder = styled.div`
     position: absolute;
     cursor: pointer;
     height: 40px;
-    width: 40px;
+    width: 60px;
     top: -10px;
     left: -10px;
     z-index: 1;
@@ -283,10 +283,11 @@ export const OptionGroup = styled.div<props>`
       align-items: center;
       .option-text {
         font-size: 14px;
-        flex: 1 1 50%;
+        flex: 1 1 45%;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        margin-left: 20px;
       }
       .option-choice {
         flex: 1 1 0%;
