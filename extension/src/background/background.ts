@@ -35,32 +35,7 @@ chrome.runtime.onInstalled.addListener(() => {
   setStoredUserLoginDetails(user);
   console.log('ON INSTALLED');
 });
-// const injectScriptsOnReload = async () => {
-//   for (const cs of chrome.runtime?.getManifest()!.content_scripts!) {
-//     for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-//       if (!tab) return;
-//       const url = tab.url!;
-//       const _url = getDomain(url);
-//       switch (_url) {
-//         case domains.NETFLIX:
-//           chrome.scripting.executeScript({
-//             target: { tabId: tab.id! },
-//             files: ['netflix.js'],
-//           });
-//           break;
-//         case domains.LOCALHOST:
-//           chrome.scripting.executeScript({
-//             target: { tabId: tab.id! },
-//             files: ['qchat.js'],
-//           });
-//           break;
-//       }
-//     }
-//   }
-// };
-// chrome.runtime.onInstalled.addListener(async () => {
-//   injectScriptsOnReload();
-// });
+
 var getMovieInfo = (movieId: number) => {
   let netflixApi = (window as any).netflix;
   // let videoState = netflixApi.appContext?.getPlayerApp().getState();
@@ -125,9 +100,9 @@ var timeSkipForNetflix = (time: string) => {
   // Conversion of time to milliseconds
   if (time !== '') {
     let timeArray = time.split(':');
-    let hours = 0;
-    let minutes = 0;
-    let seconds = 0;
+    let hours = 0,
+      minutes = 0,
+      seconds = 0;
     if (timeArray.length === 3) {
       hours = parseInt(timeArray[0]);
       minutes = parseInt(timeArray[1]);
@@ -140,7 +115,6 @@ var timeSkipForNetflix = (time: string) => {
     let timeInMS = totalSeconds * 1000;
 
     let netflixApi = (window as any).netflix;
-    console.log(window);
     let videoPlayer =
       netflixApi?.appContext?.state.playerApp.getAPI().videoPlayer;
     if (videoPlayer) {
@@ -174,59 +148,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     );
 
     sendResponse({ tab: sender.tab?.id! });
-  }
-  // if (msg.type === 'RECORD_TAB') {
-  // let tabId = msg.tabId;
-  // let streamId = msg.streamId;
-  // let isRecording = msg.isRecording;
-  // getStoredVideoFormat().then((format) => {
-  //   getStoredResolution().then((resolution) => {
-  //     getStoredVideoDuration().then((d) => {
-  //       // Send the streamId to the tab
-  //       let { height, width } = resolutions[resolution];
-  //       let duration = durations[d];
-  //       chrome.tabs.sendMessage(tabId, {
-  //         type: 'RECORD',
-  //         streamId,
-  //         height,
-  //         width,
-  //         duration,
-  //         format,
-  //         isRecording,
-  //       });
-
-  //       let timeCount = duration;
-  //       let interval = setInterval(() => {
-  //         timeCount--;
-  //         getStoredIsRecording().then((res) => {
-  //           if (!res) {
-  //             chrome.action.setBadgeText({ text: '' });
-  //             timeCount = 0;
-  //             clearInterval(interval);
-  //           } else {
-  //             if (timeCount <= 0) {
-  //               chrome.action.setBadgeText({ text: '' });
-  //               clearInterval(interval);
-  //             } else {
-  //               chrome.action.setBadgeBackgroundColor({
-  //                 color: '#FE0000',
-  //               });
-  //               chrome.action.setBadgeText({ text: timeCount + '' });
-  //             }
-  //           }
-  //         });
-  //       }, 1000);
-  //     });
-  //   });
-  // });
-  // } else if (msg.type === 'RECORD_COMPLETE') {
-  //   const blobUrl = msg.data as string[];
-  //   setStoredBlobURL(blobUrl);
-  //   chrome.tabs.create({ url: '/options.html' });
-  //   chrome.action.setBadgeText({ text: '' });
-  //   setStoredIsRecording(false);
-  // } else
-  else if (msg.type === 'OPEN_LINK') {
+  } else if (msg.type === 'OPEN_LINK') {
     chrome.tabs.create({ url: msg.url });
   }
 
