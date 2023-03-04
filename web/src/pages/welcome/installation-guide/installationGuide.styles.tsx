@@ -32,23 +32,28 @@ export const StyledInstallationGuide = styled(animated.div)<props>`
     }
     .one {
       background-color: ${(p) => (p.selectedOption === 1 ? 'black' : 'none')};
+      color: ${(p) => (p.selectedOption === 1 ? 'white' : '')};
       width: ${(p) => (p.selectedOption === 1 ? '100%' : '50%')};
     }
     .two {
       background-color: ${(p) => (p.selectedOption === 2 ? 'black' : 'none')};
       width: ${(p) => (p.selectedOption === 2 ? '100%' : '50%')};
+      color: ${(p) => (p.selectedOption === 2 ? 'white' : '')};
     }
     .three {
       background-color: ${(p) => (p.selectedOption === 3 ? 'black' : 'none')};
       width: ${(p) => (p.selectedOption === 3 ? '100%' : '80%')};
+      color: ${(p) => (p.selectedOption === 3 ? 'white' : '')};
     }
     .four {
       background-color: ${(p) => (p.selectedOption === 4 ? 'black' : 'none')};
       width: ${(p) => (p.selectedOption === 4 ? '100%' : '50%')};
+      color: ${(p) => (p.selectedOption === 4 ? 'white' : '')};
     }
     .five {
       background-color: ${(p) => (p.selectedOption === 5 ? 'black' : 'none')};
       width: ${(p) => (p.selectedOption === 5 ? '100%' : '80%')};
+      color: ${(p) => (p.selectedOption === 5 ? 'white' : '')};
     }
     .step {
       font-size: 16px;

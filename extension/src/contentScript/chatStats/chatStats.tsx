@@ -8,7 +8,14 @@ import {
   MdThumbUp,
   MdThumbUpOffAlt,
 } from 'react-icons/md';
-import React, { Dispatch, MouseEventHandler, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  MouseEventHandler,
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -39,36 +46,31 @@ type props = {};
 
 // Component: Displays the likes. comments count of the movie and provides the
 // edit nick name option and paint features.
-const ChatStats: React.FC<props> = () => {
-  let icon_Size = 20;
-
-  // Redux: App selector hooks.
-  const movie = useAppSelector((state) => state.movie);
-  const user = useAppSelector((state) => state.user);
-  const commentsCount = useAppSelector(
-    (state) => state.movie.totalCommentsCountOfMovie
-  );
-  const accentColor = useAppSelector((state) => state.misc.accentColor);
-  // Redux: App dispatch hook.
+const ChatStats: React.FC<props> = memo(() => {
+  const [iconSize] = useState(20);
   const dispatch = useAppDispatch();
+  const { id: userId, nickname: userNickname } = useAppSelector(
+    (state) => state.user
+  );
+  const {
+    id: movieId,
+    totalCommentsCountOfMovie,
+    viewsCount,
+  } = useAppSelector((state) => state.movie);
+  const { accentColor, theme } = useAppSelector((state) => state.misc);
   const [movieLikesSub] = useMovieStatusUpdateSubscription();
-  // GraphQL
   const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const [likesQuery, _lq] = useGetMovieLikesQuery({
     variables: {
-      mid: movie.id,
+      mid: movieId,
     },
   });
   const [commentsUpdateStatus] = useMovieCommentsUpdateSubscription();
-  // React: useState hooks.
-  const [nickname, setNickName] = useState<string>(user.nickname);
+  const [nickname, setNickName] = useState<string>(userNickname);
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
-  // TODO: Comments + replies count
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [themeToggled, setThemeToggled] = useState<number>(0);
-  const theme = useAppSelector((state) => state.misc.theme);
-
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (!sender.tab && request.type === 'EDIT_NICK_NAME') {
       const editedNickName = request.name;
@@ -81,10 +83,6 @@ const ChatStats: React.FC<props> = () => {
     return true;
   });
 
-  useEffect(() => {
-    console.log(user.nickname);
-  }, [user]);
-
   // Get Likes Data on Initial Load.
   useEffect(() => {
     const likesData = likesQuery.data;
@@ -93,13 +91,13 @@ const ChatStats: React.FC<props> = () => {
       const _lc = likesData.getMovieLikes?.likesCount;
       const likes = likesData.getMovieLikes?.likes;
       if (likes) {
-        const found = likes.map((l) => l.id === user.id);
+        const found = likes.map((l) => l.id === userId);
         if (found.length > 0) setLike(true);
         else setLike(false);
       }
       if (_lc) setLikesCount(_lc);
     }
-  }, [likesQuery]);
+  }, [likesQuery, userId]);
 
   // Checks the likes of the movie to determine if the movie is liked or not.
   useEffect(() => {
@@ -121,7 +119,7 @@ const ChatStats: React.FC<props> = () => {
           dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
       }
     }
-  }, [commentsUpdateStatus]);
+  }, [commentsUpdateStatus, dispatch]);
 
   // Text area: Stops the propagation of the keys.
   useEffect(() => {
@@ -140,26 +138,40 @@ const ChatStats: React.FC<props> = () => {
   }, []);
 
   // Go to user profile..
-  const goToProfile: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    let url = `${MOOVY_URL}/profile/${user.nickname}`;
-    chrome.runtime.sendMessage({
-      type: 'OPEN_LINK',
-      url: url,
-    });
-  };
+  const goToProfile = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      let url = `${MOOVY_URL}/profile/${userNickname}`;
+      chrome.runtime.sendMessage({
+        type: 'OPEN_LINK',
+        url: url,
+      });
+    },
+    [userNickname]
+  );
 
   // GraphQL: Toggle like of the movie.
-  const toggleLike = () => {
+  const toggleLike = useCallback(() => {
     setLike(!like);
     updateUserLikeFavorite({
-      uid: user?.id,
-      mid: movie.id,
+      uid: userId,
+      mid: movieId,
       options: {
         like: !like,
       },
     });
-  };
+  }, [like, movieId, updateUserLikeFavorite, userId]);
+
+  const toggleTheme = useCallback(() => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    dispatch(sliceSetTheme(newTheme));
+    setThemeToggled((prev) => prev + 1);
+  }, [dispatch, theme]);
+
+  const goToVideoStyles = useCallback(() => {
+    dispatch(sliceSetPopSlide(true));
+    dispatch(slicePopSlideContentType('video-styles'));
+  }, [dispatch]);
 
   return (
     <ChatStatContainer
@@ -167,61 +179,43 @@ const ChatStats: React.FC<props> = () => {
       themeToggled={theme}
       accentColor={accentColor}>
       <div className='capsule'>
-        <div
-          className='likes'
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLike();
-          }}>
+        <div className='likes' onClick={toggleLike}>
           <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
-            <MdThumbUp className='icon' size={icon_Size} />
+            <MdThumbUp className='icon' size={iconSize} />
           ) : (
-            <MdThumbUpOffAlt size={icon_Size} />
+            <MdThumbUpOffAlt size={iconSize} />
           )}
         </div>
         <div className='div-cmt-count-style'>
-          <span>{getFormattedNumber(commentsCount!)}</span>
-          <MdOutlineModeComment size={icon_Size} />
+          <span>{getFormattedNumber(totalCommentsCountOfMovie!)}</span>
+          <MdOutlineModeComment size={iconSize} />
         </div>
         <div className='div-cmt-count-style'>
-          <span>{getFormattedNumber(movie?.viewsCount!)}</span>
-          <MdOutlineRemoveRedEye size={icon_Size} />
+          <span>{getFormattedNumber(viewsCount!)}</span>
+          <MdOutlineRemoveRedEye size={iconSize} />
         </div>
-        <div
-          className='theme-mode'
-          onClick={(e) => {
-            e.stopPropagation();
-            theme === 'light'
-              ? dispatch(sliceSetTheme('dark'))
-              : dispatch(sliceSetTheme('light'));
-            setThemeToggled(themeToggled + 1);
-          }}>
+        <div className='theme-mode' onClick={toggleTheme}>
           <div className='toggle-anim'>
             <div>
-              <MdOutlineWbSunny size={icon_Size} />
+              <MdOutlineWbSunny size={iconSize} />
             </div>
-            <div style={{ transform: `rotateX(180deg) rotateY(180deg)` }}>
-              <IoMdMoon size={icon_Size} />
+            <div style={{ transform: 'rotateX(180deg) rotateY(180deg)' }}>
+              <IoMdMoon size={iconSize} />
             </div>
           </div>
         </div>
       </div>
       <div className='user'>
         <h4 onClick={goToProfile} className='nn'>
-          {nickname ? nickname : user.nickname}
+          {nickname ? nickname : userNickname}
         </h4>
       </div>
-      <div
-        className='user'
-        onClick={() => {
-          dispatch(sliceSetPopSlide(true));
-          dispatch(slicePopSlideContentType('video-styles'));
-        }}>
-        <BiPaint size={icon_Size} className='ic' />
+      <div className='user' onClick={goToVideoStyles}>
+        <BiPaint size={iconSize} className='ic' />
       </div>
     </ChatStatContainer>
   );
-};
+});
 
 export default withUrqlClient(urqlClient)(ChatStats);

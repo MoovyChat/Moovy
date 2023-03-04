@@ -19,7 +19,14 @@ import {
   useGetUserByNickNameMutation,
 } from '../../generated/graphql';
 import { MOOVY_URL, textMapTypes } from '../../constants';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   sliceAddAllReplies,
   sliceDeleteReply,
@@ -81,12 +88,7 @@ const CommentInterface: React.FC<props> = ({
   const mounted = useRef<boolean>(false);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const movieId = useAppSelector((state) => state.movie.id);
-  // Check if the passed component is comment or reply.
-  if (!commentOrReply) return <div>Invalid comment</div>;
-  const isComment = commentOrReply.__typename === 'Comment' ? true : false;
-  const isReplyToComment =
-    !isComment &&
-    commentOrReply.parentCommentId === commentOrReply.parentReplyId;
+
   // Redux: App Selector Hook.
   const userId = useAppSelector((state) => state.user.id);
   const allReplies = useAppSelector((state) => state.replies.replies);
@@ -102,6 +104,12 @@ const CommentInterface: React.FC<props> = ({
   const [hovered, setHovered] = useState<boolean>(false);
   const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
   const [del, setDelete] = useState<boolean>(true);
+  const isComment = useMemo(
+    () => commentOrReply.__typename === 'Comment',
+    [commentOrReply]
+  );
+  // Check if the passed component is comment or reply.
+  if (!commentOrReply) return <div>Invalid comment</div>;
 
   // Get Page and LastPage of the comments.
 
@@ -170,20 +178,38 @@ const CommentInterface: React.FC<props> = ({
     }
   }, [allReplies.length, allReplies, setRepliesCount]);
 
+  const profileClickHandler = useCallback(
+    (username: string) => {
+      getUserByNickName({ nickname: username }).then((res) => {
+        const { error, data } = res;
+        if (error) console.log(error);
+        const userId = data?.getUserByNickName?.id!;
+        batch(() => {
+          dispatch(sliceSetPopSlide(true));
+          dispatch(slicePopSlideContentType('profile'));
+          dispatch(sliceSetPopSlideUserId(userId));
+        });
+      });
+    },
+    [dispatch, getUserByNickName]
+  );
   // Conditional update.
   // typeOfMessage: TIME -> Seek the video to respective time.
   // typeOfMessage: USER -> Opens the user's profile page.
-  const onLinkHandlerInMessage = (message: textMap) => {
-    if (message.type === textMapTypes.TIME) {
-      console.log('Seeking video to the time', message.message);
-      chrome.runtime.sendMessage(
-        { text: 'SEEK_VIDEO', time: message.message },
-        (tabId) => {}
-      );
-    } else if (message.type === textMapTypes.USER) {
-      profileClickHandler(message.message.slice(1));
-    }
-  };
+  const onLinkHandlerInMessage = useCallback(
+    (message: textMap) => {
+      if (message.type === textMapTypes.TIME) {
+        console.log('Seeking video to the time', message.message);
+        chrome.runtime.sendMessage(
+          { text: 'SEEK_VIDEO', time: message.message },
+          (tabId) => {}
+        );
+      } else if (message.type === textMapTypes.USER) {
+        profileClickHandler(message.message.slice(1));
+      }
+    },
+    [profileClickHandler]
+  );
 
   // Opens likes View window when the likes count is clicked on.
   const likeWindowHandler: any = () => {
@@ -195,19 +221,6 @@ const CommentInterface: React.FC<props> = ({
           data: { id: commentOrReply.id as string, type },
         })
       );
-    });
-  };
-
-  const profileClickHandler = (username: string) => {
-    getUserByNickName({ nickname: username }).then((res) => {
-      const { error, data } = res;
-      if (error) console.log(error);
-      const userId = data?.getUserByNickName?.id!;
-      batch(() => {
-        dispatch(sliceSetPopSlide(true));
-        dispatch(slicePopSlideContentType('profile'));
-        dispatch(sliceSetPopSlideUserId(userId));
-      });
     });
   };
 
@@ -225,10 +238,10 @@ const CommentInterface: React.FC<props> = ({
     });
   };
   // TODO: Delete comment or reply.
-  const deleteCommentOrReply = () => {
+  const deleteCommentOrReply = async (): Promise<void> => {
     const message = isComment ? 'Comment deleted' : 'Reply deleted';
-    commonDelete().then((res) => {
-      let { data, error } = res;
+    try {
+      const { data, error } = await commonDelete();
       if (error) console.log(error);
 
       if (data) {
@@ -255,17 +268,24 @@ const CommentInterface: React.FC<props> = ({
             : dispatch(sliceDeleteReply(data?.deleteReply?.id));
         }, 300);
       }
-    });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // Code to be executed after try/catch block
+    }
   };
 
-  const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    let url = `${MOOVY_URL}/${type}/${commentOrReply.id}`;
-    chrome.runtime.sendMessage({
-      type: 'OPEN_LINK',
-      url: url,
-    });
-  };
+  const goToComment = useCallback(
+    (e: any) => {
+      e.stopPropagation();
+      let url = `${MOOVY_URL}/${type}/${commentOrReply.id}`;
+      chrome.runtime.sendMessage({
+        type: 'OPEN_LINK',
+        url: url,
+      });
+    },
+    [commentOrReply, type]
+  );
 
   return (
     <CSSTransition

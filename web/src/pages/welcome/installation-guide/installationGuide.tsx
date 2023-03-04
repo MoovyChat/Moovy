@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { EXTENSION_URL } from '../../../constants';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { IoExtensionPuzzleSharp } from 'react-icons/io5';
 import MoovyLogo from '../../../svgs/moovy-white.svg';
+import Step1 from '../../../static/gifs/step1.gif';
 import Step2 from '../../../static/gifs/step2.gif';
 import Step3 from '../../../static/gifs/step3.gif';
+import Step4 from '../../../static/gifs/step4.gif';
 import Step5 from '../../../static/gifs/step5.gif';
 import { StyledInstallationGuide } from './installationGuide.styles';
 import { useSpring } from '@react-spring/web';
@@ -35,7 +38,7 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
   useEffect(() => {
     switch (selectedOption) {
       case 1:
-        setSource(() => Step5);
+        setSource(() => Step1);
         break;
       case 2:
         setSource(() => Step2);
@@ -44,7 +47,7 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
         setSource(() => Step3);
         break;
       case 4:
-        setSource(() => Step2);
+        setSource(() => Step4);
         break;
       case 5:
         setSource(() => Step5);
@@ -74,7 +77,7 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
               Install the Chrome extension from{' '}
               <a
                 target='_blank'
-                href='https://chrome.google.com/webstore/detail/moovy-chat/dmipflcbflebldjbgfnkcjnobneebmpo?hl=en-US'
+                href={EXTENSION_URL}
                 style={{ padding: '0 5px', fontSize: '16px', color: 'white' }}>
                 here
               </a>

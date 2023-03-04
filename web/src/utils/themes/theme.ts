@@ -13,7 +13,7 @@ export interface ThemeProps {
 }
 
 export const lightTheme: ThemeProps = {
-  body: ' #2c94ab',
+  body: 'linear-gradient(180deg, #2c94ab 30%, #0e756b 70%);',
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: '#ffffff',

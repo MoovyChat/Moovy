@@ -14,13 +14,9 @@ const ChatWindow = () => {
   // Redux: App selector hooks.
   // Settings: chatWindowSize, openChatWindow,
   // Movie
+  const { openChatWindow } = useAppSelector((state) => state.settings);
+  const { theme } = useAppSelector((state) => state.misc);
   const user = useAppSelector((state) => state.user);
-  const openChatWindow = useAppSelector(
-    (state) => state.settings.openChatWindow
-  );
-  // React: useState hook.
-  const theme = useAppSelector((state) => state.misc.theme);
-  // React: useRef hook.
   const dragRef = useRef<HTMLDivElement | null>(null);
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
@@ -46,4 +42,4 @@ const ChatWindow = () => {
   );
 };
 
-export default withUrqlClient(urqlClient)(ChatWindow);
+export default withUrqlClient(urqlClient)(React.memo(ChatWindow));

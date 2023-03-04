@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { User, filterType } from '../Utils/interfaces';
 import { addBorder, applyFilter } from './videoStyles/videoStyles.help';
-import { createPitchShiftCurve, makeDistortionCurve } from '../Utils/utilities';
 import {
   getStoredBorder,
   getStoredFilterValues,
@@ -9,16 +8,6 @@ import {
   getStoredUserLoginDetails,
   getStoredVideoFilters,
 } from '../Utils/storage';
-import {
-  sliceResetAudioNodes,
-  sliceSetAnalyser,
-  sliceSetAudioContext,
-  sliceSetAudioSource,
-  sliceSetBiQuadFilter,
-  sliceSetDistortion,
-  sliceSetGain,
-  sliceSetStereoPanNode,
-} from '../redux/slices/audioNodes';
 import {
   sliceResetSettings,
   sliceSetSmoothWidth,
@@ -30,7 +19,6 @@ import {
 } from '../redux/slices/loading/loadingSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
-import AudioVisualizer from '../components/audio-visualizer/audioVisualizer';
 import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
 import { StyledStart } from './start.styles';
@@ -39,6 +27,7 @@ import { isServerSide } from '../constants';
 import { sliceAddMovieId } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser } from '../redux/slices/user/userSlice';
 import { sliceComment } from '../redux/slices/comment/commentSlice';
+import { sliceResetAudioNodes } from '../redux/slices/audioNodes';
 import { sliceResetReply } from '../redux/slices/reply/replySlice';
 import { urqlClient } from '../Utils/urqlClient';
 import { useFetchMovie } from './hooks/useFetchMovie';
@@ -65,6 +54,7 @@ const Start: React.FC<props> = () => {
   const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
+
   // const nodes = useAppSelector((state) => state.audioNodes);
   const [isBottomControlsVisible, setIsBottomControlsVisible] =
     useState<boolean>(false);
@@ -175,10 +165,8 @@ const Start: React.FC<props> = () => {
   //   manageAudio();
   // }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
 
-  // This interval will run continuously through out the session.
-
   useEffect(() => {
-    let observer: MutationObserver | null = null;
+    let bottomControlsObserver: MutationObserver | null = null;
 
     const handleMutation = (
       mutationsList: MutationRecord[],
@@ -192,6 +180,12 @@ const Start: React.FC<props> = () => {
           const bottomControls = document.querySelector(
             '.watch-video--bottom-controls-container'
           ) as HTMLElement | null;
+          const skipButton = document.querySelector(
+            '.watch-video--skip-content-button'
+          ) as HTMLElement | null;
+          if (skipButton && autoSkipValue) {
+            skipButton.click();
+          }
           if (bottomControls) {
             setIsBottomControlsVisible(() => true);
           } else {
@@ -202,8 +196,8 @@ const Start: React.FC<props> = () => {
     };
 
     const startObserver = () => {
-      observer = new MutationObserver(handleMutation);
-      observer.observe(document.documentElement, {
+      bottomControlsObserver = new MutationObserver(handleMutation);
+      bottomControlsObserver.observe(document.documentElement, {
         attributes: true,
         subtree: true,
       });
@@ -212,8 +206,8 @@ const Start: React.FC<props> = () => {
     startObserver();
 
     return () => {
-      observer?.disconnect();
-      observer = null;
+      bottomControlsObserver?.disconnect();
+      bottomControlsObserver = null;
     };
   }, []);
 
@@ -234,21 +228,10 @@ const Start: React.FC<props> = () => {
       }
     }
 
-    async function autoSkip(className: string) {
-      const buttonElements = document.getElementsByClassName(className);
-      if (buttonElements) {
-        let btn = buttonElements[0] as HTMLDivElement;
-        try {
-          btn.click();
-        } catch (e) {}
-      }
-    }
-
     if (isBottomControlsVisible) {
       applyTimeLineStyles();
-      autoSkipValue && autoSkip('watch-video--skip-content-button');
     }
-  }, [isBottomControlsVisible, accentColor, visible, autoSkipValue]);
+  }, [isBottomControlsVisible, accentColor, visible]);
 
   // Set the pre-saved video styles.
   useEffect(() => {

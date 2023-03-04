@@ -23,10 +23,6 @@ import { StyledImageSlider } from './imageSlider.styles';
 import { useAppDispatch } from '../../../redux/hooks';
 
 const ImageSlider = () => {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [autoPlay, setAutoPlay] = useState<boolean>(true);
-  const dispatch = useAppDispatch();
-  const sliderThumbsRef = useRef<HTMLDivElement | null>(null);
   const images = [
     Dark,
     Light,
@@ -47,92 +43,66 @@ const ImageSlider = () => {
     Screenshot15,
     Screenshot16,
   ];
-  const previousSlide: MouseEventHandler<HTMLButtonElement> = () => {
-    setCurrentIndex((currentIndex - 1 + images.length) % images.length);
-    setAutoPlay(false);
-    if (sliderThumbsRef && sliderThumbsRef.current) {
-      const selectedThumb = sliderThumbsRef.current.children[
-        currentIndex
-      ] as HTMLDivElement;
-      const thumbWidth = selectedThumb.offsetWidth;
-      const thumbLeft = selectedThumb.offsetLeft;
-      sliderThumbsRef.current.scrollLeft =
-        thumbLeft - (sliderThumbsRef.current.offsetWidth - thumbWidth) / 2;
-    }
-  };
-
-  const handleThumbClick = (index: number) => {
-    setCurrentIndex(index);
-    setAutoPlay(false);
-    if (sliderThumbsRef && sliderThumbsRef.current) {
-      const selectedThumb = sliderThumbsRef.current.children[
-        index
-      ] as HTMLDivElement;
-      const thumbWidth = selectedThumb.offsetWidth;
-      const thumbLeft = selectedThumb.offsetLeft;
-      sliderThumbsRef.current.scrollLeft =
-        thumbLeft - (sliderThumbsRef.current.offsetWidth - thumbWidth) / 2;
-    }
-  };
-
-  const nextSlide: MouseEventHandler<HTMLButtonElement> = () => {
-    setAutoPlay(false);
-    setCurrentIndex((currentIndex + 1) % images.length);
-    if (sliderThumbsRef && sliderThumbsRef.current) {
-      const selectedThumb = sliderThumbsRef.current.children[
-        currentIndex
-      ] as HTMLDivElement;
-      const thumbWidth = selectedThumb.offsetWidth;
-      const thumbLeft = selectedThumb.offsetLeft;
-      sliderThumbsRef.current.scrollLeft =
-        thumbLeft - (sliderThumbsRef.current.offsetWidth - thumbWidth) / 2;
-    }
-  };
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSlideTime = 5000;
   useEffect(() => {
-    let intervalId: NodeJS.Timer | null = null;
-    if (autoPlay) {
-      intervalId = setInterval(() => {
-        const newIndex = currentIndex + 1;
-        setCurrentIndex(newIndex === images.length ? 0 : newIndex);
-        if (sliderThumbsRef && sliderThumbsRef.current) {
-          const selectedThumb = sliderThumbsRef.current.children[
-            currentIndex
-          ] as HTMLDivElement;
-          const thumbWidth = selectedThumb.offsetWidth;
-          const thumbLeft = selectedThumb.offsetLeft;
-          sliderThumbsRef.current.scrollLeft =
-            thumbLeft - (sliderThumbsRef.current.offsetWidth - thumbWidth) / 3;
-        }
-      }, 2000);
-    }
+    timeoutRef.current = setTimeout(
+      () =>
+        setCurrentIndex((prevIndex) =>
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        ),
+      autoSlideTime
+    );
+
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [currentIndex]);
+  }, [currentIndex, autoSlideTime, images.length]);
+
+  const goToPrevSlide = () => {
+    if (currentIndex === 0) {
+      setCurrentIndex(images.length - 1);
+    } else {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const goToNextSlide = () => {
+    if (currentIndex === images.length - 1) {
+      setCurrentIndex(0);
+    } else {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
 
   return (
-    <StyledImageSlider className='slider'>
-      <div className='slider-main'>
-        <img src={images[currentIndex]} />
-      </div>
-      <div className='slider-thumbs'>
-        <button className='previous' onClick={previousSlide}>
-          <MdChevronLeft />
-        </button>
-        <div className='slider-thumbs' ref={sliderThumbsRef}>
-          {images.map((image, index) => (
-            <div
-              key={image}
-              className={`thumb ${currentIndex === index ? 'active' : ''}`}
-              onClick={() => handleThumbClick(index)}>
-              <img src={image} />
-            </div>
-          ))}
+    <StyledImageSlider className='slideshow'>
+      {images.map((image, index) => (
+        <div
+          key={image}
+          className={`slide ${currentIndex === index ? 'active' : ''} ${
+            currentIndex - 1 === index ||
+            (currentIndex === 0 && index === images.length - 1)
+              ? 'prev'
+              : ''
+          } ${
+            currentIndex + 1 === index ||
+            (currentIndex === images.length - 1 && index === 0)
+              ? 'next'
+              : ''
+          }`}>
+          <img src={image} alt={`slide ${index + 1}`} />
         </div>
-        <button className='next-slide' onClick={nextSlide}>
-          <MdChevronRight />
-        </button>
-      </div>
+      ))}
+      <button className='prev-arrow' onClick={goToPrevSlide}>
+        &#10094;
+      </button>
+      <button className='next-arrow' onClick={goToNextSlide}>
+        &#10095;
+      </button>
     </StyledImageSlider>
   );
 };

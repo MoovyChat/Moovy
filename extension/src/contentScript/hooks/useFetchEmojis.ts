@@ -1,6 +1,6 @@
 import { Emoji, fetchFromCDN } from 'emojibase';
 import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { refinedG } from '../../components/emoji-picker/emojiPicker';
 
@@ -43,7 +43,7 @@ const useFetchEmojis = () => {
     return rg;
   }, []);
 
-  useMemo(async () => {
+  useEffect(() => {
     // Once we have the data, inject the data into the indexedDB.
     const runIndexDb = async () => {
       try {
@@ -72,10 +72,6 @@ const useFetchEmojis = () => {
 
           try {
             await db.frequent.bulkAdd(forFrequent);
-          } catch (e) {
-            console.log(`Failed to add emojiDB ${e}`);
-          }
-          try {
             await db.recent.bulkAdd(forRecent);
           } catch (e) {
             console.log(`Failed to add emojiDB ${e}`);

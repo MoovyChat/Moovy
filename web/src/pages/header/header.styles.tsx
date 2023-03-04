@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const HeaderParent = styled.div`
   position: fixed;
   top: 0;
-  z-index: 1;
+  z-index: 10;
   display: flex;
   width: 100%;
   min-height: 40px;

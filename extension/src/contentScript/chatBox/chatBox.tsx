@@ -23,7 +23,6 @@ import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
 import Comments from '../comments/comments';
 import IFrameComponent from '../../components/iframe-component/iframeComponent';
-import Loading from '../../components/loading/loading';
 import SmileyWindow from '../../components/smiley-window/smileyWindow';
 import { batch } from 'react-redux';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
@@ -34,7 +33,7 @@ type props = {
   responseFromReplyWindow: (comment: CommentInfo) => void;
   type: string;
 };
-const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
+const ChatBox = React.memo<props>(({ responseFromReplyWindow, type }) => {
   const mid = useAppSelector((state) => state.movie.id);
   const initialLoadedTime = useAppSelector(
     (state) => state.movie.newlyLoadedCommentTimeStamp
@@ -211,6 +210,6 @@ const ChatBox: React.FC<props> = ({ responseFromReplyWindow, type }) => {
       <IFrameComponent />
     </ChatBoxContainer>
   );
-};
+});
 
 export default withUrqlClient(urqlClient)(ChatBox);
