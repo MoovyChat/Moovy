@@ -133,9 +133,7 @@ export const commentLikeChanges = (
             ...childElem,
             likesCount: isLike
               ? oldLikesCount + 1
-              : oldLikesCount - 1 <= 0
-              ? 0
-              : oldLikesCount - 1,
+              : Math.max(oldLikesCount - 1, 0),
             likes: isLike
               ? [...oldLikedUsers, user]
               : oldLikedUsers?.filter((u) => u.id !== user.id),
@@ -161,9 +159,7 @@ export const commentLikeChanges = (
             ...childElem,
             likesCount: isLike
               ? oldLikesCount + 1
-              : oldLikesCount - 1 <= 0
-              ? 0
-              : oldLikesCount - 1,
+              : Math.max(oldLikesCount - 1, 0),
           },
         };
         return newData;
@@ -207,7 +203,9 @@ export const replyLikeChanges = (
               ...data,
               getReplyLikes: {
                 ...childElem,
-                likesCount: isLike ? oldLikesCount + 1 : oldLikesCount - 1,
+                likesCount: isLike
+                  ? oldLikesCount + 1
+                  : Math.max(oldLikesCount - 1, 0),
                 likes: isLike
                   ? [...oldLikedUsers, user]
                   : oldLikedUsers?.filter((u) => u.id !== user.id),
@@ -508,9 +506,7 @@ export const toggleFollowChanges = (
               followingCount:
                 _result.toggleFollow?.follows === true
                   ? followingCount + 1
-                  : followingCount - 1 <= 0
-                  ? 0
-                  : followingCount - 1,
+                  : Math.max(followingCount - 1, 0),
             },
           };
 
@@ -554,9 +550,8 @@ export const deleteCommentChanges = (
           getCommentsOfTheUser: {
             ...getCommentsOfTheUser,
             comments: comments.filter((comment) => comment.id !== args.cid),
-            totalCommentCount:
-              totalCommentCount - 1 < 0 ? 0 : totalCommentCount - 1,
-            pastCount: pastCount - 1 < 0 ? 0 : pastCount - 1,
+            totalCommentCount: Math.max(totalCommentCount - 1, 0),
+            pastCount: Math.max(pastCount - 1, 0),
           },
         };
       }
@@ -585,8 +580,7 @@ export const deleteCommentChanges = (
           getCommentsOfTheMovie: {
             ...getCommentsOfTheMovie,
             comments: comments.filter((comment) => comment.id !== args.cid),
-            totalCommentCount:
-              totalCommentCount - 1 < 0 ? 0 : totalCommentCount - 1,
+            totalCommentCount: Math.max(totalCommentCount - 1, 0),
           },
         };
       }
@@ -613,7 +607,7 @@ export const deleteCommentChanges = (
           ...data,
           getMovie: {
             ...getMovie,
-            commentCount: commentCount - 1 <= 0 ? 0 : commentCount - 1,
+            commentCount: Math.max(commentCount - 1, 0),
           },
         };
       }
@@ -680,7 +674,7 @@ export const deleteReplyChanges = (
           getRepliesOfComment: {
             ...getRepliesOfComment,
             replies: replies.filter((reply) => reply.id !== args.rid),
-            repliesCount: repliesCount - 1 < 0 ? 0 : repliesCount - 1,
+            repliesCount: Math.max(repliesCount - 1, 0),
           },
         };
       }
@@ -762,7 +756,7 @@ export const deleteReplyChanges = (
               ...data,
               getReply: {
                 ...getReply,
-                repliesCount: repliesCount - 1 <= 0 ? 0 : repliesCount - 1,
+                repliesCount: Math.max(repliesCount - 1, 0),
               },
             };
           }
@@ -810,11 +804,7 @@ export const updateMovieLikesChanges = (
             ...data,
             getMovie: {
               ...getMovie,
-              likesCount: like
-                ? likesCount + 1
-                : likesCount - 1 <= 0
-                ? 0
-                : likesCount - 1,
+              likesCount: like ? likesCount + 1 : Math.max(likesCount - 1, 0),
             },
           };
         }
