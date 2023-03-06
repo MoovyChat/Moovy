@@ -9,6 +9,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
+import { ILike } from 'typeorm';
 import { conn } from '../dataSource';
 import { Follow } from '../entities/Follow';
 import { Movie } from '../entities/Movie';
@@ -116,6 +117,13 @@ export class ProfileResolver {
   async getUserFullName(@Arg('uid') uid: string) {
     let data = await Profile.findOne({ where: { userId: uid } });
     return `${data?.fullname}`;
+  }
+
+  @Mutation(() => Boolean, { defaultValue: false })
+  async isUserNameExists(@Arg('text') text: string) {
+    let data = await Users.findOne({ where: { nickname: ILike(text) } });
+    if (data) return true;
+    else return false;
   }
 
   // Get the userProfile, fav and liked titles, followers/Following  and History.
