@@ -23,9 +23,12 @@ import ErrorPage from '../error-page/errorPage';
 import LogoLoading from '../logo-loading/logoLoading';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../pop-slide/popSlide';
+import { Profile } from '../../generated/graphql';
 import Toast from '../toast/toast';
+import UpdateProfile from '../../contentScript/update-profile/updateProfile';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
+import { sliceSetIsProfileNeedsToBeUpdated } from '../../redux/slices/misc/miscSlice';
 import { sliceSetLoadingText } from '../../redux/slices/loading/loadingSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
@@ -38,6 +41,7 @@ type props = {
   widthRef: React.MutableRefObject<number>;
   videoWidthRef: React.MutableRefObject<number>;
   openChatWindow: boolean;
+  profile: Profile | null;
 };
 const ChatInterface: React.FC<props> = ({
   user,
@@ -45,6 +49,7 @@ const ChatInterface: React.FC<props> = ({
   widthRef,
   videoWidthRef,
   openChatWindow,
+  profile,
 }) => {
   let commentIcon = document.getElementById('comment-header');
   const { movie, loading, misc, settings } = useAppSelector((state) => state);
@@ -54,9 +59,10 @@ const ChatInterface: React.FC<props> = ({
   let chatWindowSize = settings.chatWindowSize || '30';
   let thumbs = movie.thumbs!;
   const divRef = useRef<HTMLDivElement | null>(null);
-
   let videoElem = getPlayerViewElement();
-
+  const isProfileNeedsToBeUpdated = useAppSelector(
+    (state) => state.misc.isProfileNeedsToBeUpdated
+  );
   let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   const dispatch = useAppDispatch();
   const position = useMousePosition();
@@ -69,6 +75,19 @@ const ChatInterface: React.FC<props> = ({
   // const responseFromReplyWindow = (comment: CommentInfo) => {
   //   setReplyClickResponse(comment);
   // };
+
+  useEffect(() => {
+    if (profile === null) {
+      dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+    } else {
+      const { fullname, gender } = profile;
+      if (fullname === '') {
+        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      } else if (gender === '') {
+        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
+    }
+  }, [profile]);
 
   const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
     setReplyClickResponse(comment);
@@ -199,7 +218,9 @@ const ChatInterface: React.FC<props> = ({
       enableBackground={enableBackground.toString()}
       ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
-      {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
+      {isProfileNeedsToBeUpdated ? (
+        <UpdateProfile />
+      ) : !isMovieLoaded || !isMovieInsertionFinished || networkError ? (
         <LogoLoading />
       ) : (
         <ChatWindowParent

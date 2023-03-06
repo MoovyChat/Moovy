@@ -6,28 +6,47 @@ export const EmojiPickerParent = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  width: 98%;
-  padding: 0px 20px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
 `;
 
 export const EmojiPickerHeader = styled.div`
   display: flex;
-  height: 20px;
+  height: 32px;
   width: 100%;
   justify-content: space-evenly;
-  background-color: #a6a6a6;
-  padding: 5px;
-  margin-bottom: 15px;
-  border-radius: 10px;
+  align-items: center;
+  background-color: ${({ theme }) => theme.headerBg};
+  padding: 4px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 `;
 
-type props = {
+type HeaderKeyProps = {
   selectedGroup: boolean;
 };
-export const HeaderKey = styled.div<props>`
-  font-size: 2em;
+export const HeaderKey = styled.div<HeaderKeyProps>`
+  font-size: 14px;
   cursor: pointer;
-  filter: ${(p) => (p.selectedGroup ? 'none' : 'grayscale(1)')};
-  transform: ${(p) => (p.selectedGroup ? 'scale(1.3)' : 'scale(0.9)')};
-  transition: transform 0.5s linear;
+  color: ${(p) => (p.selectedGroup ? '#2d3748' : '#a0aec0')};
+  font-weight: ${(p) => (p.selectedGroup ? 'bold' : 'normal')};
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    color: #2d3748;
+  }
+  &::after {
+    content: '';
+    display: block;
+    width: ${(p) => (p.selectedGroup ? '100%' : '0%')};
+    height: 2px;
+    background-color: ${(p) => p.theme.chatText};
+    transition: all 0.3s ease-in-out;
+  }
+  &:hover::after {
+    width: 100%;
+  }
 `;

@@ -47,18 +47,13 @@ const Start: React.FC<props> = () => {
     pause: isServerSide(),
   });
   const autoSkipValue = useAppSelector((state) => state.misc.autoSkip);
-  const autoNextEpisodeValue = useAppSelector(
-    (state) => state.misc.autoNextEpisode
-  );
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
-
   // const nodes = useAppSelector((state) => state.audioNodes);
   const [isBottomControlsVisible, setIsBottomControlsVisible] =
     useState<boolean>(false);
-  const [visible, setIsVisible] = useState<boolean>(true);
   // const [audioSource, setAudioSource] =
   //   useState<MediaElementAudioSourceNode | null>(null);
   // const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
@@ -170,7 +165,7 @@ const Start: React.FC<props> = () => {
 
     const handleMutation = (
       mutationsList: MutationRecord[],
-      observer: MutationObserver
+      _observer: MutationObserver
     ) => {
       for (const mutation of mutationsList) {
         if (
@@ -231,7 +226,7 @@ const Start: React.FC<props> = () => {
     if (isBottomControlsVisible) {
       applyTimeLineStyles();
     }
-  }, [isBottomControlsVisible, accentColor, visible]);
+  }, [isBottomControlsVisible, accentColor]);
 
   // Set the pre-saved video styles.
   useEffect(() => {

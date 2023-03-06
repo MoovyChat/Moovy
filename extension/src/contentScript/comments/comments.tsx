@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import CommentCard from '../commentCard/commentCard';
 import { CommentInfo } from '../../Utils/interfaces';
+import EmptyPage from '../empty-page/emptyPage';
 import Loading from '../../components/loading/loading';
 import { ShowMoreComments } from '../chatBox/chatBox.styles';
 import { ViewportList } from 'react-viewport-list';
@@ -26,6 +27,9 @@ const Comments: React.FC<props> = ({
   const dispatch = useAppDispatch();
   const listRef = useRef<any>(null);
   if (!commentsLoaded) return <Loading />;
+  if (commentsList.length <= 0) {
+    return <EmptyPage msg='Feel free to share your thoughts!' />;
+  }
   return (
     <React.Fragment>
       {commentsList.length !== 0 && (
