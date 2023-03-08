@@ -1,3 +1,5 @@
+import './fonts.scss';
+
 import {
   ChatWindowParent,
   DragBar,
@@ -23,9 +25,12 @@ import ErrorPage from '../error-page/errorPage';
 import LogoLoading from '../logo-loading/logoLoading';
 import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../pop-slide/popSlide';
+import { Profile } from '../../generated/graphql';
 import Toast from '../toast/toast';
+import UpdateProfile from '../../contentScript/update-profile/updateProfile';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
+import { sliceSetIsProfileNeedsToBeUpdated } from '../../redux/slices/misc/miscSlice';
 import { sliceSetLoadingText } from '../../redux/slices/loading/loadingSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { useMousePosition } from '../../contentScript/hooks/useMouseMove';
@@ -38,6 +43,8 @@ type props = {
   widthRef: React.MutableRefObject<number>;
   videoWidthRef: React.MutableRefObject<number>;
   openChatWindow: boolean;
+  profile: Profile | null | undefined;
+  profileFetching: boolean;
 };
 const ChatInterface: React.FC<props> = ({
   user,
@@ -45,18 +52,22 @@ const ChatInterface: React.FC<props> = ({
   widthRef,
   videoWidthRef,
   openChatWindow,
+  profile,
+  profileFetching,
 }) => {
   let commentIcon = document.getElementById('comment-header');
   const { movie, loading, misc, settings } = useAppSelector((state) => state);
+  const font = misc.font;
   const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
   const { enableBackground } = misc;
   const { isPopSlideOpen } = settings;
   let chatWindowSize = settings.chatWindowSize || '30';
   let thumbs = movie.thumbs!;
   const divRef = useRef<HTMLDivElement | null>(null);
-
   let videoElem = getPlayerViewElement();
-
+  const isProfileNeedsToBeUpdated = useAppSelector(
+    (state) => state.misc.isProfileNeedsToBeUpdated
+  );
   let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   const dispatch = useAppDispatch();
   const position = useMousePosition();
@@ -69,6 +80,17 @@ const ChatInterface: React.FC<props> = ({
   // const responseFromReplyWindow = (comment: CommentInfo) => {
   //   setReplyClickResponse(comment);
   // };
+
+  useEffect(() => {
+    if (!profileFetching) {
+      if (profile === null) dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      else if (profile?.fullname === '') {
+        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      } else if (profile?.gender === '') {
+        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
+    }
+  }, [profile, profileFetching]);
 
   const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
     setReplyClickResponse(comment);
@@ -196,38 +218,40 @@ const ChatInterface: React.FC<props> = ({
     <Perimeter
       className='chat-perimeter'
       thumbs={thumbs}
+      font={font}
       enableBackground={enableBackground.toString()}
       ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
       {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
         <LogoLoading />
+      ) : !user ? (
+        <ErrorPage
+          text={`Login using the extension, and click on Refetch`}></ErrorPage>
+      ) : profileFetching ? (
+        <LogoLoading />
+      ) : isProfileNeedsToBeUpdated ? (
+        <UpdateProfile />
       ) : (
         <ChatWindowParent
           className='chat-interface'
           onClick={(e) => e.stopPropagation()}
           windowOpened={display}>
-          {user ? (
-            <React.Fragment>
-              <ChatTitle />
-              <ChatStats />
-              <TextAreaContainer
-                className='text-area-container'
-                onClick={(e) => e.stopPropagation()}>
-                <MessageBox
-                  replyWindowResponse={replyWindowResponse}
-                  setReplyClickResponse={setReplyClickResponse}
-                />
-              </TextAreaContainer>
-              <ChatBox
-                responseFromReplyWindow={responseFromReplyWindow}
-                type='comment'
+          <React.Fragment>
+            <ChatTitle />
+            <ChatStats />
+            <TextAreaContainer
+              className='text-area-container'
+              onClick={(e) => e.stopPropagation()}>
+              <MessageBox
+                replyWindowResponse={replyWindowResponse}
+                setReplyClickResponse={setReplyClickResponse}
               />
-            </React.Fragment>
-          ) : (
-            <ErrorPage
-              text={`Login using the extension, and click on Refetch`}></ErrorPage>
-          )}
-
+            </TextAreaContainer>
+            <ChatBox
+              responseFromReplyWindow={responseFromReplyWindow}
+              type='comment'
+            />
+          </React.Fragment>
           <CSSTransition
             in={isPopSlideOpen}
             classNames='fade'
@@ -249,4 +273,4 @@ const ChatInterface: React.FC<props> = ({
   );
 };
 
-export default withUrqlClient(urqlClient)(ChatInterface);
+export default withUrqlClient(urqlClient)(React.memo(ChatInterface));

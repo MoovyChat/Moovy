@@ -7,7 +7,7 @@ import Header from '../../components/header/header';
 import { MdLockClock } from 'react-icons/md';
 import { OffsiteContent } from './offsite.styles';
 import React from 'react';
-import constants from '../../../constants';
+import { constants } from '../../../constants';
 import { createRoot } from 'react-dom/client';
 
 const streamingServices = [

@@ -7,7 +7,8 @@ export const ChatTitleParent = styled.div`
   font-size: 1.3em;
   word-wrap: break-word;
   font-weight: bold;
-  font-family: 'Lexend', sans-serif;
+  /* font-family: 'Convergence', sans-serif; */
+  font-family: inherit;
   padding: 20px 10px;
   width: 100%;
   display: grid;

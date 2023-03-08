@@ -340,6 +340,42 @@ export const OptionGroup = styled.div<props>`
           }
         }
       }
+      .select-container {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px;
+        width: 100px;
+        margin: 0 10px;
+        border-radius: 8px;
+        background-color: ${(p) => p.theme.chatText};
+        box-shadow: 0px 2px 4px rgb(0 0 0 / 10%);
+        transition: box-shadow 0.2s ease-in-out;
+        justify-content: center;
+
+        .select {
+          font-size: 12px;
+          font-weight: 500;
+          color: ${(p) => p.theme.chatBody};
+          border: none;
+          background-color: transparent;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          outline: none;
+          cursor: pointer;
+          text-align: center;
+
+          .option {
+            font-size: 14px;
+            font-weight: 500;
+            color: ${(p) => p.theme.chatBody};
+          }
+        }
+
+        .select:focus + .select-container {
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
     }
     .ready {
       display: flex;

@@ -29,6 +29,10 @@ import {
   sliceSetIsTextAreaFocused,
   sliceSetTextAreaMessage,
 } from '../../redux/slices/textArea/textAreaSlice';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { AnyAction } from 'redux';
@@ -39,6 +43,7 @@ import { MdTagFaces } from 'react-icons/md';
 import { Pic } from '../../extension/components/logout/logout.styles';
 import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
+import { iconsEnum } from '../../Utils/enums';
 import { sliceAddReply } from '../../redux/slices/reply/replySlice';
 import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
@@ -105,15 +110,27 @@ const MessageBox: React.FC<props> = ({
           .then((response) => {
             const { data, error } = response;
             if (error) {
-              console.log({ error });
               if (error.networkError) dispatch(sliceSetNetworkError(true));
+              dispatch(sliceSetToastVisible(true));
+              dispatch(
+                sliceSetToastBody({
+                  icon: iconsEnum.ERROR,
+                  message: 'Error adding reply',
+                })
+              );
             }
             if (data) {
               const insertedReply = data?.insertReply;
-              // Adds the new comment to redux store.
               batch(() => {
                 dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
                 // dispatch(sliceSetPastLoadedCount(1));
+                dispatch(sliceSetToastVisible(true));
+                dispatch(
+                  sliceSetToastBody({
+                    icon: iconsEnum.SUCCESS,
+                    message: 'Reply added',
+                  })
+                );
               });
             }
             setIsReply(false);
@@ -138,8 +155,14 @@ const MessageBox: React.FC<props> = ({
         }).then((response) => {
           const { error, data } = response;
           if (error) {
-            console.log({ error });
             if (error.networkError) dispatch(sliceSetNetworkError(true));
+            dispatch(sliceSetToastVisible(true));
+            dispatch(
+              sliceSetToastBody({
+                icon: iconsEnum.ERROR,
+                message: 'Error adding reply',
+              })
+            );
           }
           if (data) {
             const insertedComment = data?.insertComment;
@@ -152,6 +175,13 @@ const MessageBox: React.FC<props> = ({
                 })
               );
               dispatch(sliceSetPastLoadedCount(1));
+              dispatch(sliceSetToastVisible(true));
+              dispatch(
+                sliceSetToastBody({
+                  icon: iconsEnum.SUCCESS,
+                  message: 'Comment added',
+                })
+              );
             });
           }
           setIsReply(false);

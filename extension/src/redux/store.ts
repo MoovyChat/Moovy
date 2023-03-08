@@ -1,9 +1,17 @@
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+  persistStore,
+} from 'redux-persist';
 import { applyMiddleware, compose, configureStore } from '@reduxjs/toolkit';
 
 import { batchedSubscribe } from 'redux-batched-subscribe';
 import debounce from 'lodash.debounce';
 import logger from 'redux-logger';
-import { persistStore } from 'redux-persist';
 import rootReducer from './reducer/rootReducer';
 import thunk from 'redux-thunk';
 
@@ -19,7 +27,11 @@ export const store = configureStore({
   reducer: rootReducer,
   enhancers: [enhancer],
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 export const persistor = persistStore(store);
 // Infer the `RootState` and `AppDispatch` types from the store itself

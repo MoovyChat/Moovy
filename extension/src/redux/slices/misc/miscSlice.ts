@@ -8,6 +8,8 @@ type props = {
   autoSkip: boolean;
   autoNextEpisode: boolean;
   intervalIds: NodeJS.Timeout[];
+  isProfileNeedsToBeUpdated: boolean;
+  font: string;
 };
 
 const miscState: props = {
@@ -18,6 +20,8 @@ const miscState: props = {
   autoSkip: false,
   autoNextEpisode: false,
   intervalIds: [] as NodeJS.Timeout[],
+  isProfileNeedsToBeUpdated: false,
+  font: '',
 };
 
 const miscSlice = createSlice({
@@ -42,6 +46,12 @@ const miscSlice = createSlice({
     sliceResetMisc: () => {
       return miscState;
     },
+    sliceSetFont: (state, action) => {
+      return { ...state, font: action.payload };
+    },
+    sliceSetIsProfileNeedsToBeUpdated: (state, action) => {
+      return { ...state, isProfileNeedsToBeUpdated: action.payload };
+    },
     sliceSetIntervalIds: (state, action) => {
       return { ...state, intervalIds: [...state.intervalIds, action.payload] };
     },
@@ -50,11 +60,13 @@ const miscSlice = createSlice({
 
 export const {
   sliceSetTheme,
+  sliceSetFont,
   sliceSetAutoNextEpisode,
   sliceSetAutoSkip,
   sliceSetEnableBackground,
   sliceSetAccentColor,
   sliceResetMisc,
   sliceSetIntervalIds,
+  sliceSetIsProfileNeedsToBeUpdated,
 } = miscSlice.actions;
 export default miscSlice.reducer;

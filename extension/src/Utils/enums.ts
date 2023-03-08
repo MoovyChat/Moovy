@@ -37,6 +37,10 @@ export enum iconsEnum {
   DELETE_COMMENT = 'DELETE_COMMENT',
   ADD_FAVORITES = 'ADD_FAVORITES',
   REMOVE_FAVORITES = 'REMOVE_FAVORITES',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+  DARK = 'DARK',
+  LIGHT = 'LIGHT',
 }
 
 export enum requestTypes {

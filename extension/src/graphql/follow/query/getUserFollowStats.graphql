@@ -1,0 +1,6 @@
+mutation getUserFollowStats($uid: String!) {
+  getUserFollowStats(uid: $uid) {
+    followerCount
+    followingCount
+  }
+}

@@ -91,7 +91,7 @@ const SmileyWindow = () => {
                     <div
                       id='text-focus'
                       className='word'
-                      key={word}
+                      key={`${key}-${word}`}
                       onClick={handleWord}>
                       {word}
                     </div>
@@ -100,7 +100,7 @@ const SmileyWindow = () => {
                     <div
                       id='text-focus'
                       className='word'
-                      key={name.name}
+                      key={`${name.name}-${key}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleName(name.name);
@@ -115,8 +115,10 @@ const SmileyWindow = () => {
               <div className='section'>
                 <div className='title'>Recently used</div>
                 <div className='emojis'>
-                  {recentEmojis.map((emoji) => (
-                    <div className='emoji-child recent' key={emoji.id}>
+                  {recentEmojis.map((emoji, key) => (
+                    <div
+                      className='emoji-child recent'
+                      key={`${emoji.id}-${key}`}>
                       <EmojiButton
                         key={emoji.id}
                         emoji={emoji.emoji}></EmojiButton>
@@ -129,8 +131,10 @@ const SmileyWindow = () => {
               <div className='section'>
                 <div className='title'>Frequently used</div>
                 <div className='emojis'>
-                  {frequentEmojis.map((emoji) => (
-                    <div className='emoji-child frequent' key={emoji.id}>
+                  {frequentEmojis.map((emoji, key) => (
+                    <div
+                      className='emoji-child frequent'
+                      key={`${key}-${emoji.id}`}>
                       <EmojiButton
                         key={emoji.id}
                         emoji={emoji.emoji}></EmojiButton>
@@ -165,7 +169,7 @@ const SmileyWindow = () => {
                   <FaDiscord
                     color='cornflowerblue'
                     size={iconSize}
-                    id='text-focus'
+                    style={{ pointerEvents: 'none' }}
                   />
                 </div>
                 <div
@@ -178,7 +182,7 @@ const SmileyWindow = () => {
                   <FaTwitter
                     color='deepskyblue'
                     size={iconSize}
-                    id='text-focus'
+                    style={{ pointerEvents: 'none' }}
                   />
                 </div>
                 <div
@@ -188,7 +192,11 @@ const SmileyWindow = () => {
                     e.stopPropagation();
                     window.open(TIKTOK_LINK, '_blank');
                   }}>
-                  <FaTiktok className='icon' size={iconSize} id='text-focus' />
+                  <FaTiktok
+                    className='icon'
+                    size={iconSize}
+                    style={{ pointerEvents: 'none' }}
+                  />
                 </div>
                 <div
                   className='instagram'
@@ -200,7 +208,7 @@ const SmileyWindow = () => {
                   <FaInstagram
                     color='hotpink'
                     size={iconSize}
-                    id='text-focus'
+                    style={{ pointerEvents: 'none' }}
                   />
                 </div>
               </div>

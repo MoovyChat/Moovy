@@ -1,0 +1,22 @@
+query getUserStats($uid: String!) {
+  getUserStatistics(uid: $uid) {
+    user {
+      ...FullUser
+    }
+    favTitles {
+      favorite
+      movieName
+      movieId
+      userId
+    }
+    likedTitles {
+      movieId
+      userId
+      like
+      movieName
+    }
+    totalComments
+    totalLikes
+    totalWatched
+  }
+}

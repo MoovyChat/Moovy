@@ -1,4 +1,4 @@
-import constants from '../../../constants';
+import { constants } from '../../../constants';
 import styled from 'styled-components';
 
 interface prop {

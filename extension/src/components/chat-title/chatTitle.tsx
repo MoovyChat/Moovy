@@ -1,11 +1,11 @@
 import { EXT_URL, isServerSide } from '../../constants';
 import { MdStar, MdStarOutline } from 'react-icons/md';
-import React, { useEffect, useMemo, useState } from 'react';
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
 } from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useMemo, useState } from 'react';
 import {
   useGetMovieFavCountQuery,
   useGetOnlyUserMovieStatsQuery,

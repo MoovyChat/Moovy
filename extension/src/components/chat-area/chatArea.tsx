@@ -69,7 +69,7 @@ const ChatArea: React.FC<props> = ({
 
     function cancelEvent(e: KeyboardEvent) {
       let target = e.target as HTMLTextAreaElement;
-      if (target.id === 'comment') {
+      if (target.id === 'mc-text-area') {
         e.stopImmediatePropagation();
         e.stopPropagation();
         textAreaRef.current?.focus();
@@ -99,9 +99,7 @@ const ChatArea: React.FC<props> = ({
       let target = e.target as HTMLElement;
       if (
         target &&
-        (target.id === 'comment' ||
-          target.id === 'text-focus' ||
-          target.tagName === 'path')
+        (target.id === 'mc-text-area' || target.id === 'text-focus')
       ) {
         dispatch(sliceSetIsTextAreaClicked(true));
         dispatch(sliceSetIsTextAreaFocused(true));
@@ -231,8 +229,8 @@ const ChatArea: React.FC<props> = ({
         textAreaHeight={textAreaHeight}
         autoFocus={false}
         key='editor'
-        id='comment'
-        name='comment'
+        id='mc-text-area'
+        name='mc-text-area'
         autoComplete='off'
         autoCorrect='off'
         maxLength={150}

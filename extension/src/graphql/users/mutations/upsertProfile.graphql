@@ -1,0 +1,13 @@
+mutation upsertProfile($options: InputArgs!) {
+  upsertProfile(options: $options) {
+    __typename
+    bio
+    createdAt
+    deletedAt
+    dob
+    fullname
+    gender
+    updatedAt
+    userId
+  }
+}

@@ -114,9 +114,6 @@ const CommentButton: React.FC<props> = ({ visible }) => {
             clearInterval(visitInterval);
             console.log(error);
           }
-          if (data) {
-            const _data = data.insertVisited;
-          }
         });
       else clearInterval(visitInterval);
     }, 300000);
