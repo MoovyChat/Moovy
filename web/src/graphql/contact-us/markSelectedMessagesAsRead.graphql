@@ -1,0 +1,12 @@
+mutation MarkSelectedMessagesAsRead($ids: [String!]!) {
+  markSelectedMessagesAsRead(ids: $ids) {
+    id
+    name
+    email
+    message
+    read
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

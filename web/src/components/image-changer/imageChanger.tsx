@@ -1,19 +1,21 @@
-import { DisplayImage, ImageChangerParent } from './imageChanger.styles';
 import {
-  MdDone,
-  MdInfoOutline,
-  MdLink,
-  MdOutlineError,
-  MdUploadFile,
-} from 'react-icons/md';
+  DisplayImage,
+  DropzoneContainer,
+  DropzoneIcon,
+  DropzoneText,
+  ErrorMsg,
+  FileRejectionList,
+  ImageChangerParent,
+} from './imageChanger.styles';
+import { FileError, useDropzone } from 'react-dropzone';
+import { MdDone, MdOutlineError } from 'react-icons/md';
 import React, {
-  ChangeEventHandler,
   MouseEventHandler,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { compressImage, isImageURLValid } from '../../utils/helpers';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import {
   sliceSetIsPopupOpened,
@@ -32,10 +34,10 @@ import Loading from '../../pages/loading/loading';
 import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
 import { batch } from 'react-redux';
+import { compressImage } from '../../utils/helpers';
 import { imgPreview } from '../image-crop/imagePreview';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
-import { useDropzone } from 'react-dropzone';
 import { withUrqlClient } from 'next-urql';
 
 const MsgObjType = {
@@ -68,14 +70,57 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [, saveProfilePhoto] = useSaveProfilePictureMutation();
   const [, saveBg] = useUpdateUserBgMutation();
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({
-      accept: {
-        'image/jpeg': [],
-        'image/jpg': [],
-      },
-      multiple: false,
-    });
+  const [errors, setErrors] = useState<FileError[]>([]);
+  // Image saving states
+  const [saved, setSaved] = useState<boolean>(false);
+  const [saveClicked, setSaveClicked] = useState<boolean>(false);
+  const maxFileSize = 10000000;
+  const {
+    acceptedFiles,
+    fileRejections,
+    isDragReject,
+    getRootProps,
+    getInputProps,
+    isDragActive,
+  } = useDropzone({
+    accept: {
+      'image/jpeg': [],
+      'image/jpg': [],
+    },
+    maxSize: maxFileSize,
+    onDropRejected: (fileRejections) => {
+      fileRejections.forEach((fileRejection) => {
+        const rejectedFile = fileRejection.file;
+        const errors = fileRejection.errors;
+        if (rejectedFile.size && rejectedFile.size > maxFileSize) {
+          handleFileSizeError(rejectedFile);
+        }
+        console.log(`Rejected file: ${rejectedFile.name}`);
+        console.log(`Reasons for rejection:`);
+        errors.forEach((error) => console.log(`- ${error.message}`));
+      });
+    },
+    maxFiles: 1,
+    multiple: false,
+  });
+
+  const handleFileSizeError = useCallback(
+    (file: File) => {
+      alert(
+        `File "${file.name}" exceeds the maximum file size of ${maxFileSize} bytes.`
+      );
+    },
+    [maxFileSize]
+  );
+
+  const fileRejectionItems = fileRejections.map((fileRejection) => (
+    <li key={fileRejection.file.name}>
+      {fileRejection.file.name} (
+      {fileRejection.file.size || fileRejection?.file?.size} bytes) -{' '}
+      {fileRejection.errors[0].message}
+    </li>
+  ));
+
   // Change the parent top style.
   useEffect(() => {
     const parentDiv = document.getElementById('popup-child') as HTMLDivElement;
@@ -84,10 +129,6 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       top: 50%;
     `;
   }, []);
-
-  // Image saving states
-  const [saved, setSaved] = useState<boolean>(false);
-  const [saveClicked, setSaveClicked] = useState<boolean>(false);
 
   const savePhotoFromUrl: MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
@@ -175,38 +216,6 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     }
   }, [acceptedFiles]);
 
-  const fileUploadHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const files = e.target.files;
-    if (!files) return;
-    const file = files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      setUrl(reader.result?.toString() || '');
-    };
-    reader.readAsDataURL(file);
-  };
-  const selectedOptionHandler = (from: string) => {
-    switch (from) {
-      case 'fromUrl':
-        setSelectedOption('fromURL');
-        inputFileRef.current!.value = '';
-        setUrl('');
-        setLoadingStatus({
-          msg: '',
-          status: MsgObjType.INITIAL,
-        });
-        break;
-      case 'fromLocal':
-        setSelectedOption('fromLocal');
-        setLoadingStatus({
-          msg: '',
-          status: MsgObjType.INITIAL,
-        });
-        break;
-      default:
-        break;
-    }
-  };
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     batch(() => {
@@ -232,44 +241,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
           {saveText}
         </StyledButton>
       </div>
-      {/* <div className='options'>
-        <div
-          className='from url'
-          onClick={(e) => {
-            e.stopPropagation();
-            selectedOptionHandler('fromUrl');
-          }}>
-          <div className='text'>Import image from URL</div>
-          <div className='input'>
-            <MdLink className='icon' size={20} />
-            <input
-              type='text'
-              placeholder='Enter the url'
-              value={url}
-              onChange={urlHandler}
-            />
-          </div>
-        </div>
-        <div className='or'>or</div>
-        <div
-          className='from local'
-          onClick={(e) => {
-            e.stopPropagation();
-            selectedOptionHandler('fromLocal');
-          }}>
-          <div className='text'>Upload image</div>
-          <div className='input'>
-            <MdUploadFile className='icon' size={20} />
-            <input
-              ref={inputFileRef}
-              type='file'
-              accept='image/jpeg, image/jpg'
-              placeholder='Upload image (JPEG*, JPG*)'
-              onChange={fileUploadHandler}
-            />
-          </div>
-        </div>
-      </div> */}
+
       <DisplayImage className='display'>
         <div className='display-container'>
           {!!url ? (
@@ -293,11 +265,29 @@ const ImageChanger: React.FC<props> = ({ type }) => {
               <img alt='image-crop' src={url} ref={imageRef} />
             )
           ) : (
-            <div {...getRootProps({ className: 'dropzone' })}>
+            <DropzoneContainer
+              {...getRootProps({ className: 'dropzone' })}
+              isDragActive={isDragActive}
+              isDragReject={isDragReject}>
               <input {...getInputProps()} />
-              <p>Drag and Drop the image or Click to upload the Image</p>
-              <p>(Only *.jpeg/*.jpg images will be accepted)</p>
-            </div>
+              <DropzoneIcon />
+              <DropzoneText>
+                Drag and drop an image file here, or click to select file
+              </DropzoneText>
+              {maxFileSize && (
+                <ErrorMsg>Maximum file size: {maxFileSize} bytes</ErrorMsg>
+              )}
+
+              {isDragReject && (
+                <ErrorMsg>
+                  Only a single JPEG/JPG file is supported. Please check the
+                  file and try again.
+                </ErrorMsg>
+              )}
+              {fileRejections.length > 0 && (
+                <FileRejectionList>{fileRejectionItems}</FileRejectionList>
+              )}
+            </DropzoneContainer>
           )}
         </div>
       </DisplayImage>

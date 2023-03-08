@@ -1,0 +1,12 @@
+query GetAllMessages($limit: Int!, $page: Int) {
+  getAllMessages(limit: $limit, page: $page) {
+    id
+    name
+    email
+    message
+    read
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}
