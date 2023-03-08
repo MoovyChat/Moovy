@@ -1,18 +1,14 @@
 import './app.scss';
 
-import { AppWindow, Footer, SideBarOpen } from './app.styles';
+import { AppWindow, Footer } from './app.styles';
 import React, { useEffect, useState } from 'react';
-import {
-  getStoredUserLoginDetails,
-  setStoredUserLoginDetails,
-} from '../../../Utils/storage';
 
 import Header from '../header/header';
 import Home from '../home/home';
-import Sidebar from '../sidebar/sidebar';
-import Stats from '../stats/stats';
 import { User } from '../../../Utils/interfaces';
-import constants from '../../../constants';
+import { constants } from '../../../constants';
+import { getStoredUserLoginDetails } from '../../../Utils/storage';
+import { useAppSelector } from '../../../redux/hooks';
 
 export type OTTType = {
   title: string;

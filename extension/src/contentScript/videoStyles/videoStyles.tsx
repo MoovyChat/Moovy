@@ -43,11 +43,13 @@ import {
   sliceSetAccentColor,
   sliceSetAutoSkip,
   sliceSetEnableBackground,
+  sliceSetFont,
 } from '../../redux/slices/misc/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import Slider from '../../components/slider/slider';
 import { defaultVideoValues } from '../../Utils/defaultValues';
+import { fonts } from '../../constants';
 import { getVideoElement } from '../contentScript.utils';
 import { sliceSetVideoSize } from '../../redux/slices/settings/settingsSlice';
 
@@ -56,9 +58,7 @@ const VideoStyles = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const autoSkipRef = useRef<HTMLDivElement | null>(null);
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
-  const knobColor = useAppSelector((state) => state.misc.accentColor);
-  const autoSkip = useAppSelector((state) => state.misc.autoSkip);
-  const autoNextEpisode = useAppSelector((state) => state.misc.autoNextEpisode);
+  const { accentColor, autoSkip, font } = useAppSelector((state) => state.misc);
   const nodes = useAppSelector((state) => state.audioNodes);
   const [canvas, setCanvas] = useState<HTMLElement>();
   const enableBackground = useAppSelector(
@@ -350,6 +350,11 @@ const VideoStyles = () => {
     });
   };
 
+  const handleChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetFont(e.target.value));
+  };
+
   return (
     <VideoParent>
       <OptionGroup expandGroup={true}>
@@ -366,7 +371,7 @@ const VideoStyles = () => {
             <span className='option-text'>Accent Color</span>
             <span className='option-choice'>
               <CustomBorder
-                style={{ backgroundColor: knobColor }}
+                style={{ backgroundColor: accentColor }}
                 className='accent'>
                 <input
                   type='color'
@@ -437,6 +442,26 @@ const VideoStyles = () => {
               />
               <label htmlFor='bg'></label>
             </span>
+          </div>
+          <div className='tool-option'>
+            <span className='option-text'>Font</span>
+            <div className='select-container'>
+              <select
+                id='font-selector'
+                value={font}
+                onChange={handleChange}
+                className='select'>
+                {Object.entries(fonts).map(([key, value]) => (
+                  <option
+                    key={key}
+                    value={value}
+                    className='option'
+                    style={{ fontFamily: `${value}` }}>
+                    {key}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </OptionGroup>

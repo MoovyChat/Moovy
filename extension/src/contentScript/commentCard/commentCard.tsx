@@ -208,7 +208,9 @@ const CommentCard: React.FC<props> = ({
         }).then((res) => {
           const { error, data } = res;
           if (error) console.log(error);
-          setLike(data?.setCommentLike?.likeStatus?.like!);
+          if (data) {
+            setLike(data.setCommentLike?.likeStatus?.like!);
+          }
         });
       }
     },

@@ -1,3 +1,5 @@
+import './fonts.scss';
+
 import {
   ChatWindowParent,
   DragBar,
@@ -41,7 +43,8 @@ type props = {
   widthRef: React.MutableRefObject<number>;
   videoWidthRef: React.MutableRefObject<number>;
   openChatWindow: boolean;
-  profile: Profile | null;
+  profile: Profile | null | undefined;
+  profileFetching: boolean;
 };
 const ChatInterface: React.FC<props> = ({
   user,
@@ -50,9 +53,11 @@ const ChatInterface: React.FC<props> = ({
   videoWidthRef,
   openChatWindow,
   profile,
+  profileFetching,
 }) => {
   let commentIcon = document.getElementById('comment-header');
   const { movie, loading, misc, settings } = useAppSelector((state) => state);
+  const font = misc.font;
   const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
   const { enableBackground } = misc;
   const { isPopSlideOpen } = settings;
@@ -77,17 +82,15 @@ const ChatInterface: React.FC<props> = ({
   // };
 
   useEffect(() => {
-    if (profile === null) {
-      dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
-    } else {
-      const { fullname, gender } = profile;
-      if (fullname === '') {
+    if (!profileFetching) {
+      if (profile === null) dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      else if (profile?.fullname === '') {
         dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
-      } else if (gender === '') {
+      } else if (profile?.gender === '') {
         dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
       } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
     }
-  }, [profile]);
+  }, [profile, profileFetching]);
 
   const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
     setReplyClickResponse(comment);
@@ -215,40 +218,40 @@ const ChatInterface: React.FC<props> = ({
     <Perimeter
       className='chat-perimeter'
       thumbs={thumbs}
+      font={font}
       enableBackground={enableBackground.toString()}
       ref={divRef}>
       <DragBar className='drag-bar' ref={dragRef}></DragBar>
-      {isProfileNeedsToBeUpdated ? (
-        <UpdateProfile />
-      ) : !isMovieLoaded || !isMovieInsertionFinished || networkError ? (
+      {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
         <LogoLoading />
+      ) : !user ? (
+        <ErrorPage
+          text={`Login using the extension, and click on Refetch`}></ErrorPage>
+      ) : profileFetching ? (
+        <LogoLoading />
+      ) : isProfileNeedsToBeUpdated ? (
+        <UpdateProfile />
       ) : (
         <ChatWindowParent
           className='chat-interface'
           onClick={(e) => e.stopPropagation()}
           windowOpened={display}>
-          {user ? (
-            <React.Fragment>
-              <ChatTitle />
-              <ChatStats />
-              <TextAreaContainer
-                className='text-area-container'
-                onClick={(e) => e.stopPropagation()}>
-                <MessageBox
-                  replyWindowResponse={replyWindowResponse}
-                  setReplyClickResponse={setReplyClickResponse}
-                />
-              </TextAreaContainer>
-              <ChatBox
-                responseFromReplyWindow={responseFromReplyWindow}
-                type='comment'
+          <React.Fragment>
+            <ChatTitle />
+            <ChatStats />
+            <TextAreaContainer
+              className='text-area-container'
+              onClick={(e) => e.stopPropagation()}>
+              <MessageBox
+                replyWindowResponse={replyWindowResponse}
+                setReplyClickResponse={setReplyClickResponse}
               />
-            </React.Fragment>
-          ) : (
-            <ErrorPage
-              text={`Login using the extension, and click on Refetch`}></ErrorPage>
-          )}
-
+            </TextAreaContainer>
+            <ChatBox
+              responseFromReplyWindow={responseFromReplyWindow}
+              type='comment'
+            />
+          </React.Fragment>
           <CSSTransition
             in={isPopSlideOpen}
             classNames='fade'
@@ -270,4 +273,4 @@ const ChatInterface: React.FC<props> = ({
   );
 };
 
-export default withUrqlClient(urqlClient)(ChatInterface);
+export default withUrqlClient(urqlClient)(React.memo(ChatInterface));

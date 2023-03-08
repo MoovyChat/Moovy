@@ -14,7 +14,7 @@ import Ott from '../ott/ott';
 import { RiChromeFill } from 'react-icons/ri';
 import { User } from '../../../Utils/interfaces';
 import { auth } from '../../../firebase';
-import constants from '../../../constants';
+import { constants } from '../../../constants';
 
 const getGoogleAuthCredential = () => {
   return new Promise<ReturnType<typeof GoogleAuthProvider.credential>>(

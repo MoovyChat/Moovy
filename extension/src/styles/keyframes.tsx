@@ -43,10 +43,10 @@ export const rotate = keyframes`
 
 export const fillUp = keyframes`
   0% {
-    height: 0;
+    height: 100%;
   }
   100% {
-    height: 100%;
+    height: 0%;
   }
 `;
 

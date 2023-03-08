@@ -1,5 +1,5 @@
+import { EXT_URL, constants } from '../../../constants';
 import { HeaderBlock, LogoBlock, Perimeter } from './header.styles';
-import constants, { EXT_URL } from '../../../constants';
 
 const Header = () => {
   return (

@@ -1,14 +1,14 @@
 import styled, { css } from 'styled-components';
 
+import { animated } from '@react-spring/web';
 import { fillUp } from '../../styles/keyframes';
 
 type props = {
   visible: boolean;
   accentColor: string;
 };
-export const ToastParent = styled.div<props>`
+export const ToastParent = styled(animated.div)<props>`
   position: absolute;
-  bottom: ${(p) => (p.visible ? '0px' : '-60px')};
   left: 50%;
   transform: translate(-50%, 0%);
   margin-left: auto;

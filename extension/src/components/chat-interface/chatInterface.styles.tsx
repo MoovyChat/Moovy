@@ -10,6 +10,7 @@ export const TextAreaContainer = styled.div`
 type perimeterProps = {
   thumbs: string;
   enableBackground: string;
+  font: string;
 };
 export const Perimeter = styled.div<perimeterProps>`
   position: fixed;
@@ -19,6 +20,7 @@ export const Perimeter = styled.div<perimeterProps>`
   display: flex;
   right: 0;
   bottom: 0;
+  font-family: ${(p) => p.font};
   top: 0;
   color: ${({ theme }) => theme.chatText};
   transition: max-width 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);

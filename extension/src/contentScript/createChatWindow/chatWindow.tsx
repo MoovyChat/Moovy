@@ -21,7 +21,7 @@ const ChatWindow = () => {
   const dragRef = useRef<HTMLDivElement | null>(null);
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
-  const profileRef = useRef<Profile | null>(null);
+  const profileRef = useRef<Profile | null | undefined>(null);
   const [profile] = useGetUserProfileQuery({
     variables: {
       uid: user?.id,
@@ -33,7 +33,7 @@ const ChatWindow = () => {
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getUserProfile;
-      const _profile = _data as Profile;
+      const _profile = _data as Profile | null | undefined;
       profileRef.current = _profile;
     }
   }, [profile]);
@@ -53,6 +53,7 @@ const ChatWindow = () => {
             openChatWindow={openChatWindow}
             user={user}
             profile={profileRef.current}
+            profileFetching={profile.fetching}
           />
         </React.Fragment>
       </ThemeProvider>

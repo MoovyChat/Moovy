@@ -1,3 +1,4 @@
+import { MOOVY_URL, constants } from '../../../constants';
 import { Pic, SetTop } from './logout.styles';
 import React, {
   Dispatch,
@@ -7,7 +8,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import constants, { MOOVY_URL } from '../../../constants';
 import {
   getStoredCheckedStatus,
   setStoredUserLoginDetails,

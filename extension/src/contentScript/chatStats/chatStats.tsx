@@ -24,6 +24,10 @@ import {
   sliceSetFavCount,
   sliceSetTotalCommentsOfTheMovie,
 } from '../../redux/slices/movie/movieSlice';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetMovieLikesQuery,
@@ -35,7 +39,9 @@ import {
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MOOVY_URL } from '../../constants';
+import { batch } from 'react-redux';
 import { getFormattedNumber } from '../../Utils/utilities';
+import { iconsEnum } from '../../Utils/enums';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetTheme } from '../../redux/slices/misc/miscSlice';
@@ -71,17 +77,6 @@ const ChatStats: React.FC<props> = memo(() => {
   const [likesCount, setLikesCount] = useState<number>(0);
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [themeToggled, setThemeToggled] = useState<number>(0);
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === 'EDIT_NICK_NAME') {
-      const editedNickName = request.name;
-      dispatch(sliceAddUserNickName(editedNickName));
-      setNickName(editedNickName);
-      sendResponse({
-        data: 'Request fulfilled',
-      });
-    }
-    return true;
-  });
 
   // Get Likes Data on Initial Load.
   useEffect(() => {
@@ -121,22 +116,6 @@ const ChatStats: React.FC<props> = memo(() => {
     }
   }, [commentsUpdateStatus, dispatch]);
 
-  // Text area: Stops the propagation of the keys.
-  useEffect(() => {
-    document.addEventListener('keydown', cancelEventT.bind(this), !0);
-    function cancelEventT(e: KeyboardEvent) {
-      let target = e.target as HTMLTextAreaElement;
-      if (target.id === 'comment' || target.id === 'change-nick-name') {
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-      }
-    }
-
-    return () => {
-      document.removeEventListener('keydown', cancelEventT);
-    };
-  }, []);
-
   // Go to user profile..
   const goToProfile = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -164,8 +143,27 @@ const ChatStats: React.FC<props> = memo(() => {
 
   const toggleTheme = useCallback(() => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
-    dispatch(sliceSetTheme(newTheme));
+
     setThemeToggled((prev) => prev + 1);
+    batch(() => {
+      dispatch(sliceSetTheme(newTheme));
+      dispatch(sliceSetToastVisible(true));
+      if (theme === 'light') {
+        dispatch(
+          sliceSetToastBody({
+            icon: iconsEnum.DARK,
+            message: 'Switched to Dark Mode',
+          })
+        );
+      } else {
+        dispatch(
+          sliceSetToastBody({
+            icon: iconsEnum.LIGHT,
+            message: 'Switched to Light Mode',
+          })
+        );
+      }
+    });
   }, [dispatch, theme]);
 
   const goToVideoStyles = useCallback(() => {

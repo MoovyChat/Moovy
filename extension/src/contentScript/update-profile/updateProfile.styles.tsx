@@ -1,5 +1,9 @@
+import { animated } from '@react-spring/web';
 import styled from 'styled-components';
-
+type props = {
+  accentColor: string;
+  visible?: boolean;
+};
 export const ParentProfile = styled.div`
   display: flex;
   flex-direction: column;
@@ -35,9 +39,8 @@ export const FormContainer = styled.form`
   margin-top: 20px;
 `;
 
-export const StepContainer = styled.div`
-  display: ${(props: { visible: boolean }) =>
-    props.visible ? 'flex' : 'none'};
+export const StepContainer = styled(animated.div)<props>`
+  display: ${(p) => (p.visible ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
   gap: 50px;
@@ -54,36 +57,33 @@ export const StepContainer = styled.div`
       width: 2rem;
       height: 2rem;
       border-radius: 50%;
-      background-color: white;
-      color: #007bff;
+      background-color: ${(p) => p.theme.chatText};
+      color: ${(p) => p.accentColor};
       border: 2px solid #ccc;
       font-size: 1rem;
       font-weight: bold;
       z-index: 1;
     }
 
-    .circle.active {
-      background-color: #007bff;
-      color: white;
-    }
-
     .line {
       flex: 1;
       height: 2px;
-      background-color: #ccc;
+      background-color: ${(p) => p.theme.chatText};
       margin: 0 1rem;
       z-index: 0;
     }
 
     .line.active {
-      background-color: #007bff;
+      background-color: ${(p) => p.accentColor};
+    }
+
+    .circle.active {
+      background-color: ${(p) => p.accentColor};
+      color: ${(p) => p.theme.chatText};
     }
   }
 `;
 
-type props = {
-  accentColor: string;
-};
 export const FieldContainer = styled.div<props>`
   display: flex;
   flex-direction: column;
@@ -219,7 +219,7 @@ export const TextArea = styled.textarea<props>`
   }
 `;
 
-export const Button = styled.button`
+export const Button = styled(animated.button)`
   position: relative;
   display: inline-block;
   background-color: #007bff;
@@ -260,7 +260,7 @@ export const Button = styled.button`
   }
 `;
 
-export const ButtonContainer = styled.div`
+export const ButtonContainer = styled(animated.div)`
   display: flex;
   justify-content: center;
   align-items: center;

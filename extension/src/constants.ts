@@ -1,4 +1,4 @@
-const constants = {
+export const constants = {
   title: 'Moovy Chat',
   welcome: 'Welcome',
   footer1: 'Enjoy the Streaming, now with Comments!',
@@ -14,7 +14,7 @@ export const __prod__ = process.env.NODE_ENV === 'production';
 const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 export const MOOVY_URL = __prod__
   ? 'https://www.moovychat.com'
-  : 'http://localhost:3000.com';
+  : 'http://localhost:3000';
 export const EXT_URL = `chrome-extension://${EXT_ID}`;
 export const DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
 export const TWITTER_LINK = 'https://twitter.com/MoovyChat';
@@ -37,6 +37,19 @@ export const textMapTypes = {
   BASIC: 'basic',
   SPOILER: 'spoiler',
 };
-export default constants;
 
 export const isServerSide = () => typeof window === 'undefined';
+
+export const fonts = {
+  'Cabin Sketch': "'Cabin Sketch', cursive",
+  Convergence: "'Convergence', sans-serif",
+  Fira: "'Fira Sans', sans-serif",
+  Lato: "'lato', sans-serif",
+  Lexend: "'Lexend', sans-serif",
+  Montserrat: "'Montserrat', sans-serif",
+  Poppins: "'Poppins', sans-serif",
+  Roboto: "'Roboto', sans-serif",
+  Nabla: "'Nabla', cursive",
+  'Source Sans Pro': "'Source Sans Pro', sans-serif",
+  Ubuntu: "'Ubuntu', sans-serif",
+};
