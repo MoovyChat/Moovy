@@ -1,5 +1,6 @@
 import { CommentResolver } from './resolvers/comments';
 import { CommentStatsResolver } from './resolvers/commentStats';
+import { ContactResolver } from './resolvers/contact';
 import { FollowResolver } from './resolvers/follows';
 import { HelloResolver } from './resolvers/hello';
 import { MovieResolver } from './resolvers/movies';
@@ -34,4 +35,5 @@ export const resolvers = [
   SearchResolver,
   StripeResolver,
   ProxyResolver,
+  ContactResolver,
 ];

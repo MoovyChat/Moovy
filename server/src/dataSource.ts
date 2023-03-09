@@ -3,6 +3,7 @@ import 'dotenv-safe/config';
 import { AdminNotifications } from './entities/AdminNotifications';
 import { Comment } from './entities/Comment';
 import { CommentStats } from './entities/CommentStat';
+import { Contact } from './entities/Contact';
 import { DataSource } from 'typeorm';
 import { Follow } from './entities/Follow';
 import { FollowNotifications } from './entities/FollowNotifications';
@@ -43,6 +44,7 @@ export const conn = new DataSource({
     Visited,
     Profile,
     AdminNotifications,
+    Contact,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
   migrations: [path.join('dist/migrations/*.js')],
