@@ -21,6 +21,11 @@ import {
   useEffect,
   useRef,
 } from 'react';
+import { animated, useSpring } from '@react-spring/web';
+import {
+  sliceSetToastBody,
+  sliceSetToastVisible,
+} from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useIsUserNameExistsMutation,
@@ -31,6 +36,7 @@ import { EXT_URL } from '../../constants';
 import { ThemeContext } from 'styled-components';
 import { ThemeProps } from '../../theme/theme';
 import { batch } from 'react-redux';
+import { iconsEnum } from '../../Utils/enums';
 import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
 import { sliceSetIsProfileNeedsToBeUpdated } from '../../redux/slices/misc/miscSlice';
 import { useState } from 'react';
@@ -311,23 +317,55 @@ const UpdateProfile = () => {
         if (error) {
           setSuccess(() => false);
           setError(() => true);
+          batch(() => {
+            dispatch(sliceSetToastVisible(true));
+            dispatch(
+              sliceSetToastBody({
+                icon: iconsEnum.ERROR,
+                message: 'Failed to update profile',
+              })
+            );
+          });
         }
         const profile = _data?.upsertProfile;
 
         if (profile) {
           setSuccess(() => true);
           setError(() => false);
+
           batch(() => {
             dispatch(sliceAddUserNickName(formData.userName.value));
             dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
+            dispatch(sliceSetToastVisible(true));
+            dispatch(
+              sliceSetToastBody({
+                icon: iconsEnum.SUCCESS,
+                message: 'Profile updated successfully',
+              })
+            );
           });
         } else {
           setSuccess(() => false);
           setError(() => true);
+          batch(() => {
+            dispatch(sliceSetToastVisible(true));
+            dispatch(
+              sliceSetToastBody({
+                icon: iconsEnum.ERROR,
+                message: 'Failed to update profile',
+              })
+            );
+          });
         }
       });
     }
   };
+
+  const props = useSpring({
+    from: { opacity: 0, transform: 'translate3d(0,50%,0)' },
+    to: { opacity: 1, transform: 'translate3d(0,0,0)' },
+    config: { duration: 1000 },
+  });
 
   const commonSetFR = (name: string) => {
     setFocussedElement(() =>
@@ -345,13 +383,13 @@ const UpdateProfile = () => {
 
   return (
     <ParentProfile>
-      <div className='logo'>
+      <animated.div className='logo' style={props}>
         {themeContext.theme === 'dark' ? (
           <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
         ) : (
           <img src={`${EXT_URL}/Moovy/moovy-text-logo-black.png`} alt='Moovy' />
         )}
-      </div>
+      </animated.div>
 
       <Container>
         <FormContainer onSubmit={handleSubmit}>
@@ -359,7 +397,8 @@ const UpdateProfile = () => {
             <StepContainer
               key={index}
               visible={index === currentStep}
-              accentColor={accentColor}>
+              accentColor={accentColor}
+              style={props}>
               <div className='progress-bar'>
                 <div className={`circle ${step.label === 1 ? 'active' : ''}`}>
                   <span>1</span>
@@ -463,14 +502,14 @@ const UpdateProfile = () => {
               ))}
             </StepContainer>
           ))}
-          <ButtonContainer>
+          <ButtonContainer style={props}>
             {currentStep > 0 && (
               <BackButton onClick={handleBackStep}>Back</BackButton>
             )}
             {currentStep === steps.length - 1 ? (
               <Button type='submit'>Submit</Button>
             ) : (
-              <Button onClick={handleNextStep} tabIndex={3}>
+              <Button onClick={handleNextStep} tabIndex={3} style={props}>
                 Next
               </Button>
             )}
