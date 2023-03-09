@@ -1,4 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import { IoCloudUploadOutline } from 'react-icons/io5';
 
 type props = {
   url?: string;
@@ -205,4 +207,71 @@ export const DisplayImage = styled.div`
       }
     }
   }
+`;
+
+type DragProps = {
+  isDragActive: boolean;
+  isDragReject: boolean;
+};
+export const DropzoneContainer = styled.div<DragProps>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 4px;
+  background-color: ${({ isDragActive }) =>
+    isDragActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
+  color: ${({ isDragReject }) => (isDragReject ? '#ff1744' : 'inherit')};
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  box-shadow: ${({ isDragActive }) =>
+    isDragActive
+      ? '0px 0px 15px rgba(0, 128, 0, 0.3)'
+      : '0px 0px 15px rgba(0, 0, 0, 0.1)'};
+
+  &:focus {
+    outline: none;
+  }
+
+  ${({ isDragActive, isDragReject }) =>
+    (isDragActive || isDragReject) &&
+    css`
+      background-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0px 0px 15px rgba(0, 128, 0, 0.3);
+    `}
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 0px 15px rgba(0, 128, 0, 0.3);
+  }
+`;
+
+export const ErrorMsg = styled.p`
+  color: #ff1744;
+  font-size: 0.8em;
+  margin-top: 0.5em;
+`;
+
+export const DropzoneIcon = styled(IoCloudUploadOutline)`
+  font-size: 3em;
+  margin-bottom: 1em;
+`;
+
+export const DropzoneText = styled.p`
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 1em;
+`;
+
+export const FileRejectionList = styled.ul`
+  margin-top: 1em;
+  list-style: none;
+  padding-left: 0;
+`;
+
+export const FileRejectionItem = styled.li`
+  color: #ff1744;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-top: 0.5em;
 `;

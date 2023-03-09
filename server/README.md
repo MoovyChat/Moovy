@@ -9,6 +9,11 @@ The requests are sent to `graphql` server https://server.moovychat.com/graphql.
 - Installation
 - Usage
 
+```
+To generate migrations:
+npx typeorm -d dist/dataSource.js migration:generate  src/migrations
+```
+
 ## Installation
 
 Install the following dependencies and devDependencies.

@@ -1,0 +1,12 @@
+mutation CreateMessage($message: String!, $email: String!, $name: String!) {
+  createMessage(message: $message, email: $email, name: $name) {
+    id
+    name
+    email
+    message
+    read
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

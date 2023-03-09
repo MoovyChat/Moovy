@@ -1,5 +1,4 @@
 import { Users, useMeQuery } from '../../generated/graphql';
-import { useEffect, useMemo } from 'react';
 
 import App from '../app/app';
 import Home from '../home/home';
@@ -8,11 +7,10 @@ import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from './splashScreen.styles';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 
 const SplashScreen = () => {
   const [{ data, fetching, error }] = useMeQuery();
-  const location = useLocation();
   const dispatch = useAppDispatch();
 
   useMemo(() => {

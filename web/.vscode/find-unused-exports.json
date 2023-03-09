@@ -1,8 +1,0 @@
-{
-  "ignore": {
-    "files": [
-      "/Users/kishore/Documents/Github/Moovy/web/src/components/add-comment/addComment.styles.tsx",
-      "/Users/kishore/Documents/Github/Moovy/web/src/components/comment-card/commentCard.styles.tsx"
-    ]
-  }
-}

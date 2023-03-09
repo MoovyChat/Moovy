@@ -1,4 +1,3 @@
-import { animated } from '@react-spring/web';
 import styled from 'styled-components';
 type props = {
   accentColor: string;
@@ -39,7 +38,7 @@ export const FormContainer = styled.form`
   margin-top: 20px;
 `;
 
-export const StepContainer = styled(animated.div)<props>`
+export const StepContainer = styled.div<props>`
   display: ${(p) => (p.visible ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
@@ -219,7 +218,7 @@ export const TextArea = styled.textarea<props>`
   }
 `;
 
-export const Button = styled(animated.button)`
+export const Button = styled.button`
   position: relative;
   display: inline-block;
   background-color: #007bff;
@@ -260,7 +259,7 @@ export const Button = styled(animated.button)`
   }
 `;
 
-export const ButtonContainer = styled(animated.div)`
+export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

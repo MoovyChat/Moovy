@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import AboutUs from './pages/about-us/aboutUs';
+import Admin from './pages/admin/admin';
 import BasicInfo from './pages/profile/basicInfo';
 import Catalog from './pages/catalog/catalog';
 import CommentThread from './pages/commentThread/commentThread';
@@ -16,8 +17,6 @@ import Favorites from './pages/favorites/favorites';
 import Feed from './pages/feed/feed';
 import GoogleLogIn from './pages/login/google-log-in';
 import LikedTitles from './pages/favorites/likedTitles';
-import LoginError from './pages/login/login-error';
-import LoginStatus from './pages/login/login-status';
 import MovieThread from './pages/movieThread/movieThread';
 import MoviesCatalog from './pages/catalog/moviesCatalog';
 import NotFound from './pages/notFound/notFound';
@@ -116,8 +115,7 @@ const HomeRouter = () => {
         <Route path='/premium' element={<Premium />} />
         <Route path='/embedded-content' element={<EmbedContent />} />
         <Route path='/google-login' element={<GoogleLogIn />} />
-        <Route path='/login-status' element={<LoginStatus />} />
-        <Route path='/login-error' element={<LoginError />} />
+        <Route path='/admin' element={<Admin />} />
         {/* <Route path='/welcome' element={<App />} /> */}
       </Routes>
     </BrowserRouter>

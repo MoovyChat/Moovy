@@ -9,7 +9,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.netflix.com/*",
+        "*://www.netflix.com/*",
         "*://moovychat.com/*",
         "*://localhost/*"
       ],
@@ -35,7 +35,7 @@
         "patreon-word.png"
       ],
       "matches": [
-        "https://www.netflix.com/*",
+        "*://www.netflix.com/*",
         "*://moovychat.com/*",
         "*://localhost/*"
       ],
@@ -44,28 +44,28 @@
   ],
   "externally_connectable": {
     "matches": [
-      "https://www.netflix.com/*",
+      "*://www.netflix.com/*",
       "*://moovychat.com/*",
       "*://localhost/*"
     ]
   },
   "host_permissions": [
-    "https://www.netflix.com/*",
+    "*://www.netflix.com/*",
     "*://moovychat.com/*",
     "*://localhost/*"
   ],
   "icons": {
-    "16": "Moovy/moovyIcon.png",
-    "48": "Moovy/moovyIcon.png",
-    "128": "Moovy/moovyIcon.png"
+    "16": "Moovy/moovyIcon_16.png",
+    "48": "Moovy/moovyIcon_48.png",
+    "128": "Moovy/moovyIcon_128.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Quiet Chat",
     "default_icons": {
-      "16": "Moovy/moovyIcon.png",
-      "48": "Moovy/moovyIcon.png",
-      "128": "Moovy/moovyIcon.png"
+      "16": "Moovy/moovyIcon_16.png",
+      "48": "Moovy/moovyIcon_48.png",
+      "128": "Moovy/moovyIcon_128.png"
     }
   },
   "oauth2": {
