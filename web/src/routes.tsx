@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import AboutUs from './pages/about-us/aboutUs';
+import Admin from './pages/admin/admin';
 import BasicInfo from './pages/profile/basicInfo';
 import Catalog from './pages/catalog/catalog';
 import CommentThread from './pages/commentThread/commentThread';
@@ -114,6 +115,7 @@ const HomeRouter = () => {
         <Route path='/premium' element={<Premium />} />
         <Route path='/embedded-content' element={<EmbedContent />} />
         <Route path='/google-login' element={<GoogleLogIn />} />
+        <Route path='/admin' element={<Admin />} />
         {/* <Route path='/welcome' element={<App />} /> */}
       </Routes>
     </BrowserRouter>

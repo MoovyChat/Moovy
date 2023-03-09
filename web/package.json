@@ -13,12 +13,12 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/chrome": "^0.0.198",
+    "@types/chrome": "^0.0.220",
     "@types/crypto-js": "^4.1.1",
     "@types/dompurify": "^2.4.0",
     "@types/jest": "^27.0.1",
     "@types/lodash.debounce": "^4.0.7",
-    "@types/node": "^16.7.13",
+    "@types/node": "^18.0.6",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@types/react-dropzone": "^5.1.0",
@@ -113,7 +113,7 @@
     ]
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.13.7",
+    "@graphql-codegen/cli": "^3.2.2",
     "@graphql-codegen/typed-document-node": "^2.3.4",
     "@graphql-codegen/typescript": "^2.7.4",
     "@graphql-codegen/typescript-operations": "^2.5.4",

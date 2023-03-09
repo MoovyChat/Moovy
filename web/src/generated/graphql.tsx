@@ -760,6 +760,7 @@ export type Query = {
   getSearchResults?: Maybe<SearchObject>;
   getTitle?: Maybe<Title>;
   getTrendingMovies?: Maybe<Array<TrendingObject>>;
+  getUnreadMessages: Array<Contact>;
   getUser?: Maybe<Users>;
   getUserByUserName?: Maybe<Users>;
   getUserFullName?: Maybe<Scalars['String']>;
@@ -788,6 +789,7 @@ export type QueryGetAllCommentsMadeByUserArgs = {
 export type QueryGetAllMessagesArgs = {
   limit: Scalars['Int'];
   page?: InputMaybe<Scalars['Int']>;
+  read: Scalars['Boolean'];
 };
 
 
@@ -1001,6 +1003,12 @@ export type QueryGetTitleArgs = {
 
 export type QueryGetTrendingMoviesArgs = {
   limit: Scalars['Int'];
+};
+
+
+export type QueryGetUnreadMessagesArgs = {
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1393,6 +1401,7 @@ export type DeleteMessagesMutationVariables = Exact<{
 export type DeleteMessagesMutation = { __typename?: 'Mutation', deleteMessages: boolean };
 
 export type GetAllMessagesQueryVariables = Exact<{
+  read: Scalars['Boolean'];
   limit: Scalars['Int'];
   page?: InputMaybe<Scalars['Int']>;
 }>;
@@ -2192,8 +2201,8 @@ export function useDeleteMessagesMutation() {
   return Urql.useMutation<DeleteMessagesMutation, DeleteMessagesMutationVariables>(DeleteMessagesDocument);
 };
 export const GetAllMessagesDocument = gql`
-    query GetAllMessages($limit: Int!, $page: Int) {
-  getAllMessages(limit: $limit, page: $page) {
+    query GetAllMessages($read: Boolean!, $limit: Int!, $page: Int) {
+  getAllMessages(read: $read, limit: $limit, page: $page) {
     id
     name
     email

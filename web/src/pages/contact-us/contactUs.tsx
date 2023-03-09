@@ -21,11 +21,17 @@ const ContactUs = () => {
   const postMessage: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     createMessage({ name, email, message })
-      .then(() => {
-        alert('Message sent successfully!');
-        setName('');
-        setEmail('');
-        setMessage('');
+      .then((res) => {
+        const { error, data } = res;
+        if (error) {
+          alert('Failed to send message');
+        }
+        if (data) {
+          alert('Message sent successfully!');
+          setName('');
+          setEmail('');
+          setMessage('');
+        }
       })
       .catch(() => {
         alert('Failed to send message');
