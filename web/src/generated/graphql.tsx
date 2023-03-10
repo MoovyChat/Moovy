@@ -90,6 +90,7 @@ export type Contact = {
   message: Scalars['String'];
   name: Scalars['String'];
   read: Scalars['Boolean'];
+  subject: Scalars['String'];
   updatedAt: Scalars['String'];
 };
 
@@ -397,6 +398,7 @@ export type MutationCreateMessageArgs = {
   email: Scalars['String'];
   message: Scalars['String'];
   name: Scalars['String'];
+  subject: Scalars['String'];
 };
 
 
@@ -789,7 +791,7 @@ export type QueryGetAllCommentsMadeByUserArgs = {
 export type QueryGetAllMessagesArgs = {
   limit: Scalars['Int'];
   page?: InputMaybe<Scalars['Int']>;
-  read: Scalars['Boolean'];
+  read?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1386,12 +1388,13 @@ export type GetIsUserLikedCommentQuery = { __typename?: 'Query', getIsUserLikedC
 
 export type CreateMessageMutationVariables = Exact<{
   message: Scalars['String'];
+  subject: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
 }>;
 
 
-export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: { __typename?: 'Contact', id: string, name: string, email: string, message: string, read: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: { __typename?: 'Contact', id: string, name: string, email: string, subject: string, message: string, read: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DeleteMessagesMutationVariables = Exact<{
   ids: Array<Scalars['String']> | Scalars['String'];
@@ -1401,13 +1404,13 @@ export type DeleteMessagesMutationVariables = Exact<{
 export type DeleteMessagesMutation = { __typename?: 'Mutation', deleteMessages: boolean };
 
 export type GetAllMessagesQueryVariables = Exact<{
-  read: Scalars['Boolean'];
   limit: Scalars['Int'];
   page?: InputMaybe<Scalars['Int']>;
+  read?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type GetAllMessagesQuery = { __typename?: 'Query', getAllMessages: Array<{ __typename?: 'Contact', id: string, name: string, email: string, message: string, read: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type GetAllMessagesQuery = { __typename?: 'Query', getAllMessages: Array<{ __typename?: 'Contact', id: string, name: string, email: string, message: string, read: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, subject: string }> };
 
 export type MarkMessageAsReadMutationVariables = Exact<{
   markMessageAsReadId: Scalars['String'];
@@ -2174,11 +2177,12 @@ export function useGetIsUserLikedCommentQuery(options: Omit<Urql.UseQueryArgs<Ge
   return Urql.useQuery<GetIsUserLikedCommentQuery, GetIsUserLikedCommentQueryVariables>({ query: GetIsUserLikedCommentDocument, ...options });
 };
 export const CreateMessageDocument = gql`
-    mutation CreateMessage($message: String!, $email: String!, $name: String!) {
-  createMessage(message: $message, email: $email, name: $name) {
+    mutation CreateMessage($message: String!, $subject: String!, $email: String!, $name: String!) {
+  createMessage(message: $message, subject: $subject, email: $email, name: $name) {
     id
     name
     email
+    subject
     message
     read
     createdAt
@@ -2201,8 +2205,8 @@ export function useDeleteMessagesMutation() {
   return Urql.useMutation<DeleteMessagesMutation, DeleteMessagesMutationVariables>(DeleteMessagesDocument);
 };
 export const GetAllMessagesDocument = gql`
-    query GetAllMessages($read: Boolean!, $limit: Int!, $page: Int) {
-  getAllMessages(read: $read, limit: $limit, page: $page) {
+    query GetAllMessages($limit: Int!, $page: Int, $read: Boolean) {
+  getAllMessages(limit: $limit, page: $page, read: $read) {
     id
     name
     email
@@ -2211,6 +2215,7 @@ export const GetAllMessagesDocument = gql`
     createdAt
     updatedAt
     deletedAt
+    subject
   }
 }
     `;

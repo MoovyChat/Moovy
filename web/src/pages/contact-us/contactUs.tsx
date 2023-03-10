@@ -16,11 +16,12 @@ const ContactUs = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  const [subject, setSubject] = useState<string>('');
   const [{ fetching, error }, createMessage] = useCreateMessageMutation();
 
   const postMessage: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    createMessage({ name, email, message })
+    createMessage({ name, email, subject, message })
       .then((res) => {
         const { error, data } = res;
         if (error) {
@@ -31,6 +32,7 @@ const ContactUs = () => {
           setName('');
           setEmail('');
           setMessage('');
+          setSubject('');
         }
       })
       .catch(() => {
@@ -42,8 +44,8 @@ const ContactUs = () => {
       <PrivacyPolicyContent>
         <h1>Contact Us</h1>
         <p>
-          Thank you for using MoovyChat Ltd. If you have any questions,
-          comments, or concerns, please do not hesitate to contact us.
+          Thank you for using MoovyChat. If you have any questions, comments, or
+          concerns, please do not hesitate to contact us.
         </p>
         <p>
           You can reach us by email at{' '}
@@ -71,6 +73,16 @@ const ContactUs = () => {
             value={email}
             required
             onChange={(event) => setEmail(event.target.value)}
+          />
+
+          <label htmlFor='subject'>Subject:</label>
+          <input
+            type='text'
+            id='subject'
+            name='subject'
+            value={subject}
+            required
+            onChange={(event) => setSubject(event.target.value)}
           />
 
           <label htmlFor='message'>Message:</label>

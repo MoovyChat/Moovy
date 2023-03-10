@@ -1,5 +1,5 @@
-query GetAllMessages($read: Boolean!, $limit: Int!, $page: Int) {
-  getAllMessages(read: $read, limit: $limit, page: $page) {
+query GetAllMessages($limit: Int!, $page: Int, $read: Boolean) {
+  getAllMessages(limit: $limit, page: $page, read: $read) {
     id
     name
     email
@@ -8,5 +8,6 @@ query GetAllMessages($read: Boolean!, $limit: Int!, $page: Int) {
     createdAt
     updatedAt
     deletedAt
+    subject
   }
 }

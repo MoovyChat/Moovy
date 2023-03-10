@@ -1,4 +1,5 @@
 import {
+  AdminPanel,
   CheckCircleIcon,
   CheckboxWrapper,
   Container,
@@ -31,9 +32,10 @@ const Admin: React.FC<AdminProps> = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [checkedContacts, setCheckedContacts] = useState<Contact[]>([]);
+  const [chooseRead, setChooseRead] = useState<boolean | null>(null);
   const [, markMessageAsRead] = useMarkMessageAsReadMutation();
   const [{ data, fetching, error }] = useGetAllMessagesQuery({
-    variables: { page, limit: 10, read: false },
+    variables: { page, limit: 10, read: chooseRead },
   });
 
   if (error) {
@@ -43,6 +45,11 @@ const Admin: React.FC<AdminProps> = () => {
   const readMessage: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     markMessageAsRead({ markMessageAsReadId: (e.target as HTMLElement).id });
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value;
+    setChooseRead(val === 'all' ? null : val === 'read' ? true : false);
   };
 
   const contacts: Contact[] = data?.getAllMessages || [];
@@ -59,7 +66,7 @@ const Admin: React.FC<AdminProps> = () => {
     );
   }
   return (
-    <StyledAdmin>
+    <StyledAdmin contactSelected={selectedContact !== null}>
       <div className='logo'>
         <img src={Moovy} alt='Moovy' />
       </div>
@@ -77,9 +84,44 @@ const Admin: React.FC<AdminProps> = () => {
               />
             </CheckboxWrapper>
             <div className='title'>
-              {checkedContacts.length > 0
-                ? `Selected ${checkedContacts.length} items`
-                : 'Admin Inbox'}
+              {checkedContacts.length > 0 ? (
+                `Selected ${checkedContacts.length} items`
+              ) : (
+                <AdminPanel>
+                  <div className='multi-box'>
+                    <input
+                      type='radio'
+                      id='all'
+                      name='all'
+                      value='all'
+                      checked={chooseRead === null ? true : false}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor='all'>All</label>
+
+                    <input
+                      type='radio'
+                      id='read'
+                      name='read'
+                      value='read'
+                      checked={chooseRead === true ? true : false}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor='read'>Read</label>
+
+                    <input
+                      type='radio'
+                      id='unread'
+                      name='unread'
+                      value='unread'
+                      checked={chooseRead === false ? true : false}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor='unread'>Unread</label>
+                  </div>
+                  <p>Admin Inbox</p>
+                </AdminPanel>
+              )}
             </div>
             {checkedContacts.length > 0 && (
               <OptionsWrapper className='options'>
@@ -92,53 +134,61 @@ const Admin: React.FC<AdminProps> = () => {
               </OptionsWrapper>
             )}
           </Header>
-          {contacts.map((contact) => (
-            <Container
-              read={contact.read}
-              key={contact.id}
-              id={contact.id}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedContact(contact);
-                markMessageAsRead({
-                  markMessageAsReadId: contact.id,
-                });
-              }}>
-              <CheckboxWrapper>
-                <input
-                  type='checkbox'
-                  checked={checkedContacts.some((c) => c.id === contact.id)}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    const value = e.target.checked;
-                    setCheckedContacts((contacts) => {
-                      if (value) return [...contacts, contact];
-                      else return contacts.filter((c) => c.id !== contact.id);
-                    });
-                  }}
-                />
-              </CheckboxWrapper>
-              <SenderWrapper>{contact.name}</SenderWrapper>
-              <MessageWrapper>{contact.message}</MessageWrapper>
-              {checkedContacts.some((c) => c.id === contact.id) ? (
-                <OptionsWrapper>
-                  <OptionButton
-                    id={contact.id}
-                    onClick={readMessage}
-                    className='icon-btn'>
-                    <CheckCircleIcon size={20} />
-                  </OptionButton>
-                  <OptionButton className='icon-btn' id={contact.id}>
-                    <DeleteIcon size={20} />
-                  </OptionButton>
-                </OptionsWrapper>
-              ) : (
-                <OptionsWrapper>
-                  <div className='time'>{getDateFormat(contact.createdAt)}</div>
-                </OptionsWrapper>
-              )}
+          {contacts.length > 0 ? (
+            contacts.map((contact) => (
+              <Container
+                read={contact.read}
+                key={contact.id}
+                id={contact.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedContact(contact);
+                  markMessageAsRead({
+                    markMessageAsReadId: contact.id,
+                  });
+                }}>
+                <CheckboxWrapper>
+                  <input
+                    type='checkbox'
+                    checked={checkedContacts.some((c) => c.id === contact.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      const value = e.target.checked;
+                      setCheckedContacts((contacts) => {
+                        if (value) return [...contacts, contact];
+                        else return contacts.filter((c) => c.id !== contact.id);
+                      });
+                    }}
+                  />
+                </CheckboxWrapper>
+                <SenderWrapper>{contact.name}</SenderWrapper>
+                <MessageWrapper>{contact.subject}</MessageWrapper>
+                {checkedContacts.some((c) => c.id === contact.id) ? (
+                  <OptionsWrapper>
+                    <OptionButton
+                      id={contact.id}
+                      onClick={readMessage}
+                      className='icon-btn'>
+                      <CheckCircleIcon size={20} />
+                    </OptionButton>
+                    <OptionButton className='icon-btn' id={contact.id}>
+                      <DeleteIcon size={20} />
+                    </OptionButton>
+                  </OptionsWrapper>
+                ) : (
+                  <OptionsWrapper>
+                    <div className='time'>
+                      {getDateFormat(contact.createdAt)}
+                    </div>
+                  </OptionsWrapper>
+                )}
+              </Container>
+            ))
+          ) : (
+            <Container>
+              <h3>Inbox is Empty!!</h3>
             </Container>
-          ))}
+          )}
 
           <PaginationWrapper>
             <PaginationButton
@@ -153,13 +203,16 @@ const Admin: React.FC<AdminProps> = () => {
             </PaginationButton>
           </PaginationWrapper>
         </div>
-        <FullMessageContainer className='full-message-container'>
+        <FullMessageContainer
+          className='full-message-container'
+          contactSelected={selectedContact !== null}>
           {selectedContact && (
             <div className='content'>
               <div className='name'>{selectedContact.name}</div>
               <div className='time'>
                 {getShortDateFormat(selectedContact.createdAt)}
               </div>
+              <div className='subject'>{selectedContact.subject}</div>
               <div className='message'>{selectedContact.message}</div>
             </div>
           )}
