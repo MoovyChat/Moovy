@@ -13,7 +13,7 @@ import {
   Root,
   ObjectType,
 } from 'type-graphql';
-
+import fetch from 'isomorphic-fetch';
 import { Comment } from '../entities/Comment';
 import { Users } from '../entities/Users';
 import { CommentStats } from '../entities/CommentStat';
@@ -166,6 +166,21 @@ export class CommentResolver {
     // return User.create(options).save();
     if (!options.commentedUserId) throw new Error('User does not exist');
     let comment;
+    const url = 'https://toxic.moovychat.com/predict';
+    let flagged = false;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ input_text: options.message }),
+    });
+    const data = await response.json();
+    const score = data.toxicity;
+    console.log(score);
+    if (score * 100 > 70) {
+      flagged = true;
+    }
     await conn.transaction(async (manager) => {
       // Insert comment.
       const result = await manager
@@ -180,6 +195,8 @@ export class CommentResolver {
             commentedUserId: options.commentedUserId,
             platformId: options.platformId,
             commentedUserName: options.commentedUserName,
+            toxicityScore: score,
+            flagged: flagged,
           },
         ])
         .returning('*')

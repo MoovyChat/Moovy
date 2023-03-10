@@ -4,37 +4,35 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
+import { Comment } from './Comment';
+import { Users } from './Users';
+
 @ObjectType()
 @Entity()
-export class Contact extends BaseEntity {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'contact_platform_id' })
+export class CommentReport extends BaseEntity {
   @Field(() => String)
-  id!: string;
+  @PrimaryColumn()
+  usersId!: string;
 
   @Field(() => String)
-  @Column()
-  name!: string;
-
-  @Field(() => String)
-  @Column()
-  email!: string;
-
-  @Field(() => String)
-  @Column()
-  subject!: string;
-
-  @Field(() => String)
-  @Column()
-  message!: string;
+  @PrimaryColumn()
+  commentId!: string;
 
   @Field(() => Boolean)
   @Column()
-  read: boolean;
+  report!: boolean;
+
+  @OneToMany(() => Comment, (comment) => comment.commentReport)
+  comment: Comment[];
+
+  @OneToMany(() => Users, (users) => users.commentReport)
+  users: Users[];
 
   @Field(() => String)
   @CreateDateColumn()

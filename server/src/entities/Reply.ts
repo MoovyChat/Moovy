@@ -9,12 +9,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, Float, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
 import { LikeNotifications } from './LikeNotifications';
 import { Movie } from './Movie';
 import { Platform } from './Platform';
+import { ReplyReport } from './ReplyReport';
 import { ReplyStats } from './ReplyStats';
 import { Users } from './Users';
 
@@ -75,11 +76,22 @@ export class Reply extends BaseEntity {
   })
   type: string;
 
+  @Field(() => Float)
+  @Column({ type: 'float', default: 0.0 })
+  toxicityScore!: number;
+
+  @Field(() => Boolean)
+  @Column({ default: false })
+  flagged!: boolean;
+
   @OneToMany(() => LikeNotifications, (Notifications) => Notifications.reply)
   likeNotifications: LikeNotifications[];
 
   @ManyToOne(() => Movie, (movie) => movie.replies)
   movie: Movie;
+
+  @OneToMany(() => ReplyReport, (rr) => rr.reply)
+  replyReport: ReplyReport[];
 
   @ManyToOne(() => Comment, (comment) => comment.replies)
   parentComment!: Comment;

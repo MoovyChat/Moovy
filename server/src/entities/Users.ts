@@ -13,6 +13,7 @@ import {
 import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './Comment';
+import { CommentReport } from './CommentReport';
 import { CommentStats } from './CommentStat';
 import { Follow } from './Follow';
 import { FollowNotifications } from './FollowNotifications';
@@ -21,6 +22,7 @@ import { Movie } from './Movie';
 import { MovieStats } from './MovieStats';
 import { Profile } from './Profile';
 import { Reply } from './Reply';
+import { ReplyReport } from './ReplyReport';
 import { ReplyStats } from './ReplyStats';
 import { Visited } from './Visited';
 
@@ -79,6 +81,12 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => Follow, (follow) => follow.user)
   followers: Follow[];
+
+  @OneToMany(() => CommentReport, (cr) => cr.users)
+  commentReport: CommentReport[];
+
+  @OneToMany(() => ReplyReport, (rr) => rr.users)
+  replyReport: ReplyReport[];
 
   @OneToMany(() => MovieStats, (stats) => stats.user)
   movieStats: MovieStats[];

@@ -9,8 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, Float, Int, ObjectType } from 'type-graphql';
 
+import { CommentReport } from './CommentReport';
 import { CommentStats } from './CommentStat';
 import { LikeNotifications } from './LikeNotifications';
 import { Movie } from './Movie';
@@ -53,6 +54,14 @@ export class Comment extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
+  @Field(() => Float)
+  @Column({ type: 'float', default: 0.0 })
+  toxicityScore!: number;
+
+  @Field(() => Boolean)
+  @Column({ default: false })
+  flagged!: boolean;
+
   @Field(() => String, { nullable: true })
   @Column({
     nullable: true,
@@ -68,6 +77,9 @@ export class Comment extends BaseEntity {
 
   @OneToMany(() => CommentStats, (stats) => stats.comment)
   commentStats: CommentStats[];
+
+  @OneToMany(() => CommentReport, (cr) => cr.comment)
+  commentReport: CommentReport[];
 
   @ManyToOne(() => Users, (user) => user.comments)
   commentedUser: Users;

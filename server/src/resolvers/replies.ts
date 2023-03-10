@@ -9,7 +9,7 @@ import {
   Subscription,
   ObjectType,
 } from 'type-graphql';
-
+import fetch from 'isomorphic-fetch';
 import { Reply } from '../entities/Reply';
 import { conn } from '../dataSource';
 import { ReplyStats } from '../entities/ReplyStats';
@@ -159,6 +159,20 @@ export class ReplyResolver {
     if (!options.commentedUserId) throw new Error('User does not exist');
     let reply;
     try {
+      const url = 'https://toxic.moovychat.com/predict';
+      let flagged = false;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input_text: options.message }),
+      });
+      const data = await response.json();
+      const score = data.toxicity;
+      if (score * 100 > 70) {
+        flagged = true;
+      }
       await conn.transaction(async (transactionalEntityManager) => {
         // execute queries using transactionalEntityManager
         // Insert Reply.
@@ -180,6 +194,8 @@ export class ReplyResolver {
               commentedUserName: options.commentedUserName!,
               platformId: options.platformId,
               repliesCount: options.repliesCount,
+              toxicityScore: score,
+              flagged: flagged,
             },
           ])
           .returning('*')

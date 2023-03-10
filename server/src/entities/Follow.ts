@@ -26,6 +26,14 @@ export class Follow extends BaseEntity {
   @Column()
   follows: boolean;
 
+  @Field(() => Boolean, { defaultValue: false })
+  @Column()
+  blocked: boolean;
+
+  @Field(() => Boolean, { defaultValue: false })
+  @Column()
+  reported: boolean;
+
   @ManyToOne(() => Users, (user) => user.followers)
   user: Users;
 

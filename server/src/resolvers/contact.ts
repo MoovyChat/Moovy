@@ -8,14 +8,15 @@ export class ContactResolver {
   @Query(() => [Contact])
   async getAllMessages(
     @Arg('limit', () => Int) limit: number,
-    @Arg('read', () => Boolean) read: boolean,
+    @Arg('read', () => Boolean, { nullable: true }) read: boolean | null,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<Contact[]> {
-    const contacts = conn
+    const query = conn
       .getRepository(Contact)
       .createQueryBuilder('contact')
-      .orderBy('contact.createdAt', 'DESC')
-      .where('contact.read = :read', { read })
+      .orderBy('contact.createdAt', 'DESC');
+    if (read !== null) query.where('contact.read = :read', { read });
+    const contacts = query
       .offset((page - 1) * limit)
       .limit(limit)
       .getMany();
@@ -42,14 +43,14 @@ export class ContactResolver {
   async createMessage(
     @Arg('name') name: string,
     @Arg('email') email: string,
+    @Arg('subject') subject: string,
     @Arg('message') message: string
   ): Promise<Contact> {
-    console.log({ name, email, message });
     const contactRes = await conn
       .createQueryBuilder()
       .insert()
       .into(Contact)
-      .values([{ name, email, message, read: false }])
+      .values([{ name, email, message, subject, read: false }])
       .returning('*')
       .execute();
     return contactRes.raw[0];

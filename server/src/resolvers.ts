@@ -11,6 +11,7 @@ import { ProfileResolver } from './resolvers/profile';
 import { ProxyResolver } from './resolvers/proxy';
 import { ReplyResolver } from './resolvers/replies';
 import { ReplyStatsResolver } from './resolvers/replyStats';
+import { ReportResolver } from './resolvers/report';
 import { SearchResolver } from './resolvers/search';
 import { StripeResolver } from './resolvers/stripe';
 import { TitleResolver } from './resolvers/movieInfo';
@@ -36,4 +37,5 @@ export const resolvers = [
   StripeResolver,
   ProxyResolver,
   ContactResolver,
+  ReportResolver,
 ];

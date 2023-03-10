@@ -365,7 +365,7 @@ export class UserResolver {
     const userRepository = conn.getRepository(Users);
     const query = `
   SELECT "user"."id" AS "id", "user"."photoUrl" AS "photoUrl", "user"."nickname" AS "name", "profile"."fullname" AS "fullname"
-  FROM "user" "user" LEFT JOIN "profile" "profile" ON "user"."id" = "profile"."userId" AND ("profile"."deletedAt" IS NULL)
+  FROM "users" "user" LEFT JOIN "profile" "profile" ON "user"."id" = "profile"."userId" AND ("profile"."deletedAt" IS NULL)
   WHERE (LOWER("user"."nickname") LIKE LOWER($1)) AND ("user"."deletedAt" IS NULL)
   ORDER BY LOWER("user"."nickname") ASC
   LIMIT 3
