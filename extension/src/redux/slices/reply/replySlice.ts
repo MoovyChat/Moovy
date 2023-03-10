@@ -26,7 +26,16 @@ const ReplySlice = createSlice({
       const removeDuplicates = _.uniqBy(replies, 'id');
       return { ...state, replies: removeDuplicates };
     },
-
+    sliceReportReply: (
+      state,
+      action: { payload: { id: string; isReported: boolean } }
+    ) => {
+      const { id, isReported } = action.payload;
+      const rcd = state.replies.map((reply) =>
+        reply.id === id ? { ...reply, reported: isReported } : reply
+      );
+      return { ...state, replies: rcd };
+    },
     sliceResetReply: () => {
       return replyState;
     },
@@ -38,6 +47,7 @@ export const {
   sliceAddAllReplies,
   sliceDeleteReply,
   sliceResetReply,
+  sliceReportReply,
 } = ReplySlice.actions;
 
 export default ReplySlice.reducer;

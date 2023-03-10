@@ -4,10 +4,14 @@ fragment FullComment on Comment {
   commentedUserId
   commentedUserName
   message
+  movieId
   likesCount
   repliesCount
-  movieId
   platformId
+  toxicityScore
+  flagged
+  type
   createdAt
   updatedAt
+  deletedAt
 }

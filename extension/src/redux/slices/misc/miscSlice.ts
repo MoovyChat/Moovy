@@ -1,5 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+type toxicProps = {
+  identity_attack: number;
+  insult: number;
+  obscene: number;
+  severe_toxicity: number;
+  threat: number;
+  toxicity: number;
+};
+
 type props = {
   theme: string;
   enableBackground: boolean;
@@ -10,6 +19,9 @@ type props = {
   intervalIds: NodeJS.Timeout[];
   isProfileNeedsToBeUpdated: boolean;
   font: string;
+  toxicScores: toxicProps;
+  flagged: boolean;
+  isReportActive: string;
 };
 
 const miscState: props = {
@@ -21,7 +33,17 @@ const miscState: props = {
   autoNextEpisode: false,
   intervalIds: [] as NodeJS.Timeout[],
   isProfileNeedsToBeUpdated: false,
+  isReportActive: '',
   font: '',
+  flagged: false,
+  toxicScores: {
+    toxicity: 0,
+    threat: 0,
+    severe_toxicity: 0,
+    obscene: 0,
+    insult: 0,
+    identity_attack: 0,
+  },
 };
 
 const miscSlice = createSlice({
@@ -31,8 +53,17 @@ const miscSlice = createSlice({
     sliceSetTheme: (state, action) => {
       return { ...state, theme: action.payload };
     },
+    sliceSetIsReportActive: (state, action) => {
+      return { ...state, isReportActive: action.payload };
+    },
+    sliceSetToxicValues: (state, action) => {
+      return { ...state, toxicScores: action.payload };
+    },
     sliceSetAutoSkip: (state, action) => {
       return { ...state, autoSkip: action.payload };
+    },
+    sliceSetFlagged: (state, action) => {
+      return { ...state, flagged: action.payload };
     },
     sliceSetAutoNextEpisode: (state, action) => {
       return { ...state, autoNextEpisode: action.payload };
@@ -68,5 +99,8 @@ export const {
   sliceResetMisc,
   sliceSetIntervalIds,
   sliceSetIsProfileNeedsToBeUpdated,
+  sliceSetToxicValues,
+  sliceSetFlagged,
+  sliceSetIsReportActive,
 } = miscSlice.actions;
 export default miscSlice.reducer;

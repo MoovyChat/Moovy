@@ -17,6 +17,7 @@ import { NameObject } from '../../Utils/interfaces';
 import { Profile } from '../../contentScript/commentInterface/commentInterface.styles';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import TinyUserCard from '../tiny-user-card/tinyUserCard';
+import ToxicitySlider from '../toxicity-slider/toxicitySlider';
 import _ from 'lodash';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textArea/textAreaSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -25,6 +26,7 @@ import { withUrqlClient } from 'next-urql';
 
 const SmileyWindow = () => {
   const iconSize = 30;
+  const scores = useAppSelector((state) => state.misc.toxicScores);
   const [frequentEmojis, setFrequent] = useState<FrequentEmoji[]>([]);
   const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
@@ -83,7 +85,8 @@ const SmileyWindow = () => {
       {textAreaFocussed && (
         <SmileyWindowParent>
           <div className='child'>
-            {(wordSuggestions.length > 0 || nameSuggestions.length > 0) && (
+            {((wordSuggestions && wordSuggestions.length > 0) ||
+              (nameSuggestions && nameSuggestions.length > 0)) && (
               <div className='section'>
                 <div className='title'>Suggestions</div>
                 <div className='wn-suggestions'>
@@ -111,7 +114,38 @@ const SmileyWindow = () => {
                 </div>
               </div>
             )}
-            {recentEmojis.length > 0 && (
+            {scores && (
+              <div className='section'>
+                <div className='title'>
+                  Toxic Meter <i>(Powered By Detoxify)</i>
+                </div>
+                <ToxicitySlider
+                  text='Identity Attack'
+                  scores={{ identity_attack: scores.identity_attack }}
+                />
+                <ToxicitySlider
+                  text='Insult'
+                  scores={{ insult: scores.insult }}
+                />
+                <ToxicitySlider
+                  text='Obscene'
+                  scores={{ obscene: scores.obscene }}
+                />
+                <ToxicitySlider
+                  text='Severe Toxicity'
+                  scores={{ severe_toxicity: scores.severe_toxicity }}
+                />
+                <ToxicitySlider
+                  text='Threat'
+                  scores={{ threat: scores.threat }}
+                />
+                <ToxicitySlider
+                  text='Toxicity'
+                  scores={{ toxicity: scores.toxicity }}
+                />
+              </div>
+            )}
+            {recentEmojis && recentEmojis.length > 0 && (
               <div className='section'>
                 <div className='title'>Recently used</div>
                 <div className='emojis'>
@@ -127,7 +161,7 @@ const SmileyWindow = () => {
                 </div>
               </div>
             )}
-            {frequentEmojis.length > 0 && (
+            {frequentEmojis && frequentEmojis.length > 0 && (
               <div className='section'>
                 <div className='title'>Frequently used</div>
                 <div className='emojis'>

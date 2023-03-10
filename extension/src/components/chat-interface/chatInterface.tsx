@@ -27,6 +27,7 @@ import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../pop-slide/popSlide';
 import { Profile } from '../../generated/graphql';
 import Toast from '../toast/toast';
+import ToxicityMessage from '../toxicity-message/toxicityMessage';
 import UpdateProfile from '../../contentScript/update-profile/updateProfile';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
 import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
@@ -247,6 +248,7 @@ const ChatInterface: React.FC<props> = ({
                 setReplyClickResponse={setReplyClickResponse}
               />
             </TextAreaContainer>
+            <ToxicityMessage />
             <ChatBox
               responseFromReplyWindow={responseFromReplyWindow}
               type='comment'

@@ -67,6 +67,7 @@ const CommentSlice = createSlice({
             } else return comment as CommentInfo;
           }) as CommentInfo[];
           return { ...state, comment: nc6 };
+
         case COMMENT.RESET:
           return commentState;
         default:
@@ -83,6 +84,17 @@ const CommentSlice = createSlice({
       );
       return { ...state, comments: newComments };
     },
+
+    sliceReportComment: (
+      state,
+      action: { payload: { id: string; isReported: boolean } }
+    ) => {
+      const { id, isReported } = action.payload;
+      const rcd = state.comments.map((cmt) =>
+        cmt.id === id ? { ...cmt, reported: isReported } : cmt
+      );
+      return { ...state, comments: rcd };
+    },
     sliceSetLastPage: (
       state,
       action: { payload: { lastPage: number; id: string } }
@@ -97,6 +109,10 @@ const CommentSlice = createSlice({
   },
 });
 
-export const { sliceComment, sliceSetCurrentPage, sliceSetLastPage } =
-  CommentSlice.actions;
+export const {
+  sliceComment,
+  sliceSetCurrentPage,
+  sliceSetLastPage,
+  sliceReportComment,
+} = CommentSlice.actions;
 export default CommentSlice.reducer;

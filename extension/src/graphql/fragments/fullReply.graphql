@@ -5,12 +5,14 @@ fragment FullReply on Reply {
   movieId
   parentCommentId
   commentedUserName
-  parentRepliedUser
   parentReplyId
+  parentRepliedUser
   commentedUserId
   likesCount
   repliesCount
   platformId
+  type
   createdAt
   updatedAt
+  deletedAt
 }

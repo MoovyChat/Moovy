@@ -6,6 +6,7 @@ import {
   Delete,
   Like,
   MessageParent,
+  Moderation,
   Profile,
   SpoilerTag,
   Stats,
@@ -17,10 +18,13 @@ import {
   useDeleteReplyMutation,
   useGetRepliesQuery,
   useGetUserByNickNameMutation,
+  useIsReportedQuery,
+  useReportCommentMutation,
+  useReportReplyMutation,
 } from '../../generated/graphql';
 import { MOOVY_URL, textMapTypes } from '../../constants';
+import { MdDeleteForever, MdWarning, MdWarningAmber } from 'react-icons/md';
 import React, {
-  MouseEventHandler,
   useCallback,
   useEffect,
   useMemo,
@@ -30,9 +34,11 @@ import React, {
 import {
   sliceAddAllReplies,
   sliceDeleteReply,
+  sliceReportReply,
 } from '../../redux/slices/reply/replySlice';
 import {
   sliceComment,
+  sliceReportComment,
   sliceSetLastPage,
 } from '../../redux/slices/comment/commentSlice';
 import {
@@ -49,11 +55,12 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { COMMENT } from '../../redux/actionTypes';
 import { CSSTransition } from 'react-transition-group';
-import { MdDeleteForever } from 'react-icons/md';
+import Confirmation from '../../components/confirmation/confirmation';
 import { OperationResult } from 'urql';
 import ReplyWindow from '../replyWindow/replyWindow';
 import { batch } from 'react-redux';
 import { iconsEnum } from '../../Utils/enums';
+import { sliceSetIsReportActive } from '../../redux/slices/misc/miscSlice';
 import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -86,23 +93,22 @@ const CommentInterface: React.FC<props> = ({
   className,
 }) => {
   const mounted = useRef<boolean>(false);
-  const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const accentcolor = useAppSelector((state) => state.misc.accentColor);
   const movieId = useAppSelector((state) => state.movie.id);
-
+  const isReportActive = useAppSelector((state) => state.misc.isReportActive);
   // Redux: App Selector Hook.
   const userId = useAppSelector((state) => state.user.id);
   const allReplies = useAppSelector((state) => state.replies.replies);
   // Redux: App Dispatch hook.
-  const chatBoxRefElement = document.getElementById('chat-box-container');
   const dispatch = useAppDispatch();
   const totalCommentCount = useAppSelector(
     (state) => state.movie.totalCommentsCountOfMovie
   );
   // State to check if the "like" is hovered, to style the parent component accordingly.
   const [deleteFlag, setDeleteFlag] = useState<boolean>(false);
+  const [reportFlag, setReportFlag] = useState<boolean>(false);
   const [repliesCount, setRepliesCount] = useState<number>(0);
   const [hovered, setHovered] = useState<boolean>(false);
-  const [isCommentDeleted, setIsCommentDeleted] = useState<boolean>(false);
   const [del, setDelete] = useState<boolean>(true);
   const isComment = useMemo(
     () => commentOrReply.__typename === 'Comment',
@@ -115,7 +121,6 @@ const CommentInterface: React.FC<props> = ({
 
   const page = isComment && commentOrReply.page;
   const lastPage = isComment && commentOrReply.lastPage;
-
   const commentRef = useRef<HTMLDivElement>(null);
 
   // Check if the component is mounted or not for animation purposes.
@@ -137,9 +142,38 @@ const CommentInterface: React.FC<props> = ({
     pause: true,
   });
   const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
-
   const [_dc, deleteComment] = useDeleteCommentMutation();
   const [_dr, deleteReply] = useDeleteReplyMutation();
+  const [_rc, reportComment] = useReportCommentMutation();
+  const [_rr, reportReply] = useReportReplyMutation();
+  const [isReported] = useIsReportedQuery({
+    variables: {
+      isComment: isComment,
+      uid: userId,
+      isReportedId: commentOrReply.id,
+    },
+  });
+
+  useEffect(() => {
+    const { fetching, data } = isReported;
+    if (!fetching && data) {
+      const _data = data.isReported;
+      setReportFlag(_data);
+      isComment
+        ? dispatch(
+            sliceReportComment({
+              id: commentOrReply.id,
+              isReported: _data,
+            })
+          )
+        : dispatch(
+            sliceReportReply({
+              id: commentOrReply.id,
+              isReported: _data,
+            })
+          );
+    }
+  }, [isReported]);
 
   useEffect(() => {
     if (isComment) {
@@ -224,6 +258,66 @@ const CommentInterface: React.FC<props> = ({
     });
   };
 
+  const commonReport = (_report: boolean): Promise<boolean | undefined> => {
+    console.log('EXEC');
+    return new Promise((resolve, reject) => {
+      if (isComment) {
+        reportComment({ cid: commentOrReply.id!, uid: userId, report: _report })
+          .then((res) => {
+            const _data = res.data;
+            const x = _data?.reportComment;
+            resolve(x?.report);
+          })
+          .catch((err) => reject(err));
+      } else {
+        reportReply({ rid: commentOrReply.id!, uid: userId, report: _report })
+          .then((res) => {
+            const _data = res.data;
+            const x = _data?.reportReply;
+            resolve(x?.report);
+          })
+          .catch((err) => reject(err));
+      }
+    });
+  };
+
+  const reportCommentOrReply = async (_report: boolean): Promise<void> => {
+    const message = isComment ? 'Comment Reported' : 'Reply Reported';
+    try {
+      const result = await commonReport(_report);
+      if (result) {
+        dispatch(sliceSetIsReportActive(''));
+        setReportFlag(_report);
+        batch(() => {
+          dispatch(sliceSetToastVisible(true));
+          dispatch(
+            sliceSetToastBody({
+              icon: iconsEnum.ERROR,
+              message,
+            })
+          );
+          isComment
+            ? dispatch(
+                sliceReportComment({
+                  id: commentOrReply.id,
+                  isReported: _report,
+                })
+              )
+            : dispatch(
+                sliceReportReply({
+                  id: commentOrReply.id,
+                  isReported: _report,
+                })
+              );
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // Code to be executed after try/catch block
+    }
+  };
+
   const commonDelete = (): Promise<OperationResult<any, Exact<any>>> => {
     return new Promise((resolve, reject) => {
       if (isComment) {
@@ -237,6 +331,7 @@ const CommentInterface: React.FC<props> = ({
       }
     });
   };
+
   // TODO: Delete comment or reply.
   const deleteCommentOrReply = async (): Promise<void> => {
     const message = isComment ? 'Comment deleted' : 'Reply deleted';
@@ -293,130 +388,167 @@ const CommentInterface: React.FC<props> = ({
       classNames='css-cmt-transition'
       timeout={300}
       nodeRef={commentRef}>
-      <CommentCardContainer
-        className={className}
-        ref={commentRef}
-        onClick={goToComment}>
-        <div className='card-parent'>
-          {commentedUser?.id === userId && (
-            <Delete
-              accentColor={accentColor}
-              deleteFlag={deleteFlag}
-              onClick={(e: any) => {
-                e.stopPropagation();
-                deleteCommentOrReply();
-              }}>
-              <MdDeleteForever size={20} />
-            </Delete>
-          )}
-          <Card
-            ref={commentRef}
-            hovered={hovered}
-            like={like}
-            className='comment-card'
-            deleteFlag={deleteFlag}>
-            <div
-              className='profile'
-              onClick={(e) => {
-                e.stopPropagation();
-                profileClickHandler(commentedUser?.nickname);
-              }}>
-              <Profile profilePic={commentedUser?.photoUrl!}></Profile>
-            </div>
-            <div className='container'>
-              <div className='text'>
-                <Comment>
-                  <div style={{ margin: '2px' }}>
-                    <span
-                      className='username'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        profileClickHandler(commentedUser?.nickname);
-                      }}>
-                      {!isCommentDeleted
-                        ? commentedUser?.nickname
-                          ? commentedUser?.nickname
-                          : commentedUser?.name
-                        : 'Author'}
-                    </span>{' '}
-                    <MessageParent>
-                      {messageArray.map((msg, index) =>
-                        msg.type === textMapTypes.SPOILER ? (
-                          <SpoilerTag key={index}>{msg.message}</SpoilerTag>
-                        ) : (
-                          <React.Fragment key={index}>
-                            <span
-                              key={index}
-                              className={msg.type}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onLinkHandlerInMessage(msg);
-                              }}>
-                              {msg.message + ' '}
-                            </span>
-                          </React.Fragment>
-                        )
-                      )}
-                    </MessageParent>
-                  </div>
-                </Comment>
+      <>
+        <CommentCardContainer
+          className={className}
+          ref={commentRef}
+          onClick={goToComment}>
+          <div className='card-parent'>
+            {commentedUser?.id === userId && (
+              <Delete
+                accentColor={accentcolor}
+                deleteFlag={deleteFlag}
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  deleteCommentOrReply();
+                }}>
+                <MdDeleteForever size={20} />
+              </Delete>
+            )}
+            <Card
+              ref={commentRef}
+              hovered={hovered}
+              like={like}
+              className='comment-card'
+              deleteFlag={deleteFlag}>
+              <div
+                className='profile'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  profileClickHandler(commentedUser?.nickname);
+                }}>
+                <Profile profilePic={commentedUser?.photoUrl!}></Profile>
               </div>
+              <div className='container'>
+                <div className='text'>
+                  <Comment>
+                    <div style={{ margin: '2px' }}>
+                      <span
+                        className='username'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          profileClickHandler(commentedUser?.nickname);
+                        }}>
+                        {commentedUser?.nickname
+                          ? commentedUser?.nickname
+                          : commentedUser?.name}
+                      </span>{' '}
+                      <MessageParent>
+                        {messageArray.map((msg, index) =>
+                          msg.type === textMapTypes.SPOILER ? (
+                            <SpoilerTag key={index}>{msg.message}</SpoilerTag>
+                          ) : (
+                            <React.Fragment key={index}>
+                              <span
+                                key={index}
+                                className={msg.type}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onLinkHandlerInMessage(msg);
+                                }}>
+                                {msg.message + ' '}
+                              </span>
+                            </React.Fragment>
+                          )
+                        )}
+                      </MessageParent>
+                    </div>
+                  </Comment>
+                </div>
 
-              <Stats>
-                <div className='timestamp'>{time}</div>
-                <div
-                  className='likes'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    likeWindowHandler();
-                  }}>
-                  {likesCount} Likes
-                </div>
-                <div
-                  className='replies'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    responseFromReplyWindow(commentOrReply);
-                  }}>
-                  Reply
-                </div>
-                {commentedUser?.id === userId && (
+                <Stats>
+                  <div className='timestamp'>{time}</div>
                   <div
-                    className='delete'
+                    className='likes'
                     onClick={(e) => {
                       e.stopPropagation();
-                      setDeleteFlag(!deleteFlag);
+                      likeWindowHandler();
                     }}>
-                    {deleteFlag ? 'Cancel' : 'Delete'}
+                    {likesCount} Likes
                   </div>
-                )}
-              </Stats>
-            </div>
-            <Like
-              accentColor={accentColor}
-              className='like'
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={(e) => {
-                subjectLike(e);
-              }}>
-              {like ? (
-                <AiFillLike className='fill' size={20} />
-              ) : (
-                <AiOutlineLike size={20} />
-              )}
-            </Like>
-          </Card>
-        </div>
+                  <div
+                    className='replies'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      responseFromReplyWindow(commentOrReply);
+                    }}>
+                    Reply
+                  </div>
+                  {commentedUser?.id === userId ? (
+                    <div
+                      className='delete'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteFlag(!deleteFlag);
+                      }}>
+                      {deleteFlag ? 'Cancel' : 'Delete'}
+                    </div>
+                  ) : (
+                    <div
+                      className='delete'
+                      onClick={(e) => {
+                        e.stopPropagation();
 
-        <ReplyWindow
-          page={page ? page : 1}
-          lastPage={lastPage ? lastPage : 1}
-          repliesCount={repliesCount}
-          parentComment={commentOrReply}
-          responseFromReplyWindow={responseFromReplyWindow}
-        />
-      </CommentCardContainer>
+                        if (commentOrReply.reported === true) {
+                          reportCommentOrReply(false);
+                        } else {
+                          dispatch(
+                            sliceSetIsReportActive(
+                              `${isComment ? 'comment' : 'reply'}${
+                                commentOrReply.id
+                              }`
+                            )
+                          );
+                        }
+                      }}>
+                      {commentOrReply.reported === true
+                        ? 'Undo Report'
+                        : 'Report'}
+                    </div>
+                  )}
+                </Stats>
+              </div>
+              <Like
+                accentColor={accentcolor}
+                className='like'
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                onClick={(e) => {
+                  subjectLike(e);
+                }}>
+                {like ? (
+                  <AiFillLike className='fill' size={20} />
+                ) : (
+                  <AiOutlineLike size={20} />
+                )}
+              </Like>
+            </Card>
+          </div>
+          {commentOrReply.flagged && (
+            <Moderation color={accentcolor}>
+              <MdWarningAmber fill={accentcolor} />
+              The comment is flagged for moderation
+            </Moderation>
+          )}
+          {commentOrReply.reported && (
+            <Moderation color='#ff0000'>
+              <MdWarning fill='#ff0000' />
+              You have reported this comment
+            </Moderation>
+          )}
+          <ReplyWindow
+            page={page ? page : 1}
+            lastPage={lastPage ? lastPage : 1}
+            repliesCount={repliesCount}
+            parentComment={commentOrReply}
+            responseFromReplyWindow={responseFromReplyWindow}
+          />
+        </CommentCardContainer>
+        {isReportActive ===
+          `${isComment ? 'comment' : 'reply'}${commentOrReply.id}` && (
+          <Confirmation reportCommentOrReply={reportCommentOrReply} />
+        )}
+      </>
     </CSSTransition>
   );
 };

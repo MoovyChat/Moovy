@@ -13,3 +13,5 @@ declare global {
     };
   }
 }
+
+declare module '@coffeeandfun/google-profanity-words';

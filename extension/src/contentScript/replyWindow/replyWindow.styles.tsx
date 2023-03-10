@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 export const ReplyWindowParent = styled.div`
-  width: 95%;
-  transform: scale(0.95);
+  width: 100%;
   background-color: inherit;
   display: flex;
   align-self: flex-end;

@@ -70,6 +70,9 @@ export interface CommentInfo {
   platformId: number;
   createdAt?: any;
   updatedAt?: any;
+  flagged?: boolean;
+  reported?: boolean;
+  toxicityScore?: boolean;
   __typename?: any;
 }
 

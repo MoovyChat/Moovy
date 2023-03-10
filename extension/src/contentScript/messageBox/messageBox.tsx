@@ -70,11 +70,11 @@ const MessageBox: React.FC<props> = ({
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
-
+  const score = useAppSelector((state) => state.misc.toxicScores);
   // React: useState hooks.
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
-
+  const flagged = useAppSelector((state) => state.misc.flagged);
   const smileyHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetPopSlide(true));
@@ -123,7 +123,6 @@ const MessageBox: React.FC<props> = ({
               const insertedReply = data?.insertReply;
               batch(() => {
                 dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
-                // dispatch(sliceSetPastLoadedCount(1));
                 dispatch(sliceSetToastVisible(true));
                 dispatch(
                   sliceSetToastBody({
@@ -147,6 +146,8 @@ const MessageBox: React.FC<props> = ({
         commentedUserName: user?.nickname,
         movieId: movieIdFromRedux,
         platformId: 1,
+        toxicityScore: score.toxicity,
+        flagged: flagged,
       };
       if (text) {
         // Adding comments to 'comment' collection in database.
