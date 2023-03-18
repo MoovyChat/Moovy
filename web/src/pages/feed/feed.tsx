@@ -1,3 +1,4 @@
+import { FeedItem, useGetFeedQuery } from '../../generated/graphql';
 import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
@@ -12,32 +13,41 @@ import NotFound from '../notFound/notFound';
 import ViewportList from 'react-viewport-list';
 import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
-import { useGetFeedQuery } from '../../generated/graphql';
+import { useFetchMoreFeed } from '../../hooks/useFetchMoreFeed';
 
 const Feed = () => {
   const user = useAppSelector((state) => state.user);
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
-  const [items, setItems] = useState<FeedObject[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [items, setItems] = useState<FeedItem[]>([]);
+  const [cursor, setCursor] = useState<string>('');
   useEffect(() => {
     document.title = 'Moovy';
   }, []);
   const [feedQuery] = useGetFeedQuery({
     variables: {
-      uid: user.id,
-      page: page,
-      limit: 10,
+      uid: user?.id,
+      first: 10,
+      after: cursor,
     },
     pause: isServer(),
   });
+
+  const { fetchMore } = useFetchMoreFeed(
+    user.id,
+    setItems,
+    feedQuery,
+    cursor,
+    setCursor
+  );
 
   // Scroll handler.
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      setPage((page) => page + 1);
+      console.log('fetching more');
+      fetchMore();
     }
   };
 
@@ -45,9 +55,8 @@ const Feed = () => {
     const { error, data, fetching } = feedQuery;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getFeed! as FeedObject[];
-      setItems(() => _data);
-      console.log(_data);
+      const _data = data.getFeed;
+      setItems(() => _data.nodes as FeedItem[]);
     }
   }, [feedQuery]);
 
@@ -68,15 +77,9 @@ const Feed = () => {
           <ViewportList ref={listRef} viewportRef={parentRef} items={items}>
             {(item, index) =>
               item.type === 'comment' ? (
-                <FeedComment
-                  key={index + item.id}
-                  commentedUserId={item.commentedUserId}
-                  id={item.id}></FeedComment>
+                <FeedComment key={index + item.id} id={item.id}></FeedComment>
               ) : (
-                <FeedReply
-                  key={index + item.id}
-                  id={item.id}
-                  commentedUserId={item.commentedUserId}></FeedReply>
+                <FeedReply key={index + item.id} id={item.id}></FeedReply>
               )
             }
           </ViewportList>

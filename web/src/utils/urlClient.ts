@@ -25,14 +25,15 @@ import {
   paginatedFeedResolver,
   paginatedMoviesResolver,
   paginatedUserNotificationsResolver,
-  repliesResolver,
   userCommentsResolver,
   userRepliesResolver,
 } from './resolvers';
 import { serverUrl, wsUrl } from '../constants';
 
+import { Reply } from '../generated/graphql';
 import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
+import { relayPagination } from '@urql/exchange-graphcache/extras';
 import { retryExchange } from '@urql/exchange-retry';
 
 const wsClient = createWSClient({
@@ -40,7 +41,6 @@ const wsClient = createWSClient({
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
-    PaginatedMovieComments: () => null,
     getPaginatedMovies: () => null,
     PaginatedUserComments: () => null,
     RepliesObject: () => null,
@@ -55,7 +55,6 @@ const cache: Partial<CacheExchangeOpts> = {
     PaginatedTitles: () => null,
     NotificationObject: () => null,
     LinkPreview: () => null,
-    PaginatedMovieStats: () => null,
     SearchMovieObject: () => null,
     SearchTitleObject: () => null,
     SearchPeopleObject: () => null,
@@ -77,16 +76,50 @@ const cache: Partial<CacheExchangeOpts> = {
       clearNotifications: clearNotificationsChanges,
     },
   },
+  optimistic: {
+    insertComment: (args, cache, info) => {
+      const partialComment = args.options as any;
+      const newData: Comment = {
+        __typename: 'Comment',
+        id: `Optimistic-${Math.random()}`,
+        flagged: false,
+        repliesCount: 0,
+        toxicityScore: 0,
+        type: 'comment',
+        createdAt: 'Posting...',
+        updatedAt: 'Posting...',
+        deletedAt: null,
+        ...partialComment,
+      };
+      return newData;
+    },
+    insertReply: (args, cache, info) => {
+      const partialComment = args.options as any;
+      const newData: Reply = {
+        __typename: 'Reply',
+        id: `Optimistic-${Math.random()}`,
+        flagged: false,
+        repliesCount: 0,
+        toxicityScore: 0,
+        type: 'reply',
+        createdAt: 'Posting...',
+        updatedAt: 'Posting...',
+        deletedAt: null,
+        ...partialComment,
+      };
+      return newData;
+    },
+  },
   resolvers: {
     Query: {
+      getCommentReplies: relayPagination(),
+      getRepliesOfReply: relayPagination(),
+      getFeed: relayPagination(),
       getCommentsOfTheMovie: movieCommentsResolver(),
       getCommentsOfTheUser: userCommentsResolver(),
       getRepliesOfTheUser: userRepliesResolver(),
-      getRepliesOfComment: repliesResolver(),
-      getRepliesOfReply: repliesResolver(),
       getPaginatedMovies: paginatedMoviesResolver(),
       getPaginatedShows: paginatedMoviesResolver(),
-      getFeed: paginatedFeedResolver(),
       getUserNotifications: paginatedUserNotificationsResolver(),
       getFavTitles: getPaginatedMovieStatsResolver(),
       getLikedTitles: getPaginatedMovieStatsResolver(),

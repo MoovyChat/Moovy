@@ -90,7 +90,7 @@ export const RightParent = styled.div`
     }
   }
   .titles {
-    top: 35%;
+    top: 0%;
     .content {
       justify-content: space-evenly;
     }
@@ -100,24 +100,6 @@ export const RightParent = styled.div`
     background: ${(p) => p.theme.premium};
     svg {
       color: ${(p) => (p.theme.themeType === 'dark' ? '#ffffff' : '#000000')};
-    }
-  }
-  .links {
-    position: absolute;
-    top: 90%;
-    width: 70%;
-    padding: 10px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    line-height: 15px;
-    color: #71767b;
-    display: flex;
-    gap: 10px;
-    div {
-      cursor: pointer;
-      :hover {
-        text-decoration: underline;
-      }
     }
   }
 `;

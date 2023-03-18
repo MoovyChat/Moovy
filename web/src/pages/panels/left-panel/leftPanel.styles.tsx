@@ -134,3 +134,22 @@ export const LeftParent = styled.div`
     }
   }
 `;
+
+export const StyledLinks = styled.div`
+  padding: 20px;
+  flex-wrap: wrap;
+  width: 80%;
+  font-size: 10px;
+  line-height: 15px;
+  color: #71767b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  div {
+    cursor: pointer;
+    :hover {
+      text-decoration: underline;
+    }
+  }
+`;

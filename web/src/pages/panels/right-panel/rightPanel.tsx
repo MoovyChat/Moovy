@@ -54,9 +54,9 @@ const RightPanel: React.FC<props> = ({ className }) => {
   }, [trendingMoviesQuery]);
   return (
     <RightParent className={className}>
-      <div className='adblock'>
+      {/* <div className='adblock'>
         <Ads />
-      </div>
+      </div> */}
       <div className='trending titles'>
         <div className='heading'>
           <MdLocalFireDepartment color='#fc0404' size={20} />
@@ -108,44 +108,6 @@ const RightPanel: React.FC<props> = ({ className }) => {
           </div>
         </div>
       </div> */}
-      <div className='links'>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/terms-and-conditions', '_blank');
-          }}>
-          Terms of Service
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/privacy', '_blank');
-          }}>
-          Privacy Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/cookie-policy', '_blank');
-          }}>
-          Cookie Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/about-us', '_blank');
-          }}>
-          About us
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/contact', '_blank');
-          }}>
-          Contact us
-        </div>
-        <div>© 2023 MoovyChat, Ltd.</div>
-      </div>
     </RightParent>
   );
 };

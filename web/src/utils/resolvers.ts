@@ -26,14 +26,13 @@ export const movieCommentsResolver = (): Resolver => {
       cache.resolve(entityKey, fieldKeys) as string,
       'comments'
     );
-
     let newComments = [] as string[];
-    let x: any = [];
+
     let _lastPage = 0;
     let _totalCommentCount = 0;
     let _pastLoadedCount = 0;
     let _hasMoreComments = true;
-    let _id = '';
+    let id = '';
     let _movie = '';
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
@@ -49,15 +48,15 @@ export const movieCommentsResolver = (): Resolver => {
       if (hasMore === false) {
         _hasMoreComments = false;
       }
-      _id = cache.resolve(link, 'id') as string;
+      id = cache.resolve(link, 'id') as string;
       _movie = cache.resolve(link, 'movie') as string;
     });
-    info.partial = true;
+    info.partial = isInCache ? true : false;
     let newData = {
       __typename: 'PaginatedMovieComments',
       comments: newComments,
       hasMoreComments: _hasMoreComments,
-      id: _id,
+      id,
       lastPage: _lastPage,
       movie: _movie,
       pastLoadedCount: _pastLoadedCount,
@@ -158,43 +157,6 @@ export const userRepliesResolver = (): Resolver => {
       lastPage: _lastPage,
       pastCount: _pastLoadedCount,
       totalCommentCount: _totalCommentCount,
-    };
-    return newData;
-  };
-};
-
-export const repliesResolver = (): Resolver => {
-  return (_parent, fieldArgs, cache, info) => {
-    const { parentKey: entityKey, fieldName } = info;
-    const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
-    );
-    const size = fieldInfos.length;
-    if (size === 0) {
-      return undefined;
-    }
-    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    let newReplies = [] as string[];
-    let _lastPage = 0;
-    let _repliesCount = 0;
-    fieldInfos.forEach((fieldInfo: any) => {
-      const { fieldKey, arguments: args } = fieldInfo;
-      if (args.cid !== fieldArgs.cid) return;
-      if (args.rid !== fieldArgs.rid) return;
-      const link = cache.resolve(entityKey, fieldKey) as string;
-      const replies = cache.resolve(link, 'replies') as string[];
-      _repliesCount = cache.resolve(link, 'repliesCount') as number;
-      newReplies = _.concat(newReplies, replies);
-      newReplies = _.uniq(newReplies);
-      _lastPage = cache.resolve(link, 'lastPage') as number;
-    });
-    info.partial = true;
-    let newData = {
-      __typename: 'RepliesObject',
-      replies: newReplies,
-      repliesCount: _repliesCount,
-      lastPage: _lastPage,
     };
     return newData;
   };

@@ -1,20 +1,17 @@
-query getCommentsOfTheMovieQ(
-  $limit: Int!
-  $mid: String!
-  $page: Int
-  $time: String
-) {
-  getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
+query GetCommentsOfTheMovie($mid: String!, $page: Int) {
+  getCommentsOfTheMovie(mid: $mid, page: $page) {
+    id
     movie {
       id
       name
+      parentTitleName
     }
-    lastPage
-    totalCommentCount
-    pastLoadedCount
     hasMoreComments
+    totalCommentCount
     comments {
       ...FullComment
     }
+    lastPage
+    pastLoadedCount
   }
 }

@@ -13,16 +13,16 @@ const SearchResults = () => {
     <StyledSearchResults>
       <ChildHeader text={`Search Results (${search})`} className='child' />
       <NavLinks className='options'>
-        <NavLink to='episodes' end className='episodes' defaultChecked>
+        <NavLink to='episodes' end className='episodes nav' defaultChecked>
           <div>Episodes</div>
         </NavLink>
-        <NavLink to='shows' className='shows'>
+        <NavLink to='shows' className='shows nav'>
           <div>Shows</div>
         </NavLink>
-        <NavLink to='people' className='people'>
+        <NavLink to='people' className='people nav'>
           <div>People</div>
         </NavLink>
-        <NavLink to='movies' className='movies'>
+        <NavLink to='movies' className='movies nav'>
           <div>Movies</div>
         </NavLink>
       </NavLinks>

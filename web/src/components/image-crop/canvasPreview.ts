@@ -23,8 +23,8 @@ export async function canvasPreview(
   // true to the images natural size.
   const pixelRatio = window.devicePixelRatio;
 
-  canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
-  canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+  canvas.width = Math.min(Math.floor(crop.width * scaleX * pixelRatio), 4096);
+  canvas.height = Math.min(Math.floor(crop.height * scaleY * pixelRatio), 4096);
 
   ctx.scale(pixelRatio, pixelRatio);
   ctx.imageSmoothingQuality = 'high';

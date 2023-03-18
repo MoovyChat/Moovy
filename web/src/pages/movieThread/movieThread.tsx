@@ -1,6 +1,7 @@
 import {
+  Comment,
   Movie,
-  useGetCommentsOfTheMovieQQuery,
+  useGetCommentsOfTheMovieQuery,
   useGetMovieQuery,
 } from '../../generated/graphql';
 import { MovieThreadParent, StyledHeader } from './movieThread.styled';
@@ -37,9 +38,9 @@ const MovieThread = () => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [lastPage, setLastPage] = useState<number>(1);
   const [scrollValue, setScrollValue] = useState<number>(0);
-  const [getCommentsOfTheMovie] = useGetCommentsOfTheMovieQQuery({
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [{ data, error, fetching }] = useGetCommentsOfTheMovieQuery({
     variables: {
-      limit: limit,
       mid: id!,
       page: page,
     },
@@ -74,15 +75,16 @@ const MovieThread = () => {
 
   // Set Movie Comments
   useMemo(() => {
-    const { data, fetching, error } = getCommentsOfTheMovie;
     if (error) console.log(error);
+
     if (!fetching && data) {
       const _data = data.getCommentsOfTheMovie!;
       const _lastPage = _data.lastPage;
       setLastPage(() => _lastPage!);
       setHasMore(() => _data.hasMoreComments);
+      setComments(() => _data.comments);
     }
-  }, [getCommentsOfTheMovie, page]);
+  }, [data, error, fetching]);
 
   const scrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -90,9 +92,9 @@ const MovieThread = () => {
     setScrollValue(scrollValue);
   };
   let headerTitle = scrollValue > 40 ? `${movieInfo?.name}` : 'Movie';
-  if (getCommentsOfTheMovie.fetching) return <Loading />;
+  if (fetching) return <Loading />;
   if (!movieInfo) return <NotFound />;
-  const { comments } = getCommentsOfTheMovie.data?.getCommentsOfTheMovie!;
+
   return (
     <div>
       {valid ? (
@@ -114,11 +116,9 @@ const MovieThread = () => {
             </div>
             {comments && comments.length !== 0 ? (
               <div className='thread-comments'>
-                {getCommentsOfTheMovie?.data?.getCommentsOfTheMovie!.comments?.map(
-                  (cmt) => (
-                    <CommentCard comment={cmt} key={cmt.id} isMain={true} />
-                  )
-                )}
+                {comments?.map((cmt) => (
+                  <CommentCard comment={cmt} key={cmt.id} isMain={true} />
+                ))}
                 {hasMore && (
                   <div
                     className='show-more'

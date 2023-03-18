@@ -138,13 +138,11 @@ const CardTemplate: React.FC<props> = ({
   useEffect(() => {
     if (isMain) return;
     const { data, error, fetching } = movieDetails;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getMovie as Movie;
       movieRef.current = _data;
       getTitleInfo({ getTitleInfoId: _data.titleId }).then((titleInfo) => {
         const { data, error } = titleInfo;
-        if (error) console.log(error);
         if (data) {
           const _data = data.getTitleInfo as Title;
           titleRef.current = _data;
@@ -156,7 +154,6 @@ const CardTemplate: React.FC<props> = ({
   // Get user info.
   useEffect(() => {
     const { data, fetching, error } = userInfo;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _user = data.getUser as Users;
       userRef.current = _user;
@@ -287,7 +284,11 @@ const CardTemplate: React.FC<props> = ({
                     ? loggedInUser.nickname
                     : userRef.current?.nickname}
                 </div>
-                <div className='time'>{getTimeFrame(comment.createdAt)}</div>
+                <div className='time'>
+                  {comment.createdAt === 'Posting...'
+                    ? 'Posting...'
+                    : getTimeFrame(comment.createdAt)}
+                </div>
               </div>
               {isReply && (
                 <div className='isReply'>

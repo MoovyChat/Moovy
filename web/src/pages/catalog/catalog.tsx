@@ -13,10 +13,10 @@ const Catalog = () => {
     <CatalogContainer>
       <ChildHeader text='Catalog' className='child-header' />
       <NavLinks className='options'>
-        <NavLink to='/catalog/' end className='movies' defaultChecked>
+        <NavLink to='/catalog/' end className='movies nav' defaultChecked>
           <div>Movies</div>
         </NavLink>
-        <NavLink to='/catalog/shows' className='shows'>
+        <NavLink to='/catalog/shows' className='shows nav'>
           <div>Shows</div>
         </NavLink>
       </NavLinks>

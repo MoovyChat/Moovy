@@ -28,16 +28,18 @@ export type Comment = {
   __typename?: 'Comment';
   commentedUserId: Scalars['String'];
   commentedUserName: Scalars['String'];
-  createdAt: Scalars['String'];
+  createdAt?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['String']>;
+  flagged?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   likesCount?: Maybe<Scalars['Int']>;
   message: Scalars['String'];
   movieId: Scalars['String'];
   platformId: Scalars['Int'];
   repliesCount?: Maybe<Scalars['Int']>;
+  toxicityScore?: Maybe<Scalars['Float']>;
   type?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['String'];
+  updatedAt?: Maybe<Scalars['String']>;
 };
 
 export type CommentInput = {
@@ -61,6 +63,16 @@ export type CommentOrReply = {
   __typename?: 'CommentOrReply';
   comment?: Maybe<Comment>;
   reply?: Maybe<Reply>;
+};
+
+export type CommentReport = {
+  __typename?: 'CommentReport';
+  commentId: Scalars['String'];
+  createdAt: Scalars['String'];
+  deletedAt?: Maybe<Scalars['String']>;
+  report: Scalars['Boolean'];
+  updatedAt: Scalars['String'];
+  usersId: Scalars['String'];
 };
 
 export type CommentStats = {
@@ -115,11 +127,37 @@ export type FavoriteObject = {
   id: Scalars['String'];
 };
 
+export type FeedConnection = {
+  __typename?: 'FeedConnection';
+  edges: Array<FeedEdge>;
+  nodes: Array<FeedItem>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type FeedEdge = {
+  __typename?: 'FeedEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<FeedItem>;
+};
+
+export type FeedItem = {
+  __typename?: 'FeedItem';
+  commentedUserId: Scalars['String'];
+  compositeKey: Scalars['String'];
+  createdAt: Scalars['String'];
+  id: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type Follow = {
   __typename?: 'Follow';
+  blocked?: Maybe<Scalars['Boolean']>;
   createdAt: Scalars['String'];
   followingId: Scalars['String'];
   follows?: Maybe<Scalars['Boolean']>;
+  reported?: Maybe<Scalars['Boolean']>;
   updatedAt: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -268,15 +306,6 @@ export type LinkPreview = {
   videoType?: Maybe<Scalars['String']>;
 };
 
-export type MiniCommentFormat = {
-  __typename?: 'MiniCommentFormat';
-  commentedUserId: Scalars['String'];
-  createdAt: Scalars['String'];
-  id: Scalars['String'];
-  type: Scalars['String'];
-  updatedAt: Scalars['String'];
-};
-
 export type Movie = {
   __typename?: 'Movie';
   commentCount: Scalars['Int'];
@@ -297,6 +326,14 @@ export type Movie = {
   updatedAt: Scalars['String'];
   viewsCount: Scalars['Int'];
   year?: Maybe<Scalars['Int']>;
+};
+
+export type MovieCommentObject = {
+  __typename?: 'MovieCommentObject';
+  comments: Array<Comment>;
+  hasMoreComments: Scalars['Boolean'];
+  lastPage: Scalars['Int'];
+  totalCommentCount: Scalars['Int'];
 };
 
 export type MovieInput = {
@@ -340,7 +377,6 @@ export type Mutation = {
   deleteReply?: Maybe<Reply>;
   deleteUser: Scalars['Boolean'];
   fetchNewComments: Array<Comment>;
-  getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
   getTitleInfo?: Maybe<Title>;
   getTopThreeUserNames?: Maybe<Array<NicKNameFormat>>;
   getUserByNickName?: Maybe<Users>;
@@ -359,6 +395,8 @@ export type Mutation = {
   markMessageAsRead: Contact;
   markSelectedMessagesAsRead: Array<Contact>;
   readNotification?: Maybe<NotificationObj>;
+  reportComment?: Maybe<CommentReport>;
+  reportReply?: Maybe<ReplyReport>;
   setCommentLike?: Maybe<CommentsStatsObject>;
   setReplyLike?: Maybe<ReplyStatsObject>;
   toggleFollow?: Maybe<Follow>;
@@ -442,15 +480,6 @@ export type MutationDeleteUserArgs = {
 export type MutationFetchNewCommentsArgs = {
   mid: Scalars['String'];
   time: Scalars['String'];
-};
-
-
-export type MutationGetCommentsOfTheMovieArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  mid: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -544,6 +573,20 @@ export type MutationReadNotificationArgs = {
 };
 
 
+export type MutationReportCommentArgs = {
+  cid: Scalars['String'];
+  report: Scalars['Boolean'];
+  uid: Scalars['String'];
+};
+
+
+export type MutationReportReplyArgs = {
+  report: Scalars['Boolean'];
+  rid: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+
 export type MutationSetCommentLikeArgs = {
   cid: Scalars['String'];
   like: Scalars['Boolean'];
@@ -633,10 +676,17 @@ export type NotificationObject = {
   like?: Maybe<Array<LikeNotifications>>;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+};
+
 export type PaginatedMovieComments = {
   __typename?: 'PaginatedMovieComments';
   comments: Array<Comment>;
   hasMoreComments: Scalars['Boolean'];
+  id: Scalars['String'];
   lastPage: Scalars['Int'];
   movie: Movie;
   pastLoadedCount: Scalars['Int'];
@@ -730,11 +780,12 @@ export type Query = {
   getComment: Comment;
   getCommentLikes: CommentLikesObject;
   getCommentOrReply?: Maybe<CommentOrReply>;
+  getCommentReplies: ReplyConnection;
   getCommentedUser?: Maybe<Users>;
   getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
   getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
   getFavTitles?: Maybe<PaginatedMovieStats>;
-  getFeed?: Maybe<Array<MiniCommentFormat>>;
+  getFeed: FeedConnection;
   getFollowers?: Maybe<GetFollowers>;
   getFollowings?: Maybe<GetFollowings>;
   getFullUserProfile?: Maybe<FullMiniUser>;
@@ -745,6 +796,7 @@ export type Query = {
   getLinkPreview?: Maybe<LinkPreview>;
   getMovie?: Maybe<Movie>;
   getMovieById: Platform;
+  getMovieComments: MovieCommentObject;
   getMovieFavoriteCount?: Maybe<Scalars['Int']>;
   getMovieLikes?: Maybe<LikesObject>;
   getMovieLikesAndCommentsCount?: Maybe<LikesAndComment>;
@@ -755,7 +807,7 @@ export type Query = {
   getPaginatedTitles?: Maybe<PaginatedTitles>;
   getRepliedUser?: Maybe<Users>;
   getRepliesOfComment: RepliesObject;
-  getRepliesOfReply: RepliesObject;
+  getRepliesOfReply: ReplyConnection;
   getRepliesOfTheUser?: Maybe<PaginatedUserReplies>;
   getReply?: Maybe<Reply>;
   getReplyLikes: ReplyLikesObject;
@@ -774,6 +826,7 @@ export type Query = {
   getVisited?: Maybe<Visited>;
   hello: Scalars['String'];
   isFollowingUser?: Maybe<Scalars['Boolean']>;
+  isReported: Scalars['Boolean'];
   me?: Maybe<Users>;
   searchEpisodes?: Maybe<SearchMovieObject>;
   searchMovies?: Maybe<SearchTitleObject>;
@@ -813,14 +866,19 @@ export type QueryGetCommentOrReplyArgs = {
 };
 
 
+export type QueryGetCommentRepliesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  cid: Scalars['String'];
+  first: Scalars['Int'];
+};
+
+
 export type QueryGetCommentedUserArgs = {
   cid: Scalars['String'];
 };
 
 
 export type QueryGetCommentsOfTheMovieArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
   mid: Scalars['String'];
   page?: InputMaybe<Scalars['Int']>;
   time?: InputMaybe<Scalars['String']>;
@@ -844,8 +902,8 @@ export type QueryGetFavTitlesArgs = {
 
 
 export type QueryGetFeedArgs = {
-  limit: Scalars['Float'];
-  page: Scalars['Float'];
+  after: Scalars['String'];
+  first: Scalars['Int'];
   uid: Scalars['String'];
 };
 
@@ -900,6 +958,13 @@ export type QueryGetMovieArgs = {
 
 export type QueryGetMovieByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetMovieCommentsArgs = {
+  id: Scalars['String'];
+  limit: Scalars['Int'];
+  page?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -960,14 +1025,14 @@ export type QueryGetRepliedUserArgs = {
 
 export type QueryGetRepliesOfCommentArgs = {
   cid: Scalars['String'];
+  cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryGetRepliesOfReplyArgs = {
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
   rid: Scalars['String'];
 };
 
@@ -1071,6 +1136,13 @@ export type QueryIsFollowingUserArgs = {
 };
 
 
+export type QueryIsReportedArgs = {
+  id: Scalars['String'];
+  isComment: Scalars['Boolean'];
+  uid: Scalars['String'];
+};
+
+
 export type QuerySearchEpisodesArgs = {
   limit: Scalars['Float'];
   page: Scalars['Float'];
@@ -1100,7 +1172,7 @@ export type QuerySearchTitlesArgs = {
 
 export type RepliesObject = {
   __typename?: 'RepliesObject';
-  lastPage: Scalars['Int'];
+  hasMore: Scalars['Boolean'];
   replies: Array<Reply>;
   repliesCount: Scalars['Int'];
 };
@@ -1111,6 +1183,7 @@ export type Reply = {
   commentedUserName?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   deletedAt?: Maybe<Scalars['String']>;
+  flagged: Scalars['Boolean'];
   id: Scalars['String'];
   likesCount?: Maybe<Scalars['Int']>;
   message: Scalars['String'];
@@ -1120,8 +1193,23 @@ export type Reply = {
   parentReplyId?: Maybe<Scalars['String']>;
   platformId: Scalars['Int'];
   repliesCount?: Maybe<Scalars['Int']>;
+  toxicityScore: Scalars['Float'];
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['String'];
+};
+
+export type ReplyConnection = {
+  __typename?: 'ReplyConnection';
+  edges: Array<ReplyEdge>;
+  nodes: Array<Reply>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type ReplyEdge = {
+  __typename?: 'ReplyEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<Reply>;
 };
 
 export type ReplyInput = {
@@ -1135,6 +1223,16 @@ export type ReplyInput = {
   parentReplyId: Scalars['String'];
   platformId: Scalars['Int'];
   repliesCount: Scalars['Int'];
+};
+
+export type ReplyReport = {
+  __typename?: 'ReplyReport';
+  createdAt: Scalars['String'];
+  deletedAt?: Maybe<Scalars['String']>;
+  replyId: Scalars['String'];
+  report: Scalars['Boolean'];
+  updatedAt: Scalars['String'];
+  usersId: Scalars['String'];
 };
 
 export type ReplyStats = {
@@ -1335,14 +1433,14 @@ export type DeleteCommentMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } | null };
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null } | null };
 
 export type InsertCommentMutationVariables = Exact<{
   options: CommentInput;
 }>;
 
 
-export type InsertCommentMutation = { __typename?: 'Mutation', insertComment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } | null };
+export type InsertCommentMutation = { __typename?: 'Mutation', insertComment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null } | null };
 
 export type SetCommentLikeMutationVariables = Exact<{
   like: Scalars['Boolean'];
@@ -1359,7 +1457,7 @@ export type GetCommentQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentQuery = { __typename?: 'Query', getComment: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } };
+export type GetCommentQuery = { __typename?: 'Query', getComment: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null } };
 
 export type GetCommentLikesQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1376,7 +1474,7 @@ export type GetCommentOrReplyQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentOrReplyQuery = { __typename?: 'Query', getCommentOrReply?: { __typename?: 'CommentOrReply', comment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string } | null, reply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null } | null };
+export type GetCommentOrReplyQuery = { __typename?: 'Query', getCommentOrReply?: { __typename?: 'CommentOrReply', comment?: { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null } | null, reply?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null } | null };
 
 export type GetIsUserLikedCommentQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -1430,7 +1528,7 @@ export type FullTitleFragment = { __typename?: 'Title', advisories?: Array<strin
 
 export type FollowNotificationFragment = { __typename: 'FollowNotifications', id: string, toUserId: string, message: string, fromUser: string, fromUserPhotoUrl: string, isRead: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
-export type FullCommentFragment = { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string };
+export type FullCommentFragment = { __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null };
 
 export type FullMovieFragment = { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null };
 
@@ -1464,15 +1562,13 @@ export type UpdateUserMovieStatsMutationVariables = Exact<{
 
 export type UpdateUserMovieStatsMutation = { __typename?: 'Mutation', updateUserMovieStats?: { __typename?: 'LikeAndFav', like?: boolean | null, favorite?: boolean | null } | null };
 
-export type GetCommentsOfTheMovieQQueryVariables = Exact<{
-  limit: Scalars['Int'];
+export type GetCommentsOfTheMovieQueryVariables = Exact<{
   mid: Scalars['String'];
   page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetCommentsOfTheMovieQQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', lastPage: number, totalCommentCount: number, pastLoadedCount: number, hasMoreComments: boolean, movie: { __typename?: 'Movie', id: string, name: string }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetCommentsOfTheMovieQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', id: string, hasMoreComments: boolean, totalCommentCount: number, lastPage: number, pastLoadedCount: number, movie: { __typename?: 'Movie', id: string, name: string, parentTitleName?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null }> } | null };
 
 export type GetFavTitlesQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1646,23 +1742,23 @@ export type GetRepliedUserQueryVariables = Exact<{
 
 export type GetRepliedUserQuery = { __typename?: 'Query', getRepliedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
-export type GetRepliesOfCommentQueryVariables = Exact<{
-  limit: Scalars['Int'];
+export type GetCommentRepliesQueryVariables = Exact<{
   cid: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
+  first: Scalars['Int'];
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetRepliesOfCommentQuery = { __typename?: 'Query', getRepliesOfComment: { __typename: 'RepliesObject', repliesCount: number, lastPage: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
+export type GetCommentRepliesQuery = { __typename?: 'Query', getCommentReplies: { __typename?: 'ReplyConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }>, edges: Array<{ __typename?: 'ReplyEdge', node?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null }> } };
 
 export type GetRepliesOfReplyQueryVariables = Exact<{
-  limit: Scalars['Int'];
+  first: Scalars['Int'];
   rid: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetRepliesOfReplyQuery = { __typename?: 'Query', getRepliesOfReply: { __typename?: 'RepliesObject', lastPage: number, repliesCount: number, replies: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } };
+export type GetRepliesOfReplyQuery = { __typename?: 'Query', getRepliesOfReply: { __typename?: 'ReplyConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }>, edges: Array<{ __typename?: 'ReplyEdge', cursor?: string | null, node?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null }> } };
 
 export type GetReplyQueryVariables = Exact<{
   rid: Scalars['String'];
@@ -1804,13 +1900,13 @@ export type GetCommentedUserQueryVariables = Exact<{
 export type GetCommentedUserQuery = { __typename?: 'Query', getCommentedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetFeedQueryVariables = Exact<{
-  page: Scalars['Float'];
-  limit: Scalars['Float'];
+  after: Scalars['String'];
+  first: Scalars['Int'];
   uid: Scalars['String'];
 }>;
 
 
-export type GetFeedQuery = { __typename?: 'Query', getFeed?: Array<{ __typename?: 'MiniCommentFormat', id: string, type: string, commentedUserId: string, createdAt: string, updatedAt: string }> | null };
+export type GetFeedQuery = { __typename?: 'Query', getFeed: { __typename?: 'FeedConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename?: 'FeedItem', id: string, type: string, commentedUserId: string, compositeKey: string, createdAt: string, updatedAt: string }>, edges: Array<{ __typename?: 'FeedEdge', cursor?: string | null, node?: { __typename?: 'FeedItem', id: string } | null }> } };
 
 export type GetFollowersQueryVariables = Exact<{
   limit: Scalars['Float'];
@@ -1887,7 +1983,7 @@ export type GetCommentsOfTheUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser?: { __typename?: 'PaginatedUserComments', totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser?: { __typename?: 'PaginatedUserComments', totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null }> } | null };
 
 export type GetRepliesOfTheUserQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -2293,26 +2389,28 @@ export const UpdateUserMovieStatsDocument = gql`
 export function useUpdateUserMovieStatsMutation() {
   return Urql.useMutation<UpdateUserMovieStatsMutation, UpdateUserMovieStatsMutationVariables>(UpdateUserMovieStatsDocument);
 };
-export const GetCommentsOfTheMovieQDocument = gql`
-    query getCommentsOfTheMovieQ($limit: Int!, $mid: String!, $page: Int, $time: String) {
-  getCommentsOfTheMovie(limit: $limit, mid: $mid, page: $page, time: $time) {
+export const GetCommentsOfTheMovieDocument = gql`
+    query GetCommentsOfTheMovie($mid: String!, $page: Int) {
+  getCommentsOfTheMovie(mid: $mid, page: $page) {
+    id
     movie {
       id
       name
+      parentTitleName
     }
-    lastPage
-    totalCommentCount
-    pastLoadedCount
     hasMoreComments
+    totalCommentCount
     comments {
       ...FullComment
     }
+    lastPage
+    pastLoadedCount
   }
 }
     ${FullCommentFragmentDoc}`;
 
-export function useGetCommentsOfTheMovieQQuery(options: Omit<Urql.UseQueryArgs<GetCommentsOfTheMovieQQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetCommentsOfTheMovieQQuery, GetCommentsOfTheMovieQQueryVariables>({ query: GetCommentsOfTheMovieQDocument, ...options });
+export function useGetCommentsOfTheMovieQuery(options: Omit<Urql.UseQueryArgs<GetCommentsOfTheMovieQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetCommentsOfTheMovieQuery, GetCommentsOfTheMovieQueryVariables>({ query: GetCommentsOfTheMovieDocument, ...options });
 };
 export const GetFavTitlesDocument = gql`
     query GetFavTitles($limit: Int!, $uid: String!, $page: Int) {
@@ -2673,30 +2771,46 @@ export const GetRepliedUserDocument = gql`
 export function useGetRepliedUserQuery(options: Omit<Urql.UseQueryArgs<GetRepliedUserQueryVariables>, 'query'>) {
   return Urql.useQuery<GetRepliedUserQuery, GetRepliedUserQueryVariables>({ query: GetRepliedUserDocument, ...options });
 };
-export const GetRepliesOfCommentDocument = gql`
-    query getRepliesOfComment($limit: Int!, $cid: String!, $page: Int) {
-  getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
-    __typename
-    repliesCount
-    lastPage
-    replies {
+export const GetCommentRepliesDocument = gql`
+    query GetCommentReplies($cid: String!, $first: Int!, $after: String) {
+  getCommentReplies(cid: $cid, first: $first, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
       ...FullReply
+    }
+    edges {
+      node {
+        ...FullReply
+      }
     }
   }
 }
     ${FullReplyFragmentDoc}`;
 
-export function useGetRepliesOfCommentQuery(options: Omit<Urql.UseQueryArgs<GetRepliesOfCommentQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetRepliesOfCommentQuery, GetRepliesOfCommentQueryVariables>({ query: GetRepliesOfCommentDocument, ...options });
+export function useGetCommentRepliesQuery(options: Omit<Urql.UseQueryArgs<GetCommentRepliesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetCommentRepliesQuery, GetCommentRepliesQueryVariables>({ query: GetCommentRepliesDocument, ...options });
 };
 export const GetRepliesOfReplyDocument = gql`
-    query GetRepliesOfReply($limit: Int!, $rid: String!, $page: Int) {
-  getRepliesOfReply(limit: $limit, rid: $rid, page: $page) {
-    lastPage
-    replies {
+    query GetRepliesOfReply($first: Int!, $rid: String!, $after: String) {
+  getRepliesOfReply(first: $first, rid: $rid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
       ...FullReply
     }
-    repliesCount
+    edges {
+      cursor
+      node {
+        ...FullReply
+      }
+    }
   }
 }
     ${FullReplyFragmentDoc}`;
@@ -2977,13 +3091,27 @@ export function useGetCommentedUserQuery(options: Omit<Urql.UseQueryArgs<GetComm
   return Urql.useQuery<GetCommentedUserQuery, GetCommentedUserQueryVariables>({ query: GetCommentedUserDocument, ...options });
 };
 export const GetFeedDocument = gql`
-    query GetFeed($page: Float!, $limit: Float!, $uid: String!) {
-  getFeed(page: $page, limit: $limit, uid: $uid) {
-    id
-    type
-    commentedUserId
-    createdAt
-    updatedAt
+    query GetFeed($after: String!, $first: Int!, $uid: String!) {
+  getFeed(after: $after, first: $first, uid: $uid) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      id
+      type
+      commentedUserId
+      compositeKey
+      createdAt
+      updatedAt
+    }
+    edges {
+      node {
+        id
+      }
+      cursor
+    }
   }
 }
     `;

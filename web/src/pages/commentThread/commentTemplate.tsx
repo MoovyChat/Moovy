@@ -1,5 +1,18 @@
 import { CommentThreadParent, StyledButton } from './commentThread.styles';
 import {
+  GetCommentRepliesDocument,
+  Movie,
+  PageInfo,
+  Title,
+  Users,
+  useGetCommentOrReplyQuery,
+  useGetCommentQuery,
+  useGetMovieQuery,
+  useGetTitleInfoMutation,
+  useIsFollowingUserQuery,
+  useToggleFollowMutation,
+} from '../../generated/graphql';
+import {
   MdBlock,
   MdDelete,
   MdFavorite,
@@ -11,17 +24,6 @@ import {
   MdReport,
 } from 'react-icons/md';
 import {
-  Movie,
-  Title,
-  Users,
-  useGetCommentOrReplyQuery,
-  useGetCommentQuery,
-  useGetMovieQuery,
-  useGetTitleInfoMutation,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
-} from '../../generated/graphql';
-import {
   ParsedText,
   getDateFormat,
   getFormattedNumber,
@@ -30,6 +32,7 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   UIEventHandler,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -56,6 +59,8 @@ import ReplyCard from '../../components/comment-card/replyCard';
 import { SpoilerTag } from '../../components/comment-card/commentCard.styles';
 import { batch } from 'react-redux';
 import { urqlClient } from '../../utils/urlClient';
+import { useClient } from 'urql';
+import { useFetchMoreRepliesOfComment } from '../../hooks/useFetchMoreCommentReplies';
 import useFormatMessage from '../../hooks/useFormatMessage';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
@@ -65,10 +70,8 @@ type props = {
   comment: any;
   replies: any;
   userRef: MutableRefObject<Users | null>;
-  page?: number | 1;
-  lastPage?: number | 1;
-  setPage?: any;
   like: boolean;
+  fetchMore: any;
   likesCount: number;
   likedUsers?: Users[];
   updateLike: MouseEventHandler<HTMLSpanElement>;
@@ -79,16 +82,13 @@ const CommentTemplate: React.FC<props> = ({
   comment,
   replies,
   userRef,
-  page,
-  setPage,
-  lastPage,
   like,
+  fetchMore,
   likesCount,
   likedUsers,
   updateLike,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const popWindowOpen = useAppSelector((state) => state.popup.isPopupOpened);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [movieDetails] = useGetMovieQuery({
@@ -109,15 +109,6 @@ const CommentTemplate: React.FC<props> = ({
   const [showMore, setShowMore] = useState<boolean>(false);
   const [cardHeight, setCardHeight] = useState<string>('');
   const [openOptionWindow, setOpenOptionWindow] = useState<boolean>(false);
-  const [deleteAction, setDeleteAction] = useState<boolean>(false);
-
-  const [amIFollowingThisUser] = useIsFollowingUserQuery({
-    variables: {
-      uid: loggedInUser.id,
-      fid: comment.commentedUserId,
-    },
-    pause: isServer(),
-  });
 
   useEffect(() => {
     ref && ref.current?.scrollIntoView();
@@ -145,9 +136,7 @@ const CommentTemplate: React.FC<props> = ({
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      if (page !== lastPage) {
-        setPage(() => page! + 1);
-      }
+      fetchMore();
     }
   };
 
@@ -183,7 +172,7 @@ const CommentTemplate: React.FC<props> = ({
 
   const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    setDeleteAction(() => true);
+
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
       dispatch(sliceSetPopupData(comment));
@@ -431,7 +420,7 @@ const CommentTemplate: React.FC<props> = ({
                 replies?.map((reply: Reply) => (
                   <ReplyCard
                     comment={reply}
-                    key={`reply${reply.id!}`}
+                    key={`reply${reply?.id!}`}
                     isMain={true}
                   />
                 ))

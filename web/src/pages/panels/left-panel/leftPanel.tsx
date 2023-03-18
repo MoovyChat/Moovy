@@ -1,3 +1,4 @@
+import { LeftParent, StyledLinks } from './leftPanel.styles';
 import {
   MdDynamicFeed,
   MdFavorite,
@@ -16,7 +17,6 @@ import {
   sliceSetSelectedElement,
 } from '../../../redux/slices/popupSlice';
 
-import { LeftParent } from './leftPanel.styles';
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
 import { Users } from '../../../generated/graphql';
@@ -150,6 +150,45 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
+
+      <StyledLinks>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/terms-and-conditions', '_blank');
+          }}>
+          Terms of Service
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/privacy', '_blank');
+          }}>
+          Privacy Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/cookie-policy', '_blank');
+          }}>
+          Cookie Policy
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/about-us', '_blank');
+          }}>
+          About us
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open('/contact', '_blank');
+          }}>
+          Contact us
+        </div>
+        <div>© 2023 MoovyChat.</div>
+      </StyledLinks>
     </LeftParent>
   );
 };

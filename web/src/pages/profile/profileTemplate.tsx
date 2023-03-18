@@ -120,13 +120,13 @@ const ProfileTemplate: React.FC<props> = ({
       <div className='sub-division'>
         {isDifferentUser && (
           <NavLinks>
-            <NavLink to='' end defaultChecked>
+            <NavLink to='' end defaultChecked className='nav'>
               <div>Basic</div>
             </NavLink>
-            <NavLink to='comments'>
+            <NavLink to='comments' className='nav'>
               <div>Comments</div>
             </NavLink>
-            <NavLink to='replies'>
+            <NavLink to='replies' className='nav'>
               <div>Replies</div>
             </NavLink>
           </NavLinks>

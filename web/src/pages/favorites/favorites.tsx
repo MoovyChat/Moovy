@@ -10,13 +10,13 @@ const Favorites = () => {
     <FavoriteStyles>
       <ChildHeader text='Favorites' className='feed-header' />
       <NavLinks>
-        <NavLink to={`${id}/favorites`} end defaultChecked>
+        <NavLink to={`${id}/favorites`} end defaultChecked className='nav'>
           <div>Favorite Titles</div>
         </NavLink>
-        <NavLink to={`${id}/liked`}>
+        <NavLink to={`${id}/liked`} className='nav'>
           <div>Liked Titles</div>
         </NavLink>
-        <NavLink to={`${id}/history`}>
+        <NavLink to={`${id}/history`} className='nav'>
           <div>History</div>
         </NavLink>
       </NavLinks>

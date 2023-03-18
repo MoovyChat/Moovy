@@ -1,10 +1,17 @@
-query getRepliesOfComment($limit: Int!, $cid: String!, $page: Int) {
-  getRepliesOfComment(limit: $limit, cid: $cid, page: $page) {
-    __typename
-    repliesCount
-    lastPage
-    replies {
+query GetCommentReplies($cid: String!, $first: Int!, $after: String) {
+  getCommentReplies(cid: $cid, first: $first, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
       ...FullReply
+    }
+    edges {
+      node {
+        ...FullReply
+      }
     }
   }
 }
