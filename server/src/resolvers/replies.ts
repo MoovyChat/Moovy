@@ -17,7 +17,8 @@ import { Users } from '../entities/Users';
 import { REPLY_LIKES_SUB } from '../constants';
 import { Comment } from '../entities/Comment';
 import { IsUserLikedObject } from './comments';
-import { PageInfo, ReplyConnection } from '../pagination';
+import { PageInfo } from '../pagination';
+import { ReplyConnection } from '../connections';
 
 @ObjectType()
 class replyLikesObject {
@@ -135,8 +136,8 @@ export class ReplyResolver {
 
   @Query(() => ReplyConnection)
   async getCommentReplies(
-    @Arg('first', () => Int) first: number,
     @Arg('cid', () => String) cid: string,
+    @Arg('first', () => Int) first: number,
     @Arg('after', () => String, { nullable: true }) after: string
   ): Promise<ReplyConnection> {
     const query = conn

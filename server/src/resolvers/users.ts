@@ -19,8 +19,13 @@ import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
 import { COOKIE_NAME } from '../constants';
 import { Follow } from '../entities/Follow';
-import { FeedItem } from 'src/objectTypes';
-import { FeedConnection, FeedEdge, PageInfo } from '../pagination';
+import { FeedItem } from '../objectTypes';
+import { FeedEdge, PageInfo } from '../pagination';
+import {
+  FeedConnection,
+  ReplyConnection,
+  UserCommentsConnection,
+} from '../connections';
 
 @InputType()
 class UserInput {
@@ -409,19 +414,15 @@ LIMIT ${first};
     return new Promise(() => {});
   }
 
-  @Query(() => PaginatedUserComments, { nullable: true })
+  @Query(() => UserCommentsConnection)
   async getCommentsOfTheUser(
     @Arg('uid') uid: string,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
-    ASC: boolean
-  ): Promise<PaginatedUserComments | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<UserCommentsConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
-    if (!user) throw new Error('User not found');
     const query = conn
       .getRepository(Comment)
       .createQueryBuilder('c')
@@ -430,44 +431,52 @@ LIMIT ${first};
         'user',
         'user.id = c.commentedUserId'
       )
-      .where('c.commentedUserId = :uid', { uid: user.id });
-    let totalCommentCount = await query.getCount();
-    if (time && time !== '') {
-      query.andWhere('c.createdAt < :time', {
-        time: new Date(parseInt(time)),
-      });
+      .where('c.commentedUserId = :uid', { uid: user?.id });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('c.updatedAt < :cursor', { cursor: new Date(after) });
     }
-    const pastCount = await query.getCount();
+
+    // Get `first` number of replies, plus 1 to check for next page
     const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('c.createdAt', ASC ? 'ASC' : 'DESC')
+      .orderBy('c.updatedAt', 'DESC')
+      .take(first + 1)
       .getMany();
+
+    const nodes = comments.slice(0, first);
+    const hasNextPage = comments.length > first;
+    const endCursor =
+      comments.length === 0
+        ? String(totalCount)
+        : String(comments[comments.length - 1].updatedAt);
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.updatedAt),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      user,
-      comments,
-      totalCommentCount,
-      pastCount,
-      hasMoreComments: comments.length === totalCommentCount + 1,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 
-  @Query(() => PaginatedUserReplies, { nullable: true })
+  @Query(() => ReplyConnection)
   async getRepliesOfTheUser(
     @Arg('uid') uid: string,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
-    ASC: boolean
-  ): Promise<PaginatedUserReplies | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<ReplyConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
-    console.log(user);
-    if (!user) throw new Error('User not found');
     const query = conn
       .getRepository(Reply)
       .createQueryBuilder('r')
@@ -476,27 +485,40 @@ LIMIT ${first};
         'user',
         'user.id = r.commentedUserId'
       )
-      .where('r.commentedUserId = :uid', { uid: user.id });
-    let totalCommentCount = await query.getCount();
-    if (time && time !== '') {
-      query.andWhere('r.createdAt < :time', {
-        time: new Date(parseInt(time)),
-      });
+      .where('r.commentedUserId = :uid', { uid: user?.id });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('r.updatedAt < :cursor', { cursor: new Date(after) });
     }
-    const pastCount = await query.getCount();
-    const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('r.createdAt', ASC ? 'ASC' : 'DESC')
+
+    // Get `first` number of replies, plus 1 to check for next page
+    const replies = await query
+      .orderBy('r.updatedAt', 'DESC')
+      .take(first + 1)
       .getMany();
+
+    const nodes = replies.slice(0, first);
+    const hasNextPage = replies.length > first;
+    const endCursor =
+      replies.length === 0
+        ? String(totalCount)
+        : String(replies[replies.length - 1].updatedAt);
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.updatedAt),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      user,
-      comments,
-      totalCommentCount,
-      pastCount,
-      hasMoreComments: comments.length === totalCommentCount + 1,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 
