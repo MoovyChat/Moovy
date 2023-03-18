@@ -42,6 +42,12 @@ export type Comment = {
   updatedAt?: Maybe<Scalars['String']>;
 };
 
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<Comment>;
+};
+
 export type CommentInput = {
   commentedUserId: Scalars['String'];
   commentedUserName: Scalars['String'];
@@ -711,35 +717,6 @@ export type PaginatedMovies = {
   page?: Maybe<Scalars['Int']>;
 };
 
-export type PaginatedTitles = {
-  __typename?: 'PaginatedTitles';
-  hasMoreTitles: Scalars['Boolean'];
-  lastPage: Scalars['Int'];
-  page: Scalars['Int'];
-  titles: Array<Title>;
-  totalTitleCount: Scalars['Int'];
-};
-
-export type PaginatedUserComments = {
-  __typename?: 'PaginatedUserComments';
-  comments: Array<Comment>;
-  hasMoreComments: Scalars['Boolean'];
-  lastPage: Scalars['Int'];
-  pastCount?: Maybe<Scalars['Int']>;
-  totalCommentCount?: Maybe<Scalars['Int']>;
-  user: Users;
-};
-
-export type PaginatedUserReplies = {
-  __typename?: 'PaginatedUserReplies';
-  comments: Array<Reply>;
-  hasMoreComments: Scalars['Boolean'];
-  lastPage: Scalars['Int'];
-  pastCount?: Maybe<Scalars['Int']>;
-  totalCommentCount?: Maybe<Scalars['Int']>;
-  user: Users;
-};
-
 export type Platform = {
   __typename?: 'Platform';
   createdAt: Scalars['String'];
@@ -783,7 +760,7 @@ export type Query = {
   getCommentReplies: ReplyConnection;
   getCommentedUser?: Maybe<Users>;
   getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
-  getCommentsOfTheUser?: Maybe<PaginatedUserComments>;
+  getCommentsOfTheUser: UserCommentsConnection;
   getFavTitles?: Maybe<PaginatedMovieStats>;
   getFeed: FeedConnection;
   getFollowers?: Maybe<GetFollowers>;
@@ -802,13 +779,11 @@ export type Query = {
   getMovieLikesAndCommentsCount?: Maybe<LikesAndComment>;
   getMoviesByTitleId?: Maybe<PaginatedMovies>;
   getOnlyUserMovieStats?: Maybe<MovieStats>;
-  getPaginatedMovies?: Maybe<PaginatedTitles>;
-  getPaginatedShows?: Maybe<PaginatedTitles>;
-  getPaginatedTitles?: Maybe<PaginatedTitles>;
+  getPaginatedTitles?: Maybe<TitleConnection>;
   getRepliedUser?: Maybe<Users>;
   getRepliesOfComment: RepliesObject;
   getRepliesOfReply: ReplyConnection;
-  getRepliesOfTheUser?: Maybe<PaginatedUserReplies>;
+  getRepliesOfTheUser: ReplyConnection;
   getReply?: Maybe<Reply>;
   getReplyLikes: ReplyLikesObject;
   getSearchResults?: Maybe<SearchObject>;
@@ -886,10 +861,8 @@ export type QueryGetCommentsOfTheMovieArgs = {
 
 
 export type QueryGetCommentsOfTheUserArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
   uid: Scalars['String'];
 };
 
@@ -996,25 +969,10 @@ export type QueryGetOnlyUserMovieStatsArgs = {
 };
 
 
-export type QueryGetPaginatedMoviesArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryGetPaginatedShowsArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-};
-
-
 export type QueryGetPaginatedTitlesArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  type?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
+  type: Scalars['String'];
 };
 
 
@@ -1038,10 +996,8 @@ export type QueryGetRepliesOfReplyArgs = {
 
 
 export type QueryGetRepliesOfTheUserArgs = {
-  ASC?: InputMaybe<Scalars['Boolean']>;
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
   uid: Scalars['String'];
 };
 
@@ -1320,6 +1276,20 @@ export type Title = {
   year?: Maybe<Scalars['Int']>;
 };
 
+export type TitleConnection = {
+  __typename?: 'TitleConnection';
+  edges: Array<TitleEdge>;
+  nodes: Array<Title>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type TitleEdge = {
+  __typename?: 'TitleEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<Title>;
+};
+
 export type TitleOptions = {
   advisories: Array<Scalars['String']>;
   artwork: Scalars['String'];
@@ -1339,6 +1309,14 @@ export type TrendingObject = {
   id: Scalars['String'];
   title: Scalars['String'];
   viewsCount: Scalars['Int'];
+};
+
+export type UserCommentsConnection = {
+  __typename?: 'UserCommentsConnection';
+  edges: Array<CommentEdge>;
+  nodes: Array<Comment>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type UserFollowStats = {
@@ -1565,10 +1543,11 @@ export type UpdateUserMovieStatsMutation = { __typename?: 'Mutation', updateUser
 export type GetCommentsOfTheMovieQueryVariables = Exact<{
   mid: Scalars['String'];
   page?: InputMaybe<Scalars['Int']>;
+  time?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetCommentsOfTheMovieQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', id: string, hasMoreComments: boolean, totalCommentCount: number, lastPage: number, pastLoadedCount: number, movie: { __typename?: 'Movie', id: string, name: string, parentTitleName?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null }> } | null };
+export type GetCommentsOfTheMovieQuery = { __typename?: 'Query', getCommentsOfTheMovie?: { __typename?: 'PaginatedMovieComments', id: string, hasMoreComments: boolean, totalCommentCount: number, lastPage: number, pastLoadedCount: number, movie: { __typename?: 'Movie', id: string, name: string, parentTitleName?: string | null }, comments: Array<{ __typename?: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, movieId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, toxicityScore?: number | null, flagged?: boolean | null, type?: string | null, createdAt?: string | null, updatedAt?: string | null, deletedAt?: string | null }> } | null };
 
 export type GetFavTitlesQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1604,33 +1583,14 @@ export type GetMoviesByTitleIdQueryVariables = Exact<{
 
 export type GetMoviesByTitleIdQuery = { __typename?: 'Query', getMoviesByTitleId?: { __typename?: 'PaginatedMovies', hasMoreTitles?: boolean | null, id: string, lastPage?: number | null, page?: number | null, movieCount?: number | null, movies?: Array<{ __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null }> | null } | null };
 
-export type GetPaginatedMoviesQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  asc?: InputMaybe<Scalars['Boolean']>;
-}>;
-
-
-export type GetPaginatedMoviesQuery = { __typename?: 'Query', getPaginatedMovies?: { __typename?: 'PaginatedTitles', hasMoreTitles: boolean, page: number, lastPage: number, totalTitleCount: number, titles: Array<{ __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, deletedAt?: string | null, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, updatedAt: string, year?: number | null }> } | null };
-
-export type GetPaginatedShowsQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  asc?: InputMaybe<Scalars['Boolean']>;
-}>;
-
-
-export type GetPaginatedShowsQuery = { __typename?: 'Query', getPaginatedShows?: { __typename?: 'PaginatedTitles', hasMoreTitles: boolean, page: number, lastPage: number, totalTitleCount: number, titles: Array<{ __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, deletedAt?: string | null, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, updatedAt: string, year?: number | null }> } | null };
-
 export type GetPaginatedTitlesQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
-  asc?: InputMaybe<Scalars['Boolean']>;
-  type?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
+  type: Scalars['String'];
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetPaginatedTitlesQuery = { __typename?: 'Query', getPaginatedTitles?: { __typename?: 'PaginatedTitles', hasMoreTitles: boolean, page: number, lastPage: number, totalTitleCount: number, titles: Array<{ __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, deletedAt?: string | null, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, updatedAt: string, year?: number | null }> } | null };
+export type GetPaginatedTitlesQuery = { __typename?: 'Query', getPaginatedTitles?: { __typename?: 'TitleConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename?: 'Title', id: string, artwork?: string | null, boxart?: string | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, runtime?: number | null, year?: number | null, rating?: string | null, advisories?: Array<string> | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, edges: Array<{ __typename?: 'TitleEdge', cursor?: string | null, node?: { __typename?: 'Title', id: string, artwork?: string | null, boxart?: string | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, runtime?: number | null, year?: number | null, rating?: string | null, advisories?: Array<string> | null, createdAt: string, updatedAt: string, deletedAt?: string | null } | null }> } | null };
 
 export type GetTitleQueryVariables = Exact<{
   getTitleId: Scalars['String'];
@@ -1975,26 +1935,22 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetCommentsOfTheUserQueryVariables = Exact<{
-  limit: Scalars['Int'];
+  first: Scalars['Int'];
   uid: Scalars['String'];
-  asc?: InputMaybe<Scalars['Boolean']>;
-  page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser?: { __typename?: 'PaginatedUserComments', totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, likesCount?: number | null, repliesCount?: number | null, movieId: string, platformId: number, createdAt?: string | null, updatedAt?: string | null }> } | null };
+export type GetCommentsOfTheUserQuery = { __typename?: 'Query', getCommentsOfTheUser: { __typename?: 'UserCommentsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename?: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, movieId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, toxicityScore?: number | null, flagged?: boolean | null, type?: string | null, createdAt?: string | null, updatedAt?: string | null, deletedAt?: string | null }>, edges: Array<{ __typename?: 'CommentEdge', cursor?: string | null, node?: { __typename?: 'Comment', id: string, commentedUserId: string, commentedUserName: string, message: string, movieId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, toxicityScore?: number | null, flagged?: boolean | null, type?: string | null, createdAt?: string | null, updatedAt?: string | null, deletedAt?: string | null } | null }> } };
 
 export type GetRepliesOfTheUserQueryVariables = Exact<{
-  limit: Scalars['Int'];
+  first: Scalars['Int'];
   uid: Scalars['String'];
-  asc?: InputMaybe<Scalars['Boolean']>;
-  page?: InputMaybe<Scalars['Int']>;
-  time?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetRepliesOfTheUserQuery = { __typename?: 'Query', getRepliesOfTheUser?: { __typename?: 'PaginatedUserReplies', totalCommentCount?: number | null, pastCount?: number | null, hasMoreComments: boolean, lastPage: number, user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, comments: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }> } | null };
+export type GetRepliesOfTheUserQuery = { __typename?: 'Query', getRepliesOfTheUser: { __typename?: 'ReplyConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string }>, edges: Array<{ __typename?: 'ReplyEdge', cursor?: string | null, node?: { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string } | null }> } };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2390,8 +2346,8 @@ export function useUpdateUserMovieStatsMutation() {
   return Urql.useMutation<UpdateUserMovieStatsMutation, UpdateUserMovieStatsMutationVariables>(UpdateUserMovieStatsDocument);
 };
 export const GetCommentsOfTheMovieDocument = gql`
-    query GetCommentsOfTheMovie($mid: String!, $page: Int) {
-  getCommentsOfTheMovie(mid: $mid, page: $page) {
+    query GetCommentsOfTheMovie($mid: String!, $page: Int, $time: String) {
+  getCommentsOfTheMovie(mid: $mid, page: $page, time: $time) {
     id
     movie {
       id
@@ -2401,13 +2357,26 @@ export const GetCommentsOfTheMovieDocument = gql`
     hasMoreComments
     totalCommentCount
     comments {
-      ...FullComment
+      id
+      commentedUserId
+      commentedUserName
+      message
+      movieId
+      likesCount
+      repliesCount
+      platformId
+      toxicityScore
+      flagged
+      type
+      createdAt
+      updatedAt
+      deletedAt
     }
     lastPage
     pastLoadedCount
   }
 }
-    ${FullCommentFragmentDoc}`;
+    `;
 
 export function useGetCommentsOfTheMovieQuery(options: Omit<Urql.UseQueryArgs<GetCommentsOfTheMovieQueryVariables>, 'query'>) {
   return Urql.useQuery<GetCommentsOfTheMovieQuery, GetCommentsOfTheMovieQueryVariables>({ query: GetCommentsOfTheMovieDocument, ...options });
@@ -2485,53 +2454,52 @@ export const GetMoviesByTitleIdDocument = gql`
 export function useGetMoviesByTitleIdQuery(options: Omit<Urql.UseQueryArgs<GetMoviesByTitleIdQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMoviesByTitleIdQuery, GetMoviesByTitleIdQueryVariables>({ query: GetMoviesByTitleIdDocument, ...options });
 };
-export const GetPaginatedMoviesDocument = gql`
-    query getPaginatedMovies($limit: Int!, $page: Int, $asc: Boolean) {
-  getPaginatedMovies(limit: $limit, page: $page, ASC: $asc) {
-    hasMoreTitles
-    page
-    lastPage
-    totalTitleCount
-    titles {
-      ...FullTitle
-    }
-  }
-}
-    ${FullTitleFragmentDoc}`;
-
-export function useGetPaginatedMoviesQuery(options: Omit<Urql.UseQueryArgs<GetPaginatedMoviesQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetPaginatedMoviesQuery, GetPaginatedMoviesQueryVariables>({ query: GetPaginatedMoviesDocument, ...options });
-};
-export const GetPaginatedShowsDocument = gql`
-    query getPaginatedShows($limit: Int!, $page: Int, $asc: Boolean) {
-  getPaginatedShows(limit: $limit, page: $page, ASC: $asc) {
-    hasMoreTitles
-    page
-    lastPage
-    totalTitleCount
-    titles {
-      ...FullTitle
-    }
-  }
-}
-    ${FullTitleFragmentDoc}`;
-
-export function useGetPaginatedShowsQuery(options: Omit<Urql.UseQueryArgs<GetPaginatedShowsQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetPaginatedShowsQuery, GetPaginatedShowsQueryVariables>({ query: GetPaginatedShowsDocument, ...options });
-};
 export const GetPaginatedTitlesDocument = gql`
-    query getPaginatedTitles($limit: Int!, $page: Int, $asc: Boolean, $type: String) {
-  getPaginatedTitles(limit: $limit, page: $page, ASC: $asc, type: $type) {
-    hasMoreTitles
-    page
-    lastPage
-    totalTitleCount
-    titles {
-      ...FullTitle
+    query GetPaginatedTitles($first: Int!, $type: String!, $after: String) {
+  getPaginatedTitles(first: $first, type: $type, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      id
+      artwork
+      boxart
+      storyart
+      synopsis
+      title
+      type
+      runtime
+      year
+      rating
+      advisories
+      createdAt
+      updatedAt
+      deletedAt
+    }
+    edges {
+      node {
+        id
+        artwork
+        boxart
+        storyart
+        synopsis
+        title
+        type
+        runtime
+        year
+        rating
+        advisories
+        createdAt
+        updatedAt
+        deletedAt
+      }
+      cursor
     }
   }
 }
-    ${FullTitleFragmentDoc}`;
+    `;
 
 export function useGetPaginatedTitlesQuery(options: Omit<Urql.UseQueryArgs<GetPaginatedTitlesQueryVariables>, 'query'>) {
   return Urql.useQuery<GetPaginatedTitlesQuery, GetPaginatedTitlesQueryVariables>({ query: GetPaginatedTitlesDocument, ...options });
@@ -3330,55 +3298,75 @@ export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, '
   return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
 };
 export const GetCommentsOfTheUserDocument = gql`
-    query getCommentsOfTheUser($limit: Int!, $uid: String!, $asc: Boolean, $page: Int, $time: String) {
-  getCommentsOfTheUser(
-    limit: $limit
-    uid: $uid
-    ASC: $asc
-    page: $page
-    time: $time
-  ) {
-    user {
-      ...FullUser
+    query GetCommentsOfTheUser($first: Int!, $uid: String!, $after: String) {
+  getCommentsOfTheUser(first: $first, uid: $uid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
     }
-    totalCommentCount
-    pastCount
-    comments {
-      ...FullComment
+    nodes {
+      id
+      commentedUserId
+      commentedUserName
+      message
+      movieId
+      likesCount
+      repliesCount
+      platformId
+      toxicityScore
+      flagged
+      type
+      createdAt
+      updatedAt
+      deletedAt
     }
-    hasMoreComments
-    lastPage
+    edges {
+      node {
+        id
+        commentedUserId
+        commentedUserName
+        message
+        movieId
+        likesCount
+        repliesCount
+        platformId
+        toxicityScore
+        flagged
+        type
+        createdAt
+        updatedAt
+        deletedAt
+      }
+      cursor
+    }
   }
 }
-    ${FullUserFragmentDoc}
-${FullCommentFragmentDoc}`;
+    `;
 
 export function useGetCommentsOfTheUserQuery(options: Omit<Urql.UseQueryArgs<GetCommentsOfTheUserQueryVariables>, 'query'>) {
   return Urql.useQuery<GetCommentsOfTheUserQuery, GetCommentsOfTheUserQueryVariables>({ query: GetCommentsOfTheUserDocument, ...options });
 };
 export const GetRepliesOfTheUserDocument = gql`
-    query getRepliesOfTheUser($limit: Int!, $uid: String!, $asc: Boolean, $page: Int, $time: String) {
-  getRepliesOfTheUser(
-    limit: $limit
-    uid: $uid
-    ASC: $asc
-    page: $page
-    time: $time
-  ) {
-    user {
-      ...FullUser
+    query GetRepliesOfTheUser($first: Int!, $uid: String!, $after: String) {
+  getRepliesOfTheUser(first: $first, uid: $uid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
     }
-    totalCommentCount
-    pastCount
-    comments {
+    nodes {
       ...FullReply
     }
-    hasMoreComments
-    lastPage
+    edges {
+      cursor
+      node {
+        ...FullReply
+      }
+    }
   }
 }
-    ${FullUserFragmentDoc}
-${FullReplyFragmentDoc}`;
+    ${FullReplyFragmentDoc}`;
 
 export function useGetRepliesOfTheUserQuery(options: Omit<Urql.UseQueryArgs<GetRepliesOfTheUserQueryVariables>, 'query'>) {
   return Urql.useQuery<GetRepliesOfTheUserQuery, GetRepliesOfTheUserQueryVariables>({ query: GetRepliesOfTheUserDocument, ...options });

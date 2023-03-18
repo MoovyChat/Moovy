@@ -527,33 +527,33 @@ export const deleteCommentChanges = (
     getMovie: 'getMovie',
     getComment: 'getComment',
   };
-  const getCommentsOfTheUserFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getCommentsOfTheUser
-  );
-  getCommentsOfTheUserFields.forEach((fieldInfo) => {
-    cache.updateQuery(
-      { query: GetCommentsOfTheUserDocument, variables: fieldInfo.arguments },
-      (data: GetCommentsOfTheUserQuery | null) => {
-        if (!data) {
-          console.log('Data is null, returning');
-          return null;
-        }
-        const getCommentsOfTheUser = data.getCommentsOfTheUser!;
-        const comments = getCommentsOfTheUser.comments!;
-        const totalCommentCount = getCommentsOfTheUser.totalCommentCount!;
-        const pastCount = getCommentsOfTheUser.pastCount!;
-        return {
-          ...data,
-          getCommentsOfTheUser: {
-            ...getCommentsOfTheUser,
-            comments: comments.filter((comment) => comment.id !== args.cid),
-            totalCommentCount: Math.max(totalCommentCount - 1, 0),
-            pastCount: Math.max(pastCount - 1, 0),
-          },
-        };
-      }
-    );
-  });
+  // const getCommentsOfTheUserFields = allFields.filter(
+  //   (field) => field.fieldName === fieldsInfos.getCommentsOfTheUser
+  // );
+  // getCommentsOfTheUserFields.forEach((fieldInfo) => {
+  //   cache.updateQuery(
+  //     { query: GetCommentsOfTheUserDocument, variables: fieldInfo.arguments },
+  //     (data: GetCommentsOfTheUserQuery | null) => {
+  //       if (!data) {
+  //         console.log('Data is null, returning');
+  //         return null;
+  //       }
+  //       const getCommentsOfTheUser = data.getCommentsOfTheUser!;
+  //       const comments = getCommentsOfTheUser.comments!;
+  //       const totalCommentCount = getCommentsOfTheUser.totalCommentCount!;
+  //       const pastCount = getCommentsOfTheUser.pastCount!;
+  //       return {
+  //         ...data,
+  //         getCommentsOfTheUser: {
+  //           ...getCommentsOfTheUser,
+  //           comments: comments.filter((comment) => comment.id !== args.cid),
+  //           totalCommentCount: Math.max(totalCommentCount - 1, 0),
+  //           pastCount: Math.max(pastCount - 1, 0),
+  //         },
+  //       };
+  //     }
+  //   );
+  // });
   const getCommentsOfTheMovieFields = allFields.filter(
     (field) => field.fieldName === fieldsInfos.getCommentsOfTheMovie
   );

@@ -1,5 +1,5 @@
-query GetCommentsOfTheMovie($mid: String!, $page: Int) {
-  getCommentsOfTheMovie(mid: $mid, page: $page) {
+query GetCommentsOfTheMovie($mid: String!, $page: Int, $time: String) {
+  getCommentsOfTheMovie(mid: $mid, page: $page, time: $time) {
     id
     movie {
       id
@@ -9,7 +9,20 @@ query GetCommentsOfTheMovie($mid: String!, $page: Int) {
     hasMoreComments
     totalCommentCount
     comments {
-      ...FullComment
+      id
+      commentedUserId
+      commentedUserName
+      message
+      movieId
+      likesCount
+      repliesCount
+      platformId
+      toxicityScore
+      flagged
+      type
+      createdAt
+      updatedAt
+      deletedAt
     }
     lastPage
     pastLoadedCount

@@ -22,11 +22,7 @@ import {
   getPaginatedSearchTitles,
   getUserViewHistoryResolver,
   movieCommentsResolver,
-  paginatedFeedResolver,
-  paginatedMoviesResolver,
   paginatedUserNotificationsResolver,
-  userCommentsResolver,
-  userRepliesResolver,
 } from './resolvers';
 import { serverUrl, wsUrl } from '../constants';
 
@@ -41,10 +37,7 @@ const wsClient = createWSClient({
 });
 const cache: Partial<CacheExchangeOpts> = {
   keys: {
-    getPaginatedMovies: () => null,
-    PaginatedUserComments: () => null,
     RepliesObject: () => null,
-    PaginatedUserReplies: () => null,
     CommentLikesObject: () => null,
     replyLikesObject: () => null,
     SearchObject: () => null,
@@ -52,7 +45,6 @@ const cache: Partial<CacheExchangeOpts> = {
     Profile: () => null,
     MovieStats: () => null,
     CommentOrReply: () => null,
-    PaginatedTitles: () => null,
     NotificationObject: () => null,
     LinkPreview: () => null,
     SearchMovieObject: () => null,
@@ -115,11 +107,9 @@ const cache: Partial<CacheExchangeOpts> = {
       getCommentReplies: relayPagination(),
       getRepliesOfReply: relayPagination(),
       getFeed: relayPagination(),
-      getCommentsOfTheMovie: movieCommentsResolver(),
-      getCommentsOfTheUser: userCommentsResolver(),
-      getRepliesOfTheUser: userRepliesResolver(),
-      getPaginatedMovies: paginatedMoviesResolver(),
-      getPaginatedShows: paginatedMoviesResolver(),
+      getCommentsOfTheUser: relayPagination(),
+      getRepliesOfTheUser: relayPagination(),
+      getPaginatedTitles: relayPagination(),
       getUserNotifications: paginatedUserNotificationsResolver(),
       getFavTitles: getPaginatedMovieStatsResolver(),
       getLikedTitles: getPaginatedMovieStatsResolver(),
@@ -128,6 +118,7 @@ const cache: Partial<CacheExchangeOpts> = {
       searchMovies: getPaginatedSearchTitles(),
       searchEpisodes: getPaginatedSearchEpisodes(),
       searchPeople: getPaginatedSearchPeople(),
+      getCommentsOfTheMovie: movieCommentsResolver(),
     },
   },
 };
