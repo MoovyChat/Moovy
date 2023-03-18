@@ -17,6 +17,7 @@ import { Users } from '../entities/Users';
 import { REPLY_LIKES_SUB } from '../constants';
 import { Comment } from '../entities/Comment';
 import { IsUserLikedObject } from './comments';
+import { PageInfo, ReplyConnection } from '../pagination';
 
 @ObjectType()
 class replyLikesObject {
@@ -36,8 +37,8 @@ class RepliesObject {
   replies: Reply[];
   @Field(() => Int)
   repliesCount: number;
-  @Field(() => Int)
-  lastPage: number;
+  @Field(() => Boolean)
+  hasMore: boolean;
 }
 
 @InputType()
@@ -99,58 +100,128 @@ export class ReplyResolver {
     return user;
   }
 
+  LIMIT = 5;
   @Query(() => RepliesObject)
   async getRepliesOfComment(
     @Arg('cid') cid: string,
     @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg('cursor', () => String, { nullable: true }) cursor: string | null
   ): Promise<RepliesObject> {
-    const repliesCount = await Reply.count({
-      where: { parentCommentId: cid },
-    });
-    const replies = await conn
+    const realLimit = Math.min(this.LIMIT, limit);
+    const reaLimitPlusOne = realLimit + 1;
+    const query = conn
       .getRepository(Reply)
       .createQueryBuilder('reply')
-      .where('reply.parentCommentId = :cid', { cid })
+      .where('reply.parentCommentId = :cid', { cid });
+    const repliesCount = await query.getCount();
+    query
       .orderBy('reply.likesCount', 'ASC')
       .orderBy('reply.repliesCount', 'ASC')
       .orderBy('reply.createdAt', 'ASC')
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .getMany();
+      .take(realLimit);
+    if (cursor) {
+      query.andWhere('reply.createdAt > :cursor', {
+        cursor: new Date(parseInt(cursor)),
+      });
+    }
+    const replies = await query.getMany();
 
     return {
       replies,
       repliesCount,
-      lastPage: Math.ceil(repliesCount / limit),
+      hasMore: replies.length === reaLimitPlusOne,
     };
   }
 
-  @Query(() => RepliesObject)
-  async getRepliesOfReply(
-    @Arg('rid') rid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
-  ): Promise<RepliesObject> {
-    const repliesCount = await Reply.count({
-      where: { parentReplyId: rid },
-    });
-    const replies = await conn
+  @Query(() => ReplyConnection)
+  async getCommentReplies(
+    @Arg('first', () => Int) first: number,
+    @Arg('cid', () => String) cid: string,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<ReplyConnection> {
+    const query = conn
       .getRepository(Reply)
       .createQueryBuilder('reply')
-      .where('reply.parentReplyId = :rid', { rid })
-      .andWhere('cast(reply.parentReplyId AS INT) != reply.parentCommentId')
-      .orderBy('reply.likesCount', 'ASC')
-      .orderBy('reply.repliesCount', 'ASC')
+      .where('reply.parentCommentId = :cid', { cid });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('reply.id > :cursor', { cursor: after });
+    }
+
+    // Get `first` number of replies, plus 1 to check for next page
+    const replies = await query
       .orderBy('reply.createdAt', 'ASC')
-      .offset((page - 1) * limit)
-      .limit(limit)
+      .take(first + 1)
       .getMany();
 
+    const nodes = replies.slice(0, first);
+    const hasNextPage = replies.length > first;
+    const endCursor =
+      replies.length === 0
+        ? String(totalCount)
+        : replies[replies.length - 1].id;
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.id),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      replies,
-      repliesCount,
-      lastPage: Math.ceil(repliesCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
+    };
+  }
+
+  @Query(() => ReplyConnection)
+  async getRepliesOfReply(
+    @Arg('rid') rid: string,
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<ReplyConnection> {
+    const query = conn
+      .getRepository(Reply)
+      .createQueryBuilder('reply')
+      .where('reply.parentReplyId = :rid', { rid });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('reply.id > :cursor', { cursor: after });
+    }
+
+    // Get `first` number of replies, plus 1 to check for next page
+    const replies = await query
+      .orderBy('reply.createdAt', 'ASC')
+      .take(first + 1)
+      .getMany();
+
+    const nodes = replies.slice(0, first);
+    const hasNextPage = replies.length > first;
+    const endCursor =
+      replies.length === 0
+        ? String(totalCount)
+        : replies[replies.length - 1].id;
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.id),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
+    return {
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 

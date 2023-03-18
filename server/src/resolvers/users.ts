@@ -19,6 +19,8 @@ import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
 import { COOKIE_NAME } from '../constants';
 import { Follow } from '../entities/Follow';
+import { FeedItem } from 'src/objectTypes';
+import { FeedConnection, FeedEdge, PageInfo } from '../pagination';
 
 @InputType()
 class UserInput {
@@ -137,20 +139,6 @@ class PaginatedUserComments {
 }
 
 @ObjectType()
-class MiniCommentFormat {
-  @Field()
-  id: string;
-  @Field()
-  type: string;
-  @Field()
-  commentedUserId: string;
-  @Field()
-  createdAt: string;
-  @Field()
-  updatedAt: string;
-}
-
-@ObjectType()
 class PaginatedUserReplies {
   @Field(() => Int, { defaultValue: 0 })
   totalCommentCount: number;
@@ -188,69 +176,76 @@ export class UserResolver {
     return Users.findOne({ where: { nickname } });
   }
 
-  @Query(() => [MiniCommentFormat], { nullable: true })
+  @Query(() => FeedConnection)
   async getFeed(
     @Arg('uid') uid: string,
-    @Arg('limit') limit: number,
-    @Arg('page') page: number
-  ): Promise<MiniCommentFormat[] | null> {
-    let result: MiniCommentFormat[] = [];
+    @Arg('first', () => Int) first: number,
+    @Arg('after') after: string
+  ): Promise<FeedConnection> {
+    let result: FeedItem[] = [];
     const tenDaysAgo = new Date();
     tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
     const queryRunner = conn.createQueryRunner();
+    let intendedCount = first;
+    let totalCount = 0;
     // establish real database connection using our new query runner
     await queryRunner.connect();
     try {
       // lets now open a new transaction:
       await queryRunner.startTransaction();
-      const followRepo = conn.getRepository(Follow);
-      const commentRepo = conn.getRepository(Comment);
-      const replyRepo = conn.getRepository(Reply);
-      const ids = await followRepo
+      const ids = await conn
+        .getRepository(Follow)
         .createQueryBuilder('f')
-        .select('f.userId', 'id')
-        .where('f.followingId = :uid', { uid })
+        .select('f.followingId', 'id')
+        .where('f.userId = :uid', { uid })
         .andWhere('f.follows = :f', { f: true })
-        .execute();
+        .getRawMany();
       const updatedIds = [...ids, { id: uid }];
-      await Promise.all(
-        updatedIds.map(async (idObject) => {
-          let neededUserId = idObject.id;
-          // Get comments of that user and also retrieve that user info.
-          const _comments: MiniCommentFormat[] = await commentRepo
-            .createQueryBuilder('c')
-            .select('c.id', 'id')
-            .addSelect('c.commentedUserId', 'commentedUserId')
-            .addSelect('c.createdAt', 'createdAt')
-            .addSelect('c.updatedAt', 'updatedAt')
-            .addSelect('c.type', 'type')
-            .where('c.commentedUserId = :id', { id: neededUserId })
-            .andWhere('c.updatedAt >= :date', { date: tenDaysAgo })
-            .orderBy('c.updatedAt', 'DESC')
-            .offset((page - 1) * limit)
-            .limit(limit)
-            .execute();
-          const _replies: MiniCommentFormat[] = await replyRepo
-            .createQueryBuilder('r')
-            .select('r.id', 'id')
-            .addSelect('r.commentedUserId', 'commentedUserId')
-            .addSelect('r.type', 'type')
-            .addSelect('r.createdAt', 'createdAt')
-            .addSelect('r.updatedAt', 'updatedAt')
-            .where('r.commentedUserId = :id', { id: neededUserId })
-            .andWhere('r.updatedAt >= :date', { date: tenDaysAgo })
-            .orderBy('r.updatedAt', 'DESC')
-            .offset((page - 1) * limit)
-            .limit(limit)
-            .execute();
-          result = _.chain(result)
-            .concat(_comments)
-            .concat(_replies)
-            .uniqBy('id')
-            .orderBy('updatedAt', 'desc')
-            .value();
-        })
-      );
+      const query = `
+WITH comment_or_reply AS (
+  SELECT
+    id,
+    "commentedUserId",
+    "createdAt",
+    "updatedAt",
+    type,
+    CONCAT("id", ':', "commentedUserId", ':', "updatedAt") AS "compositeKey"
+  FROM (
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM comment
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+    UNION ALL
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM reply
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+  ) AS combined
+)
+SELECT *
+FROM comment_or_reply
+${after ? `WHERE "compositeKey" < '${after}'` : ''}
+ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
+LIMIT ${first};
+
+`;
+
+      result = await queryRunner.manager.query(query);
+      totalCount = result.length;
       await queryRunner.commitTransaction();
     } catch (err) {
       // since we have errors let's rollback changes we made
@@ -259,7 +254,23 @@ export class UserResolver {
       // you need to release query runner which is manually created:
       await queryRunner.release();
     }
-    return result;
+    const edges: FeedEdge[] = result.map((node) => {
+      return {
+        node,
+        cursor: node.compositeKey,
+      } as FeedEdge;
+    });
+    const pageInfo: PageInfo = {
+      hasNextPage: totalCount < intendedCount ? false : true,
+      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+    };
+    let finalRes: FeedConnection = {
+      totalCount,
+      nodes: result,
+      edges,
+      pageInfo,
+    };
+    return finalRes;
   }
 
   @Query(() => FullUserObject, { nullable: true })

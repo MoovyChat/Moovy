@@ -51,6 +51,8 @@ class MovieInput {
 
 @ObjectType()
 class PaginatedMovieComments {
+  @Field()
+  id: string;
   @Field(() => Movie)
   movie: Movie;
   @Field(() => Boolean)
@@ -88,6 +90,18 @@ export class LikesObject {
 }
 
 @ObjectType()
+export class MovieCommentObject {
+  @Field(() => Boolean)
+  hasMoreComments: boolean;
+  @Field(() => Int)
+  totalCommentCount: number;
+  @Field(() => [Comment])
+  comments: Comment[];
+  @Field(() => Int)
+  lastPage: number;
+}
+
+@ObjectType()
 export class LikesAndComment {
   @Field(() => Int)
   likesCount: number;
@@ -120,13 +134,11 @@ export class MovieResolver {
   }
 
   @Query(() => PaginatedMovieComments, { nullable: true })
-  @Mutation(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
     @Arg('mid') mid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true }) ASC: boolean | true
+    @Arg('time', { nullable: true })
+    time: string,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
     // const totalCommentCount = await Comment.count({ where: { movieId: mid } });
     const query = conn
@@ -141,24 +153,47 @@ export class MovieResolver {
     }
     const pastCount = await query.getCount();
     const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('comment.createdAt', ASC ? 'ASC' : 'DESC')
+      .offset((page - 1) * 10)
+      .limit(10)
+      .orderBy('comment.createdAt', 'DESC')
       .getMany();
-    // const commentsLimit = Math.min(limit, 25);
-    // const commentsLimitPlusOne = limit + 1;
+
     const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error('Movie not found');
+    const id = `${mid}-${page}`;
     return {
+      id,
       movie,
-      comments: comments.slice(0, limit),
+      comments: comments.slice(0, 10),
       totalCommentCount,
       pastLoadedCount: pastCount,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      lastPage: totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / 10),
       hasMoreComments:
         page <
-        (totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit)),
+        (totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / 10)),
+    };
+  }
+
+  @Query(() => MovieCommentObject)
+  async getMovieComments(
+    @Arg('id') id: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<MovieCommentObject> {
+    const query = await conn
+      .getRepository(Comment)
+      .createQueryBuilder('comment')
+      .where('comment.movieId = :id', { id });
+    const count = await query.getCount();
+    const comments = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+    return {
+      comments,
+      totalCommentCount: count,
+      lastPage: count === 0 ? 1 : Math.ceil(count / limit),
+      hasMoreComments: page < (count === 0 ? 1 : Math.ceil(count / limit)),
     };
   }
 
