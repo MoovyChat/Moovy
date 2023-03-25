@@ -8,12 +8,32 @@ export const LeftParent = styled.div`
   align-items: center;
   width: 100%;
   border-right: 0.3px solid #8f8f8f81;
-  .profile {
-    width: 100px;
-    aspect-ratio: 1;
-    position: relative;
-    margin: 10% 0;
-    height: 100px;
+  .parent-profile {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    justify-content: center;
+    .profile {
+      width: 50px;
+      height: 50px;
+      aspect-ratio: 1;
+      position: relative;
+      margin: 10% 0;
+    }
+    .profile-text {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      .welcome-text {
+        font-size: 13px;
+      }
+      .user-text {
+        font-size: 15px;
+        font-weight: 600;
+      }
+    }
   }
   .options {
     width: 100%;
@@ -21,16 +41,17 @@ export const LeftParent = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: flex-end;
+    align-items: center;
     .option {
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 20px 0px 0px 20px;
+      border-radius: 18px;
       width: 70%;
       padding: 10px;
       color: inherit;
       text-decoration: none;
+      font-size: 14px;
       :hover {
         background-color: ${(p) => p.theme.hoverColor};
         cursor: pointer;
@@ -48,10 +69,11 @@ export const LeftParent = styled.div`
     }
     .active {
       transition: all 1s;
+      background-color: ${(p) => p.theme.hoverColor};
       .icon {
         svg {
-          height: 35px;
-          width: 35px;
+          height: 27px;
+          width: 27px;
         }
       }
       .icon.feed {
@@ -90,22 +112,25 @@ export const LeftParent = styled.div`
         }
       }
       .text {
-        font-size: 1.1rem;
       }
     }
   }
 
   @media (max-height: 700px) {
-    .profile {
-      width: 70px;
-      height: 70px;
-      margin: 20% 0;
+    .parent-profile {
+      .profile {
+        width: 70px;
+        height: 70px;
+        margin: 20% 0;
+      }
     }
   }
 
   @media (max-height: 550px) {
-    .profile {
-      display: none;
+    .parent-profile {
+      .profile {
+        display: none;
+      }
     }
 
     .options {

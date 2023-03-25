@@ -40,7 +40,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
     const value = theme === themes.DARK ? false : true;
     dispatch(sliceSetTheme(value));
   };
-  const iconSize = 30;
+  const iconSize = 25;
   // log changed data
   useEffect(() => {
     // console.log(user.photoUrl);
@@ -68,11 +68,17 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   };
   return (
     <LeftParent className={className} ref={ref}>
-      <div className='profile'>
-        <ProfilePic
-          src={user?.photoUrl!}
-          user={user as Users}
-          tooltip={true}></ProfilePic>
+      <div className='parent-profile'>
+        <div className='profile'>
+          <ProfilePic
+            src={user?.photoUrl!}
+            user={user as Users}
+            tooltip={true}></ProfilePic>
+        </div>
+        <div className='profile-text'>
+          <div className='welcome-text'>Welcome back</div>
+          <div className='user-text'>{user.nickname}</div>
+        </div>
       </div>
       <div className='options'>
         <NavLink to='/' className='option' end onClick={linkClickHandler}>

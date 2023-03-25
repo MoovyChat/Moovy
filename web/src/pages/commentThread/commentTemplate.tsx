@@ -295,26 +295,32 @@ const CommentTemplate: React.FC<props> = ({
                           <div className='opo-text'>Delete</div>
                         </div>
                       )}
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdFlag size={20} />
                         </div>
-                        <div className='opo-text'>Flag this comment</div>
+                        <div className='opo-text'>Flag this comment (Beta)</div>
                       </div>
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdBlock size={20} />
                         </div>
                         <div className='opo-text'>
-                          Block @{userRef.current?.nickname}
+                          Block @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdReport size={20} />
                         </div>
                         <div className='opo-text'>
-                          Report @{userRef.current?.nickname}
+                          Report @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
                     </div>
