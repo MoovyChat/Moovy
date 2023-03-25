@@ -47,7 +47,6 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
     const { data, error, fetching } = visited;
     if (!fetching && data) {
       const _data = data.getVisited!;
-      console.log(_data);
       if (_data !== null) {
         const history = _data.history;
         const parsedHistory: VisitedInterface | null = JSON.parse(

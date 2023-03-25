@@ -7,6 +7,7 @@ export const StyledSplashScreen = styled.div`
   justify-content: center;
   width: 99vw;
   height: 99vh;
+  font-family: 'Convergence, sans-serif';
   gap: 15px;
   .logo {
     width: 30%;

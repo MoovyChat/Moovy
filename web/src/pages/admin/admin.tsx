@@ -16,10 +16,12 @@ import {
 } from './admin.styles';
 import {
   Contact,
+  Users,
   useGetAllMessagesQuery,
   useMarkMessageAsReadMutation,
+  useMeQuery,
 } from '../../generated/graphql';
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { getDateFormat, getShortDateFormat } from '../../utils/helpers';
 
 import Loading from '../loading/loading';
@@ -33,10 +35,21 @@ const Admin: React.FC<AdminProps> = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [checkedContacts, setCheckedContacts] = useState<Contact[]>([]);
   const [chooseRead, setChooseRead] = useState<boolean | null>(null);
+  const [user, setUser] = useState<Users | null>(null);
   const [, markMessageAsRead] = useMarkMessageAsReadMutation();
   const [{ data, fetching, error }] = useGetAllMessagesQuery({
     variables: { page, limit: 10, read: chooseRead },
   });
+  const [me] = useMeQuery();
+
+  useEffect(() => {
+    const { data, fetching, error } = me;
+    if (error) console.log(error);
+    if (data && !fetching) {
+      const _user = data.me as Users;
+      setUser(() => _user);
+    }
+  }, [me]);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -53,7 +66,8 @@ const Admin: React.FC<AdminProps> = () => {
   };
 
   const contacts: Contact[] = data?.getAllMessages || [];
-  if (fetching) {
+
+  if (fetching && me.fetching) {
     return (
       <StyledSplashScreen>
         <div className='logo'>
@@ -65,6 +79,8 @@ const Admin: React.FC<AdminProps> = () => {
       </StyledSplashScreen>
     );
   }
+  if (!user?.admin) return <div>You don't have access to this page.</div>;
+
   return (
     <StyledAdmin contactSelected={selectedContact !== null}>
       <div className='logo'>

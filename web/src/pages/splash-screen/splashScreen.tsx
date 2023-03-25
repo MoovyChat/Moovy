@@ -3,6 +3,7 @@ import { Users, useMeQuery } from '../../generated/graphql';
 import App from '../app/app';
 import Home from '../home/home';
 import Loading from '../loading/loading';
+import LogoLoading from '../logo-loading/logoLoading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from './splashScreen.styles';
 import { sliceSetUser } from '../../redux/slices/userSlice';
@@ -26,17 +27,7 @@ const SplashScreen = () => {
   }, [fetching, data, error]);
   const me = data?.me;
   if (error) return <App />;
-  if (fetching)
-    return (
-      <StyledSplashScreen>
-        <div className='logo'>
-          <img src={Moovy} alt='Moovy' />
-        </div>
-        <div className='loading'>
-          <Loading />
-        </div>
-      </StyledSplashScreen>
-    );
+  if (fetching) return <LogoLoading />;
   if (me) {
     return <Home />;
   } else return <App />;

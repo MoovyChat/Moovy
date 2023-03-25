@@ -342,6 +342,20 @@ export type MovieCommentObject = {
   totalCommentCount: Scalars['Int'];
 };
 
+export type MovieConnection = {
+  __typename?: 'MovieConnection';
+  edges: Array<MovieEdge>;
+  nodes: Array<Movie>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type MovieEdge = {
+  __typename?: 'MovieEdge';
+  cursor?: Maybe<Scalars['String']>;
+  node?: Maybe<Movie>;
+};
+
 export type MovieInput = {
   id: Scalars['String'];
   likesCount?: InputMaybe<Scalars['Int']>;
@@ -405,6 +419,7 @@ export type Mutation = {
   reportReply?: Maybe<ReplyReport>;
   setCommentLike?: Maybe<CommentsStatsObject>;
   setReplyLike?: Maybe<ReplyStatsObject>;
+  toggleAdmin: Users;
   toggleFollow?: Maybe<Follow>;
   updateMovieTitle?: Maybe<Scalars['Boolean']>;
   updateMovieViewCount?: Maybe<Scalars['Int']>;
@@ -609,6 +624,12 @@ export type MutationSetReplyLikeArgs = {
 };
 
 
+export type MutationToggleAdminArgs = {
+  id: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
+};
+
+
 export type MutationToggleFollowArgs = {
   follow: Scalars['Boolean'];
   followingId: Scalars['String'];
@@ -707,16 +728,6 @@ export type PaginatedMovieStats = {
   totalCount: Scalars['Int'];
 };
 
-export type PaginatedMovies = {
-  __typename?: 'PaginatedMovies';
-  hasMoreTitles?: Maybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  lastPage?: Maybe<Scalars['Int']>;
-  movieCount?: Maybe<Scalars['Int']>;
-  movies?: Maybe<Array<Movie>>;
-  page?: Maybe<Scalars['Int']>;
-};
-
 export type Platform = {
   __typename?: 'Platform';
   createdAt: Scalars['String'];
@@ -777,7 +788,7 @@ export type Query = {
   getMovieFavoriteCount?: Maybe<Scalars['Int']>;
   getMovieLikes?: Maybe<LikesObject>;
   getMovieLikesAndCommentsCount?: Maybe<LikesAndComment>;
-  getMoviesByTitleId?: Maybe<PaginatedMovies>;
+  getMoviesByTitleId: MovieConnection;
   getOnlyUserMovieStats?: Maybe<MovieStats>;
   getPaginatedTitles?: Maybe<TitleConnection>;
   getRepliedUser?: Maybe<Users>;
@@ -957,8 +968,8 @@ export type QueryGetMovieLikesAndCommentsCountArgs = {
 
 
 export type QueryGetMoviesByTitleIdArgs = {
-  limit: Scalars['Int'];
-  page?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
   tid: Scalars['String'];
 };
 
@@ -1346,6 +1357,7 @@ export type UserResponse = {
 
 export type Users = {
   __typename?: 'Users';
+  admin?: Maybe<Scalars['Boolean']>;
   bg?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['String']>;
   email: Scalars['String'];
@@ -1428,7 +1440,7 @@ export type SetCommentLikeMutationVariables = Exact<{
 }>;
 
 
-export type SetCommentLikeMutation = { __typename?: 'Mutation', setCommentLike?: { __typename?: 'CommentsStatsObject', user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, likeStatus: { __typename?: 'CommentStats', id: number, like?: boolean | null, movieId: string, commentId: string, userId: string } } | null };
+export type SetCommentLikeMutation = { __typename?: 'Mutation', setCommentLike?: { __typename?: 'CommentsStatsObject', user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, likeStatus: { __typename?: 'CommentStats', id: number, like?: boolean | null, movieId: string, commentId: string, userId: string } } | null };
 
 export type GetCommentQueryVariables = Exact<{
   cid: Scalars['String'];
@@ -1514,7 +1526,7 @@ export type FullProfileFragment = { __typename: 'Profile', bio?: string | null, 
 
 export type FullReplyFragment = { __typename: 'Reply', id: string, message: string, movieId: string, parentCommentId: string, commentedUserName?: string | null, parentRepliedUser?: string | null, parentReplyId?: string | null, commentedUserId: string, likesCount?: number | null, repliesCount?: number | null, platformId: number, createdAt: string, updatedAt: string };
 
-export type FullUserFragment = { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null };
+export type FullUserFragment = { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null };
 
 export type LikeNotificationFragment = { __typename: 'LikeNotifications', id: string, toUserId: string, commentId?: string | null, replyId?: string | null, fromUser: string, message: string, fromUserPhotoUrl: string, isRead: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -1575,13 +1587,13 @@ export type GetMovieQueryVariables = Exact<{
 export type GetMovieQuery = { __typename?: 'Query', getMovie?: { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null } | null };
 
 export type GetMoviesByTitleIdQueryVariables = Exact<{
-  limit: Scalars['Int'];
+  first: Scalars['Int'];
   tid: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetMoviesByTitleIdQuery = { __typename?: 'Query', getMoviesByTitleId?: { __typename?: 'PaginatedMovies', hasMoreTitles?: boolean | null, id: string, lastPage?: number | null, page?: number | null, movieCount?: number | null, movies?: Array<{ __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null }> | null } | null };
+export type GetMoviesByTitleIdQuery = { __typename?: 'Query', getMoviesByTitleId: { __typename?: 'MovieConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean }, nodes: Array<{ __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null }>, edges: Array<{ __typename?: 'MovieEdge', cursor?: string | null, node?: { __typename: 'Movie', id: string, name: string, runtime?: number | null, platformId: number, createdAt: string, updatedAt: string, thumbs?: string | null, season?: string | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, titleId: string, parentTitleName?: string | null, stills?: string | null, synopsis?: string | null, year?: number | null } | null }> } };
 
 export type GetPaginatedTitlesQueryVariables = Exact<{
   first: Scalars['Int'];
@@ -1685,7 +1697,7 @@ export type SetReplyLikeMutationVariables = Exact<{
 }>;
 
 
-export type SetReplyLikeMutation = { __typename?: 'Mutation', setReplyLike?: { __typename?: 'ReplyStatsObject', user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, likeStatus: { __typename?: 'ReplyStats', id: number, movieId: string, replyId: string, like?: boolean | null, updatedAt: string, userId: string, createdAt: string } } | null };
+export type SetReplyLikeMutation = { __typename?: 'Mutation', setReplyLike?: { __typename?: 'ReplyStatsObject', user: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }, likeStatus: { __typename?: 'ReplyStats', id: number, movieId: string, replyId: string, like?: boolean | null, updatedAt: string, userId: string, createdAt: string } } | null };
 
 export type GetIsUserLikedReplyQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -1700,7 +1712,7 @@ export type GetRepliedUserQueryVariables = Exact<{
 }>;
 
 
-export type GetRepliedUserQuery = { __typename?: 'Query', getRepliedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
+export type GetRepliedUserQuery = { __typename?: 'Query', getRepliedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetCommentRepliesQueryVariables = Exact<{
   cid: Scalars['String'];
@@ -1750,7 +1762,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchPeople?: { __typename?: 'SearchPeopleObject', page?: number | null, lastPage?: number | null, people?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
+export type SearchPeopleQuery = { __typename?: 'Query', searchPeople?: { __typename?: 'SearchPeopleObject', page?: number | null, lastPage?: number | null, people?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
 
 export type SearchEpisodesQueryVariables = Exact<{
   page: Scalars['Float'];
@@ -1808,12 +1820,19 @@ export type GetUserMutMutationVariables = Exact<{
 
 export type GetUserMutMutation = { __typename?: 'Mutation', getUserMut?: { __typename?: 'Users', id: string, name: string, photoUrl: string, nickname: string } | null };
 
+export type IsUserNameExistsMutationVariables = Exact<{
+  text: Scalars['String'];
+}>;
+
+
+export type IsUserNameExistsMutation = { __typename?: 'Mutation', isUserNameExists?: boolean | null };
+
 export type LoginMutationVariables = Exact<{
   uid: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', error?: string | null, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null } | null };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', error?: string | null, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1834,7 +1853,7 @@ export type SaveProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type SaveProfilePictureMutation = { __typename?: 'Mutation', updateUserProfilePhoto: { __typename?: 'NickNameResponse', errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null } };
+export type SaveProfilePictureMutation = { __typename?: 'Mutation', updateUserProfilePhoto: { __typename?: 'NickNameResponse', errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null } };
 
 export type ToggleFollowMutationVariables = Exact<{
   follow: Scalars['Boolean'];
@@ -1857,7 +1876,7 @@ export type GetCommentedUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentedUserQuery = { __typename?: 'Query', getCommentedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
+export type GetCommentedUserQuery = { __typename?: 'Query', getCommentedUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetFeedQueryVariables = Exact<{
   after: Scalars['String'];
@@ -1875,7 +1894,7 @@ export type GetFollowersQueryVariables = Exact<{
 }>;
 
 
-export type GetFollowersQuery = { __typename?: 'Query', getFollowers?: { __typename?: 'getFollowers', count: number, page: number, lastPage: number, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null, followers?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
+export type GetFollowersQuery = { __typename?: 'Query', getFollowers?: { __typename?: 'getFollowers', count: number, page: number, lastPage: number, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null, followers?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
 
 export type GetFollowingsQueryVariables = Exact<{
   limit: Scalars['Float'];
@@ -1884,28 +1903,28 @@ export type GetFollowingsQueryVariables = Exact<{
 }>;
 
 
-export type GetFollowingsQuery = { __typename?: 'Query', getFollowings?: { __typename?: 'getFollowings', count: number, page: number, lastPage: number, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null, followings?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
+export type GetFollowingsQuery = { __typename?: 'Query', getFollowings?: { __typename?: 'getFollowings', count: number, page: number, lastPage: number, user?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null, followings?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null };
 
 export type GetUserMiniProfileQueryVariables = Exact<{
   uid: Scalars['String'];
 }>;
 
 
-export type GetUserMiniProfileQuery = { __typename?: 'Query', getFullUserProfile?: { __typename?: 'FullMiniUser', id: string, followers?: { __typename?: 'FollowerObject', followerCount: number, id: string, followers?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, following?: { __typename?: 'FollowingObject', followingCount: number, id: string, following?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, history?: { __typename?: 'HistoryObject', historyCount: number, id: string, history?: Array<{ __typename?: 'Visited', history: Array<string>, deletedAt?: string | null, createdAt: string, movieId: string, updatedAt: string, userId: string, visitCount?: number | null }> | null, recentMovies?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null, profile?: { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string } | null, likes?: { __typename?: 'LikesMObject', likesCount: number, id: string, likes?: Array<{ __typename?: 'Movie', id: string, likesCount: number, name: string, parentTitleName?: string | null, platformId: number, runtime?: number | null, season?: string | null, stills?: string | null, synopsis?: string | null, thumbs?: string | null, viewsCount: number, year?: number | null, updatedAt: string, titleId: string, commentCount: number, createdAt: string, deletedAt?: string | null, favCount: number }> | null } | null, favorites?: { __typename?: 'FavoriteObject', favCount: number, id: string, favorites?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null } | null };
+export type GetUserMiniProfileQuery = { __typename?: 'Query', getFullUserProfile?: { __typename?: 'FullMiniUser', id: string, followers?: { __typename?: 'FollowerObject', followerCount: number, id: string, followers?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, following?: { __typename?: 'FollowingObject', followingCount: number, id: string, following?: Array<{ __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null }> | null } | null, history?: { __typename?: 'HistoryObject', historyCount: number, id: string, history?: Array<{ __typename?: 'Visited', history: Array<string>, deletedAt?: string | null, createdAt: string, movieId: string, updatedAt: string, userId: string, visitCount?: number | null }> | null, recentMovies?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null, profile?: { __typename: 'Profile', bio?: string | null, createdAt: string, deletedAt?: string | null, dob?: string | null, fullname?: string | null, gender?: string | null, updatedAt: string, userId: string } | null, likes?: { __typename?: 'LikesMObject', likesCount: number, id: string, likes?: Array<{ __typename?: 'Movie', id: string, likesCount: number, name: string, parentTitleName?: string | null, platformId: number, runtime?: number | null, season?: string | null, stills?: string | null, synopsis?: string | null, thumbs?: string | null, viewsCount: number, year?: number | null, updatedAt: string, titleId: string, commentCount: number, createdAt: string, deletedAt?: string | null, favCount: number }> | null } | null, favorites?: { __typename?: 'FavoriteObject', favCount: number, id: string, favorites?: Array<{ __typename?: 'Movie', id: string, name: string, synopsis?: string | null, stills?: string | null, thumbs?: string | null, season?: string | null, year?: number | null, runtime?: number | null, likesCount: number, commentCount: number, viewsCount: number, favCount: number, platformId: number, titleId: string, parentTitleName?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> | null } | null } | null };
 
 export type GetUserQueryVariables = Exact<{
   uid: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
+export type GetUserQuery = { __typename?: 'Query', getUser?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetUserByNickNameQueryVariables = Exact<{
   nickname: Scalars['String'];
 }>;
 
 
-export type GetUserByNickNameQuery = { __typename?: 'Query', getUserByUserName?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
+export type GetUserByNickNameQuery = { __typename?: 'Query', getUserByUserName?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetUserFullNameQueryVariables = Exact<{
   uid: Scalars['String'];
@@ -1932,7 +1951,7 @@ export type IsFollowingUserQuery = { __typename?: 'Query', isFollowingUser?: boo
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename: 'Users', id: string, email: string, name: string, nickname: string, photoUrl: string, bg?: string | null, admin?: boolean | null, watchedMovies?: Array<string> | null, followerCount?: number | null, followingCount?: number | null, joinedAt?: string | null, updatedAt?: string | null } | null };
 
 export type GetCommentsOfTheUserQueryVariables = Exact<{
   first: Scalars['Int'];
@@ -2066,6 +2085,7 @@ export const FullUserFragmentDoc = gql`
   nickname
   photoUrl
   bg
+  admin
   watchedMovies
   followerCount
   followingCount
@@ -2437,15 +2457,21 @@ export function useGetMovieQuery(options: Omit<Urql.UseQueryArgs<GetMovieQueryVa
   return Urql.useQuery<GetMovieQuery, GetMovieQueryVariables>({ query: GetMovieDocument, ...options });
 };
 export const GetMoviesByTitleIdDocument = gql`
-    query GetMoviesByTitleId($limit: Int!, $tid: String!, $page: Int) {
-  getMoviesByTitleId(limit: $limit, tid: $tid, page: $page) {
-    hasMoreTitles
-    id
-    lastPage
-    page
-    movieCount
-    movies {
+    query GetMoviesByTitleId($first: Int!, $tid: String!, $after: String) {
+  getMoviesByTitleId(first: $first, tid: $tid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
       ...FullMovie
+    }
+    edges {
+      cursor
+      node {
+        ...FullMovie
+      }
     }
   }
 }
@@ -2952,6 +2978,15 @@ export const GetUserMutDocument = gql`
 
 export function useGetUserMutMutation() {
   return Urql.useMutation<GetUserMutMutation, GetUserMutMutationVariables>(GetUserMutDocument);
+};
+export const IsUserNameExistsDocument = gql`
+    mutation IsUserNameExists($text: String!) {
+  isUserNameExists(text: $text)
+}
+    `;
+
+export function useIsUserNameExistsMutation() {
+  return Urql.useMutation<IsUserNameExistsMutation, IsUserNameExistsMutationVariables>(IsUserNameExistsDocument);
 };
 export const LoginDocument = gql`
     mutation login($uid: String!) {

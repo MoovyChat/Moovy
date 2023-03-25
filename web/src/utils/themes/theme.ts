@@ -10,6 +10,7 @@ export interface ThemeProps {
   themeType?: string;
   premium?: string;
   border?: string;
+  nav?: string;
 }
 
 export const lightTheme: ThemeProps = {
@@ -26,26 +27,28 @@ export const darkTheme: ThemeProps = {
 };
 
 export const lightThemeForHome: ThemeProps = {
-  body: 'linear-gradient(62deg, #d1dee3 80%, #6fa3c1 100%);',
+  body: '#F3F3F3',
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: 'linear-gradient(to right, #1f86e1, #c9f8fe, #78caf0)',
   movieHeader: 'linear-gradient(to right, #e11f1f, #e3c9fe, #f07878)',
-  trendingTiles: '#d1dee3',
-  hoverColor: '#6fa3c1',
+  trendingTiles: '#a0d2eb',
+  hoverColor: '#a0d2eb',
   mention: '#1da3f0',
+  nav: '#00a2ff',
   border: '#1f86e1',
   premium: 'linear-gradient(45deg, #58e6f3, #1da3f0) border-box',
   themeType: 'light',
 };
 export const darkThemeForHome: ThemeProps = {
-  body: 'linear-gradient(62deg, #0c0c0c 55%, #32075a 100%);',
+  body: 'black',
   text: '#FAFAFA',
   toggleBorder: '#6B8096',
   background: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   movieHeader: 'linear-gradient(to right, #681515, #302b63, #3e2524)',
   trendingTiles: '#0c0c0c',
   hoverColor: '#451374',
+  nav: 'rgb(131 0 255)',
   mention: '#00ff99',
   border: '#f00f0f',
   premium: 'linear-gradient(45deg, #be3944, #681515) border-box',

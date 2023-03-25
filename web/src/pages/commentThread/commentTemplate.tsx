@@ -1,3 +1,9 @@
+import {
+  CURRENT_DOMAIN,
+  isServer,
+  popupStates,
+  textMapTypes,
+} from '../../constants';
 import { CommentThreadParent, StyledButton } from './commentThread.styles';
 import {
   GetCommentRepliesDocument,
@@ -38,7 +44,6 @@ import React, {
   useState,
 } from 'react';
 import { Reply, textMap } from '../../utils/interfaces';
-import { isServer, popupStates, textMapTypes } from '../../constants';
 import {
   sliceSetIsPopupOpened,
   sliceSetPopupData,
@@ -51,6 +56,7 @@ import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import FollowButton from '../../components/follow-button/followButton';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import MiniCommentCard from '../../components/mini-comment-card/miniCommentCard';
 import MovieInfo from '../../components/comment-card/movieInfo';
@@ -218,10 +224,21 @@ const CommentTemplate: React.FC<props> = ({
       isReply={isReply}
       movieBg={movieRef.current?.stills as string}
       titleBg={titleRef.current?.boxart as string}>
+      <Helmet>
+        <title>{titleRef.current?.title}</title>
+        <meta name='description' content={comment.message} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/${isReply ? 'reply' : 'comment'}/${
+            comment.id
+          }`}
+        />
+      </Helmet>
       <ChildHeader
         className='comment-header'
         text={type.charAt(0).toUpperCase() + type.slice(1)}
       />
+
       <div className='main-container' onScroll={handleScroll}>
         {isReply && (
           <MiniCommentCard

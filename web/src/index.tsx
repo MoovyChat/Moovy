@@ -20,7 +20,7 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>
         <>
-          {/* <GoogleAnalytics /> */}
+          <GoogleAnalytics />
           <HomeRouter />
         </>
       </PersistGate>

@@ -13,8 +13,10 @@ import {
   useGetUserProfileQuery,
 } from '../../generated/graphql';
 
+import { CURRENT_DOMAIN } from '../../constants';
 import ChildHeader from '../../components/childHeader/childHeader';
 import FollowButton from '../../components/follow-button/followButton';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import NavLinks from '../../components/nav-links/navLinks';
 import { ProfileParent } from './profile.styles';
@@ -65,6 +67,14 @@ const ProfileTemplate: React.FC<props> = ({
       ref={ref}
       onScroll={profileScrollHandler}
       id='profile-parent'>
+      <Helmet>
+        <title>{user.nickname}</title>
+        <meta name='description' content={user.nickname} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/profile/${user.nickname}`}
+        />
+      </Helmet>
       <ChildHeader text={headerTitle} className='comment-header' />
       <div className='top'>
         <div className='cover-photo'>

@@ -110,6 +110,7 @@ const cache: Partial<CacheExchangeOpts> = {
       getCommentsOfTheUser: relayPagination(),
       getRepliesOfTheUser: relayPagination(),
       getPaginatedTitles: relayPagination(),
+      getMoviesByTitleId: relayPagination(),
       getUserNotifications: paginatedUserNotificationsResolver(),
       getFavTitles: getPaginatedMovieStatsResolver(),
       getLikedTitles: getPaginatedMovieStatsResolver(),
