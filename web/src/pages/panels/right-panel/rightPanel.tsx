@@ -1,3 +1,13 @@
+import {
+  BUY_ME_A_COFFEE,
+  DISCORD_INVITE_LINK,
+  EXT_URL,
+  INSTAGRAM_LINK,
+  PATREON,
+  TIKTOK_LINK,
+  TWITTER_LINK,
+} from '../../../constants';
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
   TrendingObject,
@@ -6,8 +16,10 @@ import {
 } from '../../../generated/graphql';
 
 import Ads from '../../../components/ads/ads';
+import BuyMeACoffee from '../../../static/images/bmc.png';
 import Loading from '../../loading/loading';
 import { MdLocalFireDepartment } from 'react-icons/md';
+import PatreonWord from '../../../static/images/patreon-word.png';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
@@ -19,6 +31,7 @@ type props = {
 };
 
 const RightPanel: React.FC<props> = ({ className }) => {
+  const iconSize = 25;
   const [, createCharge] = useCreateChargeMutation();
   const [trendingMovies, setTrendingMovies] = useState<TrendingObject[] | null>(
     null
@@ -54,9 +67,6 @@ const RightPanel: React.FC<props> = ({ className }) => {
   }, [trendingMoviesQuery]);
   return (
     <RightParent className={className}>
-      {/* <div className='adblock'>
-        <Ads />
-      </div> */}
       <div className='trending titles'>
         <div className='heading'>
           <MdLocalFireDepartment color='#fc0404' size={20} />
@@ -84,30 +94,91 @@ const RightPanel: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-      {/* <div className='trending premium'>
-        <div className='heading'>
-          <MdOutlineStar size={20} />
-          <div className='sub'>Premium features</div>
-        </div>
-        <div className='content'>
-          {fakeHashTags.map((tag) => (
-            <div className='item' key={tag.tag}>
-              <div className='title'>{tag.tag}</div>
-              <div className='count'>{tag.mentions}</div>
+
+      <div className='socials'>
+        <div className='socials-block'>
+          <div className='item-heading'>Socials</div>
+          <div className='item-options'>
+            <div
+              id='text-focus'
+              className='discord social'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(DISCORD_INVITE_LINK, '_blank');
+              }}>
+              <FaDiscord
+                color='cornflowerblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
-          ))}
-          <div className='item purchase' onClick={purchasePremium}>
-            <div className='title'>Purchase</div>
-            <div className='price'>
-              <span>$1.50</span>
-              <del className='limited'>($2.00)</del>
+            <div
+              className='twitter social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TWITTER_LINK, '_blank');
+              }}>
+              <FaTwitter
+                color='deepskyblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
-            <div className='warning'>
-              <span>*Valid only for a limited time.</span>
+            <div
+              className='tiktok social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TIKTOK_LINK, '_blank');
+              }}>
+              <FaTiktok
+                className='icon'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+            <div
+              className='instagram social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(INSTAGRAM_LINK, '_blank');
+              }}>
+              <FaInstagram
+                color='hotpink'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
           </div>
         </div>
-      </div> */}
+        <div className='socials-block'>
+          <div className='item-heading'>Donate & Support</div>
+          <div className='item-options'>
+            <div
+              className='patreon'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(PATREON, '_blank');
+              }}>
+              <div className='logo' id='text-focus'>
+                <img src={PatreonWord} alt='patreon' id='text-focus' />
+              </div>
+            </div>
+            <div
+              className='bmc'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(BUY_ME_A_COFFEE, '_blank');
+              }}>
+              <div className='logo' id='text-focus'>
+                <img src={BuyMeACoffee} alt='bmc' id='text-focus' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </RightParent>
   );
 };

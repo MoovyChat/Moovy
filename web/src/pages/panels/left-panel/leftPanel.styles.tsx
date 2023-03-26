@@ -47,7 +47,7 @@ export const LeftParent = styled.div`
       justify-content: center;
       align-items: center;
       border-radius: 18px;
-      width: 70%;
+      width: 50%;
       padding: 10px;
       color: inherit;
       text-decoration: none;

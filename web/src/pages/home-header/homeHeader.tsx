@@ -6,16 +6,19 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import FocusWindow from '../../components/focus-window/focusWindow';
 import { HomeHeaderParent } from './homeHeader.styles';
 import { Image } from '../../components/Image/image';
-import MoovyLogo from '../../svgs/moovy-white.svg';
+import MoovyBlackLogo from '../../svgs/moovy-black.svg';
+import MoovyWhiteLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
 import useIsAuth from '../../utils/isAuthUser';
+import { useTheme } from 'styled-components';
 
 type props = {
   className: string;
 };
 const HomeHeader: React.FC<props> = ({ className }) => {
   useIsAuth();
+  const theme = useTheme();
   const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
   const dispatch = useAppDispatch();
   const navBarHandler: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -30,7 +33,11 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         <div className='logo-image'>
           <img
             className='image'
-            src={MoovyLogo}
+            src={
+              (theme as any).themeType === 'light'
+                ? MoovyBlackLogo
+                : MoovyWhiteLogo
+            }
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'

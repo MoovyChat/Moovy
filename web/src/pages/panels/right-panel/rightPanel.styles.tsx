@@ -5,27 +5,19 @@ export const RightParent = styled.div`
   display: flex;
   position: relative;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
   border-left: 0.3px solid #8f8f8f81;
-  .adblock {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    height: 30%;
-    width: 80%;
-    border: 1px solid;
-    margin: 20px;
-  }
   .trending {
-    position: absolute;
-    height: 50%;
+    position: relative;
+    min-height: 50%;
     width: 80%;
     background: ${(p) => p.theme.trendingTiles};
-    margin: 20px;
+    margin: 20px 20px;
+    padding-top: 10px;
+    padding-bottom: 15px;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
@@ -36,7 +28,7 @@ export const RightParent = styled.div`
       justify-content: space-between;
       overflow: auto;
       .item {
-        padding: 0px 20px;
+        padding: 10px 20px;
         display: flex;
         flex-direction: column;
         .title {
@@ -49,31 +41,6 @@ export const RightParent = styled.div`
         .count {
           font-size: 0.7em;
           opacity: 0.8;
-        }
-      }
-      .purchase {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #ff002693;
-        cursor: pointer;
-        padding: 10px;
-        font-weight: 600;
-        font-size: 14px;
-        color: white;
-        :hover {
-          background-color: #ff0026f1;
-        }
-        .price {
-          position: relative;
-          .limited {
-            position: absolute;
-            margin-left: 10px;
-          }
-        }
-        .warning {
-          font-size: 10px;
-          font-weight: 400;
         }
       }
     }
@@ -89,17 +56,58 @@ export const RightParent = styled.div`
       }
     }
   }
-  .titles {
-    top: 0%;
-    .content {
-      justify-content: space-evenly;
-    }
-  }
-  .premium {
-    top: 35%;
-    background: ${(p) => p.theme.premium};
-    svg {
-      color: ${(p) => (p.theme.themeType === 'dark' ? '#ffffff' : '#000000')};
+
+  .socials {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .socials-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .item-heading {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .item-options {
+        display: flex;
+        justify-content: space-evenly;
+        border-radius: 20px;
+        padding: 10px;
+        background: ${(p) => p.theme.trendingTiles};
+        box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        .patreon,
+        .bmc {
+          display: flex;
+          justify-content: space-evenly;
+          align-items: center;
+          .logo {
+            width: 100px;
+            cursor: pointer;
+            img {
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+        }
+
+        .social {
+          cursor: pointer;
+          :hover {
+            transform: scale(1.3);
+            transition: transform 0.5s;
+          }
+          :active {
+            transform: scale(1);
+            transition: transform 0.2s;
+          }
+        }
+      }
     }
   }
 `;

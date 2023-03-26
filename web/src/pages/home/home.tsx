@@ -15,7 +15,7 @@ import { GlobalStyles } from '../../utils/themes/globalStyles';
 import { Helmet } from 'react-helmet';
 import HomeHeader from '../home-header/homeHeader';
 import LeftPanel from '../panels/left-panel/leftPanel';
-import Loading from '../loading/loading';
+import LogoLoading from '../logo-loading/logoLoading';
 import Popup from '../../components/popup/popup';
 import RightPanel from '../panels/right-panel/rightPanel';
 import SetProfile from '../set-profile/setProfile';
@@ -34,6 +34,7 @@ const Home = () => {
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const [prof, setProfile] = useState<Profile | null>(null);
+  const [customLoading, setCustomLoading] = useState<boolean>(true);
   const isProfileExists = useAppSelector((state) => state.misc.isProfileExists);
   const handleEscapeKey: (this: Document, ev: KeyboardEvent) => any = (
     event
@@ -58,11 +59,19 @@ const Home = () => {
   });
 
   useEffect(() => {
+    let timeout = setTimeout(() => {
+      setCustomLoading(false);
+    }, 500);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
     const { data, fetching } = profile;
     if (!fetching && data) {
       const _data = data.getUserProfile;
       setProfile(_data as Profile);
-      console.log(_data);
       if (!_data) dispatch(sliceSetIsProfileExists(false));
       else if (
         _data.userId !== '' &&
@@ -80,7 +89,7 @@ const Home = () => {
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
-  if (profile.fetching) return <Loading />;
+  if (profile.fetching || customLoading) return <LogoLoading />;
 
   return (
     <ThemeProvider

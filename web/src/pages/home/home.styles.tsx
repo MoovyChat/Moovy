@@ -27,12 +27,14 @@ export const PanelsParent = styled.div<props>`
   width: 100%;
   .left {
     flex: 1 0 25%;
+    height: 100%;
   }
   .center {
     /* flex: 1 0 50%; */
   }
   .right {
     flex: 1 0 25%;
+    height: 100%;
   }
 
   @media (max-width: 800px) {

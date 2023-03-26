@@ -5,7 +5,7 @@ export const StyledSplashScreen = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 99vw;
+  width: 100%;
   height: 99vh;
   font-family: 'Convergence, sans-serif';
   gap: 15px;

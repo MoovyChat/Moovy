@@ -55,3 +55,9 @@ export const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 export const EXT_URL = `chrome-extension://${EXT_ID}`;
 export const EXTENSION_URL =
   'https://chrome.google.com/webstore/detail/moovy-chat/ilkpekdilkpahngoeanmpnkegideejip';
+export const DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
+export const TWITTER_LINK = 'https://twitter.com/MoovyChat';
+export const TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
+export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
+export const PATREON = 'https://www.patreon.com/MoovyChatLtd';
+export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';

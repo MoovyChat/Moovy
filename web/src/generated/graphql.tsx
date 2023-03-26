@@ -397,7 +397,6 @@ export type Mutation = {
   deleteReply?: Maybe<Reply>;
   deleteUser: Scalars['Boolean'];
   fetchNewComments: Array<Comment>;
-  getTitleInfo?: Maybe<Title>;
   getTopThreeUserNames?: Maybe<Array<NicKNameFormat>>;
   getUserByNickName?: Maybe<Users>;
   getUserFollowStats?: Maybe<UserFollowStats>;
@@ -501,11 +500,6 @@ export type MutationDeleteUserArgs = {
 export type MutationFetchNewCommentsArgs = {
   mid: Scalars['String'];
   time: Scalars['String'];
-};
-
-
-export type MutationGetTitleInfoArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -799,6 +793,7 @@ export type Query = {
   getReplyLikes: ReplyLikesObject;
   getSearchResults?: Maybe<SearchObject>;
   getTitle?: Maybe<Title>;
+  getTitleInfo?: Maybe<Title>;
   getTrendingMovies?: Maybe<Array<TrendingObject>>;
   getUnreadMessages: Array<Contact>;
   getUser?: Maybe<Users>;
@@ -1031,6 +1026,11 @@ export type QueryGetSearchResultsArgs = {
 
 
 export type QueryGetTitleArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetTitleInfoArgs = {
   id: Scalars['String'];
 };
 
@@ -1536,12 +1536,12 @@ export type ShortTitleFragment = { __typename?: 'Title', id: string, artwork?: s
 
 export type ShortUserFragment = { __typename?: 'Users', id: string, name: string, photoUrl: string, nickname: string };
 
-export type GetTitleInfoMutationVariables = Exact<{
+export type GetTitleInfoQueryVariables = Exact<{
   getTitleInfoId: Scalars['String'];
 }>;
 
 
-export type GetTitleInfoMutation = { __typename?: 'Mutation', getTitleInfo?: { __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, year?: number | null } | null };
+export type GetTitleInfoQuery = { __typename?: 'Query', getTitleInfo?: { __typename?: 'Title', advisories?: Array<string> | null, artwork?: string | null, boxart?: string | null, createdAt: string, id: string, rating?: string | null, runtime?: number | null, storyart?: string | null, synopsis?: string | null, title?: string | null, type?: string | null, year?: number | null } | null };
 
 export type UpdateUserMovieStatsMutationVariables = Exact<{
   options: UserMovieOptions;
@@ -2332,7 +2332,7 @@ export function useMarkSelectedMessagesAsReadMutation() {
   return Urql.useMutation<MarkSelectedMessagesAsReadMutation, MarkSelectedMessagesAsReadMutationVariables>(MarkSelectedMessagesAsReadDocument);
 };
 export const GetTitleInfoDocument = gql`
-    mutation getTitleInfo($getTitleInfoId: String!) {
+    query getTitleInfo($getTitleInfoId: String!) {
   getTitleInfo(id: $getTitleInfoId) {
     advisories
     artwork
@@ -2350,8 +2350,8 @@ export const GetTitleInfoDocument = gql`
 }
     `;
 
-export function useGetTitleInfoMutation() {
-  return Urql.useMutation<GetTitleInfoMutation, GetTitleInfoMutationVariables>(GetTitleInfoDocument);
+export function useGetTitleInfoQuery(options: Omit<Urql.UseQueryArgs<GetTitleInfoQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetTitleInfoQuery, GetTitleInfoQueryVariables>({ query: GetTitleInfoDocument, ...options });
 };
 export const UpdateUserMovieStatsDocument = gql`
     mutation UpdateUserMovieStats($options: UserMovieOptions!, $mid: String!, $uid: String!) {

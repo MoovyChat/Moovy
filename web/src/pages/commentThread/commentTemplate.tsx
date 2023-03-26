@@ -4,31 +4,23 @@ import {
   popupStates,
   textMapTypes,
 } from '../../constants';
-import { CommentThreadParent, StyledButton } from './commentThread.styles';
-import {
-  GetCommentRepliesDocument,
-  Movie,
-  PageInfo,
-  Title,
-  Users,
-  useGetCommentOrReplyQuery,
-  useGetCommentQuery,
-  useGetMovieQuery,
-  useGetTitleInfoMutation,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
-} from '../../generated/graphql';
 import {
   MdBlock,
   MdDelete,
   MdFavorite,
-  MdFavoriteBorder,
   MdFlag,
   MdOutlineFavoriteBorder,
   MdOutlineMoreHoriz,
   MdReply,
   MdReport,
 } from 'react-icons/md';
+import {
+  Movie,
+  Title,
+  Users,
+  useGetMovieQuery,
+  useGetTitleInfoQuery,
+} from '../../generated/graphql';
 import {
   ParsedText,
   getDateFormat,
@@ -38,7 +30,6 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   UIEventHandler,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -53,11 +44,12 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
-import CommentCard from '../../components/comment-card/commentCard';
+import { CommentThreadParent } from './commentThread.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import FollowButton from '../../components/follow-button/followButton';
 import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
+import LogoLoading from '../logo-loading/logoLoading';
 import MiniCommentCard from '../../components/mini-comment-card/miniCommentCard';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
@@ -65,8 +57,6 @@ import ReplyCard from '../../components/comment-card/replyCard';
 import { SpoilerTag } from '../../components/comment-card/commentCard.styles';
 import { batch } from 'react-redux';
 import { urqlClient } from '../../utils/urlClient';
-import { useClient } from 'urql';
-import { useFetchMoreRepliesOfComment } from '../../hooks/useFetchMoreCommentReplies';
 import useFormatMessage from '../../hooks/useFormatMessage';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
@@ -103,10 +93,11 @@ const CommentTemplate: React.FC<props> = ({
     },
     pause: isServer(),
   });
-  const movieRef = useRef<Movie | null>(null);
-  const titleRef = useRef<Title | null>(null);
+  const [movieRef, setMovieRef] = useState<Movie | null>(null);
+  const [titleRef, setTitleRef] = useState<Title | null>(null);
+  const [movieRefId, setMovieRefId] = useState<string>('');
   const messageRef = useRef<HTMLDivElement | null>(null);
-  const [, getTitleInfo] = useGetTitleInfoMutation();
+
   const loggedInUser = useAppSelector((state) => state.user);
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
@@ -115,6 +106,12 @@ const CommentTemplate: React.FC<props> = ({
   const [showMore, setShowMore] = useState<boolean>(false);
   const [cardHeight, setCardHeight] = useState<string>('');
   const [openOptionWindow, setOpenOptionWindow] = useState<boolean>(false);
+  const [getTitleInfo] = useGetTitleInfoQuery({
+    variables: {
+      getTitleInfoId: movieRefId as string,
+    },
+    pause: isServer(),
+  });
 
   useEffect(() => {
     ref && ref.current?.scrollIntoView();
@@ -126,17 +123,18 @@ const CommentTemplate: React.FC<props> = ({
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getMovie as Movie;
-      movieRef.current = _data;
-      getTitleInfo({ getTitleInfoId: _data.titleId }).then((titleInfo) => {
-        const { data, error } = titleInfo;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data.getTitleInfo as Title;
-          titleRef.current = _data;
-        }
-      });
+      setMovieRef(() => _data);
+      setMovieRefId(() => _data.titleId);
     }
   }, [movieDetails]);
+
+  useEffect(() => {
+    const { data, fetching, error } = getTitleInfo;
+    if (!fetching && data) {
+      const _data = data.getTitleInfo as Title;
+      setTitleRef(() => _data);
+    }
+  }, [getTitleInfo]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
@@ -214,7 +212,7 @@ const CommentTemplate: React.FC<props> = ({
   };
 
   let formattedMsg = useFormatMessage(comment.message);
-
+  if (getTitleInfo.fetching) return <LogoLoading />;
   return (
     <CommentThreadParent
       cardHeight={cardHeight}
@@ -222,10 +220,10 @@ const CommentTemplate: React.FC<props> = ({
       showEpisodeInfo={showEpisodeInfo}
       showTitleInfo={showTitleInfo}
       isReply={isReply}
-      movieBg={movieRef.current?.stills as string}
-      titleBg={titleRef.current?.boxart as string}>
+      movieBg={movieRef?.stills as string}
+      titleBg={titleRef?.boxart as string}>
       <Helmet>
-        <title>{titleRef.current?.title}</title>
+        <title>{titleRef?.title}</title>
         <meta name='description' content={comment.message} />
         <link
           rel='canonical'
@@ -364,7 +362,7 @@ const CommentTemplate: React.FC<props> = ({
               {getDateFormat(comment?.createdAt)}
             </div>
             <div className='movie-chips'>
-              {titleRef && titleRef.current?.type === 'show' && (
+              {titleRef && titleRef?.type === 'show' && (
                 <React.Fragment>
                   <div
                     className='name title'
@@ -372,9 +370,9 @@ const CommentTemplate: React.FC<props> = ({
                     onMouseLeave={onTitleLeave}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/show/${titleRef?.current?.id}`);
+                      navigate(`/show/${titleRef?.id}`);
                     }}>
-                    {titleRef.current?.title} {movieRef.current?.season}
+                    {titleRef?.title} {movieRef?.season}
                   </div>
                 </React.Fragment>
               )}
@@ -384,9 +382,9 @@ const CommentTemplate: React.FC<props> = ({
                 onMouseLeave={onEpisodeLeave}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/movie/${movieRef?.current?.id}`);
+                  navigate(`/movie/${movieRef?.id}`);
                 }}>
-                {movieRef.current?.name}
+                {movieRef?.name}
               </div>
             </div>
             <div className='show-details'>
@@ -394,13 +392,13 @@ const CommentTemplate: React.FC<props> = ({
                 {showEpisodeInfo ? (
                   <Image
                     key='episode'
-                    src={movieRef.current?.stills as string}
+                    src={movieRef?.stills as string}
                     alt='background-image'
                   />
                 ) : showTitleInfo ? (
                   <Image
                     key='title'
-                    src={titleRef.current?.artwork as string}
+                    src={titleRef?.artwork as string}
                     alt='background-image'
                   />
                 ) : (
@@ -411,9 +409,9 @@ const CommentTemplate: React.FC<props> = ({
                 )}
               </div>
               {showEpisodeInfo ? (
-                <MovieInfo movie={movieRef.current!} />
+                <MovieInfo movie={movieRef!} />
               ) : (
-                showTitleInfo && <MovieInfo title={titleRef.current!} />
+                showTitleInfo && <MovieInfo title={titleRef!} />
               )}
             </div>
             <div className='comment-usr-stats'>
