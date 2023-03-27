@@ -5,7 +5,6 @@ import React, {
   FocusEventHandler,
   KeyboardEventHandler,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -22,10 +21,10 @@ import { AnyAction } from 'redux';
 import _ from 'lodash';
 import { getFormattedWordsArray } from '../../Utils/utilities';
 import { msgPlace } from '../../Utils/enums';
-import { sliceSetToxicValues } from '../../redux/slices/misc/miscSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import useDetoxify from '../../contentScript/hooks/useDetoxify';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
+import usePredictiveText from '../../contentScript/hooks/usePredictiveText';
 import { withUrqlClient } from 'next-urql';
 
 type props = {
@@ -46,12 +45,7 @@ const ChatArea: React.FC<props> = ({
   const searchAPI =
     'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
   const user = useAppSelector((state) => state.user);
-  const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
 
-  const [debouncedText, setDebouncedText] = useState('');
-  const nameSuggestions: NameObject[] = useAppSelector(
-    (state) => state.textArea.nameSuggestions
-  );
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
@@ -59,11 +53,29 @@ const ChatArea: React.FC<props> = ({
   const isTextAreaClicked = useAppSelector(
     (state) => state.textArea.isTextAreaClicked
   );
+  const movieId = useAppSelector((state) => state.movie.id);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textAreaHeight, setTextAreaHeight] = useState<number>(17);
   const [formattedTextMap, setFormattedTextMap] = useState<textMap[]>([]);
+  const [debouncedText, setDebouncedValue] = useState<string>('');
+
+  useEffect(() => {
+    const debouncedSetValue = _.debounce((v) => {
+      setDebouncedValue(v);
+    }, 500);
+
+    debouncedSetValue(text);
+
+    return () => {
+      debouncedSetValue.cancel();
+    };
+  }, [text]);
+
+  usePredictiveText(searchAPI, debouncedText);
+
+  useDetoxify(debouncedText);
 
   useEffect(() => {
     if (textAreaFocussed) textAreaRef.current?.focus();
@@ -85,88 +97,6 @@ const ChatArea: React.FC<props> = ({
       document.removeEventListener('keydown', cancelEvent);
     };
   }, []);
-
-  useEffect(() => {
-    const debouncedSetValue = _.debounce((v) => {
-      setDebouncedText(v);
-    }, 500);
-    debouncedSetValue(text);
-
-    return () => {
-      debouncedSetValue.cancel();
-    };
-  }, [text]);
-
-  const [results, isLoading] = useDetoxify(debouncedText);
-  useEffect(() => {
-    !isLoading && dispatch(sliceSetToxicValues(results));
-  }, [results, isLoading]);
-  useMemo(() => {
-    async function suggestions() {
-      let inputText = '';
-      if (nameSuggestions.length > 0) {
-        inputText = debouncedText.replace(/@\w+/g, '');
-      }
-      let words = inputText.split(' ');
-      let lastWord = debouncedText.split(' ')[words.length - 1];
-      if (lastWord.charAt(0) === '@') {
-        let wordToSearch = lastWord.substring(1);
-        // get response from graphQL server.
-        // Expected response: First three matches.
-        getNickNameSuggestions({ search: wordToSearch })
-          .then((res) => {
-            const { data, error } = res;
-            if (error) console.log(error);
-            if (data) {
-              const names: NameObject[] = data?.getTopThreeUserNames!;
-              dispatch(sliceSetNameSuggestions(names));
-              dispatch(sliceSetWordSuggestions([]));
-            }
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      } else {
-        let searchURL = `${searchAPI}${lastWord}`;
-        // Get Predictive text from Google search API.
-        await fetch(searchURL, {
-          mode: 'cors',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-          .then((response) => response.text())
-          .then((str) =>
-            new window.DOMParser().parseFromString(str, 'text/xml')
-          )
-          .then((data) => {
-            const el = data.getElementsByTagName('suggestion');
-            let firstWordSuggestions: string[] = [];
-            let secondWordSuggestions: string[] = [];
-            for (let item in el) {
-              let _element = el[item];
-              if (_element) {
-                let node = _element.attributes && _element.attributes[0];
-                let value = node && node.nodeValue!.split(' ');
-                if (value && !firstWordSuggestions.includes(value[0])) {
-                  firstWordSuggestions.push(value[0]);
-                }
-                if (value && !secondWordSuggestions.includes(value[1])) {
-                  secondWordSuggestions.push(value[1]);
-                }
-              }
-            }
-            let suggestions = _.concat(
-              firstWordSuggestions,
-              secondWordSuggestions
-            );
-            dispatch(sliceSetNameSuggestions([]));
-            dispatch(sliceSetWordSuggestions(suggestions));
-          });
-      }
-    }
-    suggestions();
-  }, [debouncedText]);
 
   const handleTextAreaBlur = () => {
     if (isTextAreaClicked) {
@@ -207,13 +137,11 @@ const ChatArea: React.FC<props> = ({
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    console.log(e.key);
     if (e.key === 'Enter' && e.shiftKey) {
       e.stopPropagation();
       e.isPropagationStopped();
     } else if (e.key === 'Enter') {
       e.preventDefault();
-
       postComment(user, dispatch, replyWindowResponse, setReplyClickResponse);
     } else if (
       (e.key >= 'a' && e.key <= 'z') ||
@@ -242,13 +170,7 @@ const ChatArea: React.FC<props> = ({
   }, [text, textAreaRef.current, ref.current, formattedTextMap]);
 
   useEffect(() => {
-    let res = getFormattedWordsArray(
-      text,
-      msgPlace.TEXTAREA,
-      dispatch,
-      'NO_NEED_TO_SEND_USER_ID',
-      0
-    );
+    let res = getFormattedWordsArray(text);
     setFormattedTextMap(res);
   }, [text]);
 

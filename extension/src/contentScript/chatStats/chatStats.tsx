@@ -209,8 +209,10 @@ const ChatStats: React.FC<props> = memo(() => {
           {nickname ? nickname : userNickname}
         </h4>
       </div>
-      <div className='user' onClick={goToVideoStyles}>
-        <BiPaint size={iconSize} className='ic' />
+      <div className='mvy-pt-ic' onClick={goToVideoStyles}>
+        <div id='paint-container'>
+          <BiPaint className='icon' id='paint' size={iconSize} />
+        </div>
       </div>
     </ChatStatContainer>
   );

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
+import { EXT_URL } from '../../constants';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { IoMdArrowDroprightCircle } from 'react-icons/io';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -147,7 +148,9 @@ const CommentButton: React.FC<props> = ({ visible }) => {
         chatWindowSize={smoothWidth + ''}
         openChatWindow={openChatWindow}>
         {openChatWindow ? (
-          <IoMdArrowDroprightCircle size={40} fill={accentColor} />
+          <div className='logo'>
+            <img src={`${EXT_URL}/Moovy/moovyIcon.png`} alt='logo' />
+          </div>
         ) : (
           <GoCommentDiscussion size={40} fill={accentColor} />
         )}

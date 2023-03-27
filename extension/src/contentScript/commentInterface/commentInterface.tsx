@@ -16,7 +16,6 @@ import {
   Exact,
   useDeleteCommentMutation,
   useDeleteReplyMutation,
-  useGetRepliesQuery,
   useGetUserByNickNameMutation,
   useIsReportedQuery,
   useReportCommentMutation,
@@ -32,16 +31,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  sliceAddAllReplies,
-  sliceDeleteReply,
-  sliceReportReply,
-} from '../../redux/slices/reply/replySlice';
-import {
-  sliceComment,
-  sliceReportComment,
-  sliceSetLastPage,
-} from '../../redux/slices/comment/commentSlice';
-import {
   slicePopSlideContentType,
   sliceSetPopSlide,
   sliceSetPopSlideData,
@@ -53,7 +42,6 @@ import {
 } from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { COMMENT } from '../../redux/actionTypes';
 import { CSSTransition } from 'react-transition-group';
 import Confirmation from '../../components/confirmation/confirmation';
 import { OperationResult } from 'urql';
@@ -98,7 +86,6 @@ const CommentInterface: React.FC<props> = ({
   const isReportActive = useAppSelector((state) => state.misc.isReportActive);
   // Redux: App Selector Hook.
   const userId = useAppSelector((state) => state.user.id);
-  const allReplies = useAppSelector((state) => state.replies.replies);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
   const totalCommentCount = useAppSelector(
@@ -107,110 +94,45 @@ const CommentInterface: React.FC<props> = ({
   // State to check if the "like" is hovered, to style the parent component accordingly.
   const [deleteFlag, setDeleteFlag] = useState<boolean>(false);
   const [reportFlag, setReportFlag] = useState<boolean>(false);
-  const [repliesCount, setRepliesCount] = useState<number>(0);
   const [hovered, setHovered] = useState<boolean>(false);
   const [del, setDelete] = useState<boolean>(true);
   const isComment = useMemo(
     () => commentOrReply.__typename === 'Comment',
     [commentOrReply]
   );
-  // Check if the passed component is comment or reply.
-  if (!commentOrReply) return <div>Invalid comment</div>;
-
-  // Get Page and LastPage of the comments.
-
-  const page = isComment && commentOrReply.page;
-  const lastPage = isComment && commentOrReply.lastPage;
-  const commentRef = useRef<HTMLDivElement>(null);
-
-  // Check if the component is mounted or not for animation purposes.
-  useEffect(() => {
-    mounted.current = true;
-
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-
-  // GraphQL
-  const [getReplyQuery, _executeQuery] = useGetRepliesQuery({
-    variables: {
-      cid: commentOrReply.id!,
-      limit: 5,
-      page: page ? page : 1,
-    },
-    pause: true,
-  });
-  const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
-  const [_dc, deleteComment] = useDeleteCommentMutation();
-  const [_dr, deleteReply] = useDeleteReplyMutation();
-  const [_rc, reportComment] = useReportCommentMutation();
-  const [_rr, reportReply] = useReportReplyMutation();
   const [isReported] = useIsReportedQuery({
     variables: {
-      isComment: isComment,
       uid: userId,
+      isComment: isComment,
       isReportedId: commentOrReply.id,
     },
   });
 
   useEffect(() => {
-    const { fetching, data } = isReported;
+    const { data, fetching } = isReported;
     if (!fetching && data) {
-      const _data = data.isReported;
-      setReportFlag(_data);
-      isComment
-        ? dispatch(
-            sliceReportComment({
-              id: commentOrReply.id,
-              isReported: _data,
-            })
-          )
-        : dispatch(
-            sliceReportReply({
-              id: commentOrReply.id,
-              isReported: _data,
-            })
-          );
+      const _data = data?.isReported;
+      setReportFlag(() => _data);
     }
   }, [isReported]);
+  // Check if the passed component is comment or reply.
+  if (!commentOrReply) return <div>Invalid comment</div>;
 
+  const commentRef = useRef<HTMLDivElement>(null);
+
+  // Check if the component is mounted or not for animation purposes.
   useEffect(() => {
-    if (isComment) {
-      _executeQuery();
-      const { data, error, fetching } = getReplyQuery;
-      if (error) console.log(error);
-      if (!fetching && data) {
-        const { replies, repliesCount, lastPage } = data.getRepliesOfComment;
-        setRepliesCount(repliesCount);
-        dispatch(
-          sliceSetLastPage({
-            lastPage: lastPage ? lastPage : 1,
-            id: commentOrReply.id,
-          })
-        );
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
-        batch(() => {
-          dispatch(sliceAddAllReplies(replies));
-          dispatch(
-            sliceComment({
-              payload: { id: commentOrReply.id!, repliesCount },
-              type: COMMENT.SET_REPLY_COUNT,
-            })
-          );
-        });
-      }
-    } else return;
-  }, [getReplyQuery.fetching, _executeQuery, type]);
-
-  useEffect(() => {
-    if (type === 'comment') {
-      const replyCount = allReplies.filter(
-        (reply: CommentInfo) => reply.parentCommentId === commentOrReply.id!
-      ).length;
-      setRepliesCount(replyCount);
-    }
-  }, [allReplies.length, allReplies, setRepliesCount]);
+  const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
+  const [_dc, deleteComment] = useDeleteCommentMutation();
+  const [_dr, deleteReply] = useDeleteReplyMutation();
+  const [_rc, reportComment] = useReportCommentMutation();
+  const [_rr, reportReply] = useReportReplyMutation();
 
   const profileClickHandler = useCallback(
     (username: string) => {
@@ -259,7 +181,6 @@ const CommentInterface: React.FC<props> = ({
   };
 
   const commonReport = (_report: boolean): Promise<boolean | undefined> => {
-    console.log('EXEC');
     return new Promise((resolve, reject) => {
       if (isComment) {
         reportComment({ cid: commentOrReply.id!, uid: userId, report: _report })
@@ -287,7 +208,6 @@ const CommentInterface: React.FC<props> = ({
       const result = await commonReport(_report);
       if (result) {
         dispatch(sliceSetIsReportActive(''));
-        setReportFlag(_report);
         batch(() => {
           dispatch(sliceSetToastVisible(true));
           dispatch(
@@ -296,19 +216,6 @@ const CommentInterface: React.FC<props> = ({
               message,
             })
           );
-          isComment
-            ? dispatch(
-                sliceReportComment({
-                  id: commentOrReply.id,
-                  isReported: _report,
-                })
-              )
-            : dispatch(
-                sliceReportReply({
-                  id: commentOrReply.id,
-                  isReported: _report,
-                })
-              );
         });
       }
     } catch (err) {
@@ -334,10 +241,24 @@ const CommentInterface: React.FC<props> = ({
 
   // TODO: Delete comment or reply.
   const deleteCommentOrReply = async (): Promise<void> => {
-    const message = isComment ? 'Comment deleted' : 'Reply deleted';
+    const message: string = isComment ? 'Comment deleted' : 'Reply deleted';
+    const errorMessage: string = isComment
+      ? 'Error deleting comment'
+      : 'Error deleting reply';
     try {
       const { data, error } = await commonDelete();
-      if (error) console.log(error);
+      if (error) {
+        console.log(error);
+        batch(() => {
+          dispatch(sliceSetToastVisible(true));
+          dispatch(
+            sliceSetToastBody({
+              icon: iconsEnum.ERROR,
+              errorMessage,
+            })
+          );
+        });
+      }
 
       if (data) {
         setDelete(false);
@@ -352,19 +273,18 @@ const CommentInterface: React.FC<props> = ({
             })
           );
         });
-        setTimeout(() => {
-          isComment
-            ? dispatch(
-                sliceComment({
-                  payload: data?.deleteComment?.id,
-                  type: COMMENT.DELETE_COMMENT,
-                })
-              )
-            : dispatch(sliceDeleteReply(data?.deleteReply?.id));
-        }, 300);
       }
     } catch (err) {
       console.log(err);
+      batch(() => {
+        dispatch(sliceSetToastVisible(true));
+        dispatch(
+          sliceSetToastBody({
+            icon: iconsEnum.ERROR,
+            errorMessage,
+          })
+        );
+      });
     } finally {
       // Code to be executed after try/catch block
     }
@@ -530,16 +450,13 @@ const CommentInterface: React.FC<props> = ({
               The comment is flagged for moderation
             </Moderation>
           )}
-          {commentOrReply.reported && (
+          {reportFlag && (
             <Moderation color='#ff0000'>
               <MdWarning fill='#ff0000' />
               You have reported this comment
             </Moderation>
           )}
           <ReplyWindow
-            page={page ? page : 1}
-            lastPage={lastPage ? lastPage : 1}
-            repliesCount={repliesCount}
             parentComment={commentOrReply}
             responseFromReplyWindow={responseFromReplyWindow}
           />

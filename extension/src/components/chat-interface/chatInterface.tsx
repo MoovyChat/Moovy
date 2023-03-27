@@ -75,6 +75,7 @@ const ChatInterface: React.FC<props> = ({
 
   // React:useState hooks.
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
+  const [customLoading, setCustomLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<boolean>(true);
 
   // Set the response to the global text area.
@@ -83,11 +84,19 @@ const ChatInterface: React.FC<props> = ({
   // };
 
   useEffect(() => {
+    setCustomLoading(() => true);
+    const timeout = setTimeout(() => {
+      !profileFetching && setCustomLoading(() => false);
+    }, 500);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [profileFetching]);
+
+  useEffect(() => {
     if (!profileFetching) {
       if (profile === null) dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
-      else if (profile?.fullname === '') {
-        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
-      } else if (profile?.gender === '') {
+      else if (!profile?.fullname || !profile?.dob) {
         dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
       } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
     }
@@ -228,10 +237,10 @@ const ChatInterface: React.FC<props> = ({
       ) : !user ? (
         <ErrorPage
           text={`Login using the extension, and click on Refetch`}></ErrorPage>
-      ) : profileFetching ? (
+      ) : profileFetching || customLoading ? (
         <LogoLoading />
       ) : isProfileNeedsToBeUpdated ? (
-        <UpdateProfile />
+        <UpdateProfile profile={profile} />
       ) : (
         <ChatWindowParent
           className='chat-interface'

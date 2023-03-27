@@ -73,6 +73,7 @@ export interface CommentInfo {
   flagged?: boolean;
   reported?: boolean;
   toxicityScore?: boolean;
+  type?: string;
   __typename?: any;
 }
 

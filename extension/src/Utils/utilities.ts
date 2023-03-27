@@ -45,40 +45,41 @@ export const getTimeFrame = (postTime: string) => {
   return finalString;
 };
 
-export const getFormattedWordsArray = (
-  text: string,
-  place: string,
-  dispatch: Dispatch<any>,
-  userId: string,
-  commentTimeStamp: number
-): textMap[] => {
-  return text.split(' ').map((word) => {
+export const getFormattedWordsArray = (text: string): textMap[] => {
+  const words = text.split(' ');
+  const result: textMap[] = [];
+
+  let currentBasicWords: string[] = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+
     if (word.startsWith('@')) {
-      return { message: word, type: textMapTypes.USER };
-    } else if (word.includes(':')) {
-      let words = word.split(':');
-      let hours = words.length === 3 ? words[0] : '0';
-      let minutes = hours !== '0' ? words[1] : words[0];
-      let seconds = hours !== '0' ? words[2] : words[1];
-      if (isNumber(hours) && isNumber(minutes) && isNumber(seconds)) {
-        if (place === msgPlace.COMMENT_CARD) {
-          // let timeMsgObj: timeMessage = {
-          //   madeBy: userId,
-          //   message: text,
-          //   time: word,
-          //   timeStamp: commentTimeStamp,
-          // };
-          // dispatch(sliceAddTimeMessages(timeMsgObj));
-        }
-        return { message: word, type: textMapTypes.TIME };
-      } else {
-        return { message: word, type: textMapTypes.BASIC };
-      }
+      result.push({ message: word, type: textMapTypes.USER });
+      currentBasicWords = [];
+    } else if (/^\d+(:\d+){0,2}$/.test(word)) {
+      result.push({ message: word, type: textMapTypes.TIME });
+      currentBasicWords = [];
     } else {
-      return { message: word, type: textMapTypes.BASIC };
+      currentBasicWords.push(word);
+
+      if (
+        i === words.length - 1 ||
+        words[i + 1].startsWith('@') ||
+        /^\d+(:\d+){0,2}$/.test(words[i + 1])
+      ) {
+        result.push({
+          message: currentBasicWords.join(' '),
+          type: textMapTypes.BASIC,
+        });
+        currentBasicWords = [];
+      }
     }
-  });
+  }
+
+  return result;
 };
+
 
 export const getFormattedNumber = (count: number) => {
   return Intl.NumberFormat('en-US', {
@@ -142,4 +143,66 @@ export function createPitchShiftCurve(pitch: number) {
     curve[i] = (i - n / 2) * amount;
   }
   return curve;
+}
+
+export const createRange = (
+  node: Node | null,
+  chars: { count: number },
+  range?: Range
+): Range | undefined => {
+  if (!node) return;
+  if (!range) {
+    range = document.createRange();
+    range.selectNode(node);
+    range.setStart(node, 0);
+  }
+  if (chars.count === 0) {
+    range.setEnd(node, chars.count);
+  } else if (node && chars.count > 0) {
+    console.log({ nodeType: node.nodeType });
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent!.length < chars.count) {
+        chars.count -= node.textContent!.length;
+      } else {
+        range.setEnd(node, chars.count);
+        chars.count = 0;
+      }
+    } else {
+      for (var lp = 0; lp < node.childNodes.length; lp++) {
+        range = createRange(node.childNodes[lp], chars, range);
+        if (chars.count === 0) {
+          break;
+        }
+      }
+    }
+  }
+
+  return range;
+};
+
+export function setCurrentCursorPosition(
+  chars: number,
+  element: HTMLDivElement
+) {
+  if (chars >= 0) {
+    var selection = window.getSelection();
+    let range = createRange(element.parentNode, { count: chars });
+    if (range && selection) {
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+}
+
+export function setCaret(ele: HTMLElement | null, line: any, col: any) {
+  var rng = document.createRange();
+  var sel = window.getSelection();
+  if (sel && ele) {
+    rng.setStart(ele.childNodes[0], col);
+    rng.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(rng);
+    ele.focus();
+  }
 }

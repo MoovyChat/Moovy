@@ -22,10 +22,16 @@ export const CommentHeader = styled.div<props>`
   cursor: pointer;
   display: ${(p) => (p.isVisible ? 'flex' : 'none')};
   justify-content: center;
-  z-index: 99999;
+  z-index: 99998;
   align-items: center;
   color: white;
-  overflow: hidden;
+  .logo {
+    padding: 5px;
+    img {
+      width: 25px;
+      height: 25px;
+    }
+  }
 
   /* transition: all 0.1s ease-in-out; */
   animation: ${(p) =>

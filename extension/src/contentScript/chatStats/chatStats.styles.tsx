@@ -87,14 +87,15 @@ export const ChatStatContainer = styled.div<props>`
       color: inherit;
       flex: 1;
       span {
-        font-size: 1.3em;
+        font-size: 14px;
         font-weight: 800;
         padding: 0 5px;
       }
     }
   }
 
-  .user {
+  .user,
+  .mvy-pt-ic {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -103,18 +104,21 @@ export const ChatStatContainer = styled.div<props>`
     .nn {
       cursor: pointer;
     }
-    .ic {
-      padding: 5px;
+    #paint-container {
       border-radius: 50%;
-      cursor: pointer;
+      padding: 5px;
       :hover {
         box-shadow: inset 0 0 4px;
-        padding: 5px;
+        cursor: pointer;
+      }
+      #paint {
+        pointer-events: none;
       }
     }
+
     h4 {
       padding: 4px 7px;
-      font-size: 1.3em;
+      font-size: 14px;
       border-radius: 18px;
       :hover {
         box-shadow: 0 0 5px;

@@ -1,12 +1,21 @@
 import { Cache, ResolveInfo, Variables } from '@urql/exchange-graphcache';
 import {
+  Comment,
   DeleteCommentMutation,
+  DeleteReplyMutation,
+  FetchNewCommentsMutation,
+  GetCommentRepliesDocument,
+  GetCommentRepliesQuery,
+  GetCommentsOfTheMovieDocument,
+  GetCommentsOfTheMovieQuery,
   GetMovieDocument,
   GetMovieQuery,
   IsFollowingUserDocument,
   IsFollowingUserQuery,
   ToggleFollowMutation,
 } from '../generated/graphql';
+
+import _ from 'lodash';
 
 export const toggleFollowChanges = (
   _result: ToggleFollowMutation,
@@ -38,42 +47,6 @@ export const toggleFollowChanges = (
       );
     }
   });
-
-  //   const getUserByUserNameField = allFields.filter(
-  //     (field) => field.fieldName === 'getUserByUserName'
-  //   );
-  //   getUserByUserNameField.forEach((field) => {
-  //     if (field.arguments?.uid! === args.uid) {
-  //       cache.updateQuery(
-  //         {
-  //           query: GetUserByNickNameDocument,
-  //           variables: field.arguments,
-  //         },
-  //         (data: GetUserByNickNameQuery | null) => {
-  //           if (!data) {
-  //             console.log('Data is null, returning');
-  //             return null;
-  //           }
-  //           const oldData = data.getUserByUserName!;
-  //           let followingCount = oldData.followingCount!;
-  //           const newData: GetUserByNickNameQuery = {
-  //             ...data,
-  //             getUserByUserName: {
-  //               ...oldData,
-  //               followingCount:
-  //                 _result.toggleFollow?.follows === true
-  //                   ? followingCount + 1
-  //                   : followingCount - 1 <= 0
-  //                   ? 0
-  //                   : followingCount - 1,
-  //             },
-  //           };
-
-  //           return newData;
-  //         }
-  //       );
-  //     }
-  //   });
 };
 
 export const deleteCommentChanges = (
@@ -94,25 +67,97 @@ export const deleteCommentChanges = (
   );
   getMovieFields.forEach((fieldInfo) => {
     if ((fieldInfo.arguments as any).mid !== args.mid) return null;
+    try {
+      cache.updateQuery(
+        {
+          query: GetMovieDocument,
+          variables: fieldInfo.arguments,
+        },
+        (data: GetMovieQuery | null) => {
+          if (!data) {
+            console.log('Data is null, returning');
+            return null;
+          }
+          const getMovie = data.getMovie!;
+          const commentCount = getMovie.commentCount;
+          return {
+            ...data,
+            getMovie: {
+              ...getMovie,
+              commentCount: commentCount - 1 <= 0 ? 0 : commentCount - 1,
+            },
+          };
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  });
+};
+
+export const deleteReplyChanges = (
+  _result: DeleteReplyMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getCommentReplies: 'getCommentReplies',
+  };
+  const getCommentReplies = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getCommentReplies
+  );
+  console.log(_result, _info);
+  getCommentReplies.forEach((fi) => {
+    cache.invalidate('Query', fi.fieldName, fi.arguments);
+  });
+};
+
+export const fetchNewCommentsChanges = (
+  _result: FetchNewCommentsMutation,
+  args: Variables,
+  cache: Cache,
+  _info: ResolveInfo
+) => {
+  const allFields = cache.inspectFields('Query');
+  const fieldsInfos = {
+    getCommentsOfTheMovie: 'getCommentsOfTheMovie',
+  };
+
+  const fields = allFields.filter(
+    (field) => field.fieldName === fieldsInfos.getCommentsOfTheMovie
+  );
+  fields.forEach((fieldInfo) => {
+    if ((fieldInfo.arguments as any).mid !== args.mid) return null;
+    console.log(fieldInfo, args, fields);
     cache.updateQuery(
       {
-        query: GetMovieDocument,
+        query: GetCommentsOfTheMovieDocument,
         variables: fieldInfo.arguments,
       },
-      (data: GetMovieQuery | null) => {
+
+      (data: GetCommentsOfTheMovieQuery | null) => {
         if (!data) {
           console.log('Data is null, returning');
           return null;
         }
-        const getMovie = data.getMovie!;
-        const commentCount = getMovie.commentCount;
+        const getMovieComments = data.getCommentsOfTheMovie!;
+        const comments = getMovieComments.comments!;
+        const totalCommentCount = getMovieComments.totalCommentCount!;
+        const newComments = _.chain(_result.fetchNewComments as Comment[])
+          .concat(comments as Comment[])
+          .uniqBy('id')
+          .value();
         return {
           ...data,
-          getMovie: {
-            ...getMovie,
-            commentCount: commentCount - 1 <= 0 ? 0 : commentCount - 1,
+          getCommentsOfTheMovie: {
+            ...getMovieComments,
+            comments: newComments,
+            totalCommentCount: totalCommentCount + 1,
           },
         };
+        return data;
       }
     );
   });

@@ -69,7 +69,9 @@ const ReplyCard: React.FC<props> = ({
   useEffect(() => {
     let interval: any;
     let getTime = () => {
-      setTime(getTimeFrame(createdAt!));
+      if (createdAt === 'Posting...') {
+        setTime(createdAt!);
+      } else setTime(getTimeFrame(createdAt!));
       interval = setTimeout(getTime, 60000);
     };
     getTime();
@@ -109,13 +111,7 @@ const ReplyCard: React.FC<props> = ({
         if (l > 0) {
           // non-spoiler.
           let text = remaining.substring(0, l);
-          let res = getFormattedWordsArray(
-            text,
-            msgPlace.COMMENT_CARD,
-            dispatch,
-            reply.commentedUserId!,
-            reply.createdAt!
-          );
+          let res = getFormattedWordsArray(text);
           msgArray = _.concat(msgArray, res);
         }
         if (l < r) {
@@ -133,13 +129,7 @@ const ReplyCard: React.FC<props> = ({
       if (finalEnd !== msg.length && finalEnd < msg.length) {
         // Final non-spoiler.
         let finalPhrase: string = msg.substring(finalEnd, msg.length);
-        let res = getFormattedWordsArray(
-          finalPhrase,
-          msgPlace.COMMENT_CARD,
-          dispatch,
-          reply.commentedUserId!,
-          reply.createdAt!
-        );
+        let res = getFormattedWordsArray(finalPhrase);
         msgArray = _.concat(msgArray, res);
       }
     }

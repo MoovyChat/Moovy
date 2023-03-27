@@ -15,7 +15,7 @@ const movieState: Movie = {
   lastPage: 1,
   currentPage: 1,
   pastLoadedCount: 0,
-  newlyLoadedCommentTimeStamp: '', // For loading new comments...'
+  newlyLoadedCommentTimeStamp: new Date().getTime().toString(), // For loading new comments...'
   loadNew: 0,
   viewsCount: 0,
   commentCount: 0,
