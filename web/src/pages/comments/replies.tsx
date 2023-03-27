@@ -1,13 +1,14 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 import { Reply, useGetRepliesOfTheUserQuery } from '../../generated/graphql';
 
 import { CommentParent } from './comments.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ReplyCard from '../../components/comment-card/replyCard';
 import ViewportList from 'react-viewport-list';
-import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserReplies } from '../../hooks/useFetchUserReplies';
 import { useParams } from 'react-router-dom';
@@ -55,6 +56,11 @@ const Replies = () => {
   }
   return (
     <CommentParent>
+      <Helmet>
+        <title>{`${id}: Replies`}</title>
+        <meta name='description' content={`${id} replies`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/replies/${id}`} />
+      </Helmet>
       <Fragment>
         <div className='child' onScroll={handleScroll} ref={parentRef}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>

@@ -1,3 +1,4 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import {
   Comment,
   Movie,
@@ -11,13 +12,13 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
 import CommentCard from '../../components/comment-card/commentCard';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import NotFound from '../notFound/notFound';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
 import { isNumber } from '../../utils/helpers';
-import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
@@ -97,6 +98,14 @@ const MovieThread = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{`${movieInfo.name}: Comments`}</title>
+        <meta name='description' content={`${movieInfo.name}: Comments`} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/movie/${movieInfo.id}`}
+        />
+      </Helmet>
       {valid ? (
         <MovieThreadParent onScroll={scrollHandler} ref={ref}>
           <ChildHeader className='movie-header'>

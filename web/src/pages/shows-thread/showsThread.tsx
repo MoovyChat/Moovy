@@ -1,3 +1,4 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import {
   Movie,
   Title,
@@ -14,21 +15,18 @@ import React, {
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import ViewportList from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
-import { isServer } from '../../constants';
 import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
 import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
   useIsAuth();
-  useEffect(() => {
-    document.title = 'Show - Moovy';
-  }, []);
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -85,6 +83,11 @@ const ShowsThread = () => {
   }
   return (
     <ShowThreadParent onScroll={handleScroll}>
+      <Helmet>
+        <title>{`Moovy: Show`}</title>
+        <meta name='description' content={`List of all episodes of a show.`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/show/${id}}`} />
+      </Helmet>
       <ChildHeader className='movie-header'>
         <StyledTitleHeader>
           <div className='title-image'>

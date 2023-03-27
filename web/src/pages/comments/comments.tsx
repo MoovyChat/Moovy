@@ -1,12 +1,13 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { Comment, useGetCommentsOfTheUserQuery } from '../../generated/graphql';
 import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import CommentCard from '../../components/comment-card/commentCard';
 import { CommentParent } from './comments.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import ViewportList from 'react-viewport-list';
-import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserComments } from '../../hooks/useFetchUserComments';
 import { useParams } from 'react-router-dom';
@@ -75,6 +76,11 @@ const Comments = () => {
   }
   return (
     <CommentParent className='comments'>
+      <Helmet>
+        <title>{`${id}: Comments`}</title>
+        <meta name='description' content={`${id} comments`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/comments/${id}`} />
+      </Helmet>
       <Fragment>
         <div className='child' ref={parentRef} onScroll={handleScroll}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={comments}>

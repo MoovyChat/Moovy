@@ -68,11 +68,14 @@ const ProfileTemplate: React.FC<props> = ({
       onScroll={profileScrollHandler}
       id='profile-parent'>
       <Helmet>
-        <title>{user.nickname}</title>
-        <meta name='description' content={user.nickname} />
+        <title>{`${user ? user.nickname : 'Moovy'}: Profile`}</title>
+        <meta
+          name='description'
+          content={`${user ? user.nickname : 'Moovy'}: Profile`}
+        />
         <link
           rel='canonical'
-          href={`${CURRENT_DOMAIN}/profile/${user.nickname}`}
+          href={`${CURRENT_DOMAIN}/profile/${user.nickname}}`}
         />
       </Helmet>
       <ChildHeader text={headerTitle} className='comment-header' />

@@ -1,13 +1,14 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { Title, useGetPaginatedTitlesQuery } from '../../generated/graphql';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import CatalogTemplate from './catalogTemplate';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import TitleCard from './titleCard';
 import _ from 'lodash';
-import { isServer } from '../../constants';
 import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
 
 const MoviesCatalog = () => {
@@ -55,6 +56,11 @@ const MoviesCatalog = () => {
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
+      <Helmet>
+        <title>Moovy: Movies</title>
+        <meta name='description' content='List of all movies' />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog`} />
+      </Helmet>
       {titles &&
         titles.map(
           (title, index) =>

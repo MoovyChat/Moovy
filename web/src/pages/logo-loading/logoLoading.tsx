@@ -1,9 +1,14 @@
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from '../splash-screen/splashScreen.styles';
 const LogoLoading = () => {
   return (
     <StyledSplashScreen>
+      <Helmet>
+        <title>{`Loading...`}</title>
+        <meta name='description' content={`Loading...`} />
+      </Helmet>
       <div className='logo'>
         <img src={Moovy} alt='Moovy' />
       </div>

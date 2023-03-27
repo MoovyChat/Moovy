@@ -24,6 +24,8 @@ import {
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { getDateFormat, getShortDateFormat } from '../../utils/helpers';
 
+import { CURRENT_DOMAIN } from '../../constants';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledSplashScreen } from '../splash-screen/splashScreen.styles';
@@ -83,6 +85,11 @@ const Admin: React.FC<AdminProps> = () => {
 
   return (
     <StyledAdmin contactSelected={selectedContact !== null}>
+      <Helmet>
+        <title>Admin</title>
+        <meta name='description' content='Admin' />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/admin`} />
+      </Helmet>
       <div className='logo'>
         <img src={Moovy} alt='Moovy' />
       </div>

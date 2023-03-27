@@ -1,18 +1,16 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { Title, useGetPaginatedTitlesQuery } from '../../generated/graphql';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import TitleCard from './titleCard';
-import { isServer } from '../../constants';
 import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
 
 const ShowsCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [titles, setTitles] = useState<Title[]>([]);
-  useEffect(() => {
-    document.title = 'Shows - Moovy';
-  }, []);
 
   const [paginatedTitles] = useGetPaginatedTitlesQuery({
     variables: { type: 'show', first: 15, after: '' },
@@ -44,6 +42,11 @@ const ShowsCatalog = () => {
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
+      <Helmet>
+        <title>Moovy: Shows</title>
+        <meta name='description' content='List of all shows' />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog/shows`} />
+      </Helmet>
       {titles &&
         titles.map((title, index) => (
           <TitleCard

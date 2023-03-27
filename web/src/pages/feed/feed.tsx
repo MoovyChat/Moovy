@@ -1,3 +1,4 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { FeedItem, useGetFeedQuery } from '../../generated/graphql';
 import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 
@@ -8,10 +9,10 @@ import FeedComment from './feed-comment/feedComment';
 import { FeedObject } from '../../utils/interfaces';
 import { FeedParent } from './feed.styles';
 import FeedReply from './feed-reply/feedReply';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ViewportList from 'react-viewport-list';
-import { isServer } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 import { useFetchMoreFeed } from '../../hooks/useFetchMoreFeed';
 
@@ -21,9 +22,6 @@ const Feed = () => {
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string>('');
-  useEffect(() => {
-    document.title = 'Moovy';
-  }, []);
   const [feedQuery] = useGetFeedQuery({
     variables: {
       uid: user?.id,
@@ -64,6 +62,11 @@ const Feed = () => {
   if (items.length <= 0) {
     return (
       <>
+        <Helmet>
+          <title>{`Feed`}</title>
+          <meta name='description' content={`Feed`} />
+          <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
+        </Helmet>
         <ChildHeader text='Feed' className='feed-header' />
         <EmptyPage msg='Your Feed is empty!' />
       </>
@@ -72,6 +75,11 @@ const Feed = () => {
   return (
     <>
       <ChildHeader text='Feed' className='feed-header' />
+      <Helmet>
+        <title>{`Feed`}</title>
+        <meta name='description' content={`Feed`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
+      </Helmet>
       <CommentParent>
         <div className='child' ref={parentRef} onScroll={handleScroll}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={items}>
