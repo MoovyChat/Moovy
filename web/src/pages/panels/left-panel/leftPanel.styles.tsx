@@ -8,7 +8,6 @@ export const LeftParent = styled.div`
   align-items: center;
   width: 100%;
   border-right: 0.3px solid #8f8f8f81;
-  padding-bottom: 20px;
   .parent-profile {
     display: flex;
     -webkit-box-align: center;
