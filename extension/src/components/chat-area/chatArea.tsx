@@ -64,7 +64,7 @@ const ChatArea: React.FC<props> = ({
   useEffect(() => {
     const debouncedSetValue = _.debounce((v) => {
       setDebouncedValue(v);
-    }, 500);
+    }, 200);
 
     debouncedSetValue(text);
 
