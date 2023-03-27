@@ -21,7 +21,7 @@ let OTT = {
     title: 'Netflix',
     imgUrl:
       'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI',
-    color: '#E50915',
+    color: '#c0141d',
   },
   DISNEY: {
     title: 'Disney',
