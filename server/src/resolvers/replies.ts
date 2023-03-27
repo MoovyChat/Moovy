@@ -147,7 +147,8 @@ export class ReplyResolver {
     const totalCount = await query.getCount();
     // If `after` cursor is provided, filter replies by cursor
     if (after) {
-      query.andWhere('reply.id > :cursor', { cursor: after });
+      const cursorTimestamp = new Date(parseInt(after, 10));
+      query.andWhere('reply.createdAt > :cursor', { cursor: cursorTimestamp });
     }
 
     // Get `first` number of replies, plus 1 to check for next page
@@ -161,10 +162,10 @@ export class ReplyResolver {
     const endCursor =
       replies.length === 0
         ? String(totalCount)
-        : replies[replies.length - 1].id;
+        : String(replies[replies.length - 1].createdAt.getTime());
     const edges = nodes.map((node) => ({
       node,
-      cursor: String(node.id),
+      cursor: String(node.createdAt.getTime()),
     }));
 
     const pageInfo: PageInfo = {

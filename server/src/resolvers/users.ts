@@ -127,38 +127,6 @@ class NicKNameFormat {
   photoUrl: string;
 }
 
-@ObjectType()
-class PaginatedUserComments {
-  @Field(() => Int, { defaultValue: 0 })
-  totalCommentCount: number;
-  @Field(() => Int, { defaultValue: 0 })
-  pastCount: number;
-  @Field(() => Users)
-  user: Users;
-  @Field(() => [Comment])
-  comments: Comment[];
-  @Field(() => Boolean)
-  hasMoreComments: boolean;
-  @Field(() => Int)
-  lastPage: number;
-}
-
-@ObjectType()
-class PaginatedUserReplies {
-  @Field(() => Int, { defaultValue: 0 })
-  totalCommentCount: number;
-  @Field(() => Int, { defaultValue: 0 })
-  pastCount: number;
-  @Field(() => Users)
-  user: Users;
-  @Field(() => [Reply])
-  comments: Reply[];
-  @Field(() => Boolean)
-  hasMoreComments: boolean;
-  @Field(() => Int)
-  lastPage: number;
-}
-
 @Resolver()
 export class UserResolver {
   @Query(() => [Users])
@@ -631,6 +599,22 @@ LIMIT ${first};
     return {
       user,
     };
+  }
+
+  @Mutation(() => Users)
+  async toggleAdmin(
+    @Arg('id') id: string,
+    @Arg('isAdmin') isAdmin: boolean
+  ): Promise<Users | undefined> {
+    const user = await Users.findOne({ where: { id } });
+
+    if (!user) {
+      throw new Error(`User with ID ${id} does not exist`);
+    }
+
+    user.admin = isAdmin;
+
+    return user.save();
   }
 
   @Mutation(() => NickNameResponse)

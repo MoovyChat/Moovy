@@ -20,6 +20,8 @@ import { Users } from '../entities/Users';
 import { MoreThan } from 'typeorm';
 import { LIKES_AND_COMMENT } from '../constants';
 import { MovieStats } from '../entities/MovieStats';
+import { MovieConnection } from '../connections';
+import { PageInfo } from '../pagination';
 
 @InputType()
 class MovieInput {
@@ -220,29 +222,45 @@ export class MovieResolver {
     return movie;
   }
 
-  @Query(() => PaginatedMovies, { nullable: true })
+  @Query(() => MovieConnection)
   async getMoviesByTitleId(
     @Arg('tid') tid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
-  ): Promise<PaginatedMovies | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<MovieConnection> {
     const query = conn
       .getRepository(Movie)
       .createQueryBuilder('movie')
       .where('movie.titleId = :tid', { tid });
-    const movieCount = await query.getCount();
-    const movies = await query
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('movie.id > :cursor', { cursor: after });
+    }
+    // Get `first` number of replies, plus 1 to check for next page
+    const titles = await query
       .orderBy('movie.id', 'ASC')
-      .offset((page - 1) * limit)
-      .limit(limit)
+      .take(first + 1)
       .getMany();
+    const nodes = titles.slice(0, first);
+    const hasNextPage = titles.length > first;
+    const endCursor =
+      titles.length === 0 ? String(totalCount) : titles[titles.length - 1].id;
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.id),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      id: tid,
-      movies: movies.slice(0, limit),
-      movieCount,
-      hasMoreTitles: movies.length === movieCount + 1,
-      page: page,
-      lastPage: movieCount === 0 ? 1 : Math.ceil(movieCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 

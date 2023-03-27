@@ -57,7 +57,7 @@ export class TitleResolver {
     return info;
   }
 
-  @Mutation(() => Title, { nullable: true })
+  @Query(() => Title, { nullable: true })
   async getTitleInfo(@Arg('id') id: string): Promise<Title> {
     const info = await Title.findOne({ where: { id } });
     if (!info) throw new Error('Title not found');

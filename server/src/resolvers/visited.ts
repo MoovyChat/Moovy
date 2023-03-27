@@ -35,6 +35,14 @@ class TrendingObject {
   @Field(() => Int)
   viewsCount: number;
 }
+
+@ObjectType()
+class TrendingOutput {
+  @Field(() => [TrendingObject])
+  movies: TrendingObject[];
+  @Field(() => [TrendingObject])
+  shows: TrendingObject[];
+}
 @Resolver()
 export class VisitedResolver {
   @Query(() => [Visited])
@@ -42,11 +50,11 @@ export class VisitedResolver {
     return Visited.find();
   }
 
-  @Query(() => [TrendingObject], { nullable: true })
-  async getTrendingMovies(
+  @Query(() => TrendingOutput, { nullable: true })
+  async getTrendingTitles(
     @Arg('limit', () => Int) limit: number
-  ): Promise<TrendingObject[] | null> {
-    const res = await conn
+  ): Promise<TrendingOutput | null> {
+    const movieRes = await conn
       .getRepository(Title)
       .createQueryBuilder('title')
       .innerJoin(Movie, 'movie', 'movie.titleId=title.id')
@@ -58,7 +66,34 @@ export class VisitedResolver {
       .orderBy('movie.viewsCount', 'DESC')
       .limit(limit)
       .getRawMany();
-    return res;
+
+    const showRes = await conn
+      .getRepository(Title)
+      .createQueryBuilder('title')
+      .innerJoin(Movie, 'show', 'show.titleId=title.id')
+      .where('show."viewsCount" > 0')
+      .andWhere('title.type = :type', { type: 'show' })
+      .select('title.title', 'title')
+      .addSelect('title.id', 'id')
+      .addSelect('SUM(show."viewsCount")', 'viewsCount')
+      .groupBy('title.id')
+      .orderBy('"viewsCount"', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    const movies = movieRes.map((movie) => ({
+      id: movie.id,
+      title: movie.title,
+      viewsCount: movie.viewsCount,
+    }));
+
+    const shows = showRes.map((show) => ({
+      id: show.id,
+      title: show.title,
+      viewsCount: show.viewsCount,
+    }));
+
+    return { movies, shows };
   }
 
   // Gets all the movies watched by the user.

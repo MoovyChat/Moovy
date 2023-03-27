@@ -110,6 +110,7 @@ const main = async () => {
     schema,
     context: ({ req, res }): MyContext => ({ req, res }),
     persistedQueries: false,
+    introspection: __prod__ ? false : true,
     plugins: [
       {
         async serverWillStart() {

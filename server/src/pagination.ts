@@ -2,6 +2,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 import { Comment } from './entities/Comment';
 import { FeedItem } from './objectTypes';
+import { Movie } from './entities/Movie';
 import { Reply } from './entities/Reply';
 import { Title } from './entities/Title';
 
@@ -25,6 +26,14 @@ export class CommentEdge {
 export class TitleEdge {
   @Field(() => Title, { nullable: true })
   node: Title;
+  @Field(() => String, { nullable: true })
+  cursor: string;
+}
+
+@ObjectType()
+export class MovieEdge {
+  @Field(() => Movie, { nullable: true })
+  node: Movie;
   @Field(() => String, { nullable: true })
   cursor: string;
 }

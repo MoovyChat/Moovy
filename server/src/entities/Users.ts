@@ -45,6 +45,10 @@ export class Users extends BaseEntity {
   @Column()
   photoUrl: string;
 
+  @Field(() => Boolean, { defaultValue: false })
+  @Column({ default: false })
+  admin: boolean;
+
   @Field(() => String, { nullable: true })
   @Column({
     nullable: true,

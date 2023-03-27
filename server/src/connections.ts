@@ -1,6 +1,7 @@
 import {
   CommentEdge,
   FeedEdge,
+  MovieEdge,
   PageInfo,
   ReplyEdge,
   TitleEdge,
@@ -9,6 +10,7 @@ import { Field, Int, ObjectType } from 'type-graphql';
 
 import { Comment } from './entities/Comment';
 import { FeedItem } from './objectTypes';
+import { Movie } from './entities/Movie';
 import { Reply } from './entities/Reply';
 import { Title } from './entities/Title';
 
@@ -70,4 +72,16 @@ export class TitleConnection {
   nodes: Title[];
   @Field(() => [TitleEdge])
   edges: TitleEdge[];
+}
+
+@ObjectType()
+export class MovieConnection {
+  @Field(() => Int)
+  totalCount: number;
+  @Field(() => PageInfo)
+  pageInfo: PageInfo;
+  @Field(() => [Movie])
+  nodes: Movie[];
+  @Field(() => [MovieEdge])
+  edges: MovieEdge[];
 }
