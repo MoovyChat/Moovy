@@ -4,8 +4,8 @@ import { animated } from '@react-spring/web';
 import { fillUp } from '../../styles/keyframes';
 
 type props = {
-  visible: boolean;
-  accentColor: string;
+  visible: string;
+  accentcolor: string;
 };
 export const ToastParent = styled(animated.div)<props>`
   position: absolute;
@@ -37,19 +37,19 @@ export const ToastParent = styled(animated.div)<props>`
     background: ${(p) => p.theme.chatText};
     transition: bottom 0.5s
       ${(p) =>
-        p.visible
+        p.visible === 'true'
           ? 'cubic-bezier(0.18, 0.89, 0.32, 1.28)'
           : 'cubic-bezier(0.6, -0.28, 0.74, 0.05)'};
     .fill {
       position: absolute;
 
-      background: ${(p) => p.accentColor};
+      background: ${(p) => p.accentcolor};
       top: 0;
       left: 0;
       right: 0;
       z-index: 17;
       animation: ${(p) =>
-        p.visible
+        p.visible === 'true'
           ? css`
               ${fillUp} 2s ease-in-out forwards reverse
             `

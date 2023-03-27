@@ -13,8 +13,10 @@ import {
   useGetUserProfileQuery,
 } from '../../generated/graphql';
 
+import { CURRENT_DOMAIN } from '../../constants';
 import ChildHeader from '../../components/childHeader/childHeader';
 import FollowButton from '../../components/follow-button/followButton';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import NavLinks from '../../components/nav-links/navLinks';
 import { ProfileParent } from './profile.styles';
@@ -65,6 +67,17 @@ const ProfileTemplate: React.FC<props> = ({
       ref={ref}
       onScroll={profileScrollHandler}
       id='profile-parent'>
+      <Helmet>
+        <title>{`${user ? user.nickname : 'Moovy'}: Profile`}</title>
+        <meta
+          name='description'
+          content={`${user ? user.nickname : 'Moovy'}: Profile`}
+        />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/profile/${user.nickname}}`}
+        />
+      </Helmet>
       <ChildHeader text={headerTitle} className='comment-header' />
       <div className='top'>
         <div className='cover-photo'>
@@ -120,13 +133,13 @@ const ProfileTemplate: React.FC<props> = ({
       <div className='sub-division'>
         {isDifferentUser && (
           <NavLinks>
-            <NavLink to='' end defaultChecked>
+            <NavLink to='' end defaultChecked className='nav'>
               <div>Basic</div>
             </NavLink>
-            <NavLink to='comments'>
+            <NavLink to='comments' className='nav'>
               <div>Comments</div>
             </NavLink>
-            <NavLink to='replies'>
+            <NavLink to='replies' className='nav'>
               <div>Replies</div>
             </NavLink>
           </NavLinks>

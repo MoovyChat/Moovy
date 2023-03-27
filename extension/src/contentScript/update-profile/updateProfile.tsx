@@ -21,11 +21,12 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  Profile,
   useIsUserNameExistsMutation,
   useUpsertProfileMutation,
 } from '../../generated/graphql';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EXT_URL } from '../../constants';
 import { ThemeContext } from 'styled-components';
@@ -110,9 +111,40 @@ const steps = [
   },
 ];
 
-const UpdateProfile = () => {
-  const [formData, setFormData] = useState<FormData>(defaultFormData);
+type props = {
+  profile: Profile | null | undefined;
+};
+const UpdateProfile: React.FC<props> = ({ profile }) => {
   const user = useAppSelector((state) => state.user);
+  const [formData, setFormData] = useState<FormData>({
+    userName: {
+      value: user.nickname,
+      error: '',
+      regex:
+        /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/,
+    },
+    fullName: {
+      value: profile?.fullname as string,
+      error: '',
+      regex: /^[a-zA-Z ]{2,30}$/,
+    },
+    gender: {
+      value: profile?.gender as string,
+      error: '',
+      regex: /^(Male|Female|Other)$/i,
+    },
+    dob: {
+      value: profile?.dob as string,
+      error: '',
+      regex: /^\d{4}-\d{2}-\d{2}$/,
+    },
+    bio: {
+      value: profile?.bio as string,
+      error: '',
+      regex: /^.{0,150}$/,
+    },
+  });
+
   const dobRef = useRef<HTMLInputElement | null>(null);
   const bioRef = useRef<HTMLTextAreaElement | null>(null);
   const userNameRef = useRef<HTMLInputElement | null>(null);

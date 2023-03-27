@@ -20,6 +20,8 @@ import { Users } from '../entities/Users';
 import { MoreThan } from 'typeorm';
 import { LIKES_AND_COMMENT } from '../constants';
 import { MovieStats } from '../entities/MovieStats';
+import { MovieConnection } from '../connections';
+import { PageInfo } from '../pagination';
 
 @InputType()
 class MovieInput {
@@ -51,6 +53,8 @@ class MovieInput {
 
 @ObjectType()
 class PaginatedMovieComments {
+  @Field()
+  id: string;
   @Field(() => Movie)
   movie: Movie;
   @Field(() => Boolean)
@@ -88,6 +92,18 @@ export class LikesObject {
 }
 
 @ObjectType()
+export class MovieCommentObject {
+  @Field(() => Boolean)
+  hasMoreComments: boolean;
+  @Field(() => Int)
+  totalCommentCount: number;
+  @Field(() => [Comment])
+  comments: Comment[];
+  @Field(() => Int)
+  lastPage: number;
+}
+
+@ObjectType()
 export class LikesAndComment {
   @Field(() => Int)
   likesCount: number;
@@ -120,13 +136,11 @@ export class MovieResolver {
   }
 
   @Query(() => PaginatedMovieComments, { nullable: true })
-  @Mutation(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
     @Arg('mid') mid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true }) ASC: boolean | true
+    @Arg('time', { nullable: true })
+    time: string,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
     // const totalCommentCount = await Comment.count({ where: { movieId: mid } });
     const query = conn
@@ -141,24 +155,47 @@ export class MovieResolver {
     }
     const pastCount = await query.getCount();
     const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('comment.createdAt', ASC ? 'ASC' : 'DESC')
+      .offset((page - 1) * 10)
+      .limit(10)
+      .orderBy('comment.createdAt', 'DESC')
       .getMany();
-    // const commentsLimit = Math.min(limit, 25);
-    // const commentsLimitPlusOne = limit + 1;
+
     const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error('Movie not found');
+    const id = `${mid}-${page}`;
     return {
+      id,
       movie,
-      comments: comments.slice(0, limit),
+      comments: comments.slice(0, 10),
       totalCommentCount,
       pastLoadedCount: pastCount,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      lastPage: totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / 10),
       hasMoreComments:
         page <
-        (totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit)),
+        (totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / 10)),
+    };
+  }
+
+  @Query(() => MovieCommentObject)
+  async getMovieComments(
+    @Arg('id') id: string,
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+  ): Promise<MovieCommentObject> {
+    const query = await conn
+      .getRepository(Comment)
+      .createQueryBuilder('comment')
+      .where('comment.movieId = :id', { id });
+    const count = await query.getCount();
+    const comments = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getMany();
+    return {
+      comments,
+      totalCommentCount: count,
+      lastPage: count === 0 ? 1 : Math.ceil(count / limit),
+      hasMoreComments: page < (count === 0 ? 1 : Math.ceil(count / limit)),
     };
   }
 
@@ -185,29 +222,45 @@ export class MovieResolver {
     return movie;
   }
 
-  @Query(() => PaginatedMovies, { nullable: true })
+  @Query(() => MovieConnection)
   async getMoviesByTitleId(
     @Arg('tid') tid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
-  ): Promise<PaginatedMovies | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<MovieConnection> {
     const query = conn
       .getRepository(Movie)
       .createQueryBuilder('movie')
       .where('movie.titleId = :tid', { tid });
-    const movieCount = await query.getCount();
-    const movies = await query
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('movie.id > :cursor', { cursor: after });
+    }
+    // Get `first` number of replies, plus 1 to check for next page
+    const titles = await query
       .orderBy('movie.id', 'ASC')
-      .offset((page - 1) * limit)
-      .limit(limit)
+      .take(first + 1)
       .getMany();
+    const nodes = titles.slice(0, first);
+    const hasNextPage = titles.length > first;
+    const endCursor =
+      titles.length === 0 ? String(totalCount) : titles[titles.length - 1].id;
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.id),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      id: tid,
-      movies: movies.slice(0, limit),
-      movieCount,
-      hasMoreTitles: movies.length === movieCount + 1,
-      page: page,
-      lastPage: movieCount === 0 ? 1 : Math.ceil(movieCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 

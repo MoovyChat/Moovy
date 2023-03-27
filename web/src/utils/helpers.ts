@@ -1,5 +1,4 @@
-import * as DOMPurify from 'dompurify';
-
+import DOMPurify from 'dompurify';
 import HtmlParser from 'react-html-parser';
 import { textMap } from './interfaces';
 import { textMapTypes } from '../constants';

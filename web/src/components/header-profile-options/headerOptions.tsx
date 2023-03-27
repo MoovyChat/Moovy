@@ -1,3 +1,4 @@
+/// <reference types="chrome"/>
 import { EXT_ID, isServer } from '../../constants';
 import { MdOutlineExitToApp, MdPerson, MdSync } from 'react-icons/md';
 import React, { MouseEventHandler } from 'react';

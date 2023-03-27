@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 export const ReplyWindowParent = styled.div`
-  width: 95%;
-  transform: scale(0.95);
+  width: 100%;
   background-color: inherit;
   display: flex;
   align-self: flex-end;
@@ -16,6 +15,7 @@ export const ReplyWindowParent = styled.div`
 
 type replyParentProps = {
   replySection: boolean;
+  accentColor: string;
 };
 export const ReplyParent = styled.div<replyParentProps>`
   width: 95%;
@@ -27,6 +27,7 @@ export const ReplyParent = styled.div<replyParentProps>`
   max-height: ${(p) => (p.replySection ? '400px' : '0px')};
   transition: max-height ${(p) => (p.replySection ? 1 : 0.5)}s
     cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  border-left: 1px solid ${(p) => p.accentColor};
   .show-more-replies {
     font-size: 1.1em;
     font-weight: 900;

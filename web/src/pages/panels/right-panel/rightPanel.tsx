@@ -1,13 +1,23 @@
+import {
+  BUY_ME_A_COFFEE,
+  DISCORD_INVITE_LINK,
+  INSTAGRAM_LINK,
+  PATREON,
+  TIKTOK_LINK,
+  TWITTER_LINK,
+} from '../../../constants';
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
   TrendingObject,
   useCreateChargeMutation,
-  useGetTrendingMoviesQuery,
+  useGetTrendingTitlesQuery,
 } from '../../../generated/graphql';
 
-import Ads from '../../../components/ads/ads';
+import BuyMeACoffee from '../../../static/images/bmc.png';
 import Loading from '../../loading/loading';
 import { MdLocalFireDepartment } from 'react-icons/md';
+import PatreonWord from '../../../static/images/patreon-word.png';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
@@ -19,15 +29,19 @@ type props = {
 };
 
 const RightPanel: React.FC<props> = ({ className }) => {
+  const iconSize = 25;
   const [, createCharge] = useCreateChargeMutation();
   const [trendingMovies, setTrendingMovies] = useState<TrendingObject[] | null>(
+    null
+  );
+  const [trendingShows, setTrendingShows] = useState<TrendingObject[] | null>(
     null
   );
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.user.id);
   useIsAuth();
 
-  const [trendingMoviesQuery] = useGetTrendingMoviesQuery({
+  const [trendingTitleQuery] = useGetTrendingTitlesQuery({
     variables: {
       limit: 5,
     },
@@ -45,25 +59,23 @@ const RightPanel: React.FC<props> = ({ className }) => {
   };
 
   useEffect(() => {
-    const { data, error, fetching } = trendingMoviesQuery;
+    const { data, error, fetching } = trendingTitleQuery;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getTrendingMovies;
-      setTrendingMovies(() => _data as TrendingObject[]);
+      const _data = data.getTrendingTitles;
+      setTrendingMovies(() => _data?.movies as TrendingObject[]);
+      setTrendingShows(() => _data?.shows as TrendingObject[]);
     }
-  }, [trendingMoviesQuery]);
+  }, [trendingTitleQuery]);
   return (
     <RightParent className={className}>
-      <div className='adblock'>
-        <Ads />
-      </div>
       <div className='trending titles'>
         <div className='heading'>
           <MdLocalFireDepartment color='#fc0404' size={20} />
           <div className='sub'>Trending Movies</div>
         </div>
         <div className='content'>
-          {!trendingMoviesQuery.fetching ? (
+          {!trendingTitleQuery.fetching ? (
             trendingMovies &&
             trendingMovies.map((title) => (
               <div
@@ -84,67 +96,118 @@ const RightPanel: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-      {/* <div className='trending premium'>
+
+      <div className='trending titles'>
         <div className='heading'>
-          <MdOutlineStar size={20} />
-          <div className='sub'>Premium features</div>
+          <MdLocalFireDepartment color='#fc0404' size={20} />
+          <div className='sub'>Trending Shows</div>
         </div>
         <div className='content'>
-          {fakeHashTags.map((tag) => (
-            <div className='item' key={tag.tag}>
-              <div className='title'>{tag.tag}</div>
-              <div className='count'>{tag.mentions}</div>
+          {!trendingTitleQuery.fetching ? (
+            trendingShows &&
+            trendingShows.map((title) => (
+              <div
+                className='item'
+                key={title.title}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/show/${title.id}`);
+                }}>
+                <div className='title'>{title.title}</div>
+                <div className='count'>
+                  {getFormattedNumber(title.viewsCount)} views
+                </div>
+              </div>
+            ))
+          ) : (
+            <Loading />
+          )}
+        </div>
+      </div>
+
+      <div className='socials'>
+        <div className='socials-block'>
+          <div className='item-heading'>Socials</div>
+          <div className='item-options'>
+            <div
+              id='text-focus'
+              className='discord social'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(DISCORD_INVITE_LINK, '_blank');
+              }}>
+              <FaDiscord
+                color='cornflowerblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
-          ))}
-          <div className='item purchase' onClick={purchasePremium}>
-            <div className='title'>Purchase</div>
-            <div className='price'>
-              <span>$1.50</span>
-              <del className='limited'>($2.00)</del>
+            <div
+              className='twitter social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TWITTER_LINK, '_blank');
+              }}>
+              <FaTwitter
+                color='deepskyblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
-            <div className='warning'>
-              <span>*Valid only for a limited time.</span>
+            <div
+              className='tiktok social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TIKTOK_LINK, '_blank');
+              }}>
+              <FaTiktok
+                className='icon'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+            <div
+              className='instagram social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(INSTAGRAM_LINK, '_blank');
+              }}>
+              <FaInstagram
+                color='hotpink'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
             </div>
           </div>
         </div>
-      </div> */}
-      <div className='links'>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/terms-and-conditions', '_blank');
-          }}>
-          Terms of Service
+        <div className='socials-block'>
+          <div className='item-heading'>Donate & Support</div>
+          <div className='item-options'>
+            <div
+              className='patreon'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(PATREON, '_blank');
+              }}>
+              <div className='logo' id='text-focus'>
+                <img src={PatreonWord} alt='patreon' id='text-focus' />
+              </div>
+            </div>
+            <div
+              className='bmc'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(BUY_ME_A_COFFEE, '_blank');
+              }}>
+              <div className='logo' id='text-focus'>
+                <img src={BuyMeACoffee} alt='bmc' id='text-focus' />
+              </div>
+            </div>
+          </div>
         </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/privacy', '_blank');
-          }}>
-          Privacy Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/cookie-policy', '_blank');
-          }}>
-          Cookie Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/about-us', '_blank');
-          }}>
-          About us
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/contact', '_blank');
-          }}>
-          Contact us
-        </div>
-        <div>© 2023 MoovyChat, Ltd.</div>
       </div>
     </RightParent>
   );

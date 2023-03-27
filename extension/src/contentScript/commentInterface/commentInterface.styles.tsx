@@ -2,7 +2,7 @@ import { commentStyleMixin } from '../../Utils/mixins';
 import styled from 'styled-components';
 
 export const CommentCardContainer = styled.div`
-  width: 100%;
+  width: 96%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -212,5 +212,22 @@ export const Delete = styled.div<deleteProps>`
   transition: all 0.5s linear;
   :hover {
     cursor: pointer;
+  }
+`;
+
+type ModProps = {
+  color: string;
+};
+export const Moderation = styled.div<ModProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(p) => p.color};
+  border: 1px solid ${(p) => p.color};
+  padding: 0 5px;
+  margin-top: 5px;
+  width: 80%;
+  svg {
+    margin: 5px;
   }
 `;

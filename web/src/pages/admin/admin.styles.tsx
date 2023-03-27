@@ -2,8 +2,8 @@ import { AiFillDelete, AiOutlineCheckCircle } from 'react-icons/ai';
 
 import styled from 'styled-components';
 
-export const FullMessageContainer = styled.div`
-  display: flex;
+export const FullMessageContainer = styled.div<adminProps>`
+  display: ${(p) => (p.contactSelected ? 'flex' : 'none')};
   justify-content: center;
   align-items: flex-start;
 
@@ -32,6 +32,11 @@ export const FullMessageContainer = styled.div`
       margin: 10px 0;
     }
 
+    .subject {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
     .message {
       flex: 1;
       font-size: 16px;
@@ -43,7 +48,7 @@ export const FullMessageContainer = styled.div`
 `;
 
 type props = {
-  read: boolean;
+  read?: boolean;
 };
 export const Container = styled.div<props>`
   display: flex;
@@ -136,7 +141,10 @@ export const DeleteIcon = styled(AiFillDelete)`
   transition: all 300ms;
 `;
 
-export const StyledAdmin = styled.div`
+type adminProps = {
+  contactSelected: boolean;
+};
+export const StyledAdmin = styled.div<adminProps>`
   padding: 10px;
   background-color: rgb(32, 33, 36);
   height: auto;
@@ -156,6 +164,7 @@ export const StyledAdmin = styled.div`
     display: flex;
     width: 100%;
     gap: 10px;
+    justify-content: center;
     .comments-container {
       flex: 1 1 70%;
       border-radius: 18px;
@@ -202,5 +211,49 @@ export const PaginationButton = styled.button`
   &:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
+  }
+`;
+
+export const AdminPanel = styled.div`
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  align-items: center;
+
+  .multi-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 30px;
+    input[type='radio'] {
+      display: none;
+    }
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 10px;
+      :hover {
+        background-color: #f0f0f0;
+      }
+    }
+    input[type='radio']:checked + label {
+      color: #fff;
+      background-color: #007bff;
+      :hover {
+        background-color: #0069d9;
+      }
+    }
   }
 `;

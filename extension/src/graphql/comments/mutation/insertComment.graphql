@@ -1,13 +1,5 @@
 mutation insertComment($options: CommentInput!) {
   insertComment(options: $options) {
-    id
-    commentedUserId
-    createdAt
-    likesCount
-    repliesCount
-    message
-    movieId
-    platformId
-    updatedAt
+    ...FullComment
   }
 }

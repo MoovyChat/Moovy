@@ -2,7 +2,9 @@ import { Movie, useSearchEpisodesQuery } from '../../generated/graphql';
 import { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { CURRENT_DOMAIN } from '../../constants';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
 import { MovieCardParent } from '../../components/movie-card/movieCard.styles';
@@ -50,6 +52,14 @@ const SearchEpisodes = () => {
   if (titles.length <= 0) return <EmptyPage msg='No Episodes found' />;
   return (
     <SearchTitles onScroll={handleScroll}>
+      <Helmet>
+        <title>{`${search}: Episodes`}</title>
+        <meta name='description' content={`${search}: Episodes`} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/search/${search}/episodes}`}
+        />
+      </Helmet>
       {titles.map((movie) => (
         <MovieCardParent
           bg={movie?.stills!}

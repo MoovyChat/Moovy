@@ -1,47 +1,45 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import {
   Movie,
   Title,
   useGetMoviesByTitleIdQuery,
   useGetTitleQuery,
 } from '../../generated/graphql';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  UIEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import ViewportList from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
-import { isServer } from '../../constants';
-import { title } from 'process';
+import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
 import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
   useIsAuth();
-  useEffect(() => {
-    document.title = 'Show - Moovy';
-  }, []);
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<Title | null>(null);
-  const [movies, setMovies] = useState<Movie[] | null>([]);
-  const [lastPage, setLastPage] = useState<number>(1);
-  const [page, setPage] = useState<number>(1);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [titleInfo] = useGetTitleQuery({
     variables: { getTitleId: id! },
     pause: isServer(),
   });
   const [getMovies] = useGetMoviesByTitleIdQuery({
-    variables: { tid: id!, page: page, limit: 10 },
+    variables: { tid: id!, first: 10, after: '' },
     pause: isServer(),
   });
-
-  useEffect(() => {
-    console.log('re-rendering', movies);
-  }, []);
 
   useMemo(() => {
     const { data, error, fetching } = titleInfo;
@@ -56,23 +54,20 @@ const ShowsThread = () => {
     if (error) return console.error(error);
     if (!fetching && data) {
       const _data = data.getMoviesByTitleId!;
-      if (_data.id !== id) {
-        setMovies([]);
-        return;
-      }
-      const paginatedMovies = _data.movies!;
-      const p = _data.page!;
-      const lastPage = _data.lastPage!;
-      let orderedMovies = _.chain(movies)
-        .concat(paginatedMovies)
-        .orderBy('id')
-        .uniq()
-        .value();
-      setMovies(() => orderedMovies as Movie[]);
-      setPage(() => p);
-      setLastPage(lastPage);
+      const paginatedMovies = _data.nodes as Movie[];
+      setMovies(() => paginatedMovies as Movie[]);
     }
-  }, [getMovies.fetching, page]);
+  }, [getMovies]);
+
+  const { fetchMore } = useFetchMoreMovies(id!, setMovies, getMovies);
+
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    const target = e.target as HTMLDivElement;
+    if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
+      fetchMore();
+    }
+  };
 
   if (getMovies.fetching || titleInfo.fetching) {
     <div
@@ -87,7 +82,12 @@ const ShowsThread = () => {
     </div>;
   }
   return (
-    <ShowThreadParent>
+    <ShowThreadParent onScroll={handleScroll}>
+      <Helmet>
+        <title>{`Moovy: Show`}</title>
+        <meta name='description' content={`List of all episodes of a show.`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/show/${id}}`} />
+      </Helmet>
       <ChildHeader className='movie-header'>
         <StyledTitleHeader>
           <div className='title-image'>
@@ -108,20 +108,13 @@ const ShowsThread = () => {
             {(movie, index) => {
               if (movie)
                 return (
-                  <div className='movie'>
+                  <div className='movie' key={movie.id}>
                     <MovieCard movieId={movie.id} />
                   </div>
                 );
               else <React.Fragment></React.Fragment>;
             }}
           </ViewportList>
-        )}
-        {page < lastPage && (
-          <div
-            className='show-more'
-            onClick={() => setPage((page) => page + 1)}>
-            Show more titles
-          </div>
         )}
       </div>
     </ShowThreadParent>

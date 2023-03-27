@@ -22,7 +22,9 @@ import _ from 'lodash';
 import { getFormattedWordsArray } from '../../Utils/utilities';
 import { msgPlace } from '../../Utils/enums';
 import { urqlClient } from '../../Utils/urqlClient';
+import useDetoxify from '../../contentScript/hooks/useDetoxify';
 import { useGetNickNameSuggestionsMutation } from '../../generated/graphql';
+import usePredictiveText from '../../contentScript/hooks/usePredictiveText';
 import { withUrqlClient } from 'next-urql';
 
 type props = {
@@ -43,7 +45,6 @@ const ChatArea: React.FC<props> = ({
   const searchAPI =
     'https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=';
   const user = useAppSelector((state) => state.user);
-  const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
 
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
@@ -58,6 +59,23 @@ const ChatArea: React.FC<props> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textAreaHeight, setTextAreaHeight] = useState<number>(17);
   const [formattedTextMap, setFormattedTextMap] = useState<textMap[]>([]);
+  const [debouncedText, setDebouncedValue] = useState<string>('');
+
+  useEffect(() => {
+    const debouncedSetValue = _.debounce((v) => {
+      setDebouncedValue(v);
+    }, 200);
+
+    debouncedSetValue(text);
+
+    return () => {
+      debouncedSetValue.cancel();
+    };
+  }, [text]);
+
+  usePredictiveText(searchAPI, debouncedText);
+
+  useDetoxify(debouncedText);
 
   useEffect(() => {
     if (textAreaFocussed) textAreaRef.current?.focus();
@@ -152,13 +170,7 @@ const ChatArea: React.FC<props> = ({
   }, [text, textAreaRef.current, ref.current, formattedTextMap]);
 
   useEffect(() => {
-    let res = getFormattedWordsArray(
-      text,
-      msgPlace.TEXTAREA,
-      dispatch,
-      'NO_NEED_TO_SEND_USER_ID',
-      0
-    );
+    let res = getFormattedWordsArray(text);
     setFormattedTextMap(res);
   }, [text]);
 
@@ -169,57 +181,6 @@ const ChatArea: React.FC<props> = ({
     e.preventDefault();
     let text = e.target.value;
     dispatch(sliceSetTextAreaMessage(text));
-    let words = text.split(' ');
-    let lastWord = words[words.length - 1];
-    if (lastWord.charAt(0) === '@') {
-      let wordToSearch = lastWord.substring(1);
-      // get response from graphQL server.
-      // Expected response: First three matches.
-      getNickNameSuggestions({ search: wordToSearch }).then((res) => {
-        const { data, error } = res;
-        if (error) console.log(error);
-        if (data) {
-          const names: NameObject[] = data?.getTopThreeUserNames!;
-          dispatch(sliceSetNameSuggestions(names));
-          dispatch(sliceSetWordSuggestions([]));
-        }
-      });
-    } else {
-      let searchURL = `${searchAPI}${lastWord}`;
-      // Get Predictive text from Google search API.
-      await fetch(searchURL, {
-        mode: 'cors',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-        .then((response) => response.text())
-        .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
-        .then((data) => {
-          const el = data.getElementsByTagName('suggestion');
-          let firstWordSuggestions: string[] = [];
-          let secondWordSuggestions: string[] = [];
-          for (let item in el) {
-            let _element = el[item];
-            if (_element) {
-              let node = _element.attributes && _element.attributes[0];
-              let value = node && node.nodeValue!.split(' ');
-              if (value && !firstWordSuggestions.includes(value[0])) {
-                firstWordSuggestions.push(value[0]);
-              }
-              if (value && !secondWordSuggestions.includes(value[1])) {
-                secondWordSuggestions.push(value[1]);
-              }
-            }
-          }
-          let suggestions = _.concat(
-            firstWordSuggestions,
-            secondWordSuggestions
-          );
-          dispatch(sliceSetNameSuggestions([]));
-          dispatch(sliceSetWordSuggestions(suggestions));
-        });
-    }
   };
 
   return (

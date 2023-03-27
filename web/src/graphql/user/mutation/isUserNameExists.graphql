@@ -1,0 +1,3 @@
+mutation IsUserNameExists($text: String!) {
+  isUserNameExists(text: $text)
+}

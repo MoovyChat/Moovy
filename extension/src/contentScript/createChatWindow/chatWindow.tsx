@@ -1,12 +1,13 @@
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChatInterface from '../../components/chat-interface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
+import { sliceSetNewlyLoadedTimeStamp } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
-import { useAppSelector } from '../../redux/hooks';
 import useFetchEmojis from '../hooks/useFetchEmojis';
 import { withUrqlClient } from 'next-urql';
 
@@ -27,6 +28,11 @@ const ChatWindow = () => {
       uid: user?.id,
     },
   });
+  const dispatch = useAppDispatch();
+
+  useMemo(() => {
+    dispatch(sliceSetNewlyLoadedTimeStamp(new Date().getTime().toString()));
+  }, []);
 
   useEffect(() => {
     const { data, fetching, error } = profile;

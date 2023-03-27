@@ -19,7 +19,6 @@ import { COMMENT } from '../../redux/actionTypes';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
 import { msgPlace } from '../../Utils/enums';
-import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -74,12 +73,6 @@ const CommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
-      dispatch(
-        sliceComment({
-          payload: { _users, id },
-          type: COMMENT.ADD_TO_COMMENT_LIKES,
-        })
-      );
       const findCurrentUser = _users?.find((u) => u.id === uid);
       if (findCurrentUser) setLike(true);
       else setLike(false);
@@ -96,12 +89,6 @@ const CommentCard: React.FC<props> = ({
       const commentLikesCount = data.commentLikesUpdate?.likesCount;
       setLikesCount(commentLikesCount!);
       const _users = data.commentLikesUpdate?.likes;
-      dispatch(
-        sliceComment({
-          payload: { _users, id },
-          type: COMMENT.ADD_TO_COMMENT_LIKES,
-        })
-      );
       setLikedUser(_users);
     }
   }, [commentLikesSub.fetching]);
@@ -109,7 +96,9 @@ const CommentCard: React.FC<props> = ({
   useEffect(() => {
     let interval: any;
     let getTime = () => {
-      setTime(getTimeFrame(createdAt!));
+      if (createdAt === 'Posting...') {
+        setTime(createdAt!);
+      } else setTime(getTimeFrame(createdAt!));
       interval = setTimeout(getTime, 60000);
     };
     getTime();
@@ -148,13 +137,7 @@ const CommentCard: React.FC<props> = ({
         if (l > 0) {
           // non-spoiler.
           let text = remaining.substring(0, l);
-          let res = getFormattedWordsArray(
-            text,
-            msgPlace.COMMENT_CARD,
-            dispatch,
-            comment.commentedUserId!,
-            comment.createdAt!
-          );
+          let res = getFormattedWordsArray(text);
           msgArray = _.concat(msgArray, res);
         }
         if (l < r) {
@@ -172,13 +155,7 @@ const CommentCard: React.FC<props> = ({
       if (finalEnd !== msg.length && finalEnd < msg.length) {
         // Final non-spoiler.
         let finalPhrase: string = msg.substring(finalEnd, msg.length);
-        let res = getFormattedWordsArray(
-          finalPhrase,
-          msgPlace.COMMENT_CARD,
-          dispatch,
-          comment.commentedUserId!,
-          comment.createdAt!
-        );
+        let res = getFormattedWordsArray(finalPhrase);
         msgArray = _.concat(msgArray, res);
       }
     }

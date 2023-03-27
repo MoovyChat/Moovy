@@ -1,17 +1,16 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { Visited, useGetUserViewHistoryQuery } from '../../generated/graphql';
 import { useEffect, useState } from 'react';
 
+import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
-import { isServer } from '../../constants';
 import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const VisitedTitles = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'History - Moovy';
-  }, []);
+
   useIsAuth();
   const [page, setPage] = useState<number>(1);
   const [visited, setVisited] = useState<Visited[]>([]);
@@ -39,13 +38,23 @@ const VisitedTitles = () => {
 
   if (visitedQuery.error) return <NotFound />;
   return (
-    <TitleListTemplate
-      page={page}
-      setPage={setPage}
-      fetching={visitedQuery.fetching}
-      lastPage={lastPage}
-      movieStatsData={visited}
-    />
+    <>
+      <Helmet>
+        <title>{`${id}: History`}</title>
+        <meta name='description' content={`${id}: History`} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/activity/${id}/history`}
+        />
+      </Helmet>
+      <TitleListTemplate
+        page={page}
+        setPage={setPage}
+        fetching={visitedQuery.fetching}
+        lastPage={lastPage}
+        movieStatsData={visited}
+      />
+    </>
   );
 };
 

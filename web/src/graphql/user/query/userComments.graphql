@@ -1,26 +1,44 @@
-query getCommentsOfTheUser(
-  $limit: Int!
-  $uid: String!
-  $asc: Boolean
-  $page: Int
-  $time: String
-) {
-  getCommentsOfTheUser(
-    limit: $limit
-    uid: $uid
-    ASC: $asc
-    page: $page
-    time: $time
-  ) {
-    user {
-      ...FullUser
+query GetCommentsOfTheUser($first: Int!, $uid: String!, $after: String) {
+  getCommentsOfTheUser(first: $first, uid: $uid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
     }
-    totalCommentCount
-    pastCount
-    comments {
-      ...FullComment
+    nodes {
+      id
+      commentedUserId
+      commentedUserName
+      message
+      movieId
+      likesCount
+      repliesCount
+      platformId
+      toxicityScore
+      flagged
+      type
+      createdAt
+      updatedAt
+      deletedAt
     }
-    hasMoreComments
-    lastPage
+    edges {
+      node {
+        id
+        commentedUserId
+        commentedUserName
+        message
+        movieId
+        likesCount
+        repliesCount
+        platformId
+        toxicityScore
+        flagged
+        type
+        createdAt
+        updatedAt
+        deletedAt
+      }
+      cursor
+    }
   }
 }

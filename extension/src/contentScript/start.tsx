@@ -3,6 +3,7 @@ import { User, filterType } from '../Utils/interfaces';
 import { addBorder, applyFilter } from './videoStyles/videoStyles.help';
 import {
   getStoredBorder,
+  getStoredCheckedStatus,
   getStoredFilterValues,
   getStoredResizeValue,
   getStoredUserLoginDetails,
@@ -19,16 +20,13 @@ import {
 } from '../redux/slices/loading/loadingSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
-import { COMMENT } from '../redux/actionTypes';
 import CommentButton from './commentButton/commentButton';
 import { StyledStart } from './start.styles';
 import { getVideoElement } from './contentScript.utils';
 import { isServerSide } from '../constants';
 import { sliceAddMovieId } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser } from '../redux/slices/user/userSlice';
-import { sliceComment } from '../redux/slices/comment/commentSlice';
 import { sliceResetAudioNodes } from '../redux/slices/audioNodes';
-import { sliceResetReply } from '../redux/slices/reply/replySlice';
 import { urqlClient } from '../Utils/urqlClient';
 import { useFetchMovie } from './hooks/useFetchMovie';
 import { useGetUserQuery } from '../generated/graphql';
@@ -46,6 +44,7 @@ const Start: React.FC<props> = () => {
     variables: { uid: u?.id! },
     pause: isServerSide(),
   });
+  const [isCommentEnabled, setIsCommentEnabled] = useState<boolean>(false);
   const autoSkipValue = useAppSelector((state) => state.misc.autoSkip);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [movieId, setMovieId] = useState<string>('');
@@ -74,13 +73,15 @@ const Start: React.FC<props> = () => {
 
   useEffect(() => {
     // Clear redux cache.
-    dispatch(sliceComment({ type: COMMENT.RESET }));
-    dispatch(sliceResetReply());
+
     dispatch(sliceResetSettings());
     dispatch(sliceResetAudioNodes());
     dispatch(sliceValidateMovieLoading(false));
     getStoredUserLoginDetails().then((res) => {
       setU(res);
+    });
+    getStoredCheckedStatus().then((res) => {
+      setIsCommentEnabled(res);
     });
   }, []);
 
@@ -161,6 +162,15 @@ const Start: React.FC<props> = () => {
   // }, [manipulation, videoElement, movieId, user, nodes.audioContext]);
 
   useEffect(() => {
+    // Listen for a refresh message from the pop-up
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'icon-status') {
+        setIsCommentEnabled(() => message.checked);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     let bottomControlsObserver: MutationObserver | null = null;
 
     const handleMutation = (
@@ -198,7 +208,22 @@ const Start: React.FC<props> = () => {
       });
     };
 
+    const handleRefresh = () => {
+      if (bottomControlsObserver) {
+        bottomControlsObserver.disconnect();
+        bottomControlsObserver = null;
+      }
+      startObserver();
+    };
+
     startObserver();
+
+    // Listen for a refresh message from the pop-up
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'refresh') {
+        handleRefresh();
+      }
+    });
 
     return () => {
       bottomControlsObserver?.disconnect();
@@ -206,27 +231,27 @@ const Start: React.FC<props> = () => {
     };
   }, []);
 
-  useEffect(() => {
-    async function applyTimeLineStyles() {
-      let timelineBar = document.querySelector('[data-uia="timeline-bar"]');
-      if (timelineBar) {
-        const firstChild = timelineBar.firstChild as HTMLElement;
-        const secondChild = timelineBar.childNodes[1] as HTMLElement;
-        firstChild.style.backgroundColor = accentColor;
-        firstChild.style.opacity = '0.5';
-        secondChild.style.backgroundColor = accentColor;
-      }
-      let knowView = document.querySelector('[data-uia="timeline-knob"]');
-      let knobElement = knowView as HTMLElement;
-      if (knobElement) {
-        knobElement.style.backgroundColor = accentColor;
-      }
-    }
+  // useEffect(() => {
+  //   async function applyTimeLineStyles() {
+  //     let timelineBar = document.querySelector('[data-uia="timeline-bar"]');
+  //     if (timelineBar) {
+  //       const firstChild = timelineBar.firstChild as HTMLElement;
+  //       const secondChild = timelineBar.childNodes[1] as HTMLElement;
+  //       firstChild.style.backgroundColor = accentColor;
+  //       firstChild.style.opacity = '0.5';
+  //       secondChild.style.backgroundColor = accentColor;
+  //     }
+  //     let knowView = document.querySelector('[data-uia="timeline-knob"]');
+  //     let knobElement = knowView as HTMLElement;
+  //     if (knobElement) {
+  //       knobElement.style.backgroundColor = accentColor;
+  //     }
+  //   }
 
-    if (isBottomControlsVisible) {
-      applyTimeLineStyles();
-    }
-  }, [isBottomControlsVisible, accentColor]);
+  //   if (isBottomControlsVisible) {
+  //     applyTimeLineStyles();
+  //   }
+  // }, [isBottomControlsVisible, accentColor]);
 
   // Set the pre-saved video styles.
   useEffect(() => {
@@ -262,8 +287,7 @@ const Start: React.FC<props> = () => {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (!sender.tab && request.type === 'SET_MOVIE_ID') {
       // Clear redux cache.
-      dispatch(sliceComment({ type: COMMENT.RESET }));
-      dispatch(sliceResetReply());
+
       dispatch(sliceResetSettings());
       dispatch(sliceResetAudioNodes());
       dispatch(sliceValidateMovieLoading(false));
@@ -305,8 +329,8 @@ const Start: React.FC<props> = () => {
 
   if (!videoElem) return <></>;
   return (
-    <StyledStart visible={isBottomControlsVisible}>
-      <CommentButton visible={isBottomControlsVisible} />
+    <StyledStart visible={isBottomControlsVisible && isCommentEnabled}>
+      <CommentButton visible={isBottomControlsVisible && isCommentEnabled} />
       {/* <div className='main-audio'>
         <AudioVisualizer fftSize={1024} canvasRef={canvasRefObj} />
       </div> */}

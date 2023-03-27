@@ -2,6 +2,7 @@ import 'dotenv-safe/config';
 
 import { AdminNotifications } from './entities/AdminNotifications';
 import { Comment } from './entities/Comment';
+import { CommentReport } from './entities/CommentReport';
 import { CommentStats } from './entities/CommentStat';
 import { Contact } from './entities/Contact';
 import { DataSource } from 'typeorm';
@@ -14,6 +15,7 @@ import { MovieStatsSubscriber } from './subscriptions/movieStats.subscription';
 import { Platform } from './entities/Platform';
 import { Profile } from './entities/Profile';
 import { Reply } from './entities/Reply';
+import { ReplyReport } from './entities/ReplyReport';
 import { ReplyStats } from './entities/ReplyStats';
 import { Title } from './entities/Title';
 import { Users } from './entities/Users';
@@ -45,6 +47,8 @@ export const conn = new DataSource({
     Profile,
     AdminNotifications,
     Contact,
+    CommentReport,
+    ReplyReport,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
   migrations: [path.join('dist/migrations/*.js')],

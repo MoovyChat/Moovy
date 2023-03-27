@@ -22,6 +22,8 @@
     "firebase.ts",
     "src/contentScript/contentScript.js",
     "src/components/emoji-picker/.tsx",
-    "src/redux/slices/.ts"
+    "src/redux/slices/.ts",
+    "src/types/types.d.ts",
+    "desc.d.ts"
   ]
 }

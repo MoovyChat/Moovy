@@ -1,6 +1,7 @@
 import { MOOVY_URL, constants } from '../../../constants';
-import { Pic, SetTop } from './logout.styles';
+import { Pic, Refresh, SetTop } from './logout.styles';
 import React, {
+  ChangeEventHandler,
   Dispatch,
   MouseEvent,
   MouseEventHandler,
@@ -10,11 +11,13 @@ import React, {
 } from 'react';
 import {
   getStoredCheckedStatus,
+  setStoredCheckedStatus,
   setStoredUserLoginDetails,
 } from '../../../Utils/storage';
 
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
+import { IoMdRefresh } from 'react-icons/io';
 import { OTTType } from '../app/app';
 import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
@@ -130,20 +133,24 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
     });
   }, [checked, setChecked]);
 
-  // const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
-  //   e
-  // ) => {
-  //   e.stopPropagation();
-  //   setChecked(!checked);
-  //   setStoredCheckedStatus(!checked);
-  //   chrome.windows.getCurrent((w) => {
-  //     chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
-  //       chrome.tabs.sendMessage(tabs[0].id!, { checked: true }, (response) => {
-  //         console.log(response, response?.data);
-  //       });
-  //     });
-  //   });
-  // };
+  const handleChange: ChangeEventHandler<HTMLInputElement> | undefined = (
+    e
+  ) => {
+    e.stopPropagation();
+    setChecked(!checked);
+    setStoredCheckedStatus(!checked);
+    chrome.windows.getCurrent((w) => {
+      chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
+        chrome.tabs.sendMessage(
+          tabs[0].id!,
+          { checked: !checked, type: 'icon-status' },
+          (response) => {
+            console.log(response, response?.data);
+          }
+        );
+      });
+    });
+  };
 
   const refreshData: MouseEventHandler = (e) => {
     e.stopPropagation();
@@ -177,17 +184,32 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
             <Pic photoURL={user?.photoUrl}></Pic>
           </div>
           <div className='message'>
-            {constants.welcome} {user?.name.split(' ')[0]}!
+            {constants.welcome} {user?.nickname.split(' ')[0]}!
           </div>
         </div>
 
         <div className='comment-checkbox'>
           <Ott OTTSite={OTTSite} />
         </div>
+        <div className='comment-checkbox'>
+          <div className='tool-option'>
+            <span className='option-text'>Show Comment Icon</span>
+            <span className='checkBox'>
+              <input
+                type='checkbox'
+                id='bg'
+                defaultChecked={checked}
+                checked={checked}
+                onChange={handleChange}
+              />
+              <label htmlFor='bg'></label>
+            </span>
+          </div>
+        </div>
         <div className='button-list'>
           <Button
             className='lst'
-            bgColor='hsl(0, 70%, 30%)'
+            bgColor={OTTSite.color}
             textColor='white'
             iconSize={25}
             text={constants.logout}
@@ -298,10 +320,10 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
             });
           }}>
           <MdFiberManualRecord size={40} fill='red' className='icon' />
-        </SideArrowButton>
+        </SideArrowButton> */}
         <Refresh onClick={refreshData}>
           <IoMdRefresh size={40} />
-        </Refresh> */}
+        </Refresh>
       </SetTop>
     </WithOutLoginWindow>
   );

@@ -6,6 +6,7 @@ export const miscState = {
   isNavBarOpen: false,
   emojiSearchValue: '',
   dominantColor: '',
+  isProfileExists: false,
   emojiGroupActive: {
     0: true,
     1: true,
@@ -30,6 +31,9 @@ const MiscSlice = createSlice({
     sliceSetNavBar: (state, action: { payload: boolean }) => {
       return { ...state, isNavBarOpen: action.payload };
     },
+    sliceSetIsProfileExists: (state, action) => {
+      return { ...state, isProfileExists: action.payload };
+    },
     sliceSetDominantColor: (state, action) => {
       return { ...state, dominantColor: action.payload };
     },
@@ -52,6 +56,7 @@ const MiscSlice = createSlice({
 export const {
   sliceSetNavBar,
   sliceSetDominantColor,
+  sliceSetIsProfileExists,
   sliceSetEmojiSearchValue,
   sliceSetEmojiGroupActive,
 } = MiscSlice.actions;

@@ -75,7 +75,7 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
             <ButtonParent>
               <Button
                 className=''
-                bgColor='#990100'
+                bgColor={OTTSite.color}
                 textColor='white'
                 iconSize={25}
                 text={constants.chrome}
@@ -90,7 +90,7 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
             <Button
               id='google-log-in'
               className=''
-              bgColor='#990100'
+              bgColor={OTTSite.color}
               textColor='white'
               iconSize={25}
               text={constants.login}

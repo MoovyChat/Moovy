@@ -22,7 +22,7 @@ const Toast = () => {
   const dispatch = useAppDispatch();
   const { icon, message, visible } = useAppSelector((state) => state.toast);
   const size = 25;
-  const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const accentcolor = useAppSelector((state) => state.misc.accentColor);
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (visible) {
@@ -47,7 +47,7 @@ const Toast = () => {
       case iconsEnum.DELETE_COMMENT:
         return <MdOutlineDeleteForever size={size} />;
       case iconsEnum.ADD_FAVORITES:
-        return <MdOutlineStar size={size} fill={accentColor} />;
+        return <MdOutlineStar size={size} fill={accentcolor} />;
       case iconsEnum.REMOVE_FAVORITES:
         return <MdOutlineStarBorder size={size} />;
       case iconsEnum.SUCCESS:
@@ -71,8 +71,8 @@ const Toast = () => {
   return (
     <React.Fragment>
       <ToastParent
-        visible={visible}
-        accentColor={accentColor}
+        visible={visible.toString()}
+        accentcolor={accentcolor}
         style={{ bottom: animationProps.bottom }}>
         <div className='container'>
           <div className='fill'></div>

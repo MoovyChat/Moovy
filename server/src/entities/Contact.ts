@@ -26,6 +26,10 @@ export class Contact extends BaseEntity {
 
   @Field(() => String)
   @Column()
+  subject!: string;
+
+  @Field(() => String)
+  @Column()
   message!: string;
 
   @Field(() => Boolean)

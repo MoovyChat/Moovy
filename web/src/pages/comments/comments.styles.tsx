@@ -71,6 +71,7 @@ export const CommentGroupParent = styled.div<props>`
       width: 90%;
       margin: 4px 0;
       border-radius: 20px;
+      scroll-behavior: smooth;
       overflow: auto;
       /* ::-webkit-scrollbar {
         display: none;

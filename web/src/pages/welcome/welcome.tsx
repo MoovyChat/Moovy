@@ -1,10 +1,11 @@
 import './welcome.css';
 
-import { EXTENSION_URL, home } from '../../constants';
+import { CURRENT_DOMAIN, EXTENSION_URL, home } from '../../constants';
 
 import Dark from '../../static/images/dark-chat.png';
 import Features from './features/features';
 import Footer from './footer/footer';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import InstallationGuide from './installation-guide/installationGuide';
 import Light from '../../static/images/light-chat.png';
@@ -56,9 +57,6 @@ export const streamingServices = [
   },
 ];
 const Welcome = () => {
-  useEffect(() => {
-    document.title = 'Moovy';
-  }, []);
   const handleReloadMessage = () => {
     // reload the page
     window.location.reload();
@@ -76,6 +74,11 @@ const Welcome = () => {
   }, []);
   return (
     <WelcomeParent>
+      <Helmet>
+        <title>{`MoovyChat: Welcome`}</title>
+        <meta name='description' content={`Home page of MoovyChat.`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}}`} />
+      </Helmet>
       <div className='custom-shape-divider-top-1672047931'>
         <svg
           data-name='Layer 1'

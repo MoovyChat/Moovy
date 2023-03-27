@@ -2,20 +2,19 @@ import './commentCard.css';
 
 import { CardParent, SpoilerTag } from './commentCard.styles';
 import {
-  LinkPreview,
-  Movie,
-  Title,
-  Users,
-  useGetMovieQuery,
-  useGetTitleInfoMutation,
-  useGetUserQuery,
-} from '../../generated/graphql';
-import {
   MdDelete,
   MdFavorite,
   MdOutlineFavoriteBorder,
   MdReply,
 } from 'react-icons/md';
+import {
+  Movie,
+  Title,
+  Users,
+  useGetMovieQuery,
+  useGetTitleInfoQuery,
+  useGetUserQuery,
+} from '../../generated/graphql';
 import {
   ParsedText,
   getFormattedNumber,
@@ -68,8 +67,9 @@ const CardTemplate: React.FC<props> = ({
   const commentedUserId = comment.commentedUserId;
   const loggedInUser = useAppSelector((state) => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
-  const movieRef = useRef<Movie | null>(null);
-  const titleRef = useRef<Title | null>(null);
+  const [movieRef, setMovieRef] = useState<Movie | null>(null);
+  const [movieRefId, setMovieRefId] = useState<string>('');
+  const [titleRef, setTitleRef] = useState<Title | null>(null);
   const userRef = useRef<Users | null>(null);
   let episodeEntered = useRef<boolean>(false);
   const commentRef = useRef<HTMLDivElement | null>(null);
@@ -94,7 +94,11 @@ const CardTemplate: React.FC<props> = ({
     pause: isMain || isServer(),
   });
 
-  const [, getTitleInfo] = useGetTitleInfoMutation();
+  const [getTitleInfo] = useGetTitleInfoQuery({
+    variables: {
+      getTitleInfoId: movieRefId,
+    },
+  });
 
   // Check if the component is mounted or not for animation purposes.
   useEffect(() => {
@@ -138,25 +142,25 @@ const CardTemplate: React.FC<props> = ({
   useEffect(() => {
     if (isMain) return;
     const { data, error, fetching } = movieDetails;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getMovie as Movie;
-      movieRef.current = _data;
-      getTitleInfo({ getTitleInfoId: _data.titleId }).then((titleInfo) => {
-        const { data, error } = titleInfo;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data.getTitleInfo as Title;
-          titleRef.current = _data;
-        }
-      });
+      setMovieRef(() => _data);
+      setMovieRefId(() => _data.titleId);
     }
   }, [movieDetails, isMain]);
+
+  useEffect(() => {
+    const { data, fetching, error } = getTitleInfo;
+
+    if (!fetching && data) {
+      const _data = data.getTitleInfo as Title;
+      setTitleRef(() => _data);
+    }
+  }, [getTitleInfo]);
 
   // Get user info.
   useEffect(() => {
     const { data, fetching, error } = userInfo;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _user = data.getUser as Users;
       userRef.current = _user;
@@ -226,7 +230,8 @@ const CardTemplate: React.FC<props> = ({
     }
   });
 
-  if (movieDetails.fetching) return <CardTemplateLoader />;
+  if (movieDetails.fetching || getTitleInfo.fetching)
+    return <CardTemplateLoader />;
   return (
     <CSSTransition
       in={mounted.current}
@@ -239,8 +244,8 @@ const CardTemplate: React.FC<props> = ({
         onClick={goToComment}
         showEpisodeInfo={showEpisodeInfo}
         showTitleInfo={showTitleInfo}
-        episodePoster={movieRef.current?.stills}
-        titlePoster={titleRef.current?.artwork}
+        episodePoster={movieRef?.stills}
+        titlePoster={titleRef?.artwork}
         isHover={showEpisodeInfo || showTitleInfo}
         cardHeight={cardHeight}
         showMore={showMore}>
@@ -248,13 +253,13 @@ const CardTemplate: React.FC<props> = ({
           {!isMain && showEpisodeInfo ? (
             <Image
               key='episode'
-              src={movieRef.current?.stills as string}
+              src={movieRef?.stills as string}
               alt='background-image'
             />
           ) : !isMain && showTitleInfo ? (
             <Image
               key='title'
-              src={titleRef.current?.artwork as string}
+              src={titleRef?.artwork as string}
               alt='background-image'
             />
           ) : (
@@ -287,7 +292,11 @@ const CardTemplate: React.FC<props> = ({
                     ? loggedInUser.nickname
                     : userRef.current?.nickname}
                 </div>
-                <div className='time'>{getTimeFrame(comment.createdAt)}</div>
+                <div className='time'>
+                  {comment.createdAt === 'Posting...'
+                    ? 'Posting...'
+                    : getTimeFrame(comment.createdAt)}
+                </div>
               </div>
               {isReply && (
                 <div className='isReply'>
@@ -304,7 +313,7 @@ const CardTemplate: React.FC<props> = ({
               )}
               {!isMain && (
                 <div className='movie'>
-                  {titleRef && titleRef.current?.type === 'show' && (
+                  {titleRef && titleRef?.type === 'show' && (
                     <React.Fragment>
                       <div
                         className='name title'
@@ -312,9 +321,9 @@ const CardTemplate: React.FC<props> = ({
                         onMouseLeave={onTitleLeave}
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/show/${titleRef?.current?.id}`);
+                          navigate(`/show/${titleRef?.id}`);
                         }}>
-                        {titleRef.current?.title} {movieRef.current?.season}
+                        {titleRef?.title} {movieRef?.season}
                       </div>
                     </React.Fragment>
                   )}
@@ -324,18 +333,18 @@ const CardTemplate: React.FC<props> = ({
                     onMouseLeave={onEpisodeLeave}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/movie/${movieRef?.current?.id}`);
+                      navigate(`/movie/${movieRef?.id}`);
                     }}>
-                    {movieRef.current?.name}
+                    {movieRef?.name}
                   </div>
                 </div>
               )}
             </div>
             <div className='msg' ref={messageRef} onClick={goToComment}>
               {!isMain && showEpisodeInfo ? (
-                <MovieInfo movie={movieRef.current!} />
+                <MovieInfo movie={movieRef!} />
               ) : !isMain && showTitleInfo ? (
-                <MovieInfo title={titleRef.current!} />
+                <MovieInfo title={titleRef!} />
               ) : (
                 <div className='message-box' onClick={goToComment}>
                   {formattedMsg.map((msg: textMap, index) =>

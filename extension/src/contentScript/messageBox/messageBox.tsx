@@ -6,6 +6,13 @@ import {
   TextAreaIcon,
   TextAreaPost,
 } from './messageBox.styles';
+import {
+  Comment,
+  ReplyInput,
+  useGetUserMutMutation,
+  useInsertCommentMutation,
+  useInsertReplyMutation,
+} from '../../generated/graphql';
 import { CommentInfo, User } from '../../Utils/interfaces';
 import React, {
   Dispatch,
@@ -14,12 +21,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {
-  ReplyInput,
-  useGetUserMutMutation,
-  useInsertCommentMutation,
-  useInsertReplyMutation,
-} from '../../generated/graphql';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -44,8 +45,6 @@ import { Pic } from '../../extension/components/logout/logout.styles';
 import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
 import { iconsEnum } from '../../Utils/enums';
-import { sliceAddReply } from '../../redux/slices/reply/replySlice';
-import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -70,11 +69,11 @@ const MessageBox: React.FC<props> = ({
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
-
+  const score = useAppSelector((state) => state.misc.toxicScores);
   // React: useState hooks.
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
-
+  const flagged = useAppSelector((state) => state.misc.flagged);
   const smileyHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetPopSlide(true));
@@ -122,8 +121,6 @@ const MessageBox: React.FC<props> = ({
             if (data) {
               const insertedReply = data?.insertReply;
               batch(() => {
-                dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
-                // dispatch(sliceSetPastLoadedCount(1));
                 dispatch(sliceSetToastVisible(true));
                 dispatch(
                   sliceSetToastBody({
@@ -140,18 +137,17 @@ const MessageBox: React.FC<props> = ({
         dispatch(sliceSetTextAreaMessage(''));
       }
     } else {
-      let newComment: CommentInfo | any = {
-        commentedUserId: user?.id,
-        likesCount: 0,
-        message: text,
-        commentedUserName: user?.nickname,
-        movieId: movieIdFromRedux,
-        platformId: 1,
-      };
       if (text) {
         // Adding comments to 'comment' collection in database.
         insertComment({
-          options: newComment,
+          options: {
+            commentedUserId: user?.id!,
+            likesCount: 0,
+            message: text,
+            commentedUserName: user?.nickname!,
+            movieId: movieIdFromRedux,
+            platformId: 1,
+          },
         }).then((response) => {
           const { error, data } = response;
           if (error) {
@@ -168,12 +164,6 @@ const MessageBox: React.FC<props> = ({
             const insertedComment = data?.insertComment;
             // Adds the new comment to redux store.
             batch(() => {
-              dispatch(
-                sliceComment({
-                  payload: { ...insertedComment, isReplyWindowOpen: false },
-                  type: COMMENT.ADD_COMMENT,
-                })
-              );
               dispatch(sliceSetPastLoadedCount(1));
               dispatch(sliceSetToastVisible(true));
               dispatch(
