@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "/dist",
-    "target": "es6",
+    "target": "ESNext",
+    "types": ["vite/client"],
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,

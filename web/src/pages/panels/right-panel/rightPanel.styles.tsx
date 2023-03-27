@@ -12,21 +12,18 @@ export const RightParent = styled.div`
   border-left: 0.3px solid #8f8f8f81;
   .trending {
     position: relative;
-    min-height: 50%;
     width: 80%;
-    background: ${(p) => p.theme.trendingTiles};
-    margin: 20px 20px;
+    margin: 20px;
     padding-top: 10px;
     padding-bottom: 15px;
     border-radius: 20px;
-    overflow: hidden;
+    background: ${(p) => p.theme.trendingTiles};
     box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
     .content {
       display: flex;
-      height: calc(100% - 40px);
       flex-direction: column;
       justify-content: space-between;
-      overflow: auto;
+
       .item {
         padding: 10px 20px;
         display: flex;
@@ -62,13 +59,13 @@ export const RightParent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-
+    margin-bottom: 10px;
     .socials-block {
       display: flex;
       flex-direction: column;
       gap: 10px;
       .item-heading {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
       }
       .item-options {

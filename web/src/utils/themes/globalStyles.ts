@@ -15,19 +15,19 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   div a {
-  color: #27b569;
+  color: #0e4fdb;
   text-decoration: underline;
   font-size: 14px;
 }
   /* Style for visited links */
   a:visited {
-    /* color: purple; */
+    color: purple;
   }
 
   /* Style for hover state */
-  /* a:hover {
+  a:hover {
     color: #00ffe5;
-  } */
+  }
 
   ::-webkit-scrollbar {
     width: 5px;

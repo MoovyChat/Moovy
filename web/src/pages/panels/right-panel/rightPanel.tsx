@@ -1,7 +1,6 @@
 import {
   BUY_ME_A_COFFEE,
   DISCORD_INVITE_LINK,
-  EXT_URL,
   INSTAGRAM_LINK,
   PATREON,
   TIKTOK_LINK,
@@ -12,10 +11,9 @@ import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
   TrendingObject,
   useCreateChargeMutation,
-  useGetTrendingMoviesQuery,
+  useGetTrendingTitlesQuery,
 } from '../../../generated/graphql';
 
-import Ads from '../../../components/ads/ads';
 import BuyMeACoffee from '../../../static/images/bmc.png';
 import Loading from '../../loading/loading';
 import { MdLocalFireDepartment } from 'react-icons/md';
@@ -36,11 +34,14 @@ const RightPanel: React.FC<props> = ({ className }) => {
   const [trendingMovies, setTrendingMovies] = useState<TrendingObject[] | null>(
     null
   );
+  const [trendingShows, setTrendingShows] = useState<TrendingObject[] | null>(
+    null
+  );
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.user.id);
   useIsAuth();
 
-  const [trendingMoviesQuery] = useGetTrendingMoviesQuery({
+  const [trendingTitleQuery] = useGetTrendingTitlesQuery({
     variables: {
       limit: 5,
     },
@@ -58,13 +59,14 @@ const RightPanel: React.FC<props> = ({ className }) => {
   };
 
   useEffect(() => {
-    const { data, error, fetching } = trendingMoviesQuery;
+    const { data, error, fetching } = trendingTitleQuery;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getTrendingMovies;
-      setTrendingMovies(() => _data as TrendingObject[]);
+      const _data = data.getTrendingTitles;
+      setTrendingMovies(() => _data?.movies as TrendingObject[]);
+      setTrendingShows(() => _data?.shows as TrendingObject[]);
     }
-  }, [trendingMoviesQuery]);
+  }, [trendingTitleQuery]);
   return (
     <RightParent className={className}>
       <div className='trending titles'>
@@ -73,7 +75,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
           <div className='sub'>Trending Movies</div>
         </div>
         <div className='content'>
-          {!trendingMoviesQuery.fetching ? (
+          {!trendingTitleQuery.fetching ? (
             trendingMovies &&
             trendingMovies.map((title) => (
               <div
@@ -82,6 +84,34 @@ const RightPanel: React.FC<props> = ({ className }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/movie/${title.id}`);
+                }}>
+                <div className='title'>{title.title}</div>
+                <div className='count'>
+                  {getFormattedNumber(title.viewsCount)} views
+                </div>
+              </div>
+            ))
+          ) : (
+            <Loading />
+          )}
+        </div>
+      </div>
+
+      <div className='trending titles'>
+        <div className='heading'>
+          <MdLocalFireDepartment color='#fc0404' size={20} />
+          <div className='sub'>Trending Shows</div>
+        </div>
+        <div className='content'>
+          {!trendingTitleQuery.fetching ? (
+            trendingShows &&
+            trendingShows.map((title) => (
+              <div
+                className='item'
+                key={title.title}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/show/${title.id}`);
                 }}>
                 <div className='title'>{title.title}</div>
                 <div className='count'>

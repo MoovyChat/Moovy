@@ -794,7 +794,7 @@ export type Query = {
   getSearchResults?: Maybe<SearchObject>;
   getTitle?: Maybe<Title>;
   getTitleInfo?: Maybe<Title>;
-  getTrendingMovies?: Maybe<Array<TrendingObject>>;
+  getTrendingTitles?: Maybe<TrendingOutput>;
   getUnreadMessages: Array<Contact>;
   getUser?: Maybe<Users>;
   getUserByUserName?: Maybe<Users>;
@@ -1035,7 +1035,7 @@ export type QueryGetTitleInfoArgs = {
 };
 
 
-export type QueryGetTrendingMoviesArgs = {
+export type QueryGetTrendingTitlesArgs = {
   limit: Scalars['Int'];
 };
 
@@ -1320,6 +1320,12 @@ export type TrendingObject = {
   id: Scalars['String'];
   title: Scalars['String'];
   viewsCount: Scalars['Int'];
+};
+
+export type TrendingOutput = {
+  __typename?: 'TrendingOutput';
+  movies: Array<TrendingObject>;
+  shows: Array<TrendingObject>;
 };
 
 export type UserCommentsConnection = {
@@ -1611,12 +1617,12 @@ export type GetTitleQueryVariables = Exact<{
 
 export type GetTitleQuery = { __typename?: 'Query', getTitle?: { __typename?: 'Title', title?: string | null, synopsis?: string | null, storyart?: string | null, runtime?: number | null, rating?: string | null, id: string, createdAt: string, boxart?: string | null, artwork?: string | null, advisories?: Array<string> | null, type?: string | null, year?: number | null } | null };
 
-export type GetTrendingMoviesQueryVariables = Exact<{
+export type GetTrendingTitlesQueryVariables = Exact<{
   limit: Scalars['Int'];
 }>;
 
 
-export type GetTrendingMoviesQuery = { __typename?: 'Query', getTrendingMovies?: Array<{ __typename?: 'TrendingObject', id: string, title: string, viewsCount: number }> | null };
+export type GetTrendingTitlesQuery = { __typename?: 'Query', getTrendingTitles?: { __typename?: 'TrendingOutput', movies: Array<{ __typename?: 'TrendingObject', id: string, title: string, viewsCount: number }>, shows: Array<{ __typename?: 'TrendingObject', id: string, title: string, viewsCount: number }> } | null };
 
 export type GetOnlyUserMovieStatsQueryVariables = Exact<{
   mid: Scalars['String'];
@@ -2552,18 +2558,25 @@ export const GetTitleDocument = gql`
 export function useGetTitleQuery(options: Omit<Urql.UseQueryArgs<GetTitleQueryVariables>, 'query'>) {
   return Urql.useQuery<GetTitleQuery, GetTitleQueryVariables>({ query: GetTitleDocument, ...options });
 };
-export const GetTrendingMoviesDocument = gql`
-    query GetTrendingMovies($limit: Int!) {
-  getTrendingMovies(limit: $limit) {
-    id
-    title
-    viewsCount
+export const GetTrendingTitlesDocument = gql`
+    query GetTrendingTitles($limit: Int!) {
+  getTrendingTitles(limit: $limit) {
+    movies {
+      id
+      title
+      viewsCount
+    }
+    shows {
+      id
+      title
+      viewsCount
+    }
   }
 }
     `;
 
-export function useGetTrendingMoviesQuery(options: Omit<Urql.UseQueryArgs<GetTrendingMoviesQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetTrendingMoviesQuery, GetTrendingMoviesQueryVariables>({ query: GetTrendingMoviesDocument, ...options });
+export function useGetTrendingTitlesQuery(options: Omit<Urql.UseQueryArgs<GetTrendingTitlesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetTrendingTitlesQuery, GetTrendingTitlesQueryVariables>({ query: GetTrendingTitlesDocument, ...options });
 };
 export const GetOnlyUserMovieStatsDocument = gql`
     query GetOnlyUserMovieStats($mid: String!, $uid: String!) {

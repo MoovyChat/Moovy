@@ -8,6 +8,7 @@ export const LeftParent = styled.div`
   align-items: center;
   width: 100%;
   border-right: 0.3px solid #8f8f8f81;
+  padding-bottom: 20px;
   .parent-profile {
     display: flex;
     -webkit-box-align: center;
@@ -128,6 +129,7 @@ export const LeftParent = styled.div`
 
   @media (max-height: 550px) {
     .parent-profile {
+      display: none;
       .profile {
         display: none;
       }
@@ -135,8 +137,8 @@ export const LeftParent = styled.div`
 
     .options {
       display: flex;
-      justify-content: center;
-
+      justify-content: flex-start;
+      margin-top: 20px;
       height: 100%;
       overflow: auto;
       .option {

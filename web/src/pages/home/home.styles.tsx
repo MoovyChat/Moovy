@@ -8,8 +8,8 @@ export const HomeParent = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 99.5vw;
+  height: 98.6dvh;
   flex-direction: column;
   .home-header {
     display: flex;
