@@ -1,3 +1,4 @@
+/// <reference types="chrome"/>
 import { CURRENT_DOMAIN, EXT_ID } from '../../constants';
 import {
   GoogleAuthProvider,
@@ -60,7 +61,7 @@ const GoogleLogIn = () => {
         chrome.runtime.sendMessage(
           EXT_ID,
           { type: 'EXTENSION_LOG_IN', user: _user as Users },
-          (response) => {
+          (response: any) => {
             if (response.loggedIn) {
               setLoggedInSuccess(true);
             } else {
@@ -94,7 +95,7 @@ const GoogleLogIn = () => {
             chrome.runtime.sendMessage(
               EXT_ID,
               { type: 'EXTENSION_LOG_IN', user: _data as Users },
-              (response) => {
+              (response: any) => {
                 if (response.loggedIn) {
                   setLoggedInSuccess(true);
                 } else {
