@@ -89,9 +89,7 @@ export const deleteCommentChanges = (
           };
         }
       );
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   });
 };
 
@@ -108,7 +106,6 @@ export const deleteReplyChanges = (
   const getCommentReplies = allFields.filter(
     (field) => field.fieldName === fieldsInfos.getCommentReplies
   );
-  console.log(_result, _info);
   getCommentReplies.forEach((fi) => {
     cache.invalidate('Query', fi.fieldName, fi.arguments);
   });
@@ -130,7 +127,6 @@ export const fetchNewCommentsChanges = (
   );
   fields.forEach((fieldInfo) => {
     if ((fieldInfo.arguments as any).mid !== args.mid) return null;
-    console.log(fieldInfo, args, fields);
     cache.updateQuery(
       {
         query: GetCommentsOfTheMovieDocument,

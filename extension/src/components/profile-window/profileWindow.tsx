@@ -84,7 +84,6 @@ const ProfileWindow = () => {
 
   useEffect(() => {
     const { error, data, fetching } = miniProfile;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getFullUserProfile;
       const _profileData = _data?.profile;

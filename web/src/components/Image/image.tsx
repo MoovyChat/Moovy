@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactEventHandler, useEffect, useState } from 'react';
 
 import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import { ReactComponent as MoovyLogo } from '../../svgs/moovy-white.svg';
@@ -25,7 +25,8 @@ export const Image: React.FC<props> = ({
 }) => {
   const [key, setKey] = useState<string>('1');
   const [imageError, setImageError] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [_src, setSrc] = useState<string>(src);
   useEffect(() => {
     const interval = setInterval(() => {
       setKey(Math.random().toString(36).substring(7) as string);
@@ -34,17 +35,25 @@ export const Image: React.FC<props> = ({
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (isLoading) setSrc(() => MoovyIcon);
+    else setSrc(()=>src)
+  }, [isLoading]);
+
+  const handleLoad: ReactEventHandler<HTMLImageElement> = () => {
+    setIsLoading(() => false);
+    setImageError(() => false);
+  };
+
   return (
     <>
       <img
-        src={src}
+        src={_src}
         alt={alt}
         key={key}
         ref={ref}
         onError={() => setImageError(() => true)}
-        onLoad={() => {
-          setImageError(() => false);
-        }}
+        onLoad={handleLoad}
         style={{ display: imageError ? 'none' : 'block' }}
         className={className}
         id={id}

@@ -144,9 +144,7 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
         chrome.tabs.sendMessage(
           tabs[0].id!,
           { checked: !checked, type: 'icon-status' },
-          (response) => {
-            console.log(response, response?.data);
-          }
+          (response) => {}
         );
       });
     });

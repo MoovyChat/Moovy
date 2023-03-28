@@ -42,7 +42,6 @@ export const useFetchMovie = (movieId: string) => {
         // Increase views count
         incrementMovieViewCount({ mid: _data.id }).then((res) => {
           const { error, data } = res;
-          if (error) console.log(error);
           if (data) {
             const _data = data.updateMovieViewCount! + 1;
             dispatch(sliceUpdateViewsCount(_data as number));

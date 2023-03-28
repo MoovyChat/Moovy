@@ -54,7 +54,6 @@ const ReplyCard: React.FC<props> = ({
 
   useEffect(() => {
     const { data, fetching, error } = replyLikeCountQuery;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _count = data.getReplyLikes?.likesCount!;
       const _users = data.getReplyLikes?.likes;
@@ -84,10 +83,9 @@ const ReplyCard: React.FC<props> = ({
   // Set commented user info.
   useEffect(() => {
     let { data, fetching, error } = commentedUser;
-    if (error) console.log(error);
     if (!fetching && data) {
       const commentedUserData = data.getUser;
-      if (!commentedUserData) console.log('Comment data is not available');
+      // if (!commentedUserData) console.log('Comment data is not available');
       setCommentedUser(commentedUserData as User);
     }
     return () => {};
@@ -155,7 +153,6 @@ const ReplyCard: React.FC<props> = ({
       like: !like,
     }).then((res) => {
       const { error, data } = res;
-      if (error) console.log(error);
       setLike(data?.setReplyLike?.likeStatus?.like!);
       setLikedUser(
         !like

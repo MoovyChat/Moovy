@@ -22,6 +22,8 @@ import {
   GetMovieQuery,
   GetOnlyUserMovieStatsDocument,
   GetOnlyUserMovieStatsQuery,
+  GetRepliesOfReplyDocument,
+  GetRepliesOfReplyQuery,
   GetReplyLikesDocument,
   GetReplyLikesQuery,
   GetUserByNickNameDocument,
@@ -402,7 +404,6 @@ export const insertReplyChanges = (
                 pageInfo: newPageInfo,
               },
             };
-            console.log({ newData });
             return newData;
           }
         );
@@ -441,6 +442,62 @@ export const insertReplyChanges = (
                 comments: updatedComments,
               },
             };
+          }
+        );
+      }
+    } else if (field.fieldName === 'getRepliesOfReply') {
+      if (field?.arguments?.rid === (args?.options as Reply).parentReplyId) {
+        cache.updateQuery(
+          {
+            query: GetRepliesOfReplyDocument,
+            variables: field.arguments,
+          },
+          (data: GetRepliesOfReplyQuery | null) => {
+            console.log({ data });
+            if (!data) {
+              console.log('Data is null, returning');
+              return null;
+            }
+
+            const existingReplies = data.getRepliesOfReply?.nodes as
+              | Reply[]
+              | undefined;
+            const newReply = _result.insertReply;
+
+            if (!existingReplies || !newReply) {
+              console.log('No existing comments or new comment, returning');
+              return null;
+            }
+            const existingEdges = data.getRepliesOfReply?.edges || [];
+
+            let newNodes = [newReply, ...existingReplies];
+            newNodes = _.uniqBy(newNodes, 'id');
+            const newTotalCount = data.getRepliesOfReply?.totalCount
+              ? data.getRepliesOfReply.totalCount + 1
+              : 1;
+            const newEdges = newNodes.map((node) => ({
+              __typename: 'ReplyEdge',
+              cursor: node.id,
+              node,
+            }));
+
+            const newPageInfo: PageInfo = {
+              __typename: 'PageInfo',
+              endCursor: newEdges[newEdges.length - 1].cursor,
+              hasNextPage: existingEdges.length < newTotalCount,
+            };
+
+            const newData: GetRepliesOfReplyQuery = {
+              ...data,
+              getRepliesOfReply: {
+                ...data.getRepliesOfReply,
+                nodes: newNodes as any,
+                totalCount: newTotalCount,
+                edges: newEdges as any,
+                pageInfo: newPageInfo,
+              },
+            };
+            return newData;
           }
         );
       }

@@ -14,10 +14,10 @@ import {
   useGetTrendingTitlesQuery,
 } from '../../../generated/graphql';
 
-import BuyMeACoffee from '../../../static/images/bmc.png';
+import BuyMeACoffee from '../../../static/images/bmc.webp';
 import Loading from '../../loading/loading';
 import { MdLocalFireDepartment } from 'react-icons/md';
-import PatreonWord from '../../../static/images/patreon-word.png';
+import PatreonWord from '../../../static/images/patreon-word.webp';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';

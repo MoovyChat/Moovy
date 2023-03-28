@@ -1,7 +1,4 @@
-import { textMap, timeMessage } from './interfaces';
-
-import { Dispatch } from 'redux';
-import { msgPlace } from './enums';
+import { textMap } from './interfaces';
 import { textMapTypes } from '../constants';
 
 const isNumber = (c: string) => {
@@ -79,7 +76,6 @@ export const getFormattedWordsArray = (text: string): textMap[] => {
 
   return result;
 };
-
 
 export const getFormattedNumber = (count: number) => {
   return Intl.NumberFormat('en-US', {
@@ -159,7 +155,6 @@ export const createRange = (
   if (chars.count === 0) {
     range.setEnd(node, chars.count);
   } else if (node && chars.count > 0) {
-    console.log({ nodeType: node.nodeType });
     if (node.nodeType === Node.TEXT_NODE) {
       if (node.textContent!.length < chars.count) {
         chars.count -= node.textContent!.length;

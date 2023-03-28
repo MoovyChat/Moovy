@@ -47,7 +47,6 @@ const Comments: React.FC<props> = ({
   const dispatch = useAppDispatch();
   const listRef = useRef<any>(null);
   useEffect(() => {
-    if (error) console.log(error);
     if (!fetching && data) {
       const commentsFromData = data?.getCommentsOfTheMovie
         ?.comments! as Comment[];

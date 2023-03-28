@@ -47,17 +47,12 @@ const ReplyWindow: React.FC<props> = ({
     pause: parentComment.repliesCount === 0 && !open,
   });
 
-  useEffect(() => {
-    console.log('Reply window');
-  }, []);
-
   const fetchMore = useCallback(() => {
     const { pageInfo } = res?.data?.getCommentReplies || {};
     if (!res?.data || !pageInfo?.hasNextPage) {
       return;
     }
     setFetchingMore(() => true);
-    console.log('fetchMore', pageInfo, fetchingMore);
     graphqlClient
       .query(GetCommentRepliesDocument, {
         first: 5,
@@ -66,7 +61,6 @@ const ReplyWindow: React.FC<props> = ({
       })
       .toPromise()
       .then((moreData) => {
-        console.log('fetchMore', moreData);
         const { data, error } = moreData;
         const _data = data.getCommentReplies!;
         const pageInfo = _data.pageInfo;
@@ -83,8 +77,6 @@ const ReplyWindow: React.FC<props> = ({
 
   useEffect(() => {
     const { error, data, fetching } = res;
-    if (error) console.log(error);
-    data && console.log({ msg: parentComment.repliesCount, data });
     if (!fetching && data) {
       const _data = data.getCommentReplies!;
       const nodes = _data.nodes as Reply[];

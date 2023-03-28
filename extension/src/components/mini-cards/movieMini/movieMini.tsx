@@ -49,7 +49,6 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
       options: {},
     }).then((response) => {
       const { data, error } = response;
-      if (error) console.log(error);
       const { like, favorite } = data?.updateUserMovieStats!;
       if (like) setLike(like);
       if (favorite) setFav(favorite);
@@ -63,7 +62,6 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
       options,
     }).then((res) => {
       const { data, error } = res;
-      if (error) console.log(error);
       if (!error && data) {
         const { like, favorite } = data.updateUserMovieStats!;
         setLike(like!);

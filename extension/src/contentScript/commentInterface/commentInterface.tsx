@@ -138,7 +138,6 @@ const CommentInterface: React.FC<props> = ({
     (username: string) => {
       getUserByNickName({ nickname: username }).then((res) => {
         const { error, data } = res;
-        if (error) console.log(error);
         const userId = data?.getUserByNickName?.id!;
         batch(() => {
           dispatch(sliceSetPopSlide(true));
@@ -155,7 +154,7 @@ const CommentInterface: React.FC<props> = ({
   const onLinkHandlerInMessage = useCallback(
     (message: textMap) => {
       if (message.type === textMapTypes.TIME) {
-        console.log('Seeking video to the time', message.message);
+        // console.log('Seeking video to the time', message.message);
         chrome.runtime.sendMessage(
           { text: 'SEEK_VIDEO', time: message.message },
           (tabId) => {}
@@ -219,7 +218,6 @@ const CommentInterface: React.FC<props> = ({
         });
       }
     } catch (err) {
-      console.log(err);
     } finally {
       // Code to be executed after try/catch block
     }
@@ -243,12 +241,11 @@ const CommentInterface: React.FC<props> = ({
   const deleteCommentOrReply = async (): Promise<void> => {
     const message: string = isComment ? 'Comment deleted' : 'Reply deleted';
     const errorMessage: string = isComment
-      ? 'Error deleting comment'
-      : 'Error deleting reply';
+      ? 'Error deleting Comment'
+      : 'Error deleting Reply';
     try {
       const { data, error } = await commonDelete();
       if (error) {
-        console.log(error);
         batch(() => {
           dispatch(sliceSetToastVisible(true));
           dispatch(
@@ -275,7 +272,6 @@ const CommentInterface: React.FC<props> = ({
         });
       }
     } catch (err) {
-      console.log(err);
       batch(() => {
         dispatch(sliceSetToastVisible(true));
         dispatch(

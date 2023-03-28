@@ -67,7 +67,6 @@ export const useInsertMovie = (movieId: string) => {
               advisories: result?.advisories!,
             },
           }).then(() => {
-            console.log(type);
             if (type === 'movie') {
               insertMovie({
                 options: {
@@ -85,7 +84,6 @@ export const useInsertMovie = (movieId: string) => {
                   year: result?.year,
                 },
               }).then((res) => {
-                if (res.error) console.log(res.error);
                 const _data = res.data;
                 if (_data) {
                   const movieData = _data.insertMovie as Movie;
@@ -121,7 +119,6 @@ export const useInsertMovie = (movieId: string) => {
                       },
                     });
                     const { error, data } = res;
-                    if (error) console.log(error);
                     if (data) {
                       const _data = data.insertMovie as Movie;
                       let text = `(S${

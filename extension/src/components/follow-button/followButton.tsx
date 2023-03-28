@@ -32,8 +32,6 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
 
   useMemo(() => {
     const { data, error, fetching } = amIFollowingUser;
-    if (error) console.log(error);
-    console.log(data);
     if (!fetching && data) {
       const _data = data.isFollowingUser as boolean;
       setIsFollowing(() => _data);
@@ -49,7 +47,6 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
       follow: !isFollowing,
     }).then((res) => {
       const { error, data } = res;
-      if (error) console.log(error);
       const isFollowingRes = data?.toggleFollow?.follows;
       let icon = '';
       let message = '';

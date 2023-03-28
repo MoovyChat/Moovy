@@ -114,7 +114,7 @@ const MessageBox: React.FC<props> = ({
               dispatch(
                 sliceSetToastBody({
                   icon: iconsEnum.ERROR,
-                  message: 'Error adding reply',
+                  message: 'Error adding Reply',
                 })
               );
             }
@@ -133,7 +133,7 @@ const MessageBox: React.FC<props> = ({
             setIsReply(false);
             setReplyClickResponse(undefined);
           })
-          .catch((err) => console.log(err));
+          .catch(() => {});
         dispatch(sliceSetTextAreaMessage(''));
       }
     } else {
@@ -156,23 +156,33 @@ const MessageBox: React.FC<props> = ({
             dispatch(
               sliceSetToastBody({
                 icon: iconsEnum.ERROR,
-                message: 'Error adding reply',
+                message: 'Error adding Comment',
               })
             );
           }
           if (data) {
             const insertedComment = data?.insertComment;
-            // Adds the new comment to redux store.
-            batch(() => {
-              dispatch(sliceSetPastLoadedCount(1));
+            if (!insertedComment) {
               dispatch(sliceSetToastVisible(true));
               dispatch(
                 sliceSetToastBody({
-                  icon: iconsEnum.SUCCESS,
-                  message: 'Comment added',
+                  icon: iconsEnum.ERROR,
+                  message: 'Error adding Comment',
                 })
               );
-            });
+            }
+            // Adds the new comment to redux store.
+            else
+              batch(() => {
+                dispatch(sliceSetPastLoadedCount(1));
+                dispatch(sliceSetToastVisible(true));
+                dispatch(
+                  sliceSetToastBody({
+                    icon: iconsEnum.SUCCESS,
+                    message: 'Comment added',
+                  })
+                );
+              });
           }
           setIsReply(false);
           setReplyClickResponse(undefined);
@@ -193,7 +203,6 @@ const MessageBox: React.FC<props> = ({
       const referredUser = parentComment.commentedUserId!;
       getUser({ uid: referredUser }).then((res) => {
         const { data, error } = res;
-        if (error) console.log(error);
         const nickName = data?.getUserMut?.nickname;
         dispatch(sliceSetTextAreaMessage(`@${nickName!} `));
         setRepliedUser(nickName!);

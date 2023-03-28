@@ -114,7 +114,7 @@ function getHTMLPlugins(chunks) {
   return chunks.map(
     (chunk) =>
       new HTMLPlugin({
-        title: 'Netflix Comments',
+        title: 'Moovy Chat',
         filename: `${chunk}.html`,
         chunks: [chunk],
       })

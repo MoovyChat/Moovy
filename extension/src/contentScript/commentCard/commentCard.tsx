@@ -69,7 +69,6 @@ const CommentCard: React.FC<props> = ({
 
   useEffect(() => {
     const { data, fetching, error } = commentLikeCountQuery;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
@@ -84,7 +83,6 @@ const CommentCard: React.FC<props> = ({
   //Set Comment likes count
   useEffect(() => {
     const { data, fetching, error } = commentLikesSub;
-    if (error) console.log(error);
     if (!fetching && data) {
       const commentLikesCount = data.commentLikesUpdate?.likesCount;
       setLikesCount(commentLikesCount!);
@@ -111,10 +109,9 @@ const CommentCard: React.FC<props> = ({
   // Set commented user info.
   useMemo(() => {
     let { data, fetching, error } = commentedUser;
-    if (error) console.log(error);
     if (!fetching && data) {
       const commentData = data.getCommentedUser;
-      if (!commentData) console.log('Comment data is not available');
+      // if (!commentData) console.log('Comment data is not available');
       setCommentedUser(commentData as User);
     }
     return () => {};
@@ -184,7 +181,6 @@ const CommentCard: React.FC<props> = ({
           like: !like,
         }).then((res) => {
           const { error, data } = res;
-          if (error) console.log(error);
           if (data) {
             setLike(data.setCommentLike?.likeStatus?.like!);
           }

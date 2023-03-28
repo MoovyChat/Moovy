@@ -107,7 +107,6 @@ const ChatStats: React.FC<props> = memo(() => {
   useEffect(() => {
     const { data, error, fetching } = commentsUpdateStatus;
     if (error) {
-      console.log(error);
     } else {
       if (!fetching && data) {
         if (data.movieCommentsUpdate)

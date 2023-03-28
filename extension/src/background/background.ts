@@ -33,7 +33,6 @@ chrome.runtime.onInstalled.addListener(() => {
     favorites: [],
   };
   setStoredUserLoginDetails(user);
-  console.log('ON INSTALLED');
 });
 
 var getMovieInfo = (movieId: number) => {
@@ -133,7 +132,6 @@ var timeSkipForNetflix = (time: string) => {
 };
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.text === 'SEEK_VIDEO') {
-    console.log('Seeking Video');
     const tabId = sender.tab?.id!;
     chrome.scripting.executeScript(
       {
@@ -142,9 +140,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         args: [msg.time],
         world: 'MAIN',
       },
-      (e) => {
-        console.log('injected seek script', e);
-      }
+      (e) => {}
     );
 
     sendResponse({ tab: sender.tab?.id! });

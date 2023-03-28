@@ -58,11 +58,10 @@ const ChatBox = React.memo<props>(({ responseFromReplyWindow, type }) => {
         : new Date().getTime().toString(),
     }).then((res) => {
       const { data, error } = res;
-      if (error) console.log(error);
       if (data) {
         const newComments = data.fetchNewComments;
         if (newComments.length === 0) {
-          console.log('Unable to load new Comments');
+          // console.log('Unable to load new Comments');
           return;
         }
         pastLoadedCommentCount &&
