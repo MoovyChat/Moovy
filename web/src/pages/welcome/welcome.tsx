@@ -12,13 +12,13 @@ import {
 import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { StyledFlaps, WelcomeParent } from './welcome.styles';
 
-import Dark from '../../static/images/dark-chat.png';
+import Dark from '../../static/images/dark-chat.webp';
 import Features from './features/features';
 import Footer from './footer/footer';
 import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import InstallationGuide from './installation-guide/installationGuide';
-import Light from '../../static/images/light-chat.png';
+import Light from '../../static/images/light-chat.webp';
 import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
@@ -60,7 +60,7 @@ export const streamingServices = [
   },
   {
     title: 'Amazon Prime Video',
-    imgUrl: 'https://images-na.ssl-images-amazon.com/images/I/41mpv9rBhmL.png',
+    imgUrl: 'https://images-na.ssl-images-amazon.com/images/I/41mpv9rBhmL.webp',
     color: '#2b9ec1',
     home: 'https://www.amazon.com/gp/video/storefront/',
     status: 'Available soon',

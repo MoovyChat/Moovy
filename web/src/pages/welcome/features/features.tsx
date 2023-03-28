@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import HomeCard from '../../../components/home-card/homeCard';
-import Screenshot8 from '../../../static/images/screenshot8.png';
+import Screenshot8 from '../../../static/images/screenshot8.webp';
 import { StyledFeatures } from './features.styles';
-import accent from '../../../static/images/accent.png';
-import ambience from '../../../static/images/ambience.png';
-import autoSkip from '../../../static/images/skipIntro.png';
-import filter from '../../../static/images/filters.png';
-import spoiler from '../../../static/images/spoiler.png';
+import accent from '../../../static/images/accent.webp';
+import ambience from '../../../static/images/ambience.webp';
+import autoSkip from '../../../static/images/skipIntro.webp';
+import filter from '../../../static/images/filters.webp';
+import spoiler from '../../../static/images/spoiler.webp';
 import { useSpring } from '@react-spring/web';
 
 type props = {
