@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { dependencies } from './package.json';
 import react from '@vitejs/plugin-react';
-import { splitVendorChunkPlugin } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import viteCompression from 'vite-plugin-compression';
 function renderChunks(deps) {
@@ -13,7 +12,7 @@ function renderChunks(deps) {
   return chunks;
 }
 export default defineConfig({
-  plugins: [svgr(), react(), splitVendorChunkPlugin(), viteCompression()],
+  plugins: [svgr(), react(), viteCompression()],
   server: {
     port: 3000,
   },
@@ -23,6 +22,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-router-dom', 'react-dom'],
+          lodash: ['lodash'],
+          'react-icons': ['react-icons'],
           ...renderChunks(dependencies),
         },
       },
