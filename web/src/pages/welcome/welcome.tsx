@@ -13,12 +13,16 @@ import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { StyledFlaps, WelcomeParent } from './welcome.styles';
 
 import Dark from '../../static/images/dark-chat.webp';
+import Dark300 from '../../static/images/dark-chat-300x.webp';
+import Dark600 from '../../static/images/dark-chat-600x.webp';
 import Features from './features/features';
 import Footer from './footer/footer';
 import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import InstallationGuide from './installation-guide/installationGuide';
 import Light from '../../static/images/light-chat.webp';
+import Light300 from '../../static/images/light-chat-300x.webp';
+import Light600 from '../../static/images/light-chat-600x.webp';
 import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
@@ -160,12 +164,20 @@ const Welcome = () => {
         <div className='pics'>
           <div className='first pic'>
             <picture>
-              <Image className='image' src={Light} alt='light' />
+              <Image
+                className='image'
+                srcSet={`${Light300} 300w, ${Light600} 600w`}
+                alt='light'
+              />
             </picture>
           </div>
           <div className='second pic'>
             <picture>
-              <Image className='image' src={Dark} alt='dark' />
+              <Image
+                className='image'
+                srcSet={`${Dark300} 300w, ${Dark600} 600w`}
+                alt='dark'
+              />
             </picture>
           </div>
         </div>
