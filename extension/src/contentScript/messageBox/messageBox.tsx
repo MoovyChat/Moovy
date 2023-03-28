@@ -114,7 +114,7 @@ const MessageBox: React.FC<props> = ({
               dispatch(
                 sliceSetToastBody({
                   icon: iconsEnum.ERROR,
-                  message: 'Error adding reply',
+                  message: 'Error adding Reply',
                 })
               );
             }
@@ -156,23 +156,33 @@ const MessageBox: React.FC<props> = ({
             dispatch(
               sliceSetToastBody({
                 icon: iconsEnum.ERROR,
-                message: 'Error adding reply',
+                message: 'Error adding Comment',
               })
             );
           }
           if (data) {
             const insertedComment = data?.insertComment;
-            // Adds the new comment to redux store.
-            batch(() => {
-              dispatch(sliceSetPastLoadedCount(1));
+            if (!insertedComment) {
               dispatch(sliceSetToastVisible(true));
               dispatch(
                 sliceSetToastBody({
-                  icon: iconsEnum.SUCCESS,
-                  message: 'Comment added',
+                  icon: iconsEnum.ERROR,
+                  message: 'Error adding Comment',
                 })
               );
-            });
+            }
+            // Adds the new comment to redux store.
+            else
+              batch(() => {
+                dispatch(sliceSetPastLoadedCount(1));
+                dispatch(sliceSetToastVisible(true));
+                dispatch(
+                  sliceSetToastBody({
+                    icon: iconsEnum.SUCCESS,
+                    message: 'Comment added',
+                  })
+                );
+              });
           }
           setIsReply(false);
           setReplyClickResponse(undefined);

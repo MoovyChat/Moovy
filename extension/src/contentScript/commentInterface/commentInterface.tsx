@@ -241,8 +241,8 @@ const CommentInterface: React.FC<props> = ({
   const deleteCommentOrReply = async (): Promise<void> => {
     const message: string = isComment ? 'Comment deleted' : 'Reply deleted';
     const errorMessage: string = isComment
-      ? 'Error deleting comment'
-      : 'Error deleting reply';
+      ? 'Error deleting Comment'
+      : 'Error deleting Reply';
     try {
       const { data, error } = await commonDelete();
       if (error) {
