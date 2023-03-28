@@ -4,6 +4,7 @@ export const WelcomeParent = styled.div`
   display: flex;
   width: 96vw;
   flex-direction: column;
+  overflow: hidden;
   .home {
     position: relative;
     display: flex;

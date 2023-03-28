@@ -37,13 +37,12 @@ export const Image: React.FC<props> = ({
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (isLoading) setSrc(() => MoovyIcon);
-    else src && setSrc(() => src);
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (isLoading) setSrc(() => MoovyIcon);
+  //   else src && setSrc(() => src);
+  // }, [isLoading]);
 
   const handleLoad: ReactEventHandler<HTMLImageElement> = () => {
-    setIsLoading(() => false);
     setImageError(() => false);
   };
 

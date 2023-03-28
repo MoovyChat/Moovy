@@ -23,7 +23,7 @@ export const PanelsParent = styled.div<props>`
   position: relative;
   justify-content: space-evenly;
   align-items: center;
-  height: calc(100% - ${offset}px);
+  height: calc(104% - ${offset}px);
   width: 100%;
   .left {
     flex: 1 0 25%;

@@ -144,7 +144,7 @@ const Welcome = () => {
       <Helmet>
         <title>{`MoovyChat: Welcome`}</title>
         <meta name='description' content={`Home page of MoovyChat.`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}}`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
       </Helmet>
       <div className='custom-shape-divider-top-1672047931'>
         <svg
@@ -212,7 +212,7 @@ const Welcome = () => {
       </div>
       <Screenshots id='screenshots' />
       <Features id='features' />
-      <InstallationGuide id='install-guide' />
+      {/* <InstallationGuide id='install-guide' /> */}
       <Footer id='footer' />
     </WelcomeParent>
   );

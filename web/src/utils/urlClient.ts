@@ -128,6 +128,10 @@ export const urqlClient: any = (ssrExchange: any) => ({
   url: serverUrl,
   fetchOptions: {
     credentials: 'include',
+    compress: true,
+    headers: {
+      'Accept-Encoding': 'gzip, deflate, br',
+    },
   },
   exchanges: [
     devtoolsExchange,
