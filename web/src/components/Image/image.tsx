@@ -4,7 +4,8 @@ import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import { ReactComponent as MoovyLogo } from '../../svgs/moovy-white.svg';
 
 type props = {
-  src: string;
+  src?: string;
+  srcSet?: string;
   alt: string;
   id?: string;
   lazy?: boolean;
@@ -21,12 +22,13 @@ export const Image: React.FC<props> = ({
   ref,
   className,
   lazy,
+  srcSet,
   onLoad,
 }) => {
   const [key, setKey] = useState<string>('1');
   const [imageError, setImageError] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [_src, setSrc] = useState<string>(src);
+  const [_src, setSrc] = useState<string>(src ? src : '');
   useEffect(() => {
     const interval = setInterval(() => {
       setKey(Math.random().toString(36).substring(7) as string);
@@ -37,7 +39,7 @@ export const Image: React.FC<props> = ({
 
   useEffect(() => {
     if (isLoading) setSrc(() => MoovyIcon);
-    else setSrc(()=>src)
+    else src && setSrc(() => src);
   }, [isLoading]);
 
   const handleLoad: ReactEventHandler<HTMLImageElement> = () => {
@@ -49,6 +51,7 @@ export const Image: React.FC<props> = ({
     <>
       <img
         src={_src}
+        srcSet={srcSet}
         alt={alt}
         key={key}
         ref={ref}

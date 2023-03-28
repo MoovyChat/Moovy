@@ -19,11 +19,6 @@ ReactDOM.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>
         <>
-          <Helmet>
-            <meta
-              http-equiv='Content-Security-Policy'
-              content="default-src 'self'; script-src 'self' 'unsafe-inline'"></meta>
-          </Helmet>
           <GoogleAnalytics />
           <HomeRouter />
         </>
