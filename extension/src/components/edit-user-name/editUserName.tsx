@@ -65,7 +65,6 @@ const EditUserName = () => {
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
       let target = e.target as HTMLInputElement;
-      console.log(target.id);
       if (target.id === 'edit-user-name-input') {
         setClickedTA(true);
       } else setClickedTA(false);

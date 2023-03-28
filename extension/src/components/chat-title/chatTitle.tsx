@@ -45,7 +45,6 @@ const ChatTitle = () => {
   });
   useMemo(() => {
     const { error, fetching, data } = movieStats;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getOnlyUserMovieStats;
       const _fav = _data?.favorite!;
@@ -64,7 +63,6 @@ const ChatTitle = () => {
       options: {},
     }).then((response) => {
       const { data, error } = response;
-      if (error) console.log(error);
       if (data && data.updateUserMovieStats) {
         const { favorite } = data.updateUserMovieStats;
         if (favorite !== null && favorite !== undefined) setFav(favorite);
@@ -75,7 +73,6 @@ const ChatTitle = () => {
   // Get Movie Fav count.
   useEffect(() => {
     if (error) {
-      console.log(error);
       return;
     }
     if (!fetching && data) {
@@ -130,7 +127,6 @@ const ChatTitle = () => {
               icon: '',
               message: '',
             };
-            if (error) console.log(error);
             if (data && data.updateUserMovieStats) {
               const { favorite } = data?.updateUserMovieStats!;
               if (favorite !== null && favorite !== undefined) {

@@ -52,7 +52,6 @@ const LikesWindow = () => {
   useMemo(() => {
     if (type !== 'comment') return;
     const { data, error, fetching } = commentLikes;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getCommentLikes.likes!;
       const _lastPage = data.getCommentLikes.lastPage;
@@ -75,7 +74,6 @@ const LikesWindow = () => {
   useMemo(() => {
     if (type !== 'reply') return;
     const { data, error, fetching } = replyLikes;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getReplyLikes.likes!;
       const _lastPage = data.getReplyLikes.lastPage!;

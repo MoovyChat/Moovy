@@ -36,7 +36,6 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
     pause: isServerSide(),
   });
   useEffect(() => {
-    if (error) console.log(error);
     if (!fetching) {
       const { uid, email, displayName, photoURL } = userFromAuth.user;
       const nickName = displayName?.split(' ').pop();
@@ -54,23 +53,18 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
         })
           .then((res) => {
             const { data, error } = res;
-            if (error) console.log(error);
             setUserToStore(user, setUser);
             chrome.windows.getCurrent((w) => {
               chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
                 chrome.tabs.sendMessage(
                   tabs[0].id!,
                   { user: user, from: 'withOutLogin' },
-                  (response) => {
-                    console.log(response);
-                  }
+                  (response) => {}
                 );
               });
             });
           })
-          .catch((err: any) => {
-            console.log('ERR: Unable to create user', err);
-          });
+          .catch((err: any) => {});
       } else {
         setUserToStore(data!.getUser as any, setUser);
       }

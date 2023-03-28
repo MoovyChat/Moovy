@@ -51,9 +51,7 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
       const result = await signInWithCredential(auth, credential);
       setUserFromAuth(() => result);
       setIsUserFetched(() => true);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {

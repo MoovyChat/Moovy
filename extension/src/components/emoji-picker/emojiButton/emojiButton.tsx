@@ -34,7 +34,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           emoji,
         });
         if ((await db.recent.count()) > 12) db.recent.delete(2);
-        console.log(`Successfully added to recent: ${insertEmoji}`);
+        // console.log(`Successfully added to recent: ${insertEmoji}`);
       } catch (error) {
         console.log('Error', error);
       }
@@ -52,7 +52,6 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
             count: 1,
             emoji,
           });
-          console.log(`Successfully added: ${id}`);
         } else {
           await db.frequent.update(foundEmoji.id!, {
             count: foundEmoji.count! + 1,
@@ -60,7 +59,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           });
         }
       } catch (error) {
-        console.log(`Failed to add} ${error}`);
+        // console.log(`Failed to add} ${error}`);
       }
     };
 

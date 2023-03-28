@@ -47,7 +47,6 @@ const usePredictiveText = (
           const res = await getNickNameSuggestions({ search: wordToSearch });
 
           const { data, error } = res;
-          if (error) console.log(error);
           if (data) {
             const names: NameObject[] = data?.getTopThreeUserNames!;
             dispatch(sliceSetNameSuggestions(names));

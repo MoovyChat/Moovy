@@ -223,7 +223,6 @@ export const insertReplyChanges = (
             variables: field.arguments,
           },
           (data: GetCommentRepliesQuery | null) => {
-            console.log({ data });
             if (!data) {
               console.log('Data is null, returning');
               return null;
@@ -267,7 +266,6 @@ export const insertReplyChanges = (
                 pageInfo: newPageInfo,
               },
             };
-            console.log({ newData });
             return newData;
           }
         );

@@ -18,7 +18,6 @@ const IFrameComponent = () => {
   const LOCAL_STORAGE_KEY = 'adminNotifications';
   useEffect(() => {
     const { data, fetching, error } = adminQuery;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getLatestAdminNotification;
       const _latestId = _data.id;
@@ -50,7 +49,6 @@ const IFrameComponent = () => {
   }, [adminQuery]);
 
   useEffect(() => {
-    if (error) console.log(error);
     if (!fetching && data) {
       setIsTriggered(() => true);
       const _data = data.adminNotifications;

@@ -36,7 +36,6 @@ const ChatWindow = () => {
 
   useEffect(() => {
     const { data, fetching, error } = profile;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getUserProfile;
       const _profile = _data as Profile | null | undefined;

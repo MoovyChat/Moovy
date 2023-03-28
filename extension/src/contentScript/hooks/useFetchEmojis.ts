@@ -56,7 +56,7 @@ const useFetchEmojis = () => {
               emojis: refGroups,
             });
           } catch (e) {
-            console.log(`Failed to add emojiDB ${e}`);
+            // console.log(`Failed to add emojiDB ${e}`);
           }
 
           const emojis = refGroups[0];
@@ -74,18 +74,18 @@ const useFetchEmojis = () => {
             await db.frequent.bulkAdd(forFrequent);
             await db.recent.bulkAdd(forRecent);
           } catch (e) {
-            console.log(`Failed to add emojiDB ${e}`);
+            // console.log(`Failed to add emojiDB ${e}`);
           }
         } else {
           try {
             const refGroups = await db.emojis.get(1);
             await setRefinedGroups(refGroups?.emojis as refinedG);
           } catch (e) {
-            console.log(`Failed to add emojiDB ${e}`);
+            // console.log(`Failed to add emojiDB ${e}`);
           }
         }
       } catch (error) {
-        console.log(`Failed to add emojiDB ${error}`);
+        // console.log(`Failed to add emojiDB ${error}`);
       }
     };
     runIndexDb();

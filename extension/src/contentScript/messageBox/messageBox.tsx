@@ -133,7 +133,7 @@ const MessageBox: React.FC<props> = ({
             setIsReply(false);
             setReplyClickResponse(undefined);
           })
-          .catch((err) => console.log(err));
+          .catch(() => {});
         dispatch(sliceSetTextAreaMessage(''));
       }
     } else {
@@ -193,7 +193,6 @@ const MessageBox: React.FC<props> = ({
       const referredUser = parentComment.commentedUserId!;
       getUser({ uid: referredUser }).then((res) => {
         const { data, error } = res;
-        if (error) console.log(error);
         const nickName = data?.getUserMut?.nickname;
         dispatch(sliceSetTextAreaMessage(`@${nickName!} `));
         setRepliedUser(nickName!);

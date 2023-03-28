@@ -113,7 +113,6 @@ const CommentButton: React.FC<props> = ({ visible }) => {
           const { data, error } = res;
           if (error) {
             clearInterval(visitInterval);
-            console.log(error);
           }
         });
       else clearInterval(visitInterval);
