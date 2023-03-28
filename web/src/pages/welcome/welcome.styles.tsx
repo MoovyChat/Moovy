@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const WelcomeParent = styled.div`
   display: flex;
-  width: 99vw;
+  width: 96vw;
   flex-direction: column;
   .home {
     position: relative;
@@ -191,6 +191,39 @@ export const WelcomeParent = styled.div`
     }
     100% {
       width: 100%;
+    }
+  }
+`;
+
+export const StyledFlaps = styled.div`
+  position: fixed;
+  right: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .social-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border-radius: 20px;
+    padding: 10px;
+    background: ${(p) => p.theme.trendingTiles};
+    box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: 40%;
+    .social {
+      cursor: pointer;
+      :hover {
+        transform: scale(1.3);
+        transition: transform 0.5s;
+      }
+      :active {
+        transform: scale(1);
+        transition: transform 0.2s;
+      }
     }
   }
 `;

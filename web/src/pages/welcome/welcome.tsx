@@ -1,6 +1,16 @@
 import './welcome.css';
 
-import { CURRENT_DOMAIN, EXTENSION_URL, home } from '../../constants';
+import {
+  CURRENT_DOMAIN,
+  DISCORD_INVITE_LINK,
+  EXTENSION_URL,
+  INSTAGRAM_LINK,
+  TIKTOK_LINK,
+  TWITTER_LINK,
+  home,
+} from '../../constants';
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
+import { StyledFlaps, WelcomeParent } from './welcome.styles';
 
 import Dark from '../../static/images/dark-chat.png';
 import Features from './features/features';
@@ -12,9 +22,9 @@ import Light from '../../static/images/light-chat.png';
 import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
-import { WelcomeParent } from './welcome.styles';
 import { useEffect } from 'react';
 
+const iconSize = 25;
 export const streamingServices = [
   {
     title: 'Netflix',
@@ -74,6 +84,62 @@ const Welcome = () => {
   }, []);
   return (
     <WelcomeParent>
+      <StyledFlaps>
+        <div className='social-container'>
+          <div
+            id='text-focus'
+            className='discord social'
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(DISCORD_INVITE_LINK, '_blank');
+            }}>
+            <FaDiscord
+              color='cornflowerblue'
+              size={iconSize}
+              style={{ pointerEvents: 'none' }}
+            />
+          </div>
+          <div
+            className='twitter social'
+            id='text-focus'
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(TWITTER_LINK, '_blank');
+            }}>
+            <FaTwitter
+              color='deepskyblue'
+              size={iconSize}
+              style={{ pointerEvents: 'none' }}
+            />
+          </div>
+          <div
+            className='tiktok social'
+            id='text-focus'
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(TIKTOK_LINK, '_blank');
+            }}>
+            <FaTiktok
+              className='icon'
+              size={iconSize}
+              style={{ pointerEvents: 'none' }}
+            />
+          </div>
+          <div
+            className='instagram social'
+            id='text-focus'
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(INSTAGRAM_LINK, '_blank');
+            }}>
+            <FaInstagram
+              color='hotpink'
+              size={iconSize}
+              style={{ pointerEvents: 'none' }}
+            />
+          </div>
+        </div>
+      </StyledFlaps>
       <Helmet>
         <title>{`MoovyChat: Welcome`}</title>
         <meta name='description' content={`Home page of MoovyChat.`} />
