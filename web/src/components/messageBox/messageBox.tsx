@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 
 const MessageBox = () => {
-  const ref = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const textAreaScrollListener: UIEventHandler<HTMLTextAreaElement> = () => {};
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = () => {};

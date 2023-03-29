@@ -276,10 +276,3 @@ export const FileRejectionList = styled.ul`
   list-style: none;
   padding-left: 0;
 `;
-
-export const FileRejectionItem = styled.li`
-  color: #ff1744;
-  font-size: 0.8em;
-  font-weight: bold;
-  margin-top: 0.5em;
-`;

@@ -16,8 +16,3 @@ export enum FOCUS_WINDOW {
   EMOJI = 'EMOJI',
   HEADER_OPTIONS = 'HEADER_OPTIONS',
 }
-
-export enum msgPlace {
-  TEXTAREA = 'textArea',
-  COMMENT_CARD = 'commentCard',
-}

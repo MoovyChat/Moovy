@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
-import { themes } from '../../constants';
 
 export const miscState = {
   isNavBarOpen: false,
@@ -34,9 +32,6 @@ const MiscSlice = createSlice({
     sliceSetIsProfileExists: (state, action) => {
       return { ...state, isProfileExists: action.payload };
     },
-    sliceSetDominantColor: (state, action) => {
-      return { ...state, dominantColor: action.payload };
-    },
     sliceSetEmojiSearchValue: (state, action) => {
       return { ...state, emojiSearchValue: action.payload };
     },
@@ -55,7 +50,6 @@ const MiscSlice = createSlice({
 
 export const {
   sliceSetNavBar,
-  sliceSetDominantColor,
   sliceSetIsProfileExists,
   sliceSetEmojiSearchValue,
   sliceSetEmojiGroupActive,

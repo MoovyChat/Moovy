@@ -74,15 +74,6 @@ export const getShortDateFormat = (time: string | undefined) => {
   return intlFormat.toString();
 };
 
-export const isImageURLValid = async (url: string) => {
-  const img = new Image();
-  img.src = url;
-  return new Promise((resolve) => {
-    img.onerror = () => resolve(false);
-    img.onload = () => resolve(true);
-  });
-};
-
 export const getFormattedWordsArray = (text: string): textMap[] => {
   return text.split(' ').map((word) => {
     if (word.startsWith('@')) {

@@ -38,11 +38,6 @@ export const PrivacyPolicyParagraph = styled.p`
   margin-bottom: 20px;
 `;
 
-export const PrivacyPolicyLink = styled.a`
-  color: blue;
-  text-decoration: underline;
-`;
-
 export const LastUpdated = styled.p`
   font-size: 14px;
   color: #666;
