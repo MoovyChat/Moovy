@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 
+import { AdminUser } from './Admin';
 import { Comment } from './Comment';
 import { CommentReport } from './CommentReport';
 import { CommentStats } from './CommentStat';
@@ -44,10 +45,6 @@ export class Users extends BaseEntity {
   @Field(() => String)
   @Column()
   photoUrl: string;
-
-  @Field(() => Boolean, { defaultValue: false })
-  @Column({ default: false })
-  admin: boolean;
 
   @Field(() => String, { nullable: true })
   @Column({
@@ -112,6 +109,9 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => LikeNotifications, (Notifications) => Notifications.toUser)
   likeNotifications: LikeNotifications[];
+
+  @OneToMany(() => AdminUser, (admin) => admin.user)
+  admin: AdminUser[];
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];

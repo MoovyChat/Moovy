@@ -246,6 +246,103 @@ LIMIT ${first};
     return finalRes;
   }
 
+  @Query(() => FeedConnection)
+  async getFeedWithLikes(
+    @Arg('uid') uid: string,
+    @Arg('first', () => Int) first: number,
+    @Arg('after') after: string
+  ): Promise<FeedConnection> {
+    let result: FeedItem[] = [];
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+    const queryRunner = conn.createQueryRunner();
+    let intendedCount = first;
+    let totalCount = 0;
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    try {
+      // lets now open a new transaction:
+      await queryRunner.startTransaction();
+      const ids = await conn
+        .getRepository(Follow)
+        .createQueryBuilder('f')
+        .select('f.followingId', 'id')
+        .where('f.userId = :uid', { uid })
+        .andWhere('f.follows = :f', { f: true })
+        .getRawMany();
+      const updatedIds = [...ids, { id: uid }];
+      const query = `
+WITH comment_or_reply AS (
+  SELECT
+    id,
+    "commentedUserId",
+    "createdAt",
+    "updatedAt",
+    type,
+    CONCAT("id", ':', "commentedUserId", ':', "updatedAt") AS "compositeKey"
+  FROM (
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM comment
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+    UNION ALL
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM reply
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+  ) AS combined
+)
+SELECT *
+FROM comment_or_reply
+${after ? `WHERE "compositeKey" < '${after}'` : ''}
+ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
+LIMIT ${first};
+
+`;
+
+      result = await queryRunner.manager.query(query);
+      totalCount = result.length;
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+    const edges: FeedEdge[] = result.map((node) => {
+      return {
+        node,
+        cursor: node.compositeKey,
+      } as FeedEdge;
+    });
+    const pageInfo: PageInfo = {
+      hasNextPage: totalCount < intendedCount ? false : true,
+      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+    };
+    let finalRes: FeedConnection = {
+      totalCount,
+      nodes: result,
+      edges,
+      pageInfo,
+    };
+    return finalRes;
+  }
+
   @Query(() => FullUserObject, { nullable: true })
   async getUserStatistics(
     @Arg('uid') uid: string
@@ -505,6 +602,8 @@ LIMIT ${first};
 
   @Mutation(() => Users, { nullable: true })
   async createUser(@Arg('options') options: UserInput) {
+    let existingUser = await Users.findOne({ where: { id: options.id } });
+    if (existingUser) return existingUser;
     let user;
     try {
       const result = await conn
@@ -599,22 +698,6 @@ LIMIT ${first};
     return {
       user,
     };
-  }
-
-  @Mutation(() => Users)
-  async toggleAdmin(
-    @Arg('id') id: string,
-    @Arg('isAdmin') isAdmin: boolean
-  ): Promise<Users | undefined> {
-    const user = await Users.findOne({ where: { id } });
-
-    if (!user) {
-      throw new Error(`User with ID ${id} does not exist`);
-    }
-
-    user.admin = isAdmin;
-
-    return user.save();
   }
 
   @Mutation(() => NickNameResponse)
