@@ -1,43 +1,60 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import AboutUs from './pages/about-us/aboutUs';
-import Admin from './pages/admin/admin';
-import BasicInfo from './pages/profile/basicInfo';
-import Catalog from './pages/catalog/catalog';
-import CommentThread from './pages/commentThread/commentThread';
-import Comments from './pages/comments/comments';
-import CommentsComponent from './pages/comments/commentsComponent';
-import ContactUs from './pages/contact-us/contactUs';
-import CookiePolicy from './pages/cookie-policy/cookiePolicy';
-import DifferentProfile from './pages/profile/differentProfile';
-import EmbedContent from './pages/embed-content/embedContent';
-import EmptyPage from './components/empty-page/emptyPage';
-import FavTitles from './pages/favorites/favTitles';
-import Favorites from './pages/favorites/favorites';
-import Feed from './pages/feed/feed';
-import GoogleLogIn from './pages/login/google-log-in';
-import LikedTitles from './pages/favorites/likedTitles';
-import MovieThread from './pages/movieThread/movieThread';
-import MoviesCatalog from './pages/catalog/moviesCatalog';
-import NotFound from './pages/notFound/notFound';
-import Notifications from './pages/notifications/NotificationsModule';
-import Premium from './pages/premium/premium';
-import PrivacyPolicy from './pages/privacy-policy/privacyPolicy';
-import Replies from './pages/comments/replies';
-import ReplyThread from './pages/commentThread/replyThread';
-import SearchEpisodes from './pages/search-results/search-episodes';
-import SearchMovies from './pages/search-results/search-movies';
-import SearchPeople from './pages/search-results/search-people';
-import SearchResults from './pages/search-results/searchResults';
-import SearchShows from './pages/search-results/search-shows';
-import ShowsCatalog from './pages/catalog/showsCatalog';
-import ShowsThread from './pages/shows-thread/showsThread';
-import ShowsThreadComponent from './pages/shows-thread/showsThreadParent.component';
-import SplashScreen from './pages/splash-screen/splashScreen';
-import TermsAndConditions from './pages/terms-and-conditions/termsAndConditions';
-import VisitedTitles from './pages/favorites/visitedTitles';
+import { lazy } from 'react';
 import { urqlClient } from './utils/urlClient';
 import { withUrqlClient } from 'next-urql';
+
+const BasicInfo = lazy(() => import('./pages/profile/basicInfo'));
+const Catalog = lazy(() => import('./pages/catalog/catalog'));
+const CommentThread = lazy(() => import('./pages/commentThread/commentThread'));
+const Comments = lazy(() => import('./pages/comments/comments'));
+const CommentsComponent = lazy(
+  () => import('./pages/comments/commentsComponent')
+);
+const ContactUs = lazy(() => import('./pages/contact-us/contactUs'));
+const CookiePolicy = lazy(() => import('./pages/cookie-policy/cookiePolicy'));
+const DifferentProfile = lazy(() => import('./pages/profile/differentProfile'));
+const EmbedContent = lazy(() => import('./pages/embed-content/embedContent'));
+const EmptyPage = lazy(() => import('./components/empty-page/emptyPage'));
+const FavTitles = lazy(() => import('./pages/favorites/favTitles'));
+const Favorites = lazy(() => import('./pages/favorites/favorites'));
+const Feed = lazy(() => import('./pages/feed/feed'));
+const GoogleLogIn = lazy(() => import('./pages/login/google-log-in'));
+const LikedTitles = lazy(() => import('./pages/favorites/likedTitles'));
+const MovieThread = lazy(() => import('./pages/movieThread/movieThread'));
+const MoviesCatalog = lazy(() => import('./pages/catalog/moviesCatalog'));
+const NotFound = lazy(() => import('./pages/notFound/notFound'));
+const Notifications = lazy(
+  () => import('./pages/notifications/NotificationsModule')
+);
+const Premium = lazy(() => import('./pages/premium/premium'));
+const PrivacyPolicy = lazy(
+  () => import('./pages/privacy-policy/privacyPolicy')
+);
+const Replies = lazy(() => import('./pages/comments/replies'));
+const ReplyThread = lazy(() => import('./pages/commentThread/replyThread'));
+const SearchEpisodes = lazy(
+  () => import('./pages/search-results/search-episodes')
+);
+const SearchMovies = lazy(() => import('./pages/search-results/search-movies'));
+const SearchPeople = lazy(() => import('./pages/search-results/search-people'));
+const SearchResults = lazy(
+  () => import('./pages/search-results/searchResults')
+);
+const SearchShows = lazy(() => import('./pages/search-results/search-shows'));
+const ShowsCatalog = lazy(() => import('./pages/catalog/showsCatalog'));
+const ShowsThread = lazy(() => import('./pages/shows-thread/showsThread'));
+const ShowsThreadComponent = lazy(
+  () => import('./pages/shows-thread/showsThreadParent.component')
+);
+const SplashScreen = lazy(() => import('./pages/splash-screen/splashScreen'));
+const TermsAndConditions = lazy(
+  () => import('./pages/terms-and-conditions/termsAndConditions')
+);
+const VisitedTitles = lazy(() => import('./pages/favorites/visitedTitles'));
+
+const AboutUs = lazy(() => import('./pages/about-us/aboutUs'));
+const Admin = lazy(() => import('./pages/admin/admin'));
 
 const HomeRouter = () => {
   return (

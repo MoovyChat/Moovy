@@ -1,0 +1,1 @@
+import{u as c,aA as i,r as u,L as f}from"./index.js";import{u as n}from"./hooks.ts";const g=()=>{const r=c(),[{data:s,fetching:t,error:e}]=i(),a=n();u.useEffect(()=>{if(e&&console.log(e),!t&&s){const o=s==null?void 0:s.me;o||r("/"),a(f(o))}},[t,s,e])};export{g as u};

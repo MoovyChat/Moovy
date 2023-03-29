@@ -1,0 +1,21 @@
+import { defineConfig } from 'vite';
+import { dependencies } from './package.json';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+import viteCompression from 'vite-plugin-compression';
+
+export default defineConfig({
+  plugins: [svgr(), react(), viteCompression()],
+  server: {
+    port: 3000,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].ts',
+        assetFileNames: '[name].[ext]',
+      },
+    },
+  },
+});
