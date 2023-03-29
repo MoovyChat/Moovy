@@ -81,7 +81,7 @@ const Admin: React.FC<AdminProps> = () => {
       </StyledSplashScreen>
     );
   }
-  if (!user?.admin) return <div>You don't have access to this page.</div>;
+  // if (!user?.admin) return <div>You don't have access to this page.</div>;
 
   return (
     <StyledAdmin contactSelected={selectedContact !== null}>

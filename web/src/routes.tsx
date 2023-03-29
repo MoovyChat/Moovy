@@ -1,7 +1,16 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import AboutUs from './pages/about-us/aboutUs';
+import Admin from './pages/admin/admin';
+import ContactUs from './pages/contact-us/contactUs';
+import CookiePolicy from './pages/cookie-policy/cookiePolicy';
+import EmbedContent from './pages/embed-content/embedContent';
 import Feed from './pages/feed/feed';
+import GoogleLogIn from './pages/login/google-log-in';
+import Premium from './pages/premium/premium';
+import PrivacyPolicy from './pages/privacy-policy/privacyPolicy';
 import SplashScreen from './pages/splash-screen/splashScreen';
+import TermsAndConditions from './pages/terms-and-conditions/termsAndConditions';
 import { lazyLoad } from './lazyLoad';
 import { urqlClient } from './utils/urlClient';
 import { withUrqlClient } from 'next-urql';
@@ -11,21 +20,15 @@ const Catalog = lazyLoad('./pages/catalog/catalog');
 const CommentThread = lazyLoad('./pages/commentThread/commentThread');
 const Comments = lazyLoad('./pages/comments/comments');
 const CommentsComponent = lazyLoad('./pages/comments/commentsComponent');
-const ContactUs = lazyLoad('./pages/contact-us/contactUs');
-const CookiePolicy = lazyLoad('./pages/cookie-policy/cookiePolicy');
 const DifferentProfile = lazyLoad('./pages/profile/differentProfile');
-const EmbedContent = lazyLoad('./pages/embed-content/embedContent');
 const EmptyPage = lazyLoad('./components/empty-page/emptyPage');
 const FavTitles = lazyLoad('./pages/favorites/favTitles');
 const Favorites = lazyLoad('./pages/favorites/favorites');
-const GoogleLogIn = lazyLoad('./pages/login/google-log-in');
 const LikedTitles = lazyLoad('./pages/favorites/likedTitles');
 const MovieThread = lazyLoad('./pages/movieThread/movieThread');
 const MoviesCatalog = lazyLoad('./pages/catalog/moviesCatalog');
 const NotFound = lazyLoad('./pages/notFound/notFound');
 const Notifications = lazyLoad('./pages/notifications/NotificationsModule');
-const Premium = lazyLoad('./pages/premium/premium');
-const PrivacyPolicy = lazyLoad('./pages/privacy-policy/privacyPolicy');
 const Replies = lazyLoad('./pages/comments/replies');
 const ReplyThread = lazyLoad('./pages/commentThread/replyThread');
 const SearchEpisodes = lazyLoad('./pages/search-results/search-episodes');
@@ -38,13 +41,8 @@ const ShowsThread = lazyLoad('./pages/shows-thread/showsThread');
 const ShowsThreadComponent = lazyLoad(
   './pages/shows-thread/showsThreadParent.component'
 );
-const TermsAndConditions = lazyLoad(
-  './pages/terms-and-conditions/termsAndConditions'
-);
-const VisitedTitles = lazyLoad('./pages/favorites/visitedTitles');
 
-const AboutUs = lazyLoad('./pages/about-us/aboutUs');
-const Admin = lazyLoad('./pages/admin/admin');
+const VisitedTitles = lazyLoad('./pages/favorites/visitedTitles');
 
 const HomeRouter = () => {
   return (
