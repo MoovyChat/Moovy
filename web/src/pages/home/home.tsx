@@ -11,23 +11,29 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect, useMemo, useState } from 'react';
 
-import CenterPanel from '../panels/center-panel/centerPanel';
+// import CenterPanel from '../panels/center-panel/centerPanel';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
 import { Helmet } from 'react-helmet';
-import HomeHeader from '../home-header/homeHeader';
-import LeftPanel from '../panels/left-panel/leftPanel';
 import LogoLoading from '../logo-loading/logoLoading';
-import RightPanel from '../panels/right-panel/rightPanel';
+// import HomeHeader from '../home-header/homeHeader';
+// import LeftPanel from '../panels/left-panel/leftPanel';
+// import LogoLoading from '../logo-loading/logoLoading';
+// import Popup from '../../components/popup/popup';
+// import RightPanel from '../panels/right-panel/rightPanel';
+// import SetProfile from '../set-profile/setProfile';
 import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
-import loadable from '@loadable/component';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
-const Popup = loadable(() => import('../../components/popup/popup'));
-const SetProfile = loadable(() => import('../set-profile/setProfile'));
+const HomeHeader = lazy(() => import('../home-header/homeHeader'));
+const LeftPanel = lazy(() => import('../panels/left-panel/leftPanel'));
+const CenterPanel = lazy(() => import('../panels/center-panel/centerPanel'));
+const Popup = lazy(() => import('../../components/popup/popup'));
+const RightPanel = lazy(() => import('../panels/right-panel/rightPanel'));
+const SetProfile = lazy(() => import('../set-profile/setProfile'));
 
 const Home = () => {
   const navigate = useNavigate();
@@ -103,20 +109,21 @@ const Home = () => {
         <meta name='description' content='Home' />
         <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
       </Helmet>
-
-      {isProfileExists ? (
-        <HomeParent>
-          <HomeHeader className='home-header' />
-          <PanelsParent className='panels' isNavBarOpen={isNavBarOpen}>
-            <LeftPanel className='left'></LeftPanel>
-            <CenterPanel className='center' id='center'></CenterPanel>
-            <RightPanel className='right'></RightPanel>
-          </PanelsParent>
-          <Popup />
-        </HomeParent>
-      ) : (
-        <SetProfile profile={prof} />
-      )}
+      <Suspense fallback={<LogoLoading />}>
+        {isProfileExists ? (
+          <HomeParent>
+            <HomeHeader className='home-header' />
+            <PanelsParent className='panels' isNavBarOpen={isNavBarOpen}>
+              <LeftPanel className='left'></LeftPanel>
+              <CenterPanel className='center' id='center'></CenterPanel>
+              <RightPanel className='right'></RightPanel>
+            </PanelsParent>
+            <Popup />
+          </HomeParent>
+        ) : (
+          <SetProfile profile={prof} />
+        )}
+      </Suspense>
     </ThemeProvider>
   );
 };

@@ -6,23 +6,28 @@ import {
   TIKTOK_LINK,
   TWITTER_LINK,
 } from '../../../constants';
-import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, Suspense, useEffect, useState } from 'react';
 import {
   TrendingObject,
   useCreateChargeMutation,
   useGetTrendingTitlesQuery,
 } from '../../../generated/graphql';
+import { lazyIconFa, lazyIconMd } from '../../../lazyLoad';
 
 import BuyMeACoffee from '../../../static/images/bmc.webp';
 import Loading from '../../loading/loading';
-import { MdLocalFireDepartment } from 'react-icons/md';
 import PatreonWord from '../../../static/images/patreon-word.webp';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
 import useIsAuth from '../../../utils/isAuthUser';
 import { useNavigate } from 'react-router-dom';
+
+const FaDiscord = lazyIconFa('FaDiscord');
+const FaTwitter = lazyIconFa('FaTwitter');
+const FaTiktok = lazyIconFa('FaTiktok');
+const FaInstagram = lazyIconFa('FaInstagram');
+const MdLocalFireDepartment = lazyIconMd('MdLocalFireDepartment');
 
 type props = {
   className: string;
@@ -126,88 +131,90 @@ const RightPanel: React.FC<props> = ({ className }) => {
       </div>
 
       <div className='socials'>
-        <div className='socials-block'>
-          <div className='item-heading'>Socials</div>
-          <div className='item-options'>
-            <div
-              id='text-focus'
-              className='discord social'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(DISCORD_INVITE_LINK, '_blank');
-              }}>
-              <FaDiscord
-                color='cornflowerblue'
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </div>
-            <div
-              className='twitter social'
-              id='text-focus'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(TWITTER_LINK, '_blank');
-              }}>
-              <FaTwitter
-                color='deepskyblue'
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </div>
-            <div
-              className='tiktok social'
-              id='text-focus'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(TIKTOK_LINK, '_blank');
-              }}>
-              <FaTiktok
-                className='icon'
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </div>
-            <div
-              className='instagram social'
-              id='text-focus'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(INSTAGRAM_LINK, '_blank');
-              }}>
-              <FaInstagram
-                color='hotpink'
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className='socials-block'>
-          <div className='item-heading'>Donate & Support</div>
-          <div className='item-options'>
-            <div
-              className='patreon'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(PATREON, '_blank');
-              }}>
-              <div className='logo' id='text-focus'>
-                <img src={PatreonWord} alt='patreon' id='text-focus' />
+        <Suspense>
+          <div className='socials-block'>
+            <div className='item-heading'>Socials</div>
+            <div className='item-options'>
+              <div
+                id='text-focus'
+                className='discord social'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(DISCORD_INVITE_LINK, '_blank');
+                }}>
+                <FaDiscord
+                  color='cornflowerblue'
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
               </div>
-            </div>
-            <div
-              className='bmc'
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(BUY_ME_A_COFFEE, '_blank');
-              }}>
-              <div className='logo' id='text-focus'>
-                <img src={BuyMeACoffee} alt='bmc' id='text-focus' />
+              <div
+                className='twitter social'
+                id='text-focus'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(TWITTER_LINK, '_blank');
+                }}>
+                <FaTwitter
+                  color='deepskyblue'
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </div>
+              <div
+                className='tiktok social'
+                id='text-focus'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(TIKTOK_LINK, '_blank');
+                }}>
+                <FaTiktok
+                  className='icon'
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </div>
+              <div
+                className='instagram social'
+                id='text-focus'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(INSTAGRAM_LINK, '_blank');
+                }}>
+                <FaInstagram
+                  color='hotpink'
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
               </div>
             </div>
           </div>
-        </div>
+          <div className='socials-block'>
+            <div className='item-heading'>Donate & Support</div>
+            <div className='item-options'>
+              <div
+                className='patreon'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(PATREON, '_blank');
+                }}>
+                <div className='logo' id='text-focus'>
+                  <img src={PatreonWord} alt='patreon' id='text-focus' />
+                </div>
+              </div>
+              <div
+                className='bmc'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(BUY_ME_A_COFFEE, '_blank');
+                }}>
+                <div className='logo' id='text-focus'>
+                  <img src={BuyMeACoffee} alt='bmc' id='text-focus' />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Suspense>
       </div>
     </RightParent>
   );

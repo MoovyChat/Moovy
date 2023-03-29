@@ -9,21 +9,26 @@ import {
   TWITTER_LINK,
   home,
 } from '../../constants';
-import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { StyledFlaps, WelcomeParent } from './welcome.styles';
+import { Suspense, lazy, useEffect } from 'react';
 
 import Dark300 from '../../static/images/dark-chat-300x.webp';
 import Dark600 from '../../static/images/dark-chat-600x.webp';
 import Features from './features/features';
 import Footer from './footer/footer';
 import { Helmet } from 'react-helmet';
-import InstallationGuide from './installation-guide/installationGuide';
 import Light300 from '../../static/images/light-chat-300x.webp';
 import Light600 from '../../static/images/light-chat-600x.webp';
+import LogoLoading from '../logo-loading/logoLoading';
 import { LogoSet } from '../../components/logoset/logoset';
 import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
-import { useEffect } from 'react';
+import { lazyIconFa } from '../../lazyLoad';
+
+const FaDiscord = lazyIconFa('FaDiscord');
+const FaTwitter = lazyIconFa('FaTwitter');
+const FaTiktok = lazyIconFa('FaTiktok');
+const FaInstagram = lazyIconFa('FaInstagram');
 
 const iconSize = 25;
 export const streamingServices = [
@@ -86,60 +91,62 @@ const Welcome = () => {
   return (
     <WelcomeParent>
       <StyledFlaps>
-        <div className='social-container'>
-          <div
-            id='text-focus'
-            className='discord social'
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(DISCORD_INVITE_LINK, '_blank');
-            }}>
-            <FaDiscord
-              color='cornflowerblue'
-              size={iconSize}
-              style={{ pointerEvents: 'none' }}
-            />
+        <Suspense>
+          <div className='social-container'>
+            <div
+              id='text-focus'
+              className='discord social'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(DISCORD_INVITE_LINK, '_blank');
+              }}>
+              <FaDiscord
+                color='cornflowerblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+            <div
+              className='twitter social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TWITTER_LINK, '_blank');
+              }}>
+              <FaTwitter
+                color='deepskyblue'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+            <div
+              className='tiktok social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(TIKTOK_LINK, '_blank');
+              }}>
+              <FaTiktok
+                className='icon'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+            <div
+              className='instagram social'
+              id='text-focus'
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(INSTAGRAM_LINK, '_blank');
+              }}>
+              <FaInstagram
+                color='hotpink'
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
           </div>
-          <div
-            className='twitter social'
-            id='text-focus'
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(TWITTER_LINK, '_blank');
-            }}>
-            <FaTwitter
-              color='deepskyblue'
-              size={iconSize}
-              style={{ pointerEvents: 'none' }}
-            />
-          </div>
-          <div
-            className='tiktok social'
-            id='text-focus'
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(TIKTOK_LINK, '_blank');
-            }}>
-            <FaTiktok
-              className='icon'
-              size={iconSize}
-              style={{ pointerEvents: 'none' }}
-            />
-          </div>
-          <div
-            className='instagram social'
-            id='text-focus'
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(INSTAGRAM_LINK, '_blank');
-            }}>
-            <FaInstagram
-              color='hotpink'
-              size={iconSize}
-              style={{ pointerEvents: 'none' }}
-            />
-          </div>
-        </div>
+        </Suspense>
       </StyledFlaps>
       <Helmet>
         <title>{`MoovyChat: Welcome`}</title>

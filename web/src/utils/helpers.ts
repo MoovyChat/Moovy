@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import HtmlParser from 'react-html-parser';
+import { lazy } from 'react';
 import { textMap } from './interfaces';
 import { textMapTypes } from '../constants';
 
