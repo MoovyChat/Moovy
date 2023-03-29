@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import SplashScreen from './pages/splash-screen/splashScreen';
 import { lazy } from 'react';
 import { urqlClient } from './utils/urlClient';
 import { withUrqlClient } from 'next-urql';
@@ -47,7 +48,6 @@ const ShowsThread = lazy(() => import('./pages/shows-thread/showsThread'));
 const ShowsThreadComponent = lazy(
   () => import('./pages/shows-thread/showsThreadParent.component')
 );
-const SplashScreen = lazy(() => import('./pages/splash-screen/splashScreen'));
 const TermsAndConditions = lazy(
   () => import('./pages/terms-and-conditions/termsAndConditions')
 );

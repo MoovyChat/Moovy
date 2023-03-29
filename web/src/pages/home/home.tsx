@@ -11,15 +11,13 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect, useMemo, useState } from 'react';
 
-// import CenterPanel from '../panels/center-panel/centerPanel';
+import CenterPanel from '../panels/center-panel/centerPanel';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
 import { Helmet } from 'react-helmet';
-// import HomeHeader from '../home-header/homeHeader';
-// import LeftPanel from '../panels/left-panel/leftPanel';
-// import LogoLoading from '../logo-loading/logoLoading';
-// import Popup from '../../components/popup/popup';
-// import RightPanel from '../panels/right-panel/rightPanel';
-// import SetProfile from '../set-profile/setProfile';
+import HomeHeader from '../home-header/homeHeader';
+import LeftPanel from '../panels/left-panel/leftPanel';
+import LogoLoading from '../logo-loading/logoLoading';
+import RightPanel from '../panels/right-panel/rightPanel';
 import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import loadable from '@loadable/component';
@@ -28,15 +26,7 @@ import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
-const CenterPanel = loadable(
-  () => import('../panels/center-panel/centerPanel')
-);
-
-const HomeHeader = loadable(() => import('../home-header/homeHeader'));
-const LeftPanel = loadable(() => import('../panels/left-panel/leftPanel'));
-const LogoLoading = loadable(() => import('../logo-loading/logoLoading'));
 const Popup = loadable(() => import('../../components/popup/popup'));
-const RightPanel = loadable(() => import('../panels/right-panel/rightPanel'));
 const SetProfile = loadable(() => import('../set-profile/setProfile'));
 
 const Home = () => {
