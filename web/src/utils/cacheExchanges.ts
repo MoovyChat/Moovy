@@ -75,30 +75,6 @@ export const logOutChanges = (
   });
 };
 
-export const setCommentLikeChanges = (
-  _result: SetCommentLikeMutation,
-  _args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
-) => {
-  cache.updateQuery(
-    { query: GetIsUserLikedCommentDocument },
-    (data: GetIsUserLikedCommentQuery | null) => {
-      if (data && data.getIsUserLikedComment) {
-        const newData: GetIsUserLikedCommentQuery = {
-          ...data,
-          getIsUserLikedComment: {
-            ...data.getIsUserLikedComment,
-            isLiked: _result.setCommentLike?.likeStatus.like,
-          },
-        };
-
-        return newData;
-      } else return data;
-    }
-  );
-};
-
 export const commentLikeChanges = (
   _result: SetCommentLikeMutation,
   args: Variables,

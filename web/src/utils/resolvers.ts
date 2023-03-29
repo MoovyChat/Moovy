@@ -66,33 +66,6 @@ export const movieCommentsResolver = (): Resolver => {
   };
 };
 
-export const paginatedFeedResolver = (): Resolver => {
-  return (_parent, fieldArgs, cache, info) => {
-    const { parentKey: entityKey, fieldName } = info;
-    const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
-    );
-    const size = fieldInfos.length;
-    if (size === 0) {
-      return undefined;
-    }
-    // const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    let paginatedComments = [] as string[];
-
-    fieldInfos.forEach((fieldInfo: any) => {
-      const { fieldKey, arguments: args } = fieldInfo;
-
-      if (args.uid !== fieldArgs.uid) return;
-
-      const link = cache.resolve(entityKey, fieldKey) as string;
-      paginatedComments.push(...link);
-    });
-    info.partial = true;
-    return paginatedComments;
-  };
-};
-
 export const paginatedUserNotificationsResolver = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;

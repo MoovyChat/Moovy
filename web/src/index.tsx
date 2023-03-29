@@ -4,7 +4,6 @@ import './registerServiceWorker.ts';
 import { persistedStore, store } from './redux/store';
 
 import GoogleAnalytics from './components/google-analytics/googleAnalytics';
-import { Helmet } from 'react-helmet';
 import HomeRouter from './routes';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';

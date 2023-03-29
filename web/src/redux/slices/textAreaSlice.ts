@@ -17,19 +17,9 @@ const TextAreaSlice = createSlice({
     sliceSetIsTextAreaFocused: (state, action) => {
       return { ...state, isTextAreaFocused: action.payload };
     },
-    sliceSetIsTextAreaClicked: (state, action) => {
-      return { ...state, isTextAreaClicked: action.payload };
-    },
-    sliceSetWordSuggestions: (state, action) => {
-      return { ...state, wordSuggestions: action.payload };
-    },
   },
 });
 
-export const {
-  sliceSetTextAreaMessage,
-  sliceSetIsTextAreaFocused,
-  sliceSetIsTextAreaClicked,
-  sliceSetWordSuggestions,
-} = TextAreaSlice.actions;
+export const { sliceSetTextAreaMessage, sliceSetIsTextAreaFocused } =
+  TextAreaSlice.actions;
 export default TextAreaSlice.reducer;

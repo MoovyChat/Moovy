@@ -8,6 +8,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { MyContext } from './types';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { buildSchema } from 'type-graphql';
+import compression from 'compression';
 import { conn } from './dataSource';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
@@ -46,6 +47,13 @@ const main = async () => {
   await conn.initialize();
   await conn.runMigrations();
   const app = express();
+
+  // Enable gzip compression for all resources
+  app.use(compression());
+
+  // Serve your app's static resources
+  app.use(express.static('public'));
+
   // Load the SSL certificate and private key
   // const certsPath = '/home/dokku/api/letsencrypt/certs/current/certificates';
   // const serverOptions: ServerOptions<

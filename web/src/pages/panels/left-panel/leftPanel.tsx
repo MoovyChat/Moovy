@@ -1,16 +1,5 @@
 import { LeftParent, StyledLinks } from './leftPanel.styles';
-import {
-  MdDynamicFeed,
-  MdFavorite,
-  MdModeComment,
-  MdNightlight,
-  MdNotificationsActive,
-  MdOutlineReply,
-  MdOutlineWbSunny,
-  MdPerson,
-  MdStorage,
-} from 'react-icons/md';
-import React, { MouseEventHandler, useEffect, useRef } from 'react';
+import React, { MouseEventHandler, Suspense, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import {
   sliceSetIsPopupOpened,
@@ -20,11 +9,22 @@ import {
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
 import { Users } from '../../../generated/graphql';
+import { lazyIconMd } from '../../../lazyLoad';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
 import { useAppSelector } from '../../../redux/hooks';
 import useIsAuth from '../../../utils/isAuthUser';
+
+const MdDynamicFeed = lazyIconMd('MdDynamicFeed');
+const MdFavorite = lazyIconMd('MdFavorite');
+const MdModeComment = lazyIconMd('MdModeComment');
+const MdNightlight = lazyIconMd('MdNightlight');
+const MdNotificationsActive = lazyIconMd('MdNotificationsActive');
+const MdOutlineReply = lazyIconMd('MdOutlineReply');
+const MdOutlineWbSunny = lazyIconMd('MdOutlineWbSunny');
+const MdPerson = lazyIconMd('MdPerson');
+const MdStorage = lazyIconMd('MdStorage');
 
 type props = {
   className: string;
@@ -81,80 +81,82 @@ const LeftPanel: React.FC<props> = ({ className }) => {
         </div>
       </div>
       <div className='options'>
-        <NavLink to='/' className='option' end onClick={linkClickHandler}>
-          <div className='icon feed'>
-            <MdDynamicFeed size={iconSize} />
+        <Suspense>
+          <NavLink to='/' className='option' end onClick={linkClickHandler}>
+            <div className='icon feed'>
+              <MdDynamicFeed size={iconSize} />
+            </div>
+            <div className='text'>Feed</div>
+          </NavLink>
+          <NavLink to='/catalog' className='option' onClick={linkClickHandler}>
+            <div className='icon catalog'>
+              <MdStorage size={iconSize} />
+            </div>
+            <div className='text'>Catalog</div>
+          </NavLink>
+          <NavLink
+            to={`/profile/${user.nickname}`}
+            className='option'
+            onClick={linkClickHandler}>
+            <div className='icon p'>
+              <MdPerson size={iconSize} />
+            </div>
+            <div className='text'>Profile</div>
+          </NavLink>
+          <NavLink
+            to={`activity/${user.nickname}/favorites`}
+            className='option'
+            onClick={linkClickHandler}>
+            <div className='icon favorites'>
+              <MdFavorite size={iconSize} />
+            </div>
+            <div className='text'>Favorites</div>
+          </NavLink>
+          <NavLink
+            to={`/comments/${user.nickname}`}
+            className='option'
+            onClick={linkClickHandler}>
+            <div className='icon comments'>
+              <MdModeComment size={iconSize} />
+            </div>
+            <div className='text'>Comments</div>
+          </NavLink>
+          <NavLink
+            to={`/replies/${user.nickname}`}
+            className='option'
+            onClick={linkClickHandler}>
+            <div className='icon replies'>
+              <MdOutlineReply size={iconSize} />
+            </div>
+            <div className='text'>Replies</div>
+          </NavLink>
+          <NavLink
+            to='/notifications'
+            className='option'
+            onClick={linkClickHandler}>
+            <div className='icon notifications'>
+              <MdNotificationsActive size={iconSize} />
+            </div>
+            <div className='text'>Notifications</div>
+          </NavLink>
+          <div className='option' onClick={themeHandler}>
+            {theme === themes.DARK ? (
+              <React.Fragment>
+                <div className='icon'>
+                  <MdOutlineWbSunny size={iconSize} />
+                </div>
+                <div className='text'>Light</div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <div className='icon'>
+                  <MdNightlight size={iconSize} />
+                </div>
+                <div className='text'>Dark</div>
+              </React.Fragment>
+            )}
           </div>
-          <div className='text'>Feed</div>
-        </NavLink>
-        <NavLink to='/catalog' className='option' onClick={linkClickHandler}>
-          <div className='icon catalog'>
-            <MdStorage size={iconSize} />
-          </div>
-          <div className='text'>Catalog</div>
-        </NavLink>
-        <NavLink
-          to={`/profile/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon p'>
-            <MdPerson size={iconSize} />
-          </div>
-          <div className='text'>Profile</div>
-        </NavLink>
-        <NavLink
-          to={`activity/${user.nickname}/favorites`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon favorites'>
-            <MdFavorite size={iconSize} />
-          </div>
-          <div className='text'>Favorites</div>
-        </NavLink>
-        <NavLink
-          to={`/comments/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon comments'>
-            <MdModeComment size={iconSize} />
-          </div>
-          <div className='text'>Comments</div>
-        </NavLink>
-        <NavLink
-          to={`/replies/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon replies'>
-            <MdOutlineReply size={iconSize} />
-          </div>
-          <div className='text'>Replies</div>
-        </NavLink>
-        <NavLink
-          to='/notifications'
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon notifications'>
-            <MdNotificationsActive size={iconSize} />
-          </div>
-          <div className='text'>Notifications</div>
-        </NavLink>
-        <div className='option' onClick={themeHandler}>
-          {theme === themes.DARK ? (
-            <React.Fragment>
-              <div className='icon'>
-                <MdOutlineWbSunny size={iconSize} />
-              </div>
-              <div className='text'>Light</div>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <div className='icon'>
-                <MdNightlight size={iconSize} />
-              </div>
-              <div className='text'>Dark</div>
-            </React.Fragment>
-          )}
-        </div>
+        </Suspense>
       </div>
 
       <StyledLinks>

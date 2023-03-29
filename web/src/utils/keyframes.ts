@@ -35,23 +35,6 @@ export const rotate180 = keyframes`
   }
 `;
 
-export const rotateY360 = keyframes`
-   0% {
-    -ms-transform: rotateY(0deg);
-    -moz-transform: rotateY(0deg);
-    -webkit-transform: rotateY(0deg);
-    -o-transform: rotateY(0deg);
-    transform: rotateY(0deg);
-  }
-  100% {
-    -ms-transform: rotateY(360deg);
-    -moz-transform: rotateY(360deg);
-    -webkit-transform: rotateY(360deg);
-    -o-transform: rotateY(360deg);
-    transform: rotateY(360deg);
-  }
-`;
-
 export const rotateX180 = keyframes`
    0% {
     -ms-transform: rotateX(0deg);
@@ -104,22 +87,4 @@ export const rotate180rev = keyframes`
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
   }
-`;
-
-export const HomeTitleKeyframes = keyframes`
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-`;
-
-export const expandDown = keyframes`
-    0% {
-      height: 0px;
-    }
-    100% {
-      height: 100px;
-    }
 `;

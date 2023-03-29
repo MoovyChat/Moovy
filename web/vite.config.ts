@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
+import { dependencies } from './package.json';
 import react from '@vitejs/plugin-react';
-import { splitVendorChunkPlugin } from 'vite';
 import svgr from 'vite-plugin-svgr';
+import viteCompression from 'vite-plugin-compression';
 
 export default defineConfig({
-  plugins: [svgr(), react(), splitVendorChunkPlugin()],
+  plugins: [svgr(), react(), viteCompression()],
   server: {
     port: 3000,
   },

@@ -13,10 +13,6 @@ import { useFetchUserComments } from '../../hooks/useFetchUserComments';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
-export interface allCommentsInterface {
-  [key: string]: Comment[];
-}
-
 const Comments = () => {
   const { id } = useParams();
   const listRef = useRef<any>(null);

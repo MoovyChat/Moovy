@@ -1,6 +1,9 @@
+import React, { Suspense } from 'react';
+
 import { CenterParent } from './centerPanel.styles';
+import Loading from '../../loading/loading';
+import LogoLoading from '../../logo-loading/logoLoading';
 import { Outlet } from 'react-router-dom';
-import React from 'react';
 import useIsAuth from '../../../utils/isAuthUser';
 
 type props = {
@@ -11,7 +14,9 @@ const CenterPanel: React.FC<props> = ({ className, id }) => {
   useIsAuth();
   return (
     <CenterParent className={className} id={id}>
-      <Outlet />
+      <Suspense fallback={<LogoLoading />}>
+        <Outlet />
+      </Suspense>
     </CenterParent>
   );
 };

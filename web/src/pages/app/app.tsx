@@ -1,7 +1,6 @@
 import { CURRENT_DOMAIN, themes } from '../../constants';
 import { darkTheme, lightTheme } from '../../utils/themes/theme';
 
-import { AppParent } from './app.styles';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
 import Header from '../header/header';
 import { Helmet } from 'react-helmet';

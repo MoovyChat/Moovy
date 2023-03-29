@@ -9,7 +9,7 @@ export const HomeParent = styled.div`
   position: relative;
   align-items: center;
   width: 99.5vw;
-  height: 98.6dvh;
+  height: 100dvh;
   flex-direction: column;
   .home-header {
     display: flex;
@@ -24,7 +24,7 @@ export const PanelsParent = styled.div<props>`
   justify-content: space-evenly;
   align-items: center;
   height: calc(100% - ${offset}px);
-  width: 100%;
+  width: 99.9%;
   .left {
     flex: 1 0 25%;
     height: 100%;

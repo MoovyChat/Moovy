@@ -14,9 +14,6 @@ import { useFetchUserReplies } from '../../hooks/useFetchUserReplies';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
-export interface allRepliesInterface {
-  [key: string]: Reply[];
-}
 const Replies = () => {
   const { id } = useParams();
   useEffect(() => {
