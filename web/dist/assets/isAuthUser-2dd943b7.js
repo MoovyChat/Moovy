@@ -1,1 +1,0 @@
-import{u as r,b8 as i,A as u,r as n,aJ as f}from"./index-c87fafe8.js";const g=()=>{const a=r(),[{data:s,fetching:t,error:e}]=i(),c=u();n.useEffect(()=>{if(e&&console.log(e),!t&&s){const o=s==null?void 0:s.me;o||a("/"),c(f(o))}},[t,s,e])};export{g as u};
