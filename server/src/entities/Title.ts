@@ -16,7 +16,7 @@ import { Movie } from './Movie';
 @ObjectType()
 @Entity()
 export class Title extends BaseEntity {
-  @Field()
+  @Field(() => String)
   @PrimaryColumn()
   id!: string;
 

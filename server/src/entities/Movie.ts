@@ -23,7 +23,7 @@ import { Visited } from './Visited';
 @ObjectType()
 @Entity()
 export class Movie extends BaseEntity {
-  @PrimaryColumn({ primaryKeyConstraintName: 'pk_movie_id' })
+  @PrimaryColumn()
   @Field(() => String)
   id!: string;
 
