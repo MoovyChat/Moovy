@@ -19,7 +19,11 @@ export const HeaderParent = styled.div`
     margin-left: 20px;
     .beta {
       font-weight: 600;
-      font-size: 12px;
+      font-size: 10px;
+      align-self: flex-end;
+      background-color: #343499;
+      padding: 4px 6px;
+      border-radius: 10px;
     }
   }
   .header-buttons {

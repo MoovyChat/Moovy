@@ -64,8 +64,8 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
   const parentClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     if (movie) {
-      if (location.pathname !== `/show/${movie.titleId!}`)
-        navigate(`/show/${movie.titleId!}`);
+      if (location.pathname !== `/home/show/${movie.titleId!}`)
+        navigate(`/home/show/${movie.titleId!}`);
     }
   };
   const titleClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {

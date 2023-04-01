@@ -40,7 +40,7 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
 
   const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    navigate(`/comment/${comment.id}`);
+    navigate(`/home/comment/${comment.id}`);
   };
 
   const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {

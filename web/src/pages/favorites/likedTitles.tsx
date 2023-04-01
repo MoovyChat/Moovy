@@ -1,22 +1,14 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { MovieStats, useGetLikedTitlesQuery } from '../../generated/graphql';
-import { UIEventHandler, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import EmptyPage from '../../components/empty-page/emptyPage';
 import { Helmet } from 'react-helmet';
-import { LikedStyles } from './favorites.styles';
-import Loading from '../loading/loading';
-import MovieCard from '../../components/movie-card/movieCard';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
-import ViewportList from 'react-viewport-list';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const LikedTitles = () => {
   const { id } = useParams();
-
-  useIsAuth();
   const [page, setPage] = useState<number>(1);
   const [movieStatsData, setMovieStats] = useState<MovieStats[]>([]);
   const [lastPage, setLastPage] = useState<number>(1);

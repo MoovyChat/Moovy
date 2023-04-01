@@ -305,7 +305,7 @@ const CardTemplate: React.FC<props> = ({
                     className='ru'
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/profile/${comment.parentRepliedUser}`);
+                      navigate(`/home/profile/${comment.parentRepliedUser}`);
                     }}>
                     @{comment.parentRepliedUser}
                   </span>
@@ -321,7 +321,7 @@ const CardTemplate: React.FC<props> = ({
                         onMouseLeave={onTitleLeave}
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/show/${titleRef?.id}`);
+                          navigate(`/home/show/${titleRef?.id}`);
                         }}>
                         {titleRef?.title} {movieRef?.season}
                       </div>
@@ -333,7 +333,7 @@ const CardTemplate: React.FC<props> = ({
                     onMouseLeave={onEpisodeLeave}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/movie/${movieRef?.id}`);
+                      navigate(`/home/movie/${movieRef?.id}`);
                     }}>
                     {movieRef?.name}
                   </div>
@@ -358,7 +358,7 @@ const CardTemplate: React.FC<props> = ({
                           onClick={(e) => {
                             if (msg.type === 'user') {
                               e.stopPropagation();
-                              navigate(`/profile/${msg.message.slice(1)}`);
+                              navigate(`/home/profile/${msg.message.slice(1)}`);
                             }
                           }}>
                           {ParsedText(msg.message)}{' '}

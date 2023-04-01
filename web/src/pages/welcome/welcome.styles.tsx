@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const WelcomeParent = styled.div`
   display: flex;
-  width: 96vw;
+  width: 99vvw;
   flex-direction: column;
   overflow: hidden;
   .home {
@@ -86,6 +86,7 @@ export const WelcomeParent = styled.div`
       .get-started {
         border: 1px solid;
         position: relative;
+        z-index: 999;
         padding: 10px;
         width: 150px;
         margin-top: 20px;

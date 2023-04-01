@@ -105,7 +105,7 @@ const Header = () => {
             id='blur-escape'
             loading='lazy'
           />
-          <div className='beta'>(beta)</div>
+          <div className='beta'>beta</div>
         </div>
       </div>
       <div className='header-buttons'>

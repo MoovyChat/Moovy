@@ -20,7 +20,6 @@ import PatreonWord from '../../../static/images/patreon-word.webp';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
-import useIsAuth from '../../../utils/isAuthUser';
 import { useNavigate } from 'react-router-dom';
 
 const FaDiscord = lazyIconFa('FaDiscord');
@@ -44,7 +43,6 @@ const RightPanel: React.FC<props> = ({ className }) => {
   );
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.user.id);
-  useIsAuth();
 
   const [trendingTitleQuery] = useGetTrendingTitlesQuery({
     variables: {
@@ -88,7 +86,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
                 key={title.title}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/movie/${title.id}`);
+                  navigate(`/home/movie/${title.id}`);
                 }}>
                 <div className='title'>{title.title}</div>
                 <div className='count'>
@@ -116,7 +114,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
                 key={title.title}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/show/${title.id}`);
+                  navigate(`/home/show/${title.id}`);
                 }}>
                 <div className='title'>{title.title}</div>
                 <div className='count'>

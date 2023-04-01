@@ -1,20 +1,14 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
-import {
-  MovieStats,
-  useGetFavTitlesQuery,
-  useGetUserQuery,
-} from '../../generated/graphql';
+import { MovieStats, useGetFavTitlesQuery } from '../../generated/graphql';
 import { useEffect, useState } from 'react';
 
 import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const FavTitles = () => {
   const { id } = useParams();
-  useIsAuth();
   const [page, setPage] = useState<number>(1);
   const [movieStatsData, setMovieStats] = useState<MovieStats[]>([]);
   const [lastPage, setLastPage] = useState<number>(1);

@@ -28,7 +28,6 @@ import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
-import { StyledSplashScreen } from '../splash-screen/splashScreen.styles';
 
 interface AdminProps {}
 
@@ -71,14 +70,14 @@ const Admin: React.FC<AdminProps> = () => {
 
   if (fetching && me.fetching) {
     return (
-      <StyledSplashScreen>
+      <div>
         <div className='logo'>
           <img src={Moovy} alt='Moovy' />
         </div>
         <div className='loading'>
           <Loading />
         </div>
-      </StyledSplashScreen>
+      </div>
     );
   }
   // if (!user?.admin) return <div>You don't have access to this page.</div>;
