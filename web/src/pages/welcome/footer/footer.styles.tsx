@@ -27,12 +27,15 @@ export const FooterContainer = styled.footer`
   align-items: center;
 `;
 
-export const FooterLink = styled.span`
+export const FooterLink = styled.a`
   color: #fff;
   text-decoration: none;
   transition: color 0.2s ease-in-out;
   cursor: pointer;
-  &:hover {
-    color: #ccc;
+  :visited {
+    color: #0087ff;
+  }
+  :hover {
+    color: #99ffff;
   }
 `;

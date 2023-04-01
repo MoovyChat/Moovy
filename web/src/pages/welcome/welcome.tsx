@@ -92,8 +92,7 @@ const Welcome = () => {
       <StyledFlaps>
         <Suspense>
           <div className='social-container'>
-            <div
-              id='text-focus'
+            <button
               className='discord social'
               onClick={(e) => {
                 e.stopPropagation();
@@ -104,10 +103,9 @@ const Welcome = () => {
                 size={iconSize}
                 style={{ pointerEvents: 'none' }}
               />
-            </div>
-            <div
+            </button>
+            <button
               className='twitter social'
-              id='text-focus'
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(TWITTER_LINK, '_blank');
@@ -117,10 +115,9 @@ const Welcome = () => {
                 size={iconSize}
                 style={{ pointerEvents: 'none' }}
               />
-            </div>
-            <div
+            </button>
+            <button
               className='tiktok social'
-              id='text-focus'
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(TIKTOK_LINK, '_blank');
@@ -130,10 +127,9 @@ const Welcome = () => {
                 size={iconSize}
                 style={{ pointerEvents: 'none' }}
               />
-            </div>
-            <div
+            </button>
+            <button
               className='instagram social'
-              id='text-focus'
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(INSTAGRAM_LINK, '_blank');
@@ -143,7 +139,7 @@ const Welcome = () => {
                 size={iconSize}
                 style={{ pointerEvents: 'none' }}
               />
-            </div>
+            </button>
           </div>
         </Suspense>
       </StyledFlaps>
@@ -216,6 +212,7 @@ const Welcome = () => {
           </div>
           <div
             className='get-started'
+            tabIndex={0}
             onClick={(e) => {
               e.stopPropagation();
               window.open(EXTENSION_URL, '_blank');

@@ -83,6 +83,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
             trendingMovies.map((title) => (
               <div
                 className='item'
+                tabIndex={0}
                 key={title.title}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -112,6 +113,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               <div
                 className='item'
                 key={title.title}
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/home/show/${title.id}`);
@@ -136,6 +138,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               <div
                 id='text-focus'
                 className='discord social'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(DISCORD_INVITE_LINK, '_blank');
@@ -149,6 +152,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               <div
                 className='twitter social'
                 id='text-focus'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(TWITTER_LINK, '_blank');
@@ -162,6 +166,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               <div
                 className='tiktok social'
                 id='text-focus'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(TIKTOK_LINK, '_blank');
@@ -175,6 +180,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               <div
                 className='instagram social'
                 id='text-focus'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(INSTAGRAM_LINK, '_blank');
@@ -192,6 +198,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
             <div className='item-options'>
               <div
                 className='patreon'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(PATREON, '_blank');
@@ -202,6 +209,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               </div>
               <div
                 className='bmc'
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(BUY_ME_A_COFFEE, '_blank');
