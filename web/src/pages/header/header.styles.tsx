@@ -17,10 +17,14 @@ export const HeaderParent = styled.div`
     justify-content: center;
     align-items: center;
     margin-left: 20px;
+    img {
+      width: 40px;
+      height: 40px;
+    }
     .beta {
       font-weight: 600;
       font-size: 10px;
-      align-self: flex-end;
+      align-self: center;
       background-color: #343499;
       padding: 4px 6px;
       border-radius: 10px;
