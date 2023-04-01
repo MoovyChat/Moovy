@@ -201,3 +201,8 @@ export function setCaret(ele: HTMLElement | null, line: any, col: any) {
     ele.focus();
   }
 }
+
+export const randomUserNameGenerator = (nickname: string) => {
+  const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+  return `${nickname}_${randomNumber}}`;
+};
