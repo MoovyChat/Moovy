@@ -44,7 +44,7 @@ class TitleOptions {
   @Field(() => String)
   rating: string;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true, defaultValue: [] })
   advisories: string[];
 }
 

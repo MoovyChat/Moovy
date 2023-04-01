@@ -420,7 +420,7 @@ export class MovieResolver {
               synopsis: options.synopsis,
               runtime: options.runtime,
               likesCount: options.likesCount,
-              platformId: options.platformId,
+              platformId: 1,
             },
           ])
           .returning('*')
