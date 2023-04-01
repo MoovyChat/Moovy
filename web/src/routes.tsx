@@ -86,6 +86,7 @@ const HomeRouter = () => {
         <Route path='premium' element={<Premium />} />
         <Route path='embedded-content' element={<EmbedContent />} />
         <Route path='google-login' element={<GoogleLogIn />} />
+
         <Route element={<ProtectedRoutes />}>
           <Route path='home' element={<Home />}>
             <Route index element={<Feed />} />
