@@ -3,12 +3,12 @@ import './fonts.scss';
 import {
   ChatWindowParent,
   DragBar,
-  NoUserScreen,
   Perimeter,
   TextAreaContainer,
 } from './chatInterface.styles';
 import { CommentInfo, User } from '../../Utils/interfaces';
 import React, {
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
