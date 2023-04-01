@@ -52,7 +52,13 @@ const main = async () => {
   app.use(compression());
 
   // Serve your app's static resources
-  app.use(express.static('public'));
+  app.use(express.static('public', { maxAge: '1d' }));
+
+  // Set cache headers for /graphql
+  app.use('/graphql', (_req, res, next) => {
+    res.set('Cache-Control', 'public, max-age=86400'); // 1 day
+    next();
+  });
 
   // Load the SSL certificate and private key
   // const certsPath = '/home/dokku/api/letsencrypt/certs/current/certificates';
