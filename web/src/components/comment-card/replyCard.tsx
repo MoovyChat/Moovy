@@ -42,7 +42,7 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
 
   const goToReply: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    navigate(`/reply/${comment.id}`);
+    navigate(`/home/reply/${comment.id}`);
   };
 
   const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {

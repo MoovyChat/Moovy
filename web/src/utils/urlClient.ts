@@ -50,6 +50,7 @@ const cache: Partial<CacheExchangeOpts> = {
     SearchMovieObject: () => null,
     SearchTitleObject: () => null,
     SearchPeopleObject: () => null,
+    TrendingOutput: () => null,
   },
   updates: {
     Mutation: {

@@ -14,7 +14,7 @@ import {
   useIsUserNameExistsMutation,
   useUpdateProfileMutation,
 } from '../../generated/graphql';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
@@ -23,7 +23,6 @@ import { Helmet } from 'react-helmet';
 import Moovy from '../../svgs/moovy-text-logo-black.png';
 import ProfilePic from '../../components/profilePic/profilePic';
 import { RegistrationSteps } from './steps-help';
-import { StyledSplashScreen } from '../splash-screen/splashScreen.styles';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { sliceSetProfile } from '../../redux/slices/userProfileSlice';

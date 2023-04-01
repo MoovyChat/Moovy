@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-type props = {
+interface props {
   bg?: string;
-};
+}
 export const UserTipParent = styled.div<props>`
   display: flex;
   position: relative;

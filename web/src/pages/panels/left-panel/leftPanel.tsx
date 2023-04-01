@@ -14,7 +14,6 @@ import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
 import { useAppSelector } from '../../../redux/hooks';
-import useIsAuth from '../../../utils/isAuthUser';
 
 const MdDynamicFeed = lazyIconMd('MdDynamicFeed');
 const MdFavorite = lazyIconMd('MdFavorite');
@@ -30,7 +29,6 @@ type props = {
   className: string;
 };
 const LeftPanel: React.FC<props> = ({ className }) => {
-  useIsAuth();
   const ref = useRef<HTMLDivElement>(null);
   const user = useAppSelector((state) => state.user);
   const theme = useAppSelector((state) => state.settings.theme);
@@ -59,7 +57,6 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   }, [ref]);
 
   const linkClickHandler: MouseEventHandler<HTMLAnchorElement> = (e) => {
-    e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
       dispatch(sliceSetSelectedElement(''));
@@ -81,82 +78,80 @@ const LeftPanel: React.FC<props> = ({ className }) => {
         </div>
       </div>
       <div className='options'>
-        <Suspense>
-          <NavLink to='/' className='option' end onClick={linkClickHandler}>
-            <div className='icon feed'>
-              <MdDynamicFeed size={iconSize} />
-            </div>
-            <div className='text'>Feed</div>
-          </NavLink>
-          <NavLink to='/catalog' className='option' onClick={linkClickHandler}>
-            <div className='icon catalog'>
-              <MdStorage size={iconSize} />
-            </div>
-            <div className='text'>Catalog</div>
-          </NavLink>
-          <NavLink
-            to={`/profile/${user.nickname}`}
-            className='option'
-            onClick={linkClickHandler}>
-            <div className='icon p'>
-              <MdPerson size={iconSize} />
-            </div>
-            <div className='text'>Profile</div>
-          </NavLink>
-          <NavLink
-            to={`activity/${user.nickname}/favorites`}
-            className='option'
-            onClick={linkClickHandler}>
-            <div className='icon favorites'>
-              <MdFavorite size={iconSize} />
-            </div>
-            <div className='text'>Favorites</div>
-          </NavLink>
-          <NavLink
-            to={`/comments/${user.nickname}`}
-            className='option'
-            onClick={linkClickHandler}>
-            <div className='icon comments'>
-              <MdModeComment size={iconSize} />
-            </div>
-            <div className='text'>Comments</div>
-          </NavLink>
-          <NavLink
-            to={`/replies/${user.nickname}`}
-            className='option'
-            onClick={linkClickHandler}>
-            <div className='icon replies'>
-              <MdOutlineReply size={iconSize} />
-            </div>
-            <div className='text'>Replies</div>
-          </NavLink>
-          <NavLink
-            to='/notifications'
-            className='option'
-            onClick={linkClickHandler}>
-            <div className='icon notifications'>
-              <MdNotificationsActive size={iconSize} />
-            </div>
-            <div className='text'>Notifications</div>
-          </NavLink>
-          <div className='option' onClick={themeHandler}>
-            {theme === themes.DARK ? (
-              <React.Fragment>
-                <div className='icon'>
-                  <MdOutlineWbSunny size={iconSize} />
-                </div>
-                <div className='text'>Light</div>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <div className='icon'>
-                  <MdNightlight size={iconSize} />
-                </div>
-                <div className='text'>Dark</div>
-              </React.Fragment>
-            )}
+        <NavLink to='/home' className='option' end onClick={linkClickHandler}>
+          <div className='icon feed'>
+            <MdDynamicFeed size={iconSize} />
           </div>
-        </Suspense>
+          <div className='text'>Feed</div>
+        </NavLink>
+        <NavLink to='catalog' className='option' onClick={linkClickHandler}>
+          <div className='icon catalog'>
+            <MdStorage size={iconSize} />
+          </div>
+          <div className='text'>Catalog</div>
+        </NavLink>
+        <NavLink
+          to={`profile/${user.nickname}`}
+          className='option'
+          onClick={linkClickHandler}>
+          <div className='icon p'>
+            <MdPerson size={iconSize} />
+          </div>
+          <div className='text'>Profile</div>
+        </NavLink>
+        <NavLink
+          to={`activity/${user.nickname}/favorites`}
+          className='option'
+          onClick={linkClickHandler}>
+          <div className='icon favorites'>
+            <MdFavorite size={iconSize} />
+          </div>
+          <div className='text'>Favorites</div>
+        </NavLink>
+        <NavLink
+          to={`comments/${user.nickname}`}
+          className='option'
+          onClick={linkClickHandler}>
+          <div className='icon comments'>
+            <MdModeComment size={iconSize} />
+          </div>
+          <div className='text'>Comments</div>
+        </NavLink>
+        <NavLink
+          to={`replies/${user.nickname}`}
+          className='option'
+          onClick={linkClickHandler}>
+          <div className='icon replies'>
+            <MdOutlineReply size={iconSize} />
+          </div>
+          <div className='text'>Replies</div>
+        </NavLink>
+        <NavLink
+          to='notifications'
+          className='option'
+          onClick={linkClickHandler}>
+          <div className='icon notifications'>
+            <MdNotificationsActive size={iconSize} />
+          </div>
+          <div className='text'>Notifications</div>
+        </NavLink>
+        <div className='option' onClick={themeHandler}>
+          {theme === themes.DARK ? (
+            <React.Fragment>
+              <div className='icon'>
+                <MdOutlineWbSunny size={iconSize} />
+              </div>
+              <div className='text'>Light</div>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <div className='icon'>
+                <MdNightlight size={iconSize} />
+              </div>
+              <div className='text'>Dark</div>
+            </React.Fragment>
+          )}
+        </div>
       </div>
 
       <StyledLinks>

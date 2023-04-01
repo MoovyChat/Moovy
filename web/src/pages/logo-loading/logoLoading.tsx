@@ -1,10 +1,11 @@
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
-import { StyledSplashScreen } from '../splash-screen/splashScreen.styles';
+import { StyledLogoLoading } from './logoLoading.styles';
+
 const LogoLoading = () => {
   return (
-    <StyledSplashScreen>
+    <StyledLogoLoading>
       <Helmet>
         <title>{`Loading...`}</title>
         <meta name='description' content={`Loading...`} />
@@ -15,7 +16,7 @@ const LogoLoading = () => {
       <div className='loading'>
         <Loading />
       </div>
-    </StyledSplashScreen>
+    </StyledLogoLoading>
   );
 };
 

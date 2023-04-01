@@ -17,10 +17,10 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>
-        <>
+        <React.Fragment>
           <GoogleAnalytics />
           <HomeRouter />
-        </>
+        </React.Fragment>
       </PersistGate>
     </Provider>
   </React.StrictMode>,

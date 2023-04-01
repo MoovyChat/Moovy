@@ -1,21 +1,19 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { FeedItem, useGetFeedQuery } from '../../generated/graphql';
-import { Suspense, lazy } from 'react';
 import { UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import { CommentParent } from '../comments/comments.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import FeedComment from './feed-comment/feedComment';
+import FeedReply from './feed-reply/feedReply';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import LogoLoading from '../logo-loading/logoLoading';
+import NotFound from '../notFound/notFound';
 import ViewportList from 'react-viewport-list';
 import { useAppSelector } from '../../redux/hooks';
 import { useFetchMoreFeed } from '../../hooks/useFetchMoreFeed';
-
-const FeedComment = lazy(() => import('./feed-comment/feedComment'));
-const FeedReply = lazy(() => import('./feed-reply/feedReply'));
-const NotFound = lazy(() => import('../notFound/notFound'));
 
 const Feed = () => {
   const user = useAppSelector((state) => state.user);
@@ -73,6 +71,7 @@ const Feed = () => {
       </>
     );
   }
+  if (feedQuery.fetching) return <LogoLoading />;
   return (
     <>
       <ChildHeader text='Feed' className='feed-header' />
@@ -82,20 +81,18 @@ const Feed = () => {
         <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
       </Helmet>
       <CommentParent>
-        <Suspense fallback={<LogoLoading />}>
-          <div className='child' ref={parentRef} onScroll={handleScroll}>
-            <ViewportList ref={listRef} viewportRef={parentRef} items={items}>
-              {(item, index) =>
-                item.type === 'comment' ? (
-                  <FeedComment key={index + item.id} id={item.id}></FeedComment>
-                ) : (
-                  <FeedReply key={index + item.id} id={item.id}></FeedReply>
-                )
-              }
-            </ViewportList>
-            <div className='extra'>{feedQuery.fetching && <Loading />}</div>
-          </div>
-        </Suspense>
+        <div className='child' ref={parentRef} onScroll={handleScroll}>
+          <ViewportList ref={listRef} viewportRef={parentRef} items={items}>
+            {(item, index) =>
+              item.type === 'comment' ? (
+                <FeedComment key={index + item.id} id={item.id}></FeedComment>
+              ) : (
+                <FeedReply key={index + item.id} id={item.id}></FeedReply>
+              )
+            }
+          </ViewportList>
+          <div className='extra'>{feedQuery.fetching && <Loading />}</div>
+        </div>
       </CommentParent>
     </>
   );

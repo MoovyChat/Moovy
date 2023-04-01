@@ -5,13 +5,11 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const VisitedTitles = () => {
   const { id } = useParams();
 
-  useIsAuth();
   const [page, setPage] = useState<number>(1);
   const [visited, setVisited] = useState<Visited[]>([]);
   const [lastPage, setLastPage] = useState<number>(1);

@@ -10,14 +10,12 @@ import MoovyBlackLogo from '../../svgs/moovy-black.svg';
 import MoovyWhiteLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
-import useIsAuth from '../../utils/isAuthUser';
 import { useTheme } from 'styled-components';
 
 type props = {
   className: string;
 };
 const HomeHeader: React.FC<props> = ({ className }) => {
-  useIsAuth();
   const theme = useTheme();
   const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
   const dispatch = useAppDispatch();
@@ -45,10 +43,13 @@ const HomeHeader: React.FC<props> = ({ className }) => {
           <p
             style={{
               fontWeight: 600,
-              fontSize: '12px',
+              fontSize: '10px',
               alignSelf: 'flex-end',
+              backgroundColor: '#993434',
+              padding: '4px 6px',
+              borderRadius: '10px',
             }}>
-            (Beta)
+            Beta
           </p>
         </div>
         <div className='logo-icon' onClick={navBarHandler}>

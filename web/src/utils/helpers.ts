@@ -1,3 +1,7 @@
+// Importing DOMPurify and HtmlParser to clean and parse HTML text
+// Importing lazy from React to use lazy loading for components
+// Importing textMap and textMapTypes from interfaces and constants files
+
 import DOMPurify from 'dompurify';
 import HtmlParser from 'react-html-parser';
 import { lazy } from 'react';
@@ -40,12 +44,14 @@ export const getTimeFrame = (postTime: string) => {
   return finalString;
 };
 
+// Check if the string can be parsed to a number
 export const isNumber = (c: string) => {
   let parsedInt = parseInt(c);
   if (isNaN(parsedInt)) return false;
   else return true;
 };
 
+// Format a number to a compact representation with one decimal
 export const getFormattedNumber = (count: number) => {
   return Intl.NumberFormat('en-US', {
     notation: 'compact',
@@ -53,6 +59,7 @@ export const getFormattedNumber = (count: number) => {
   }).format(count);
 };
 
+// Get a date in long format, e.g. Monday, March 1, 2021, 10:30:15 AM GMT+2
 export const getDateFormat = (time: string | undefined) => {
   if (!time) return;
   let intTimeFormat = parseInt(time);
@@ -63,7 +70,7 @@ export const getDateFormat = (time: string | undefined) => {
   return intlFormat.toString();
 };
 
-// Date format: DD MMM YYYY
+// Get a date in short format, e.g. Mar 1, 2021
 export const getShortDateFormat = (time: string | undefined) => {
   if (!time) return;
   let intTime = parseInt(time);
@@ -75,6 +82,7 @@ export const getShortDateFormat = (time: string | undefined) => {
   return intlFormat.toString();
 };
 
+// Split a text string into an array of text maps, where each text map has a message and a type property
 export const getFormattedWordsArray = (text: string): textMap[] => {
   return text.split(' ').map((word) => {
     if (word.startsWith('@')) {
@@ -95,6 +103,9 @@ export const getFormattedWordsArray = (text: string): textMap[] => {
   });
 };
 
+// Function to parse and sanitize HTML text
+// Uses regular expression to match links and replaces with HTML a elements
+// Adds a hook to make all links open a new window
 export const ParsedText = (text: string) => {
   // Use a regular expression to match the links
   const linkRegex =
@@ -119,13 +130,18 @@ export const ParsedText = (text: string) => {
       node.setAttribute('xlink:show', 'new');
     }
   });
+
+  // Sanitize the cleaned HTML text using the allowed tags and additional attributes
   let clean = DOMPurify.sanitize(linkText, {
     ALLOWED_TAGS: ['a'],
     ADD_ATTR: ['target'],
   });
+
+  // Parse the sanitized HTML text into a React component
   return HtmlParser(clean);
 };
 
+// Function to compress image using HTML5 Canvas API
 export async function compressImage(inputBlob: Blob): Promise<Blob | null> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -148,3 +164,9 @@ export async function compressImage(inputBlob: Blob): Promise<Blob | null> {
     };
   });
 }
+
+// Function to generate a random username by appending a random number to the provided nickname
+export const randomUserNameGenerator = (nickname: string) => {
+  const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+  return `${nickname}${randomNumber}}`;
+};

@@ -20,12 +20,10 @@ import WatchVideo from '../../components/watch-video/watchVideo';
 import _ from 'lodash';
 import { isNumber } from '../../utils/helpers';
 import { urqlClient } from '../../utils/urlClient';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const MovieThread = () => {
-  useIsAuth();
   const { id } = useParams();
   useEffect(() => {
     document.title = 'Movie - Moovy';

@@ -14,10 +14,6 @@ import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
 const MoviesCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    document.title = 'Movies - Moovy';
-  }, []);
-
   const [titles, setTitles] = useState<Title[]>([]);
   const [paginatedTitles] = useGetPaginatedTitlesQuery({
     variables: { type: 'movie', first: 15, after: '' },

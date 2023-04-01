@@ -5,13 +5,7 @@ import {
   useGetMoviesByTitleIdQuery,
   useGetTitleQuery,
 } from '../../generated/graphql';
-import React, {
-  UIEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { ShowThreadParent, StyledTitleHeader } from './showThread.styles';
 
 import ChildHeader from '../../components/childHeader/childHeader';
@@ -20,13 +14,10 @@ import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import ViewportList from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
-import _ from 'lodash';
 import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
-  useIsAuth();
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
