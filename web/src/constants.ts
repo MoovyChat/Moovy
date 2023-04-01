@@ -1,10 +1,3 @@
-export const home = {
-  heading: 'Now stream movies with comments',
-  sub: 'Moovy provides you a new way to enjoy your streaming experience with a comment section and video filters.',
-  sub2: 'Why wait? Install our extension and step up the game with your streaming experience. Please note that We are not affiliated with Netflix.',
-  supported: 'Supported Platforms:',
-};
-
 export const themes = {
   LIGHT: 'LIGHT',
   DARK: 'DARK',

@@ -7,7 +7,6 @@ import {
   INSTAGRAM_LINK,
   TIKTOK_LINK,
   TWITTER_LINK,
-  home,
 } from '../../constants';
 import { StyledFlaps, WelcomeParent } from './welcome.styles';
 import { Suspense, lazy, useEffect } from 'react';
@@ -174,6 +173,8 @@ const Welcome = () => {
                 src={Light300}
                 alt='light'
                 sizes='300px'
+                width='300'
+                height='487'
               />
             </picture>
           </div>
@@ -185,6 +186,8 @@ const Welcome = () => {
                 src={Dark300}
                 alt='dark'
                 sizes='300px'
+                width='300'
+                height='509'
               />
             </picture>
           </div>
@@ -201,9 +204,16 @@ const Welcome = () => {
               )}
             </span>
           </div>
-          <div className='text'>{home.heading}</div>
-          <div className='sub'>{home.sub}</div>
-          <div className='sub2'>{home.sub2}</div>
+          <div className='text'>Now stream movies with comments</div>
+          <div className='sub'>
+            Moovy provides you a new way to enjoy your streaming experience with
+            a comment section and video filters.
+          </div>
+          <div className='sub2'>
+            Why wait? Install our extension and step up the game with your
+            streaming experience. Please note that We are not affiliated with
+            Netflix.
+          </div>
           <div
             className='get-started'
             onClick={(e) => {

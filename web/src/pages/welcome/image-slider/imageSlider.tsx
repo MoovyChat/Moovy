@@ -106,6 +106,7 @@ const ImageSlider = () => {
             alt={`slide ${index + 1}`}
             sizes='(min-width: 620px) 594px, 276px'
             src={image.split(' ')[0]}
+            loading='lazy'
           />
         </div>
       ))}
