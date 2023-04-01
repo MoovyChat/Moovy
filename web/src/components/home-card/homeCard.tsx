@@ -21,6 +21,7 @@ const HomeCard: React.FC<props> = ({ info }) => {
           alt='image'
           srcSet={info.srcSet}
           sizes='250px'
+          loading='lazy'
         />
         <div className='content'>{content}</div>
       </div>

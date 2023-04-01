@@ -13,6 +13,8 @@ type props = {
   ref?: any;
   onClick?: any;
   onLoad?: any;
+  width?: string;
+  height?: string;
 };
 export const Image: React.FC<props> = ({
   src,
@@ -24,6 +26,8 @@ export const Image: React.FC<props> = ({
   lazy,
   srcSet,
   onLoad,
+  width,
+  height,
 }) => {
   const [key, setKey] = useState<string>('1');
   const [imageError, setImageError] = useState(true);
@@ -61,6 +65,8 @@ export const Image: React.FC<props> = ({
         id={id}
         loading={lazy ? 'lazy' : 'eager'}
         onClick={onClick}
+        width={width}
+        height={height}
       />
       <div
         style={{ display: imageError ? 'flex' : 'none', maxHeight: '100px' }}>

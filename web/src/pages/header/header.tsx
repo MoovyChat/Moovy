@@ -104,6 +104,8 @@ const Header = () => {
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'
+            width='150'
+            height='150'
           />
           <div className='beta'>beta</div>
         </div>

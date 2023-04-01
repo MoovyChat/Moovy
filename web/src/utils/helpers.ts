@@ -170,3 +170,14 @@ export const randomUserNameGenerator = (nickname: string) => {
   const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
   return `${nickname}${randomNumber}}`;
 };
+
+export function loadCSS(url: string) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = url;
+  link.media = 'print';
+  link.onload = function () {
+    link.media = 'all';
+  };
+  document.head.appendChild(link);
+}

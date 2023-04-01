@@ -1,4 +1,3 @@
-import './index.css';
 import './registerServiceWorker.ts';
 
 import * as ReactDOMClient from 'react-dom/client';
@@ -10,7 +9,6 @@ import HomeRouter from './routes';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 
 const rootElement = document.getElementById('root');

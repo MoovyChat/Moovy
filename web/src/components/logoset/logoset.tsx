@@ -9,7 +9,12 @@ export const LogoSet: React.FC<logoSetProp> = ({ platform }) => {
   return (
     <LogoSetParent className='platform'>
       <div className='set'>
-        <Image src={platform.imgUrl} alt={platform.title} />
+        <Image
+          src={platform.imgUrl}
+          alt={platform.title}
+          width='512'
+          height='512'
+        />
       </div>
     </LogoSetParent>
   );
