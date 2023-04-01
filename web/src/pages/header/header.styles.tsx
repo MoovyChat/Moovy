@@ -54,13 +54,15 @@ export const HeaderParent = styled.div`
   }
 `;
 
-export const HeaderButton = styled.div`
-  padding: 10px 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
-  font-weight: 500;
-  border-radius: 10px;
+export const HeaderButton = styled.button`
   cursor: pointer;
+  font-size: 16px;
+  border: none;
+  background: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+  padding: 10px;
+  border-radius: 18px;
+  font-weight: 600;
 `;

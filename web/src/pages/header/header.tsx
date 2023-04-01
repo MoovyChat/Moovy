@@ -36,11 +36,10 @@ const Header = () => {
       dispatch(sliceSetUser(data.me as Users));
     }
   }, [me.fetching]);
-  const themeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    e.stopPropagation();
-    dispatch(sliceSetTheme(e.target.checked));
-  };
-  const loginHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
+
+  const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
     e.stopPropagation();
     const signedInUser = await googleSignIn();
     loginAction({ uid: signedInUser.id }).then((res) => {
@@ -78,7 +77,9 @@ const Header = () => {
     });
   };
 
-  const logOutHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
+  const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
     e.stopPropagation();
     const result = await logOutAction({});
     const data = result.data;
@@ -112,6 +113,8 @@ const Header = () => {
       </div>
       <div className='header-buttons'>
         <HeaderButton
+          tabIndex={0}
+          role='button'
           className='install-button hb'
           onClick={(e) => {
             e.stopPropagation();
@@ -120,6 +123,8 @@ const Header = () => {
           Screenshots
         </HeaderButton>
         <HeaderButton
+          tabIndex={0}
+          role='button'
           className='install-button hb'
           onClick={(e) => {
             e.stopPropagation();
@@ -128,16 +133,28 @@ const Header = () => {
           Features
         </HeaderButton>
         {user && user.id ? (
-          <HeaderButton className='hb' id='logout-btn' onClick={logOutHandler}>
+          <HeaderButton
+            className='hb'
+            id='logout-btn'
+            onClick={logOutHandler}
+            role='button'
+            tabIndex={0}>
             Logout
           </HeaderButton>
         ) : (
-          <HeaderButton className='hb' id='login-btn' onClick={loginHandler}>
+          <HeaderButton
+            className='hb'
+            id='login-btn'
+            onClick={loginHandler}
+            role='button'
+            tabIndex={0}>
             Login
           </HeaderButton>
         )}
         <HeaderButton
           className='install-button hb'
+          role='button'
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');

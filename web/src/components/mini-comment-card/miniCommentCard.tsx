@@ -79,6 +79,7 @@ const MiniCommentCard: React.FC<props> = ({
       className={className}
       cardHeight={cardHeight}
       showMore={showMore}
+      tabIndex={0}
       onClick={(e) => {
         e.stopPropagation();
         if (type === 'reply') {

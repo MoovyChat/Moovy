@@ -50,13 +50,13 @@ const HeaderOptions = () => {
         </div>
         <div className='nick'>@{user.nickname}</div>
       </div>
-      <div className='option' onClick={profileClickHandler}>
+      <div className='option' tabIndex={0} onClick={profileClickHandler}>
         <div className='icon'>
           <MdPerson size={20} />
         </div>
         <div className='text'>Profile</div>
       </div>
-      <div className='option' onClick={logOutHandler}>
+      <div className='option' tabIndex={0} onClick={logOutHandler}>
         <div className='icon'>
           <MdOutlineExitToApp size={20} />
         </div>
@@ -64,6 +64,7 @@ const HeaderOptions = () => {
       </div>
       <div
         className='option'
+        tabIndex={0}
         onClick={(e) => {
           e.stopPropagation();
           chrome.runtime.sendMessage(

@@ -204,12 +204,13 @@ export const StyledFlaps = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
   .social-container {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     border-radius: 20px;
-    padding: 10px;
+    padding: 5px;
     background: ${(p) => p.theme.trendingTiles};
     box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
     align-items: center;
@@ -218,6 +219,11 @@ export const StyledFlaps = styled.div`
     height: 40%;
     .social {
       cursor: pointer;
+      border: none;
+      background: none;
+      text-decoration: none;
+      color: inherit;
+      font-family: inherit;
       :hover {
         transform: scale(1.3);
         transition: transform 0.5s;
