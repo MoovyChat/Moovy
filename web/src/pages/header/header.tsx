@@ -67,13 +67,13 @@ const Header = () => {
             localStorage.setItem('user', JSON.stringify(_data));
             dispatch(sliceSetUser(_data as Users));
             loginAction({ uid: _data?.id! });
-            navigate('/');
+            navigate('/home');
           })
           .catch((err: any) => {
             console.log('ERR: Unable to create user', err);
           });
       }
-      navigate('/');
+      navigate('/home');
     });
   };
 
@@ -112,6 +112,18 @@ const Header = () => {
         </div>
       </div>
       <div className='header-buttons'>
+        {user && user.id && (
+          <HeaderButton
+            tabIndex={0}
+            role='button'
+            className='install-button hb'
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/home');
+            }}>
+            Home
+          </HeaderButton>
+        )}
         <HeaderButton
           tabIndex={0}
           role='button'
