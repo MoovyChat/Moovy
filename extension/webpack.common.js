@@ -3,6 +3,7 @@ var webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 // const BundleAnalyzerPlugin =
 //   require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
@@ -13,6 +14,7 @@ module.exports = {
     background: path.resolve('src/background/background.ts'),
     index: path.resolve('src/contentScript/index.tsx'),
     options: path.resolve('src/extension/options/options.tsx'),
+    graphql: path.resolve('src/generated/graphql.tsx'),
   },
   module: {
     rules: [
@@ -102,6 +104,8 @@ module.exports = {
     publicPath: '',
   },
   optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
     splitChunks: {
       chunks(chunk) {
         return chunk.name !== 'index';
