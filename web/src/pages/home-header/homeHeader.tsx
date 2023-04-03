@@ -39,6 +39,8 @@ const HomeHeader: React.FC<props> = ({ className }) => {
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'
+            width='40'
+            height='40'
           />
           <p
             style={{
@@ -70,7 +72,13 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         width='220px'>
         <div className='user'>
           <div className='logo-image'>
-            <Image className='image' src={user.photoUrl} alt='user' />
+            <Image
+              className='image'
+              src={user.photoUrl}
+              alt='user'
+              width='40'
+              height='40'
+            />
           </div>
         </div>
       </FocusWindow>

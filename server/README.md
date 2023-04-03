@@ -4,6 +4,62 @@ The server is hosted on "server.moovychat.com", it is built upon Apollo Server f
 
 The requests are sent to `graphql` server https://server.moovychat.com/graphql.
 
+## Quick Debug and Deploy
+
+- To check the running process `docker ps -a`
+- To stop the previous copy of process `docker stop <container-id>`
+- It is important to stop the previous process of the server for the pushed server to work properly.
+
+### Quick Deploy (Update versions every time)
+
+Current deployed version: 0.0.4
+Next version: 0.0.5
+
+```
+docker login
+docker build -t kishore189/moovychat:0.0.5 .
+docker push kishore189/moovychat:0.0.5
+
+ssh root@137.184.201.17 (password: moovychat)
+docker pull kishore189/moovychat:0.0.5
+docker tag kishore189/moovychat:0.0.4 dokku/api:0.0.5
+dokku deploy api 0.0.5
+```
+
+## Access POSTGRES inside dokku
+
+- Check logs `dokku postgres:logs qchat -t`
+- Connect to the database `dokku postgres:connect qchat`
+- Delete all values from the all tables in database.
+
+```
+DO $$ DECLARE
+    table_name text;
+BEGIN
+    FOR table_name IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+        EXECUTE 'TRUNCATE TABLE "' || table_name || '" CASCADE;';
+    END LOOP;
+END $$;
+
+```
+
+- Delete all values including the primary generated index values
+
+```
+DO $$ DECLARE
+    table_name text;
+BEGIN
+    FOR table_name IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+        EXECUTE 'TRUNCATE TABLE "' || table_name || '" RESTART IDENTITY CASCADE;';
+    END LOOP;
+END $$;
+
+```
+
+- List all tables `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
+
+- Make sure to insert initial platform and admin values. Refer help.md.
+
 ## Table of contents
 
 - Installation

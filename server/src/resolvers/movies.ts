@@ -22,7 +22,58 @@ import { LIKES_AND_COMMENT } from '../constants';
 import { MovieStats } from '../entities/MovieStats';
 import { MovieConnection } from '../connections';
 import { PageInfo } from '../pagination';
+import { Title } from '../entities/Title';
 
+@InputType()
+class EpisodeInfo {
+  @Field(() => Int, { defaultValue: 0 })
+  id: number;
+  @Field({ nullable: true })
+  title: string;
+  @Field({ nullable: true })
+  synopsis: string;
+  @Field({ nullable: true })
+  stills: string;
+  @Field({ nullable: true })
+  thumbs: string;
+  @Field(() => Int, { defaultValue: 0 })
+  runtime: number;
+}
+
+@InputType()
+class SeasonInfo {
+  @Field({ nullable: true })
+  title: string;
+  @Field(() => Int, { defaultValue: 0 })
+  year: number;
+  @Field(() => [EpisodeInfo], { defaultValue: [] })
+  episodes: EpisodeInfo[];
+}
+@InputType()
+class MovieFullInformation {
+  @Field({ nullable: true })
+  title?: string;
+  @Field({ nullable: true })
+  type?: string;
+  @Field({ nullable: true })
+  artwork?: string;
+  @Field({ nullable: true })
+  boxart?: string;
+  @Field({ nullable: true })
+  storyart?: string;
+  @Field({ nullable: true })
+  rating?: string;
+  @Field({ nullable: true })
+  synopsis?: string;
+  @Field(() => [String], { nullable: true, defaultValue: [] })
+  advisories?: string[];
+  @Field(() => Int, { defaultValue: 0 })
+  runtime: number;
+  @Field(() => Int, { defaultValue: 0 })
+  year: number;
+  @Field(() => [SeasonInfo], { nullable: true })
+  seasons: SeasonInfo[];
+}
 @InputType()
 class MovieInput {
   @Field()
@@ -374,21 +425,6 @@ export class MovieResolver {
     return false;
   }
 
-  @Mutation(() => Boolean, { nullable: true })
-  async insertBulkMovie(
-    @Arg('options', () => [MovieInput]) options: [MovieInput]
-  ): Promise<boolean> {
-    const insertResult = await conn
-      .createQueryBuilder()
-      .insert()
-      .into(Movie)
-      .values(options)
-      .execute();
-    console.log(insertResult.raw[0]);
-    if (insertResult.raw[0]) return true;
-    else return false;
-  }
-
   @Mutation(() => Movie, { nullable: true })
   async insertMovie(@Arg('options') options: MovieInput) {
     try {
@@ -431,6 +467,96 @@ export class MovieResolver {
       }
       return movie;
     }
+  }
+
+  @Mutation(() => Movie, { nullable: true })
+  async insertMovieInformation(
+    @Arg('options') options: MovieFullInformation,
+    @Arg('mid') mid: string
+  ) {
+    const {
+      type,
+      artwork,
+      boxart,
+      storyart,
+      year,
+      runtime,
+      synopsis,
+      title,
+      rating,
+      advisories,
+      seasons,
+    } = options;
+
+    let uniqueId =
+      type !== 'movie' && seasons ? seasons[0]?.episodes[0]?.id : mid;
+
+    const titleRepo = conn.getRepository(Title);
+    const movieRepo = conn.getRepository(Movie);
+
+    const existing = await movieRepo.findOne({ where: { id: mid } });
+    if (existing) return existing;
+
+    // Upsert into "Title" table, irrespective of type.
+    const titleResult = await titleRepo.upsert(
+      {
+        id: String(uniqueId),
+        artwork,
+        boxart,
+        storyart,
+        year,
+        runtime,
+        synopsis,
+        title,
+        type,
+        rating,
+        advisories,
+      },
+      { conflictPaths: ['id'] }
+    );
+
+    if (titleResult) {
+      if (type === 'movie') {
+        const movieInput = {
+          id: String(mid),
+          name: options?.title!,
+          season: '',
+          stills: options?.artwork!,
+          synopsis: options?.synopsis!,
+          thumbs: options?.boxart!,
+          parentTitleName: '',
+          likesCount: 0,
+          platformId: 1,
+          runtime: options?.runtime,
+          titleId: uniqueId + '',
+          year: options?.year,
+        };
+        await movieRepo.upsert(movieInput, { conflictPaths: ['id'] });
+      } else if (type === 'show') {
+        const promises = seasons?.flatMap((season) => {
+          return season.episodes.map(async (episode) => {
+            const episodeInput = {
+              id: String(episode?.id),
+              name: episode?.title,
+              season: season?.title,
+              stills: episode?.stills,
+              synopsis: episode?.synopsis,
+              thumbs: episode?.thumbs,
+              parentTitleName: options?.title,
+              likesCount: 0,
+              platformId: 1,
+              runtime: episode?.runtime,
+              titleId: uniqueId + '',
+              year: season?.year,
+            };
+            return movieRepo.upsert(episodeInput, { conflictPaths: ['id'] });
+          });
+        });
+        await Promise.all(promises);
+      }
+    }
+
+    return await movieRepo.findOne({ where: { id: mid } });
   }
 
   @Mutation(() => Int, { nullable: true })

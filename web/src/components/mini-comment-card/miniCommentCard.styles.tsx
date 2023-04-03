@@ -12,7 +12,6 @@ export const StyledMiniCommentCard = styled.div<props>`
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 2px 1px;
-  border-radius: 18px;
   transition: max-height 0.3s;
   cursor: pointer;
   .photo {

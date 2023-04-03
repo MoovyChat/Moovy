@@ -1,3 +1,4 @@
+import { lowerCase } from 'lodash';
 import 'reflect-metadata';
 
 import {
@@ -259,6 +260,27 @@ export class ProfileResolver {
     let data: Profile | null = null;
     await conn.transaction(async (manager) => {
       let repo = manager.getRepository(Profile);
+      const userRepo = manager.getRepository(Users);
+
+      let nickname = options.nickname;
+      let isNicknameUnique = false;
+      while (!isNicknameUnique) {
+        const existingUser = await userRepo
+          .createQueryBuilder('user')
+          .select('LOWER(user.nickname)', 'nickname')
+          .where(`LOWER(user.nickname) = :nickname AND user.id != :id`, {
+            nickname: lowerCase(nickname),
+            id: options.uid,
+          })
+          .getOne();
+        if (existingUser && existingUser.nickname === nickname.toLowerCase()) {
+          // the new nickname is not unique
+          nickname = generateNewNickname(options.nickname);
+        } else {
+          isNicknameUnique = true;
+        }
+      }
+
       await repo.upsert(
         [
           {
@@ -277,11 +299,18 @@ export class ProfileResolver {
       await manager
         .createQueryBuilder()
         .update(Users)
-        .set({ nickname: options.nickname })
+        .set({ nickname })
         .where('id = :id', { id: options.uid })
         .execute();
       data = await repo.findOne({ where: { userId: options.uid } });
     });
     return data;
   }
+}
+
+function generateNewNickname(oldNickname: string): string {
+  const prefix = oldNickname.replace(/[0-9]/g, ''); // remove numbers from the old nickname
+  const randomNumber = Math.floor(Math.random() * 1000); // generate a random number
+
+  return `${prefix}${randomNumber}`;
 }

@@ -7,6 +7,7 @@ import Redis, { RedisOptions } from 'ioredis';
 import { ApolloServer } from 'apollo-server-express';
 import { MyContext } from './types';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import bodyParser from 'body-parser';
 import { buildSchema } from 'type-graphql';
 import compression from 'compression';
 import { conn } from './dataSource';
@@ -59,6 +60,10 @@ const main = async () => {
     res.set('Cache-Control', 'public, max-age=86400'); // 1 day
     next();
   });
+
+  // Increase the maximum request size limit to 50MB
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   // Load the SSL certificate and private key
   // const certsPath = '/home/dokku/api/letsencrypt/certs/current/certificates';

@@ -32,7 +32,6 @@ export const Image: React.FC<props> = ({
   const [key, setKey] = useState<string>('1');
   const [imageError, setImageError] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [_src, setSrc] = useState<string>(src ? src : '');
   useEffect(() => {
     const interval = setInterval(() => {
       setKey(Math.random().toString(36).substring(7) as string);
@@ -41,11 +40,6 @@ export const Image: React.FC<props> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // useEffect(() => {
-  //   if (isLoading) setSrc(() => MoovyIcon);
-  //   else src && setSrc(() => src);
-  // }, [isLoading]);
-
   const handleLoad: ReactEventHandler<HTMLImageElement> = () => {
     setImageError(() => false);
   };
@@ -53,7 +47,7 @@ export const Image: React.FC<props> = ({
   return (
     <>
       <img
-        src={_src}
+        src={src}
         srcSet={srcSet}
         alt={alt}
         key={key}

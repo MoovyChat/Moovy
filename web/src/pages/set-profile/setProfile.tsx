@@ -14,7 +14,7 @@ import {
   useIsUserNameExistsMutation,
   useUpdateProfileMutation,
 } from '../../generated/graphql';
-import React, { useEffect, useState } from 'react';
+import React, { FormEventHandler, useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
@@ -83,28 +83,28 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
   const [{ fetching }, upsertProfile] = useUpdateProfileMutation();
   const [formData, setFormData] = useState<FormData>({
     fullName: {
-      value: profile?.fullname as string,
+      value: profile?.fullname || '',
       error: '',
       regex: /^[a-zA-Z ]{2,30}$/,
     },
     userName: {
-      value: user.nickname,
+      value: user.nickname || '',
       error: '',
       regex:
         /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/,
     },
     gender: {
-      value: profile?.gender as string,
+      value: profile?.gender || '',
       error: '',
       regex: /^(Male|Female|Other)$/i,
     },
     dob: {
-      value: profile?.dob as string,
+      value: profile?.dob || '',
       error: '',
       regex: /^\d{4}-\d{2}-\d{2}$/,
     },
     bio: {
-      value: profile?.bio as string,
+      value: profile?.bio || '',
       error: '',
       regex: /^.{0,150}$/,
     },
@@ -127,21 +127,27 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     };
   }, [index]);
 
-  const validateField = async (name: string, value: string, regex: RegExp) => {
+  const validateField = (name: string, value: string, regex: RegExp) => {
     switch (name) {
       case 'userName':
         const match1 = regex.exec(value);
         if (match1 === null) {
-          return `Invalid ${name}`;
+          return Promise.resolve(`Invalid ${name}`);
         } else if (match1[2]) {
-          return `Invalid ${name}: '${match1[2]}' not allowed`;
+          return Promise.resolve(`Invalid ${name}: '${match1[2]}' not allowed`);
         } else {
-          const res = await isUserNameExists({ text: value });
-          const _data = res.data;
-          const isExists = _data?.isUserNameExists;
-          if (isExists) return `${value} already exists`;
+          return isUserNameExists({ text: value })
+            .then((res) => {
+              const _data = res.data;
+              const isExists = _data?.isUserNameExists;
+              if (isExists) return `${value} already exists`;
+              return '';
+            })
+            .catch((error) => {
+              console.error(error);
+              return '';
+            });
         }
-        return '';
       case 'fullName':
       case 'gender':
       case 'bio':
@@ -153,36 +159,47 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
         }
         return '';
       case 'dob':
-        if (!value.match(regex)) {
-          return 'Please enter a valid date in the format YYYY-MM-DD';
+        const dateMatch = regex.exec(value);
+        if (dateMatch === null) {
+          return `Invalid ${name}`;
+        } else {
+          // check if input value is a valid date
+          const date = new Date(value);
+          if (isNaN(date.getTime())) {
+            return `Invalid ${name}: date is not valid`;
+          }
+          // calculate age based on date of birth
+          const dobYear = date.getFullYear();
+          const dobMonth = date.getMonth() + 1;
+          const dobDay = date.getDate();
+          const now = new Date();
+          const currentYear = now.getFullYear();
+          const currentMonth = now.getMonth() + 1;
+          const currentDay = now.getDate();
+          let age = currentYear - dobYear;
+          if (
+            currentMonth < dobMonth ||
+            (currentMonth === dobMonth && currentDay < dobDay)
+          ) {
+            age--;
+          }
+          if (age < 13) {
+            return 'You must be at least 13 years old to sign up';
+          }
+          return '';
         }
-        const dobYear = parseInt(value.substring(0, 4));
-        const dobMonth = parseInt(value.substring(5, 7));
-        const dobDay = parseInt(value.substring(8, 10));
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1;
-        const currentDay = now.getDate();
-        let age = currentYear - dobYear;
-        if (
-          currentMonth < dobMonth ||
-          (currentMonth === dobMonth && currentDay < dobDay)
-        ) {
-          age--;
-        }
-        if (age < 13) {
-          return 'You must be at least 13 years old to sign up';
-        }
-        return '';
       // Add more cases for other fields as needed
       default:
-        break;
+        return '';
     }
   };
 
   const handleInputChange = async (
     event: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+      | HTMLInputElement
     >
   ) => {
     const { name, value } = event.target;
@@ -292,7 +309,18 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     }
   };
 
-  const nextClickHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const handleYearInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dob: {
+        ...prevFormData.dob,
+        value: value,
+      },
+    }));
+  };
+
+  const nextClickHandler: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     if (index < RegistrationSteps.length - 1) setIndex((i) => i + 1);
     else if (index === RegistrationSteps.length - 1) {
@@ -391,6 +419,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
                   type='date'
                   value={formData.dob.value}
                   onChange={handleInputChange}
+                  onInput={handleYearInput}
                 />
               ) : (
                 <StyledTextArea
@@ -408,11 +437,13 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
             ) : (
               success && <Success>Profile updated successfully</Success>
             )}
-            <div className='step-index next-index ' onClick={nextClickHandler}>
+            <button
+              className='step-index next-index'
+              onClick={nextClickHandler}>
               {currentIndex === RegistrationSteps.length - 1
                 ? 'Finish'
                 : 'Next'}
-            </div>
+            </button>
           </animated.div>
         </StyledDescription>
       </div>
