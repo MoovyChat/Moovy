@@ -100,6 +100,13 @@ export const StyledDescription = styled.div`
     .next-index {
       background-color: black;
       cursor: pointer;
+      :hover,
+      :focus {
+        background-color: #3a65c4;
+      }
+      :active {
+        background-color: #1d315d;
+      }
     }
     .title {
       font-weight: 500;

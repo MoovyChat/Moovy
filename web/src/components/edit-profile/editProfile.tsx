@@ -1,6 +1,4 @@
-import { MdError, MdReportGmailerrorred } from 'react-icons/md';
-import { Profile, useUpdateProfileMutation } from '../../generated/graphql';
-import React, {
+import {
   FormEventHandler,
   MouseEventHandler,
   useEffect,
@@ -8,20 +6,24 @@ import React, {
   useState,
 } from 'react';
 import {
+  Profile,
+  useIsUserNameExistsMutation,
+  useUpdateProfileMutation,
+} from '../../generated/graphql';
+import {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
-import {
-  sliceSetProfile,
-  sliceUpdateProfileField,
-} from '../../redux/slices/userProfileSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EditProfileParent } from './editProfile.styles';
 import { FaUserEdit } from 'react-icons/fa';
 import Loading from '../../pages/loading/loading';
+import { MdReportGmailerrorred } from 'react-icons/md';
 import ProfileTextBox from '../../pages/profile/profileTextBox';
 import { batch } from 'react-redux';
+import { debounce } from 'lodash';
+import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 import { sliceSetUserNickName } from '../../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,6 +31,7 @@ interface ErrorIn {
   nickname: string;
   fullname: string;
   gender: string;
+  dob: string;
 }
 const EditProfile = () => {
   const profile = useAppSelector((state) => state.profile);
@@ -36,6 +39,7 @@ const EditProfile = () => {
   const [tempProfile, setTempProfile] = useState<Profile>(profile);
   const [nickname, setNickname] = useState<string>(user.nickname);
   const dispatch = useAppDispatch();
+  const [, isUserNameExists] = useIsUserNameExistsMutation();
   const [saving, setSaving] = useState<boolean>(false);
   const [serverError, setServerError] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
@@ -45,6 +49,7 @@ const EditProfile = () => {
     nickname: '',
     fullname: '',
     gender: '',
+    dob: '',
   });
 
   useMemo(() => {
@@ -72,8 +77,6 @@ const EditProfile = () => {
 
     if (nickname.length < 2) {
       setErrors((err) => ({ ...err, nickname: 'Invalid user name' }));
-    } else {
-      setErrors((err) => ({ ...err, nickname: '' }));
     }
   }, [tempProfile, nickname, setErrors, setHasError]);
 
@@ -94,13 +97,6 @@ const EditProfile = () => {
         const { data, error } = res;
         if (error?.message) {
           setSaving(() => false);
-          console.log(
-            error.message,
-            error.name,
-            error.graphQLErrors,
-            error.networkError,
-            error.response
-          );
           setServerError(error.message);
           return;
         }
@@ -111,7 +107,7 @@ const EditProfile = () => {
           dispatch(sliceSetIsPopupOpened(false));
           dispatch(sliceSetSelectedElement(''));
         });
-        navigate(`/profile/${nickname}`);
+        navigate(`/home/profile/${nickname}`);
         setSaving(() => false);
         window.location.reload();
       })
@@ -122,12 +118,92 @@ const EditProfile = () => {
       });
   };
   const setValue = (key: string, value: string) => {
-    if (key === 'nickname') {
-      setNickname(value);
-    } else {
+    if (key !== 'nickname' && key !== 'dob') {
       setTempProfile({ ...tempProfile, [key]: value } as Profile);
     }
   };
+
+  const handleNickname = (key: string, value: string) => {
+    setNickname(value);
+    debouncedHandleNickname(key, value);
+  };
+
+  const handleDOB = (key: string, value: string) => {
+    setTempProfile({ ...tempProfile, [key]: value } as Profile);
+    let regex = /^\d{4}-\d{2}-\d{2}$/;
+    const dateMatch = regex.exec(value);
+    if (dateMatch === null) {
+      setErrors((err) => ({ ...err, dob: `Invalid ${value}` }));
+    } else {
+      // check if input value is a valid date
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        setErrors((err) => ({
+          ...err,
+          dob: `Invalid ${value}: date is not valid`,
+        }));
+      }
+      // calculate age based on date of birth
+      const dobYear = date.getFullYear();
+      const dobMonth = date.getMonth() + 1;
+      const dobDay = date.getDate();
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const currentDay = now.getDate();
+      let age = currentYear - dobYear;
+      if (
+        currentMonth < dobMonth ||
+        (currentMonth === dobMonth && currentDay < dobDay)
+      ) {
+        age--;
+      }
+      if (age < 13) {
+        setErrors((err) => ({
+          ...err,
+          dob: 'You must be at least 13 years old to sign up',
+        }));
+      } else {
+        setErrors((err) => ({
+          ...err,
+          dob: '',
+        }));
+      }
+    }
+  };
+
+  const debouncedHandleNickname = debounce((key: string, value: string) => {
+    let regex =
+      /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/;
+    const match1 = regex.exec(value);
+    setErrors((err) => ({
+      ...err,
+      nickname: match1
+        ? match1[2]
+          ? `Invalid ${value}: '${match1[2]}' not allowed`
+          : ''
+        : `Invalid ${value}`,
+    }));
+    if (match1 && !match1[2]) {
+      isUserNameExists({ text: value })
+        .then((res) => {
+          const _data = res.data;
+          const isExists = _data?.isUserNameExists;
+          if (isExists)
+            setErrors((err) => ({
+              ...err,
+              nickname: `${value} already exists`,
+            }));
+        })
+        .catch((error) => {
+          setErrors((err) => ({
+            ...err,
+            nickname: `Server Error`,
+          }));
+        });
+    }
+  }, 500);
+
   const cancelButtonHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     batch(() => {
@@ -176,7 +252,7 @@ const EditProfile = () => {
             type='text'
             value={nickname}
             keyItem='nickname'
-            setValue={setValue}
+            setValue={handleNickname}
             error={errors!.nickname}
           />
         </div>
@@ -196,8 +272,8 @@ const EditProfile = () => {
             type='date'
             keyItem='dob'
             value={tempProfile.dob as string}
-            setValue={setValue}
-            error='none'
+            setValue={handleDOB}
+            error={errors!.dob}
           />
         </div>
         <div className='gender ext'>
