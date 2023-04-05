@@ -1,19 +1,12 @@
-import { Emoji, fetchFromCDN } from 'emojibase';
+/* eslint-disable react/react-in-jsx-scope */
 import {
   EmojiPickerHeader,
   EmojiPickerParent,
   HeaderKey,
 } from './emojiPicker.styles';
-import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
-import {
-  TouchEventHandler,
-  WheelEventHandler,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { TouchEventHandler, WheelEventHandler, useRef, useState } from 'react';
 
+import { Emoji } from 'emojibase';
 import EmojiGroup from './emojiGroup/emojiGroup';
 import groupSet from 'emojibase-data/meta/groups.json';
 import useFetchEmojis from '../../contentScript/hooks/useFetchEmojis';
@@ -25,7 +18,7 @@ export interface refinedG {
   [key: number]: subGroup;
 }
 
-let headerEmoji: any = {
+const headerEmoji: { [key: string]: string } = {
   'smileys-emotion': '🤣',
   'people-body': '👨‍👩‍👧',
   'animals-nature': '🐵',
@@ -85,29 +78,28 @@ const EmojiPicker = () => {
     <EmojiPickerParent
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}>
+      onTouchEnd={handleTouchEnd}
+    >
       <EmojiPickerHeader>
         {Object.values(groups).map(
           (value, index) =>
             index !== 2 && (
               <HeaderKey
                 key={index}
-                className='header-key'
+                className="header-key"
                 selectedGroup={index === groupNumber}
                 onClick={(e) => {
                   e.stopPropagation();
                   selectGroup(index);
-                }}>
+                }}
+              >
                 {headerEmoji[value]}
               </HeaderKey>
             )
         )}
       </EmojiPickerHeader>
       {refinedGroups && refinedGroups[groupNumber] && groupNumber !== 2 && (
-        <EmojiGroup
-          subGroup={refinedGroups[groupNumber]}
-          groupNumber={groupNumber}
-        />
+        <EmojiGroup subGroup={refinedGroups[groupNumber]} />
       )}
     </EmojiPickerParent>
   );

@@ -15,3 +15,12 @@ export function getSupportedMimeTypes(
   });
   return supported;
 }
+
+export const randomUserNameGenerator = (nickname: string) => {
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const truncatedNickname = nickname.slice(0, 4);
+  const paddingLength =
+    8 - truncatedNickname.length - randomNumber.toString().length;
+  const padding = Array(paddingLength).fill('0').join('');
+  return `${truncatedNickname}${padding}${randomNumber}`;
+};

@@ -1,6 +1,6 @@
 import { Emoji, fetchFromCDN } from 'emojibase';
 import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { refinedG } from '../../components/emoji-picker/emojiPicker';
 
@@ -12,32 +12,34 @@ const useFetchEmojis = () => {
     const data: Emoji[] = await fetchFromCDN('en/data.json');
     // Refining data to the object with keys and subKeys.
     await data.map((em) => {
-      let key = em.group!;
-      let subKey = em.subgroup!;
-      if (rg[key] === undefined) {
-        rg = {
-          ...rg,
-          [key]: {
-            [subKey]: [em],
-          },
-        };
-      } else {
-        if (rg[key][subKey] === undefined) {
+      const key = em.group;
+      const subKey = em.subgroup;
+      if (key && subKey) {
+        if (rg[key] === undefined) {
           rg = {
             ...rg,
             [key]: {
-              ...rg[key],
               [subKey]: [em],
             },
           };
-        } else
-          rg = {
-            ...rg,
-            [key]: {
-              ...rg[key],
-              [subKey]: [...rg[key][subKey], em],
-            },
-          };
+        } else {
+          if (rg[key][subKey] === undefined) {
+            rg = {
+              ...rg,
+              [key]: {
+                ...rg[key],
+                [subKey]: [em],
+              },
+            };
+          } else
+            rg = {
+              ...rg,
+              [key]: {
+                ...rg[key],
+                [subKey]: [...rg[key][subKey], em],
+              },
+            };
+        }
       }
     });
     return rg;

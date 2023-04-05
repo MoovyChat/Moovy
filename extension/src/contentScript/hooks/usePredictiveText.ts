@@ -33,7 +33,7 @@ const usePredictiveText = (
   const [error, setError] = useState<any | null>(null);
 
   const dispatch = useAppDispatch();
-  const [_nns, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
+  const [, getNickNameSuggestions] = useGetNickNameSuggestionsMutation();
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -46,14 +46,15 @@ const usePredictiveText = (
           const wordToSearch = lastWord.substring(1);
           const res = await getNickNameSuggestions({ search: wordToSearch });
 
-          const { data, error } = res;
+          const { data } = res;
           if (data) {
-            const names: NameObject[] = data?.getTopThreeUserNames!;
+            const names: NameObject[] =
+              data.getTopThreeUserNames as NameObject[];
             dispatch(sliceSetNameSuggestions(names));
             dispatch(sliceSetWordSuggestions([]));
           }
         } else {
-          let searchURL = `${searchAPI}${lastWord}`;
+          const searchURL = `${searchAPI}${lastWord}`;
           const response = await fetch(searchURL, {
             mode: 'cors',
             headers: {
@@ -64,14 +65,14 @@ const usePredictiveText = (
           const str = await response.text();
           const data = new window.DOMParser().parseFromString(str, 'text/xml');
           const el = data.getElementsByTagName('suggestion');
-          let firstWordSuggestions: string[] = [];
-          let secondWordSuggestions: string[] = [];
+          const firstWordSuggestions: string[] = [];
+          const secondWordSuggestions: string[] = [];
 
-          for (let item in el) {
-            let _element = el[item];
+          for (const item in el) {
+            const _element = el[item];
             if (_element) {
-              let node = _element.attributes && _element.attributes[0];
-              let value = node && node.nodeValue!.split(' ');
+              const node = _element.attributes && _element.attributes[0];
+              const value = node && node.nodeValue && node.nodeValue.split(' ');
               if (value && !firstWordSuggestions.includes(value[0])) {
                 firstWordSuggestions.push(value[0]);
               }

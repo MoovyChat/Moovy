@@ -9,25 +9,23 @@ import {
   ReplyWindowParent,
   ShowReplyText,
 } from './replyWindow.styles';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CommentInfo } from '../../Utils/interfaces';
 import Loading from '../../components/loading/loading';
 import ReplyCard from '../replyCard/replyCard';
 import { ViewportList } from 'react-viewport-list';
 import _ from 'lodash';
-import { openStdin } from 'process';
+import { useAppSelector } from '../../redux/hooks';
 import { useClient } from 'urql';
 
-type props = {
+interface props {
   parentComment: CommentInfo;
   responseFromReplyWindow: (e: any) => void;
-};
+}
 const ReplyWindow: React.FC<props> = ({
   responseFromReplyWindow,
   parentComment,
 }) => {
-  const dispatch = useAppDispatch();
   const [fetchingMore, setFetchingMore] = useState(false);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [replies, setReplies] = useState<Reply[]>([]);
@@ -39,7 +37,7 @@ const ReplyWindow: React.FC<props> = ({
   const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
   const replyWindowScrollSessionKey = `replyWindowScrollPosition${parentComment.id}`;
-  const [res, _executeQuery] = useGetCommentRepliesQuery({
+  const [res] = useGetCommentRepliesQuery({
     variables: {
       cid: parentComment.id,
       first: 5,
@@ -61,24 +59,26 @@ const ReplyWindow: React.FC<props> = ({
       })
       .toPromise()
       .then((moreData) => {
-        const { data, error } = moreData;
-        const _data = data.getCommentReplies!;
-        const pageInfo = _data.pageInfo;
-        setCursor(() => pageInfo.endCursor as string);
-        const nodes = _data.nodes as Reply[];
-        setReplies((replies) =>
-          _.chain(replies).concat(nodes).uniqBy('id').value()
-        );
-        setHasMore(() => _data.pageInfo.hasNextPage);
-        setRepliesCount(() => _data.totalCount);
-        setFetchingMore(() => false);
+        const { data } = moreData;
+        const _data = data.getCommentReplies;
+        if (_data) {
+          const pageInfo = _data.pageInfo;
+          setCursor(() => pageInfo.endCursor as string);
+          const nodes = _data.nodes as Reply[];
+          setReplies((replies) =>
+            _.chain(replies).concat(nodes).uniqBy('id').value()
+          );
+          setHasMore(() => _data.pageInfo.hasNextPage);
+          setRepliesCount(() => _data.totalCount);
+          setFetchingMore(() => false);
+        }
       });
   }, [graphqlClient, res, fetchingMore, setFetchingMore]);
 
   useEffect(() => {
-    const { error, data, fetching } = res;
+    const { data, fetching } = res;
     if (!fetching && data) {
-      const _data = data.getCommentReplies!;
+      const _data = data.getCommentReplies;
       const nodes = _data.nodes as Reply[];
       setReplies(() => nodes);
       setHasMore(() => _data.pageInfo.hasNextPage);
@@ -93,11 +93,12 @@ const ReplyWindow: React.FC<props> = ({
     <ReplyWindowParent>
       {parentComment.repliesCount !== 0 && (
         <ShowReplyText
-          className='reply-status'
+          className="reply-status"
           onClick={(e) => {
             e.stopPropagation();
             setOpen((flag) => !flag);
-          }}>
+          }}
+        >
           {replyText}
         </ShowReplyText>
       )}
@@ -107,29 +108,32 @@ const ReplyWindow: React.FC<props> = ({
         replySection={open}
         ref={parentRef}
         onScroll={() =>
+          parentRef.current &&
           sessionStorage.setItem(
             replyWindowScrollSessionKey,
-            `${parentRef!.current!.scrollTop!}`
+            `${parentRef.current.scrollTop}`
           )
-        }>
+        }
+      >
         <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
           {(reply) => (
             <ReplyCard
               key={reply.id}
-              type='reply'
+              type="reply"
               responseFromReplyWindow={responseFromReplyWindow}
-              className='reply-card'
+              className="reply-card"
               reply={reply}
             />
           )}
         </ViewportList>
         {hasMore && replies.length > 0 && (
           <div
-            className='show-more-replies'
+            className="show-more-replies"
             onClick={(e) => {
               e.stopPropagation();
               fetchMore();
-            }}>
+            }}
+          >
             show more replies
           </div>
         )}

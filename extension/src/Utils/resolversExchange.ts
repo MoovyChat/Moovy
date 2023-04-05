@@ -13,17 +13,12 @@ export const movieCommentsResolver = (): Resolver => {
     if (size === 0) {
       return undefined;
     }
-    const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isInCache = cache.resolve(
-      cache.resolve(entityKey, fieldKeys) as string,
-      'comments'
-    );
     let newComments = [] as string[];
     let id = '';
     let _lastPage = 0;
     let _totalCommentCount = 0;
     let _hasMoreComments = true;
-    let _pastLoadedCount = 0;
+    const _pastLoadedCount = 0;
     let _movie = '';
     fieldInfos.forEach((fieldInfo: any) => {
       const { fieldKey, arguments: args } = fieldInfo;
@@ -36,13 +31,13 @@ export const movieCommentsResolver = (): Resolver => {
       newComments = _.uniq(newComments);
       _movie = cache.resolve(link, 'movie') as string;
       _totalCommentCount = cache.resolve(link, 'totalCommentCount') as number;
-      let hasMore = cache.resolve(link, 'hasMoreComments') as boolean;
+      const hasMore = cache.resolve(link, 'hasMoreComments') as boolean;
       if (hasMore === false) {
         _hasMoreComments = false;
       }
     });
     info.partial = true;
-    let newData = {
+    const newData = {
       __typename: 'PaginatedMovieComments',
       id,
       comments: newComments,

@@ -5,7 +5,7 @@ import { app } from '../firebase';
 import { randomUserNameGenerator } from './utilities';
 
 const auth = getAuth(app);
-var provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
 
 export const googleSignIn = (): Promise<Users> => {
   return new Promise((resolve, reject) => {

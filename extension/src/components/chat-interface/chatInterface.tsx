@@ -8,7 +8,6 @@ import {
 } from './chatInterface.styles';
 import { CommentInfo, User } from '../../Utils/interfaces';
 import React, {
-  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -56,20 +55,20 @@ const ChatInterface: React.FC<props> = ({
   profile,
   profileFetching,
 }) => {
-  let commentIcon = document.getElementById('comment-header');
+  const commentIcon = document.getElementById('comment-header');
   const { movie, loading, misc, settings } = useAppSelector((state) => state);
   const font = misc.font;
   const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
   const { enableBackground } = misc;
   const { isPopSlideOpen } = settings;
-  let chatWindowSize = settings.chatWindowSize || '30';
-  let thumbs = movie.thumbs!;
+  const chatWindowSize = settings.chatWindowSize || '30';
+  const thumbs = movie.thumbs;
   const divRef = useRef<HTMLDivElement | null>(null);
-  let videoElem = getPlayerViewElement();
+  const videoElem = getPlayerViewElement();
   const isProfileNeedsToBeUpdated = useAppSelector(
     (state) => state.misc.isProfileNeedsToBeUpdated
   );
-  let windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
+  const windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   const dispatch = useAppDispatch();
   const position = useMousePosition();
 
@@ -77,12 +76,6 @@ const ChatInterface: React.FC<props> = ({
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [customLoading, setCustomLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<boolean>(true);
-
-  // Set the response to the global text area.
-  // const responseFromReplyWindow = (comment: CommentInfo) => {
-  //   setReplyClickResponse(comment);
-  // };
-
   useEffect(() => {
     setCustomLoading(() => true);
     const timeout = setTimeout(() => {
@@ -95,8 +88,9 @@ const ChatInterface: React.FC<props> = ({
 
   useEffect(() => {
     if (!profileFetching) {
-      if (profile === null) dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
-      else if (!profile?.fullname || !profile?.dob) {
+      if (profile === null || profile === undefined)
+        dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
+      else if (!profile.fullname || !profile.dob) {
         dispatch(sliceSetIsProfileNeedsToBeUpdated(true));
       } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
     }
@@ -108,13 +102,13 @@ const ChatInterface: React.FC<props> = ({
 
   // Animations on initial button click.
   useEffect(() => {
-    if (!divRef || !commentIcon || !videoElem) return;
+    if (!divRef.current || !commentIcon || !videoElem) return;
     if (openChatWindow) {
-      commentIcon!.style.cssText = `
+      commentIcon.style.cssText = `
         right: ${chatWindowSize}%;
         transition: all 1s ${windowTransition};
       `;
-      divRef.current!.style.cssText = `
+      divRef.current.style.cssText = `
         max-width: ${chatWindowSize || 30}%;
       `;
       videoElem.style.cssText = `
@@ -122,11 +116,11 @@ const ChatInterface: React.FC<props> = ({
         transition: max-width 1s ${windowTransition};
       `;
     } else {
-      commentIcon!.style.cssText = `
+      commentIcon.style.cssText = `
         right: 0%;
         transition: all 1s ${windowTransition};
       `;
-      divRef.current!.style.cssText = `
+      divRef.current.style.cssText = `
         max-width: 0%;
       `;
       videoElem.style.cssText = `
@@ -139,18 +133,18 @@ const ChatInterface: React.FC<props> = ({
   // Drag the chat window
   useMemo(() => {
     let onMouseMoveEventListener: any;
-    let onMouseUpEventListener: any;
     let dragging = false;
-    onMouseUpEventListener = (event: MouseEvent) => {
+    const onMouseUpEventListener = (event: MouseEvent) => {
       event.stopPropagation();
+      if (!divRef.current || !commentIcon) return;
       dragging = false;
-      document.body!.style.cursor = 'default';
-      let defaultChatWidth = 100 - videoWidthRef.current;
-      divRef!.current!.style.cssText = `
+      document.body.style.cursor = 'default';
+      const defaultChatWidth = 100 - videoWidthRef.current;
+      divRef.current.style.cssText = `
           max-width: ${defaultChatWidth}%;
           transition: max-width 1s ${windowTransition};
       `;
-      commentIcon!.style.cssText = `
+      commentIcon.style.cssText = `
           right: ${defaultChatWidth}%;
           opacity: 1;
           transition: right 1s ${windowTransition};
@@ -158,27 +152,27 @@ const ChatInterface: React.FC<props> = ({
       document.body.removeEventListener('mousemove', onMouseMoveEventListener);
       document.body.removeEventListener('mouseup', onMouseUpEventListener);
     };
-    if (dragRef!.current) {
-      dragRef!.current!.onmousedown = (event) => {
+    if (dragRef && dragRef.current) {
+      dragRef.current.onmousedown = (event) => {
         event.stopPropagation();
         dragging = true;
         onMouseMoveEventListener = (e: MouseEvent) => {
           e.stopPropagation();
           if (dragging) {
             setDisplay(true);
-            document.body!.style.cursor = 'col-resize';
-            let bodyWidth = document.body!.clientWidth;
-            if (divRef) {
-              let newWidth = bodyWidth - e.pageX - 6;
+            document.body.style.cursor = 'col-resize';
+            const bodyWidth = document.body.clientWidth;
+            if (divRef && divRef.current && commentIcon) {
+              const newWidth = bodyWidth - e.pageX - 6;
               // Sets the chat window size.
               let newChatWindowSize = (newWidth / bodyWidth) * 100;
               if (newChatWindowSize < 30) newChatWindowSize = 30;
               dispatch(sliceSetChatWindowSize(newChatWindowSize));
-              divRef!.current!.style.cssText = `
+              divRef.current.style.cssText = `
                 max-width: ${newChatWindowSize}%;
                 transition: none;
               `;
-              commentIcon!.style.cssText = `
+              commentIcon.style.cssText = `
                 right: ${newChatWindowSize}%;
                 transition: none;
               `;
@@ -209,7 +203,7 @@ const ChatInterface: React.FC<props> = ({
   // Animation detection
 
   useEffect(() => {
-    setDisplay((prevDisplay) => {
+    setDisplay(() => {
       if (!openChatWindow) return false;
       return true;
     });
@@ -226,32 +220,36 @@ const ChatInterface: React.FC<props> = ({
 
   return (
     <Perimeter
-      className='chat-perimeter'
-      thumbs={thumbs}
+      className="chat-perimeter"
+      thumbs={thumbs ? thumbs : ''}
       font={font}
       enableBackground={enableBackground.toString()}
-      ref={divRef}>
-      <DragBar className='drag-bar' ref={dragRef}></DragBar>
+      ref={divRef}
+    >
+      <DragBar className="drag-bar" ref={dragRef}></DragBar>
       {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
         <LogoLoading />
       ) : !user ? (
         <ErrorPage
-          text={`Login using the extension, and click on Refetch`}></ErrorPage>
+          text={`Login using the extension, and click on Refetch`}
+        ></ErrorPage>
       ) : profileFetching || customLoading ? (
         <LogoLoading />
       ) : isProfileNeedsToBeUpdated ? (
         <UpdateProfile profile={profile} />
       ) : (
         <ChatWindowParent
-          className='chat-interface'
+          className="chat-interface"
           onClick={(e) => e.stopPropagation()}
-          windowOpened={display}>
+          windowOpened={display}
+        >
           <React.Fragment>
             <ChatTitle />
             <ChatStats />
             <TextAreaContainer
-              className='text-area-container'
-              onClick={(e) => e.stopPropagation()}>
+              className="text-area-container"
+              onClick={(e) => e.stopPropagation()}
+            >
               <MessageBox
                 replyWindowResponse={replyWindowResponse}
                 setReplyClickResponse={setReplyClickResponse}
@@ -260,20 +258,22 @@ const ChatInterface: React.FC<props> = ({
             <ToxicityMessage />
             <ChatBox
               responseFromReplyWindow={responseFromReplyWindow}
-              type='comment'
+              type="comment"
             />
           </React.Fragment>
           <CSSTransition
             in={isPopSlideOpen}
-            classNames='fade'
+            classNames="fade"
             timeout={300}
-            unmountOnExit>
+            unmountOnExit
+          >
             <div
               style={{
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-              }}>
+              }}
+            >
               <PopSlide />
             </div>
           </CSSTransition>

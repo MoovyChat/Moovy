@@ -10,13 +10,13 @@ import { useAppSelector } from '../../../redux/hooks';
 import { useUpdateUserMovieStatusMutation } from '../../../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
-type props = {
+interface props {
   title: string;
   id: string;
-};
-type optionProps = {
+}
+interface optionProps {
   id: string;
-};
+}
 
 const redirectToMovie = (id: string) => {
   const url = `https://www.netflix.com/watch/${id}`;
@@ -29,14 +29,15 @@ const MovieBody: React.FC<props> = ({ title, id }) => {
       onClick={(e) => {
         e.stopPropagation();
         redirectToMovie(id);
-      }}>
+      }}
+    >
       {title}
     </MovieMiniParent>
   );
 };
 
 const MovieOptions: React.FC<optionProps> = ({ id }) => {
-  const [_r, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
+  const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const user = useAppSelector((state) => state.user);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const [lk, setLike] = useState<boolean>(false);
@@ -48,10 +49,14 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
       mid: id,
       options: {},
     }).then((response) => {
-      const { data, error } = response;
-      const { like, favorite } = data?.updateUserMovieStats!;
-      if (like) setLike(like);
-      if (favorite) setFav(favorite);
+      const { data } = response;
+      if (data) {
+        const _data = data.updateUserMovieStats;
+        if (_data) {
+          if (_data.like) setLike(_data.like);
+          if (_data.favorite) setFav(_data.favorite);
+        }
+      }
     });
   }, []);
   const LikeAndFav = (type: string, value: boolean) => {
@@ -63,35 +68,39 @@ const MovieOptions: React.FC<optionProps> = ({ id }) => {
     }).then((res) => {
       const { data, error } = res;
       if (!error && data) {
-        const { like, favorite } = data.updateUserMovieStats!;
-        setLike(like!);
-        setFav(favorite!);
+        const _data = data.updateUserMovieStats;
+        if (_data) {
+          if (_data.like) setLike(_data.like);
+          if (_data.favorite) setFav(_data.favorite);
+        }
       }
     });
   };
   return (
     <OptionPerimeter>
       <div
-        className='favorite'
+        className="favorite"
         onClick={(e) => {
           e.stopPropagation();
           LikeAndFav('fav', !fav);
-        }}>
+        }}
+      >
         {!fav ? (
-          <MdStarOutline className='star' size={20} />
+          <MdStarOutline className="star" size={20} />
         ) : (
-          <MdStar className='star' size={20} color='gold' />
+          <MdStar className="star" size={20} color="gold" />
         )}
       </div>
       <Like
         accentColor={accentColor}
-        className='like'
+        className="like"
         onClick={(e) => {
           e.stopPropagation();
           LikeAndFav('like', !lk);
-        }}>
+        }}
+      >
         {lk ? (
-          <AiFillLike className='icon' size={20} color={accentColor} />
+          <AiFillLike className="icon" size={20} color={accentColor} />
         ) : (
           <AiOutlineLike size={20} />
         )}

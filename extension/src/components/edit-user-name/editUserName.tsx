@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
@@ -8,15 +9,14 @@ const EditUserName = () => {
   const [err, setError] = useState<string>('');
   const nickName = useAppSelector((state) => state.user.nickname);
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
   const [text, setText] = useState<string>(nickName);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [clickedTA, setClickedTA] = useState<boolean>(false);
 
   const validateText = (inputText: string) => {
     setText(inputText);
-    let usernameRegex = /^[a-zA-Z0-9_@$.]+$/;
-    let isValid = usernameRegex.test(inputText);
+    const usernameRegex = /^[a-zA-Z0-9_@$.]+$/;
+    const isValid = usernameRegex.test(inputText);
     if (!isValid) setError('Name is invalid!');
     else setError('');
   };
@@ -33,7 +33,7 @@ const EditUserName = () => {
     document.addEventListener('keydown', cancelEvent.bind(this), !0);
 
     function cancelEvent(e: KeyboardEvent) {
-      let target = e.target as HTMLTextAreaElement;
+      const target = e.target as HTMLTextAreaElement;
       if (target.id === 'edit-user-name-input') {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -64,7 +64,7 @@ const EditUserName = () => {
   useEffect(() => {
     document.addEventListener('click', textAreaClicked, !0);
     function textAreaClicked(e: MouseEvent) {
-      let target = e.target as HTMLInputElement;
+      const target = e.target as HTMLInputElement;
       if (target.id === 'edit-user-name-input') {
         setClickedTA(true);
       } else setClickedTA(false);
@@ -79,18 +79,19 @@ const EditUserName = () => {
 
   return (
     <EditNickNameParent
-      className='edit-user-name'
-      id='edit-user-name'
-      isError={err === '' ? false : true}>
-      <div className='edit-user-name-title' id='edit-user-name-title'>
+      className="edit-user-name"
+      id="edit-user-name"
+      isError={err === '' ? false : true}
+    >
+      <div className="edit-user-name-title" id="edit-user-name-title">
         Change User Name
       </div>
-      <div className='edit-user-name-box' id='edit-user-name-box'>
+      <div className="edit-user-name-box" id="edit-user-name-box">
         <input
           ref={inputRef}
-          className='edit-user-name-input'
-          id='edit-user-name-input'
-          type='text'
+          className="edit-user-name-input"
+          id="edit-user-name-input"
+          type="text"
           value={text}
           size={5}
           onBlur={handleTextAreaBlur}
@@ -99,15 +100,16 @@ const EditUserName = () => {
             e.stopPropagation();
             validateText(e.target.value);
           }}
-          placeholder='Enter your user name'
+          placeholder="Enter your user name"
           maxLength={15}
         />
       </div>
       {err && (
         <div
-          className='edit-user-name-err'
-          id='edit-user-name-err'
-          style={{ color: 'red', fontSize: '1.5em' }}>
+          className="edit-user-name-err"
+          id="edit-user-name-err"
+          style={{ color: 'red', fontSize: '1.5em' }}
+        >
           {err}
         </div>
       )}

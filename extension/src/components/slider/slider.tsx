@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { BiReset } from 'react-icons/bi';
 import { SliderParent } from './slider.styles';
 import { filterType } from '../../Utils/interfaces';
+import { useAppSelector } from '../../redux/hooks';
 
 type props = {
   filter: filterType;
@@ -11,17 +12,19 @@ type props = {
   rangeValue: string | undefined;
 };
 const Slider: React.FC<props> = ({ filter, onChange, reset, rangeValue }) => {
-  let rangeRef = useRef<HTMLInputElement | null>(null);
+  const rangeRef = useRef<HTMLInputElement | null>(null);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
   useEffect(() => {
-    rangeRef.current!.value = rangeValue ? rangeValue : '0';
+    if (rangeRef.current)
+      rangeRef.current.value = rangeValue ? rangeValue : '0';
   }, [rangeValue]);
 
   return (
-    <SliderParent>
-      <div className='slider-title'>{filter.title}</div>
-      <div className='slider'>
+    <SliderParent accentColor={accentColor}>
+      <div className="slider-title">{filter.title}</div>
+      <div className="slider">
         <input
-          type='range'
+          type="range"
           ref={rangeRef}
           id={filter.title}
           name={filter.title}
@@ -33,12 +36,15 @@ const Slider: React.FC<props> = ({ filter, onChange, reset, rangeValue }) => {
         />
       </div>
       <div
-        className='value'
+        className="value"
         onClick={(e) => {
           e.stopPropagation();
           reset(filter);
-        }}>
-        <BiReset size={15} />
+        }}
+      >
+        <div className="val-icon">
+          <BiReset size={15} />
+        </div>
       </div>
     </SliderParent>
   );

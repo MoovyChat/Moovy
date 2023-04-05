@@ -20,7 +20,7 @@ const ErrorPage: React.FC<props> = ({ text }) => {
     chrome.runtime.sendMessage(
       { type: requestTypes.REFETCH_USER },
       function (response) {
-        let userFromExtension = response as User;
+        const userFromExtension = response as User;
         dispatch(sliceAddUser(userFromExtension));
         if (response) {
           getUser({ uid: userFromExtension.id }).then((res) => {
@@ -29,7 +29,7 @@ const ErrorPage: React.FC<props> = ({ text }) => {
               setErr(() => 'Error: Unable to fetch user.');
             }
             if (data) {
-              const _data = data.getUserMut! as User;
+              const _data = data.getUserMut as User;
               dispatch(sliceAddUser(_data));
             }
           });
@@ -39,14 +39,14 @@ const ErrorPage: React.FC<props> = ({ text }) => {
   };
   return (
     <StyledErrorPage>
-      <div className='logo'>
-        <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
+      <div className="logo">
+        <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`} alt="Moovy" />
       </div>
-      <div className='text'>{text}</div>
-      <div className='refetch' onClick={refetchUser}>
+      <div className="text">{text}</div>
+      <div className="refetch" onClick={refetchUser}>
         Refetch User details
       </div>
-      {err && <div className='err text'>{err}</div>}
+      {err && <div className="err text">{err}</div>}
     </StyledErrorPage>
   );
 };
