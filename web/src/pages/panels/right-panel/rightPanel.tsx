@@ -14,7 +14,6 @@ import {
 } from '../../../generated/graphql';
 import { lazyIconFa, lazyIconMd } from '../../../lazyLoad';
 
-import BuyMeACoffee from '../../../static/images/bmc.webp';
 import Loading from '../../loading/loading';
 import PatreonWord from '../../../static/images/patreon-word.webp';
 import { RightParent } from './rightPanel.styles';
@@ -215,7 +214,11 @@ const RightPanel: React.FC<props> = ({ className }) => {
                   window.open(BUY_ME_A_COFFEE, '_blank');
                 }}>
                 <div className='logo' id='text-focus'>
-                  <img src={BuyMeACoffee} alt='bmc' id='text-focus' />
+                  <img
+                    src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'
+                    alt='bmc'
+                    id='text-focus'
+                  />
                 </div>
               </div>
             </div>

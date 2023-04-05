@@ -175,6 +175,7 @@ export const AddCommentParent = styled.div<props>`
         .comment {
           .mini {
             min-height: 100px;
+            width: 90%;
           }
         }
         .title-details {
