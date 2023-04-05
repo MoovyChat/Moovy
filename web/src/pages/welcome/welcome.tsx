@@ -16,6 +16,7 @@ import Dark600 from '../../static/images/dark-chat-600x.webp';
 import Features from './features/features';
 import Footer from './footer/footer';
 import { Helmet } from 'react-helmet';
+import ImageWithFadeIn from '../../components/image-with-fadeIn/imageWithFadeIn';
 import Light300 from '../../static/images/light-chat-300x.webp';
 import Light600 from '../../static/images/light-chat-600x.webp';
 import LogoLoading from '../logo-loading/logoLoading';
@@ -163,10 +164,10 @@ const Welcome = () => {
         <div className='pics'>
           <div className='first pic'>
             <picture>
-              <img
+              <ImageWithFadeIn
                 className='image'
-                srcSet={`${Light300} 300w, ${Light600} 600w`}
-                src={Light300}
+                src300={Light300}
+                src600={Light600}
                 alt='light'
                 sizes='300px'
                 width='300'
@@ -176,10 +177,10 @@ const Welcome = () => {
           </div>
           <div className='second pic'>
             <picture>
-              <img
+              <ImageWithFadeIn
                 className='image'
-                srcSet={`${Dark300} 300w, ${Dark600} 600w`}
-                src={Dark300}
+                src300={Dark300}
+                src600={Dark600}
                 alt='dark'
                 sizes='300px'
                 width='300'

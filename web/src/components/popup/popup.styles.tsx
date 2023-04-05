@@ -24,7 +24,7 @@ export const PopupParent = styled.div`
   align-items: center;
   justify-content: center;
 
-  @media (max-width: 500px) {
+  @media (max-width: 760px) {
     width: 100vw;
     height: 99vh;
     top: 50%;

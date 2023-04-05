@@ -31,7 +31,7 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
   });
 
   useMemo(() => {
-    const { data, error, fetching } = amIFollowingUser;
+    const { data, fetching } = amIFollowingUser;
     if (!fetching && data) {
       const _data = data.isFollowingUser as boolean;
       setIsFollowing(() => _data);
@@ -46,7 +46,7 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
       followingId: userId,
       follow: !isFollowing,
     }).then((res) => {
-      const { error, data } = res;
+      const { data } = res;
       const isFollowingRes = data?.toggleFollow?.follows;
       let icon = '';
       let message = '';
@@ -68,15 +68,17 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
   };
   return (
     <div
-      className='follow'
+      className="follow"
       onMouseEnter={() => setFollowHovered(() => true)}
-      onMouseLeave={() => setFollowHovered(() => false)}>
+      onMouseLeave={() => setFollowHovered(() => false)}
+    >
       {isDifferentUser && (
         <StyledButton
-          className='follow-btn'
+          className="follow-btn"
           color={isFollowing ? '#13dbde31' : '#de1328'}
           isFollowingUser={isFollowing}
-          onClick={toggleFollowHandler}>
+          onClick={toggleFollowHandler}
+        >
           {isFollowing ? (followHovered ? 'UnFollow' : 'Following') : 'Follow'}
         </StyledButton>
       )}

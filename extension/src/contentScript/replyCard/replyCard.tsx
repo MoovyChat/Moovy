@@ -19,7 +19,7 @@ interface props {
   reply: CommentInfo;
   responseFromReplyWindow: (comment: CommentInfo) => void;
   type: string;
-  className: any;
+  className: string;
 }
 
 const ReplyCard: React.FC<props> = ({
@@ -29,8 +29,8 @@ const ReplyCard: React.FC<props> = ({
   className,
 }) => {
   const { id, message, createdAt, commentedUserId } = reply;
-  const [commentedUser, _q] = useGetUserQuery({
-    variables: { uid: commentedUserId! },
+  const [commentedUser] = useGetUserQuery({
+    variables: { uid: commentedUserId ? commentedUserId : '' },
   });
   const loggedInUser = useAppSelector((state) => state.user);
   const uid = useAppSelector((state) => state.user.id);
@@ -41,36 +41,38 @@ const ReplyCard: React.FC<props> = ({
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const dispatch = useAppDispatch();
-  const [_likeRes, setReplyLike] = useSetReplyLikeMutation();
+  const [, setReplyLike] = useSetReplyLikeMutation();
 
-  const [replyLikeCountQuery, _executeQuery] = useGetReplyLikesQuery({
+  const [replyLikeCountQuery] = useGetReplyLikesQuery({
     variables: {
-      rid: id!,
+      rid: id,
       page: 1,
       limit: 10,
     },
   });
 
   useEffect(() => {
-    const { data, fetching, error } = replyLikeCountQuery;
+    const { data, fetching } = replyLikeCountQuery;
     if (!fetching && data) {
-      const _count = data.getReplyLikes?.likesCount!;
-      const _users = data.getReplyLikes?.likes;
-      //TODO:   dispatch(sliceAddToLikes({ _users, rid }));
-      const isFoundUser = _users && _users.find((u) => u.id === uid);
-      if (isFoundUser) setLike(true);
-      else setLike(false);
-      setLikesCount(_users ? _count : 0);
+      const _data = data.getReplyLikes;
+      if (_data) {
+        const _count = _data.likesCount;
+        const _users = _data.likes;
+        //TODO:   dispatch(sliceAddToLikes({ _users, rid }));
+        const isFoundUser = _users && _users.find((u) => u.id === uid);
+        if (isFoundUser) setLike(true);
+        else setLike(false);
+        setLikesCount(_users ? _count : 0);
+      }
     }
   }, [replyLikeCountQuery.fetching]);
 
   useEffect(() => {
-    let interval: any;
-    let getTime = () => {
+    let interval: NodeJS.Timeout;
+    const getTime = () => {
       if (createdAt === 'Posting...') {
-        setTime(createdAt!);
-      } else setTime(getTimeFrame(createdAt!));
+        setTime(createdAt);
+      } else setTime(getTimeFrame(createdAt));
       interval = setTimeout(getTime, 60000);
     };
     getTime();
@@ -82,38 +84,36 @@ const ReplyCard: React.FC<props> = ({
 
   // Set commented user info.
   useEffect(() => {
-    let { data, fetching, error } = commentedUser;
+    const { data, fetching } = commentedUser;
     if (!fetching && data) {
       const commentedUserData = data.getUser;
       // if (!commentedUserData) console.log('Comment data is not available');
       setCommentedUser(commentedUserData as User);
     }
-    return () => {};
   }, [commentedUser]);
 
   // (Spoiler) Converting message to messageArray
   useEffect(() => {
     let msgArray: textMap[] = [];
-    let isFinal: boolean = false;
     if (message) {
-      let msg: string = message;
+      const msg: string = message;
       let finalEnd = 0;
       let index = 0;
       while (index < msg.length) {
-        let remaining: string = msg.substring(index, msg.length);
-        let l = remaining.indexOf('<s>');
-        let r = remaining.indexOf('</s>');
+        const remaining: string = msg.substring(index, msg.length);
+        const l = remaining.indexOf('<s>');
+        const r = remaining.indexOf('</s>');
         if (l === -1) break;
         if (r === -1) break;
         if (l > r) break;
         if (l > 0) {
           // non-spoiler.
-          let text = remaining.substring(0, l);
-          let res = getFormattedWordsArray(text);
+          const text = remaining.substring(0, l);
+          const res = getFormattedWordsArray(text);
           msgArray = _.concat(msgArray, res);
         }
         if (l < r) {
-          let spoilerObj: textMap = {
+          const spoilerObj: textMap = {
             type: textMapTypes.SPOILER,
             message: remaining.substring(l + 3, r),
           };
@@ -126,8 +126,8 @@ const ReplyCard: React.FC<props> = ({
       // End of loop
       if (finalEnd !== msg.length && finalEnd < msg.length) {
         // Final non-spoiler.
-        let finalPhrase: string = msg.substring(finalEnd, msg.length);
-        let res = getFormattedWordsArray(finalPhrase);
+        const finalPhrase: string = msg.substring(finalEnd, msg.length);
+        const res = getFormattedWordsArray(finalPhrase);
         msgArray = _.concat(msgArray, res);
       }
     }
@@ -147,21 +147,30 @@ const ReplyCard: React.FC<props> = ({
     );
     setLikesCount(like ? likesCount - 1 : likesCount + 1);
     setReplyLike({
-      rid: id!,
+      rid: id,
       uid,
       mid: mid,
       like: !like,
     }).then((res) => {
-      const { error, data } = res;
-      setLike(data?.setReplyLike?.likeStatus?.like!);
-      setLikedUser(
-        !like
-          ? likedUsers.filter((u) => u.id !== uid)
-          : [...likedUsers, data?.setReplyLike?.user!]
-      );
-      setLikesCount(
-        data?.setReplyLike?.likeStatus.like! ? likesCount + 1 : likesCount - 1
-      );
+      const { data } = res;
+      if (data) {
+        const _data = data.setReplyLike;
+        if (_data) {
+          if (
+            _data.likeStatus.like !== null &&
+            _data.likeStatus.like !== undefined
+          )
+            setLike(_data.likeStatus.like);
+          setLikedUser(
+            !like
+              ? likedUsers.filter((u) => u.id !== uid)
+              : [...likedUsers, _data.user]
+          );
+          setLikesCount(
+            _data.likeStatus.like ? likesCount + 1 : likesCount - 1
+          );
+        }
+      }
     });
   };
   return (
@@ -169,7 +178,7 @@ const ReplyCard: React.FC<props> = ({
       className={className}
       subjectLike={subjectLike}
       type={type}
-      commentedUser={loadedCommentedUser!}
+      commentedUser={loadedCommentedUser}
       messageArray={mArray}
       time={time}
       likedUsers={likedUsers}

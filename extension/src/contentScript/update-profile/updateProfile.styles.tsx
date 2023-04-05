@@ -24,7 +24,7 @@ export const ParentProfile = styled.div`
   }
 `;
 
-let C_O_L_O_R = '#1b86a7';
+const C_O_L_O_R = '#1b86a7';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;

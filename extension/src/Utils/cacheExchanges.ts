@@ -20,15 +20,14 @@ import _ from 'lodash';
 export const toggleFollowChanges = (
   _result: ToggleFollowMutation,
   args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
+  cache: Cache
 ) => {
   const allFields = cache.inspectFields('Query');
   const isFollowingUserField = allFields.filter(
     (field) => field.fieldName === 'isFollowingUser'
   );
   isFollowingUserField.forEach((field) => {
-    if (field.arguments?.uid! === args.uid) {
+    if (field.arguments && field.arguments.uid === args.uid) {
       cache.updateQuery(
         {
           query: IsFollowingUserDocument,
@@ -52,8 +51,7 @@ export const toggleFollowChanges = (
 export const deleteCommentChanges = (
   _result: DeleteCommentMutation,
   args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
+  cache: Cache
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -78,7 +76,8 @@ export const deleteCommentChanges = (
             console.log('Data is null, returning');
             return null;
           }
-          const getMovie = data.getMovie!;
+          const getMovie = data.getMovie;
+          if (!getMovie) return data;
           const commentCount = getMovie.commentCount;
           return {
             ...data,
@@ -89,15 +88,16 @@ export const deleteCommentChanges = (
           };
         }
       );
-    } catch (e) {}
+    } catch (e) {
+      //Error block
+    }
   });
 };
 
 export const deleteReplyChanges = (
   _result: DeleteReplyMutation,
   args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
+  cache: Cache
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -114,8 +114,7 @@ export const deleteReplyChanges = (
 export const fetchNewCommentsChanges = (
   _result: FetchNewCommentsMutation,
   args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
+  cache: Cache
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {

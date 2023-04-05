@@ -167,17 +167,10 @@ export async function compressImage(inputBlob: Blob): Promise<Blob | null> {
 
 // Function to generate a random username by appending a random number to the provided nickname
 export const randomUserNameGenerator = (nickname: string) => {
-  const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
-  return `${nickname}${randomNumber}}`;
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const truncatedNickname = nickname.slice(0, 4);
+  const paddingLength =
+    8 - truncatedNickname.length - randomNumber.toString().length;
+  const padding = Array(paddingLength).fill('0').join('');
+  return `${truncatedNickname}${padding}${randomNumber}`;
 };
-
-export function loadCSS(url: string) {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = url;
-  link.media = 'print';
-  link.onload = function () {
-    link.media = 'all';
-  };
-  document.head.appendChild(link);
-}

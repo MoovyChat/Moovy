@@ -22,8 +22,7 @@ import _ from 'lodash';
 export const commentLikeChanges = (
   _result: SetCommentLikeMutation,
   args: Variables,
-  cache: Cache,
-  info: ResolveInfo
+  cache: Cache
 ) => {
   cache
     .inspectFields('Query')
@@ -42,13 +41,13 @@ export const commentLikeChanges = (
             }
             // When I click like button, I am getting the past data of liked
             // users and likes count.
-            let childElem = data.getCommentLikes;
-            const oldLikesCount = childElem?.likesCount!;
-            const oldLikedUsers = childElem?.likes!;
-            // console.log('oldData', data);
-            // console.log('newResult', _result);
-            const user = _result.setCommentLike?.user!;
-            const likeStatus = _result.setCommentLike?.likeStatus!;
+            const childElem = data.getCommentLikes;
+            const oldLikesCount = childElem.likesCount;
+            const oldLikedUsers = childElem.likes;
+
+            if (!_result.setCommentLike) return data;
+            const user = _result.setCommentLike.user;
+            const likeStatus = _result.setCommentLike.likeStatus;
             const isLike = likeStatus?.like;
             const newData = {
               ...data,
@@ -73,10 +72,9 @@ export const commentLikeChanges = (
 export const replyLikeChanges = (
   _result: SetReplyLikeMutation,
   args: Variables,
-  cache: Cache,
-  info: ResolveInfo
+  cache: Cache
 ) => {
-  const fields = cache
+  cache
     .inspectFields('Query')
     .filter((field) => field.fieldName === 'getReplyLikes')
     .forEach((field) => {
@@ -93,13 +91,12 @@ export const replyLikeChanges = (
             }
             // When I click like button, I am getting the past data of liked
             // users and likes count.
-            let childElem = data.getReplyLikes;
-            const oldLikesCount = childElem?.likesCount!;
-            const oldLikedUsers = childElem?.likes!;
-            // console.log('oldData', data);
-            // console.log('newResult', _result);
-            const user = _result.setReplyLike?.user!;
-            const likeStatus = _result.setReplyLike?.likeStatus!;
+            const childElem = data.getReplyLikes;
+            const oldLikesCount = childElem.likesCount;
+            const oldLikedUsers = childElem.likes;
+            if (!_result.setReplyLike) return data;
+            const user = _result.setReplyLike.user;
+            const likeStatus = _result.setReplyLike.likeStatus;
             const isLike = likeStatus.like;
             const newData = {
               ...data,
@@ -122,13 +119,12 @@ export const replyLikeChanges = (
 export const insertCommentChanges = (
   _result: InsertCommentMutation,
   args: Variables,
-  cache: Cache,
-  _info: ResolveInfo
+  cache: Cache
 ) => {
   cache.inspectFields('Query').map((field) => {
     if (field.fieldName === 'getCommentsOfTheMovie') {
       if (
-        field?.arguments?.mid === (args?.options as any).movieId! &&
+        field?.arguments?.mid === (args?.options as any).movieId &&
         field?.arguments?.page === 1
       ) {
         cache.updateQuery(
@@ -138,18 +134,20 @@ export const insertCommentChanges = (
           },
           (data: GetCommentsOfTheMovieQuery | null) => {
             if (!data) {
-              console.log('Data is null, returning');
               return null;
             }
-            let childElem = data.getCommentsOfTheMovie!;
-            let oldComments = childElem?.comments as Comment[];
-            let totalCommentCount = childElem?.totalCommentCount;
+            const childElem = data.getCommentsOfTheMovie;
+            if (!childElem) return data;
+            const oldComments = childElem.comments as Comment[];
+            const totalCommentCount = childElem.totalCommentCount;
             const newData = {
               ...data,
               getCommentsOfTheMovie: {
                 ...childElem,
                 comments: [_result.insertComment as Comment, ...oldComments],
-                totalCommentCount: totalCommentCount + 1,
+                totalCommentCount: totalCommentCount
+                  ? totalCommentCount + 1
+                  : 1,
               },
             };
             return newData;
@@ -278,20 +276,24 @@ export const insertReplyChanges = (
             variables: field.arguments,
           },
           (data: GetCommentsOfTheMovieQuery | null) => {
-            const _data = data?.getCommentsOfTheMovie!;
-            const comments = _data?.comments;
+            if (!data) return null;
+            const _data = data.getCommentsOfTheMovie;
+            if (!_data) return data;
+            const comments = _data.comments;
             const reply = args.options as Reply;
             const commentId = reply.parentCommentId;
-            const filteredComment = comments?.filter(
+            const filteredComment = comments.filter(
               (cmt) => cmt.id === commentId
             );
             let updatedComments = comments;
-            if (filteredComment && filteredComment.length > 0) {
-              updatedComments = comments?.map((cmt) =>
+            if (filteredComment && filteredComment.length > 0 && comments) {
+              updatedComments = comments.map((cmt) =>
                 cmt.id === parentCommentId
                   ? {
                       ...cmt,
-                      repliesCount: filteredComment[0].repliesCount! + 1,
+                      repliesCount: filteredComment[0].repliesCount
+                        ? filteredComment[0].repliesCount + 1
+                        : 1,
                     }
                   : cmt
               );
@@ -300,7 +302,7 @@ export const insertReplyChanges = (
             return {
               ...data,
               getCommentsOfTheMovie: {
-                ...data?.getCommentsOfTheMovie!,
+                ..._data,
                 comments: updatedComments,
               },
             };

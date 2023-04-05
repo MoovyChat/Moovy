@@ -36,7 +36,7 @@ const cache: Partial<CacheExchangeOpts> = {
     MovieStats: () => null,
   },
   optimistic: {
-    insertComment: (args, cache, info) => {
+    insertComment: (args) => {
       const partialComment = args.options as any;
       const newData: Comment = {
         __typename: 'Comment',
@@ -52,7 +52,7 @@ const cache: Partial<CacheExchangeOpts> = {
       };
       return newData;
     },
-    insertReply: (args, cache, info) => {
+    insertReply: (args) => {
       const partialComment = args.options as any;
       const newData: Reply = {
         __typename: 'Reply',

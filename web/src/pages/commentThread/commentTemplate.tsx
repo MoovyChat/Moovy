@@ -338,7 +338,7 @@ const CommentTemplate: React.FC<props> = ({
                         className={msg.type}
                         onClick={(e) => {
                           if (msg.type === 'user') {
-                            navigate(`/profile/${msg.message.slice(1)}`);
+                            navigate(`/home/profile/${msg.message.slice(1)}`);
                           }
                         }}>
                         {ParsedText(msg.message)}{' '}
@@ -370,7 +370,7 @@ const CommentTemplate: React.FC<props> = ({
                     onMouseLeave={onTitleLeave}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/show/${titleRef?.id}`);
+                      navigate(`/home/show/${titleRef?.id}`);
                     }}>
                     {titleRef?.title} {movieRef?.season}
                   </div>
@@ -382,7 +382,7 @@ const CommentTemplate: React.FC<props> = ({
                 onMouseLeave={onEpisodeLeave}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/movie/${movieRef?.id}`);
+                  navigate(`/home/movie/${movieRef?.id}`);
                 }}>
                 {movieRef?.name}
               </div>

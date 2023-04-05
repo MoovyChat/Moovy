@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable no-case-declarations */
+/* eslint-disable react/prop-types */
 import './update-profile.scss';
 
 import {
@@ -245,8 +248,8 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
     >
   ) => {
     const { name, value } = event.target;
-    let regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
-    let error = await validateField(name, value, regex);
+    const regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
+    const error = await validateField(name, value, regex);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: {
@@ -377,11 +380,17 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
 
   return (
     <ParentProfile>
-      <div className='logo'>
+      <div className="logo">
         {themeContext.theme === 'dark' ? (
-          <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
+          <img
+            src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`}
+            alt="Moovy"
+          />
         ) : (
-          <img src={`${EXT_URL}/Moovy/moovy-text-logo-black.png`} alt='Moovy' />
+          <img
+            src={`${EXT_URL}/Moovy/moovy-text-logo-black.webp`}
+            alt="Moovy"
+          />
         )}
       </div>
 
@@ -391,13 +400,15 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
             <StepContainer
               key={index}
               visible={index === currentStep}
-              accentColor={accentColor}>
-              <div className='progress-bar'>
+              accentColor={accentColor}
+            >
+              <div className="progress-bar">
                 <div className={`circle ${step.label === 1 ? 'active' : ''}`}>
                   <span>1</span>
                 </div>
                 <div
-                  className={`line ${step.label >= 2 ? 'active' : ''}`}></div>
+                  className={`line ${step.label >= 2 ? 'active' : ''}`}
+                ></div>
                 <div className={`circle ${step.label >= 2 ? 'active' : ''}`}>
                   <span>2</span>
                 </div>
@@ -405,35 +416,37 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
               {step.fields.map(({ name, label }) => (
                 <FieldContainer
                   key={name}
-                  className='form'
+                  className="form"
                   accentColor={accentColor}
-                  onClick={(e) => {
+                  onClick={() => {
                     commonSetFR(name);
-                  }}>
+                  }}
+                >
                   {name === 'gender' ? (
                     <select
-                      id='gender'
-                      name='gender'
+                      id="gender"
+                      name="gender"
                       value={formData.gender.value}
                       onChange={handleInputChange}
-                      required>
-                      <option value=''>Select gender</option>
-                      <option value='Male'>Male</option>
-                      <option value='Female'>Female</option>
-                      <option value='Other'>Other</option>
+                      required
+                    >
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </select>
                   ) : name === 'dob' ? (
                     <input
-                      type='date'
-                      id='dob'
-                      name='dob'
+                      type="date"
+                      id="dob"
+                      name="dob"
                       ref={dobRef}
                       value={formData.dob.value}
                       onKeyDown={handleKeyDown}
                       onChange={handleInputChange}
                       onBlur={onBlurHandler}
                       onFocus={() => handleFocus(dobRef)}
-                      onClick={(e) => {
+                      onClick={() => {
                         commonSetFR(name);
                       }}
                       className={formData.dob.error ? 'input error' : 'input'}
@@ -449,7 +462,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                       value={formData[name].value}
                       onKeyPress={handleKeyDown}
                       onBlur={onBlurHandler}
-                      onClick={(e) => {
+                      onClick={() => {
                         commonSetFR(name);
                       }}
                       className={formData[name].error ? 'input error' : 'input'}
@@ -458,12 +471,12 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                     />
                   ) : (
                     <input
-                      type='text'
+                      type="text"
                       tabIndex={name === 'userName' ? 1 : 2}
                       id={name}
                       name={name}
                       onKeyDown={handleKeyDown}
-                      onClick={(e) => {
+                      onClick={() => {
                         commonSetFR(name);
                       }}
                       value={formData[name].value}
@@ -472,7 +485,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                       ref={name === 'userName' ? userNameRef : fullNameRef}
                       onBlur={onBlurHandler}
                       onFocus={() => {
-                        let ref =
+                        const ref =
                           name === 'userName' ? userNameRef : fullNameRef;
                         handleFocus(ref);
                       }}
@@ -482,14 +495,15 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                   )}
                   <label
                     htmlFor={name}
-                    className='label'
-                    onClick={(e) => {
+                    className="label"
+                    onClick={() => {
                       commonSetFR(name);
-                    }}>
+                    }}
+                  >
                     {label}
                   </label>
                   {formData[name].error && (
-                    <div className='error'>{formData[name].error}</div>
+                    <div className="error">{formData[name].error}</div>
                   )}
                 </FieldContainer>
               ))}
@@ -500,7 +514,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
               <BackButton onClick={handleBackStep}>Back</BackButton>
             )}
             {currentStep === steps.length - 1 ? (
-              <Button type='submit'>Submit</Button>
+              <Button type="submit">Submit</Button>
             ) : (
               <Button onClick={handleNextStep} tabIndex={3}>
                 Next

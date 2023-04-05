@@ -2,7 +2,7 @@
   "short_name": "Moovy Chat",
   "name": "Moovy Chat",
   "description": "Enjoy the Streaming now with the Comments",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "manifest_version": 3,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkytqfusvzuhsXy53QIiGy1CrMg2GksVqFRjtIJeU/NvyVc2/B6Ly8pdjUbQ1sHJyxqm0ueAjN5aug9NyEdWBgmXHMIlkxsnD2VYwyZ3CWGfksLeYl8WCRl3eUbWgshnz7AZbRFOb8KLzIGuYU3CRMDfs6EsoPENXIRIH44RfaWlA2U1m/SD7TNE8tYBePBLf7bNzPBWiZ3J6g5bG8gJBc/DUsshA66OXbbu1ypwxPIMPf0ZjIotppAZ7y+kTlt4sqV1lKoiREABwIoZX2P64nxHTgMxCGjbgYqnPYGtgUKDL6kfmg411QwWiGm16KwHgCsusMVXjCRPPmtybiINEQIDAQAB",
   "permissions": ["identity", "storage", "tabs", "scripting", "system.display"],
@@ -21,18 +21,15 @@
     {
       "resources": [
         "netflix.js",
-        "Moovy/moovyIcon.png",
-        "Moovy/moovy.png",
         "Moovy/moovy-black-text.svg",
         "Moovy/moovy-black.svg",
-        "Moovy/moovy-logo-black.jpg",
-        "Moovy/moovy-logo-black.png",
-        "Moovy/moovy-logo-white.jpg",
-        "Moovy/moovy-text-logo-white.png",
-        "Moovy/moovy-text-logo-black.png",
-        "bmc.png",
-        "patreon-logo.png",
-        "patreon-word.png"
+        "Moovy/moovyIcon.webp",
+        "Moovy/moovy.webp",
+        "Moovy/moovy-logo-black.webp",
+        "Moovy/moovy-logo-white.webp",
+        "Moovy/moovy-text-logo-white.webp",
+        "Moovy/moovy-text-logo-black.webp",
+        "patreon-word.webp"
       ],
       "matches": [
         "*://www.netflix.com/*",

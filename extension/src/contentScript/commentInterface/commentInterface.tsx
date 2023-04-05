@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import {
   Card,
@@ -47,6 +48,7 @@ import Confirmation from '../../components/confirmation/confirmation';
 import { OperationResult } from 'urql';
 import ReplyWindow from '../replyWindow/replyWindow';
 import { batch } from 'react-redux';
+import { containsOnlyOneEmoji } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
 import { sliceSetIsReportActive } from '../../redux/slices/misc/miscSlice';
 import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
@@ -77,7 +79,6 @@ const CommentInterface: React.FC<props> = ({
   responseFromReplyWindow,
   subjectLike,
   like,
-  likedUsers,
   className,
 }) => {
   const mounted = useRef<boolean>(false);
@@ -128,17 +129,18 @@ const CommentInterface: React.FC<props> = ({
     };
   }, []);
 
-  const [_gu, getUserByNickName] = useGetUserByNickNameMutation();
-  const [_dc, deleteComment] = useDeleteCommentMutation();
-  const [_dr, deleteReply] = useDeleteReplyMutation();
-  const [_rc, reportComment] = useReportCommentMutation();
-  const [_rr, reportReply] = useReportReplyMutation();
+  const [, getUserByNickName] = useGetUserByNickNameMutation();
+  const [, deleteComment] = useDeleteCommentMutation();
+  const [, deleteReply] = useDeleteReplyMutation();
+  const [, reportComment] = useReportCommentMutation();
+  const [, reportReply] = useReportReplyMutation();
 
   const profileClickHandler = useCallback(
     (username: string) => {
       getUserByNickName({ nickname: username }).then((res) => {
-        const { error, data } = res;
-        const userId = data?.getUserByNickName?.id!;
+        const { data } = res;
+        const userId =
+          data && data.getUserByNickName ? data.getUserByNickName.id : '';
         batch(() => {
           dispatch(sliceSetPopSlide(true));
           dispatch(slicePopSlideContentType('profile'));
@@ -155,10 +157,10 @@ const CommentInterface: React.FC<props> = ({
     (message: textMap) => {
       if (message.type === textMapTypes.TIME) {
         // console.log('Seeking video to the time', message.message);
-        chrome.runtime.sendMessage(
-          { text: 'SEEK_VIDEO', time: message.message },
-          (tabId) => {}
-        );
+        chrome.runtime.sendMessage({
+          text: 'SEEK_VIDEO',
+          time: message.message,
+        });
       } else if (message.type === textMapTypes.USER) {
         profileClickHandler(message.message.slice(1));
       }
@@ -167,7 +169,7 @@ const CommentInterface: React.FC<props> = ({
   );
 
   // Opens likes View window when the likes count is clicked on.
-  const likeWindowHandler: any = () => {
+  const likeWindowHandler = () => {
     batch(() => {
       dispatch(sliceSetPopSlide(true));
       dispatch(slicePopSlideContentType('likes'));
@@ -182,7 +184,7 @@ const CommentInterface: React.FC<props> = ({
   const commonReport = (_report: boolean): Promise<boolean | undefined> => {
     return new Promise((resolve, reject) => {
       if (isComment) {
-        reportComment({ cid: commentOrReply.id!, uid: userId, report: _report })
+        reportComment({ cid: commentOrReply.id, uid: userId, report: _report })
           .then((res) => {
             const _data = res.data;
             const x = _data?.reportComment;
@@ -190,7 +192,7 @@ const CommentInterface: React.FC<props> = ({
           })
           .catch((err) => reject(err));
       } else {
-        reportReply({ rid: commentOrReply.id!, uid: userId, report: _report })
+        reportReply({ rid: commentOrReply.id, uid: userId, report: _report })
           .then((res) => {
             const _data = res.data;
             const x = _data?.reportReply;
@@ -218,6 +220,7 @@ const CommentInterface: React.FC<props> = ({
         });
       }
     } catch (err) {
+      //Empty catch
     } finally {
       // Code to be executed after try/catch block
     }
@@ -226,11 +229,11 @@ const CommentInterface: React.FC<props> = ({
   const commonDelete = (): Promise<OperationResult<any, Exact<any>>> => {
     return new Promise((resolve, reject) => {
       if (isComment) {
-        deleteComment({ cid: commentOrReply.id!, mid: movieId })
+        deleteComment({ cid: commentOrReply.id, mid: movieId })
           .then((res) => resolve(res))
           .catch((err) => reject(err));
       } else {
-        deleteReply({ rid: commentOrReply.id! })
+        deleteReply({ rid: commentOrReply.id })
           .then((res) => resolve(res))
           .catch((err) => reject(err));
       }
@@ -260,7 +263,8 @@ const CommentInterface: React.FC<props> = ({
       if (data) {
         setDelete(false);
         isComment &&
-          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount! - 1));
+          totalCommentCount &&
+          dispatch(sliceSetTotalCommentsOfTheMovie(totalCommentCount - 1));
         batch(() => {
           dispatch(sliceSetToastVisible(true));
           dispatch(
@@ -289,7 +293,7 @@ const CommentInterface: React.FC<props> = ({
   const goToComment = useCallback(
     (e: any) => {
       e.stopPropagation();
-      let url = `${MOOVY_URL}/${type}/${commentOrReply.id}`;
+      const url = `${MOOVY_URL}/home/${type}/${commentOrReply.id}`;
       chrome.runtime.sendMessage({
         type: 'OPEN_LINK',
         url: url,
@@ -301,15 +305,17 @@ const CommentInterface: React.FC<props> = ({
   return (
     <CSSTransition
       in={mounted.current && del}
-      classNames='css-cmt-transition'
+      classNames="css-cmt-transition"
       timeout={300}
-      nodeRef={commentRef}>
+      nodeRef={commentRef}
+    >
       <>
         <CommentCardContainer
           className={className}
           ref={commentRef}
-          onClick={goToComment}>
-          <div className='card-parent'>
+          onClick={goToComment}
+        >
+          <div className="card-parent">
             {commentedUser?.id === userId && (
               <Delete
                 accentColor={accentcolor}
@@ -317,7 +323,8 @@ const CommentInterface: React.FC<props> = ({
                 onClick={(e: any) => {
                   e.stopPropagation();
                   deleteCommentOrReply();
-                }}>
+                }}
+              >
                 <MdDeleteForever size={20} />
               </Delete>
             )}
@@ -325,46 +332,56 @@ const CommentInterface: React.FC<props> = ({
               ref={commentRef}
               hovered={hovered}
               like={like}
-              className='comment-card'
-              deleteFlag={deleteFlag}>
+              className="comment-card"
+              deleteFlag={deleteFlag}
+            >
               <div
-                className='profile'
+                className="profile"
                 onClick={(e) => {
                   e.stopPropagation();
                   profileClickHandler(commentedUser?.nickname);
-                }}>
-                <Profile profilePic={commentedUser?.photoUrl!}></Profile>
+                }}
+              >
+                <Profile profilePic={commentedUser?.photoUrl}></Profile>
               </div>
-              <div className='container'>
-                <div className='text'>
+              <div className="container">
+                <div className="text">
                   <Comment>
                     <div style={{ margin: '2px' }}>
                       <span
-                        className='username'
+                        className="username"
                         onClick={(e) => {
                           e.stopPropagation();
                           profileClickHandler(commentedUser?.nickname);
-                        }}>
+                        }}
+                      >
                         {commentedUser?.nickname
                           ? commentedUser?.nickname
                           : commentedUser?.name}
                       </span>{' '}
                       <MessageParent>
-                        {messageArray.map((msg, index) =>
-                          msg.type === textMapTypes.SPOILER ? (
-                            <SpoilerTag key={index}>{msg.message}</SpoilerTag>
-                          ) : (
-                            <React.Fragment key={index}>
-                              <span
-                                key={index}
-                                className={msg.type}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onLinkHandlerInMessage(msg);
-                                }}>
-                                {msg.message + ' '}
-                              </span>
-                            </React.Fragment>
+                        {containsOnlyOneEmoji(commentOrReply.message) ? (
+                          <div className="one-emoji">
+                            {commentOrReply.message}
+                          </div>
+                        ) : (
+                          messageArray.map((msg, index) =>
+                            msg.type === textMapTypes.SPOILER ? (
+                              <SpoilerTag key={index}>{msg.message}</SpoilerTag>
+                            ) : (
+                              <React.Fragment key={index}>
+                                <span
+                                  key={index}
+                                  className={msg.type}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onLinkHandlerInMessage(msg);
+                                  }}
+                                >
+                                  {msg.message + ' '}
+                                </span>
+                              </React.Fragment>
+                            )
                           )
                         )}
                       </MessageParent>
@@ -373,35 +390,38 @@ const CommentInterface: React.FC<props> = ({
                 </div>
 
                 <Stats>
-                  <div className='timestamp'>{time}</div>
+                  <div className="timestamp">{time}</div>
                   <div
-                    className='likes'
+                    className="likes"
                     onClick={(e) => {
                       e.stopPropagation();
                       likeWindowHandler();
-                    }}>
+                    }}
+                  >
                     {likesCount} Likes
                   </div>
                   <div
-                    className='replies'
+                    className="replies"
                     onClick={(e) => {
                       e.stopPropagation();
                       responseFromReplyWindow(commentOrReply);
-                    }}>
+                    }}
+                  >
                     Reply
                   </div>
                   {commentedUser?.id === userId ? (
                     <div
-                      className='delete'
+                      className="delete"
                       onClick={(e) => {
                         e.stopPropagation();
                         setDeleteFlag(!deleteFlag);
-                      }}>
+                      }}
+                    >
                       {deleteFlag ? 'Cancel' : 'Delete'}
                     </div>
                   ) : (
                     <div
-                      className='delete'
+                      className="delete"
                       onClick={(e) => {
                         e.stopPropagation();
 
@@ -416,7 +436,8 @@ const CommentInterface: React.FC<props> = ({
                             )
                           );
                         }
-                      }}>
+                      }}
+                    >
                       {commentOrReply.reported === true
                         ? 'Undo Report'
                         : 'Report'}
@@ -426,17 +447,20 @@ const CommentInterface: React.FC<props> = ({
               </div>
               <Like
                 accentColor={accentcolor}
-                className='like'
+                className="like"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 onClick={(e) => {
                   subjectLike(e);
-                }}>
-                {like ? (
-                  <AiFillLike className='fill' size={20} />
-                ) : (
-                  <AiOutlineLike size={20} />
-                )}
+                }}
+              >
+                <div className="like-icon">
+                  {like ? (
+                    <AiFillLike className="fill" size={20} />
+                  ) : (
+                    <AiOutlineLike size={20} />
+                  )}
+                </div>
               </Like>
             </Card>
           </div>
@@ -447,8 +471,8 @@ const CommentInterface: React.FC<props> = ({
             </Moderation>
           )}
           {reportFlag && (
-            <Moderation color='#ff0000'>
-              <MdWarning fill='#ff0000' />
+            <Moderation color="#ff0000">
+              <MdWarning fill="#ff0000" />
               You have reported this comment
             </Moderation>
           )}

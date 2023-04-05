@@ -6,24 +6,25 @@ The requests are sent to `graphql` server https://server.moovychat.com/graphql.
 
 ## Quick Debug and Deploy
 
-- To check the running process `docker ps -a`
-- To stop the previous copy of process `docker stop <container-id>`
+- To check the running process/containers `docker ps -a`
+- To stop the previous copy of container `docker stop <container-id>`
+- To remove the previous container `docker rm <container-id>`
 - It is important to stop the previous process of the server for the pushed server to work properly.
 
 ### Quick Deploy (Update versions every time)
 
-Current deployed version: 0.0.4
-Next version: 0.0.5
+Current deployed version: 0.0.5
+Next version: 0.0.6
 
 ```
-docker login
-docker build -t kishore189/moovychat:0.0.5 .
-docker push kishore189/moovychat:0.0.5
+docker login (kishore189/Chandra189)
+docker build -t kishore189/moovychat:0.0.6 .
+docker push kishore189/moovychat:0.0.6
 
 ssh root@137.184.201.17 (password: moovychat)
-docker pull kishore189/moovychat:0.0.5
-docker tag kishore189/moovychat:0.0.4 dokku/api:0.0.5
-dokku deploy api 0.0.5
+docker pull kishore189/moovychat:0.0.6
+docker tag kishore189/moovychat:0.0.6 dokku/api:0.0.6
+dokku deploy api 0.0.6
 ```
 
 ## Access POSTGRES inside dokku
