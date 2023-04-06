@@ -10,6 +10,7 @@ const useFetchEmojis = () => {
   const fetchEmojis = useCallback(async () => {
     let rg: refinedG = {};
     const data: Emoji[] = await fetchFromCDN('en/data.json');
+    console.log(data);
     // Refining data to the object with keys and subKeys.
     await data.map((em) => {
       const key = em.group;

@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import {
   EmojiPickerHeader,
   EmojiPickerParent,
@@ -6,6 +5,7 @@ import {
 } from './emojiPicker.styles';
 import { TouchEventHandler, WheelEventHandler, useRef, useState } from 'react';
 
+/* eslint-disable react/react-in-jsx-scope */
 import { Emoji } from 'emojibase';
 import EmojiGroup from './emojiGroup/emojiGroup';
 import groupSet from 'emojibase-data/meta/groups.json';
@@ -18,7 +18,7 @@ export interface refinedG {
   [key: number]: subGroup;
 }
 
-const headerEmoji: { [key: string]: string } = {
+const headerEmoji: any = {
   'smileys-emotion': '🤣',
   'people-body': '👨‍👩‍👧',
   'animals-nature': '🐵',
@@ -99,7 +99,10 @@ const EmojiPicker = () => {
         )}
       </EmojiPickerHeader>
       {refinedGroups && refinedGroups[groupNumber] && groupNumber !== 2 && (
-        <EmojiGroup subGroup={refinedGroups[groupNumber]} />
+        <EmojiGroup
+          subGroup={refinedGroups[groupNumber]}
+          groupNumber={groupNumber}
+        />
       )}
     </EmojiPickerParent>
   );

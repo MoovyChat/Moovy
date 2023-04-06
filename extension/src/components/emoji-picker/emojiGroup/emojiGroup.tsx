@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
-
 import EmojiSubGroup from '../emojiSubGroup/emojiSubGroup';
 import { GroupParent } from './emojiGroup.styles';
+import React from 'react';
 import { subGroup } from '../emojiPicker';
 
 type props = {
   subGroup: subGroup;
+  groupNumber: number;
 };
-const EmojiGroup: FC<props> = ({ subGroup }) => {
+const EmojiGroup: React.FC<props> = ({ subGroup, groupNumber }) => {
   return (
     <GroupParent>
       {subGroup &&

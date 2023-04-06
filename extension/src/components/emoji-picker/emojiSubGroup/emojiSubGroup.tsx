@@ -16,7 +16,7 @@ const EmojiSubGroup: React.FC<props> = ({ emojiSet }) => {
       <div className="subgroup-name">{groupName}</div>
       <div className="subgroup-emojis">
         {emojiSet.map((emoji, index) => (
-          <EmojiButton key={`${emoji.label}${index}`} emoji={emoji} />
+          <EmojiButton key={`${emoji.label}:${index}`} emoji={emoji} />
         ))}
       </div>
     </SubGroupParent>
