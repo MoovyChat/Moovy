@@ -158,6 +158,8 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
   const themeContext: ThemeProps = useContext(ThemeContext);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const [isTextAreaFocussed, setIsTextAreaFocussed] = useState<boolean>(false);
+  const [isTextAreaClicked, setIsTextAreaClicked] = useState<boolean>(false);
   const [, isUserNameExists] = useIsUserNameExistsMutation();
   const [, upsertProfile] = useUpsertProfileMutation();
   const [success, setSuccess] = useState<boolean>(false);
@@ -172,8 +174,12 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
   };
 
   useEffect(() => {
-    focussedElement?.current?.focus();
-  }, [focussedElement]);
+    if (isTextAreaFocussed) bioRef.current?.focus();
+    else {
+      focussedElement?.current?.focus();
+      bioRef.current?.blur();
+    }
+  }, [focussedElement, isTextAreaFocussed]);
 
   const onBlurHandler: FocusEventHandler<
     HTMLTextAreaElement | HTMLInputElement
@@ -243,11 +249,12 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
     }
   };
   const handleInputChange = async (
-    event: React.ChangeEvent<
+    e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = event.target;
+    e.stopPropagation();
+    const { name, value } = e.target;
     const regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
     const error = await validateField(name, value, regex);
     setFormData((prevFormData) => ({
@@ -256,6 +263,17 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
         value,
         error,
         regex: regex,
+      },
+    }));
+  };
+
+  const handleYearInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dob: {
+        ...prevFormData.dob,
+        value: value,
       },
     }));
   };
@@ -364,6 +382,51 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
     }
   };
 
+  const handleTextAreaBlur = () => {
+    if (isTextAreaClicked) {
+      bioRef.current?.focus();
+      setIsTextAreaFocussed(() => true);
+    } else {
+      setIsTextAreaFocussed(() => false);
+    }
+  };
+
+  const handleTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    console.log(e.key);
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.stopPropagation();
+    } else if (
+      (e.key >= 'a' && e.key <= 'z') ||
+      (e.key >= 'A' && e.key <= 'Z')
+    ) {
+      e.stopPropagation();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', textAreaClicked, !0);
+    function textAreaClicked(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (target && target.id === 'bio') {
+        setIsTextAreaClicked(() => true);
+        setIsTextAreaFocussed(() => true);
+      } else {
+        setIsTextAreaClicked(() => false);
+        setIsTextAreaFocussed(() => false);
+      }
+    }
+    return () => {
+      document.removeEventListener('click', textAreaClicked);
+    };
+  }, []);
+
+  const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
+    e.stopPropagation();
+    setIsTextAreaFocussed(() => true);
+  };
+
   const commonSetFR = (name: string) => {
     setFocussedElement(() =>
       name === 'userName'
@@ -372,8 +435,6 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
         ? fullNameRef
         : name === 'dob'
         ? dobRef
-        : name === 'bio'
-        ? bioRef
         : null
     );
   };
@@ -445,6 +506,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                       onKeyDown={handleKeyDown}
                       onChange={handleInputChange}
                       onBlur={onBlurHandler}
+                      onInput={handleYearInput}
                       onFocus={() => handleFocus(dobRef)}
                       onClick={() => {
                         commonSetFR(name);
@@ -458,12 +520,15 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
                       id={name}
                       name={name}
                       ref={bioRef}
-                      onFocus={() => handleFocus(bioRef)}
                       value={formData[name].value}
-                      onKeyPress={handleKeyDown}
-                      onBlur={onBlurHandler}
+                      autoFocus={false}
+                      onFocus={onFocusHandler}
+                      onBlur={handleTextAreaBlur}
+                      onKeyPress={handleTextAreaKeyDown}
+                      onKeyDown={handleTextAreaKeyDown}
                       onClick={() => {
-                        commonSetFR(name);
+                        setIsTextAreaFocussed(() => true);
+                        setIsTextAreaFocussed(() => true);
                       }}
                       className={formData[name].error ? 'input error' : 'input'}
                       placeholder={label}

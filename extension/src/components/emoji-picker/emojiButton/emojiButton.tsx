@@ -23,17 +23,18 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
 
     const addToRecentIndexedDB = async () => {
       try {
-        await db.recent.add({
+        const id = await db.recent.add({
           emoji,
         });
         const deleteEmoji = await db.recent
           .filter((r) => r.emoji.emoji === emoji.emoji)
           .keys();
         await db.recent.bulkDelete(deleteEmoji);
-        await db.recent.add({
+        const insertEmoji = await db.recent.add({
           emoji,
         });
         if ((await db.recent.count()) > 12) db.recent.delete(2);
+        console.log(`Successfully added to recent: ${insertEmoji}`);
       } catch (error) {
         console.log('Error', error);
       }
@@ -47,10 +48,11 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
         );
         const foundEmoji = await record.first();
         if (!foundEmoji) {
-          await db.frequent.add({
+          const id = await db.frequent.add({
             count: 1,
             emoji,
           });
+          console.log(`Successfully added: ${id}`);
         } else {
           foundEmoji.id &&
             (await db.frequent.update(foundEmoji.id, {
@@ -59,7 +61,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
             }));
         }
       } catch (error) {
-        // console.log(`Failed to add} ${error}`);
+        console.log(`Failed to add} ${error}`);
       }
     };
 
