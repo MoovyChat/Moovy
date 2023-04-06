@@ -10,37 +10,35 @@ const useFetchEmojis = () => {
   const fetchEmojis = useCallback(async () => {
     let rg: refinedG = {};
     const data: Emoji[] = await fetchFromCDN('en/data.json');
-    console.log(data);
     // Refining data to the object with keys and subKeys.
     await data.map((em) => {
       const key = em.group;
       const subKey = em.subgroup;
-      if (key && subKey) {
-        if (rg[key] === undefined) {
+      if (key === undefined || subKey === undefined) return em;
+      if (rg[key] === undefined) {
+        rg = {
+          ...rg,
+          [key]: {
+            [subKey]: [em],
+          },
+        };
+      } else {
+        if (rg[key][subKey] === undefined) {
           rg = {
             ...rg,
             [key]: {
+              ...rg[key],
               [subKey]: [em],
             },
           };
-        } else {
-          if (rg[key][subKey] === undefined) {
-            rg = {
-              ...rg,
-              [key]: {
-                ...rg[key],
-                [subKey]: [em],
-              },
-            };
-          } else
-            rg = {
-              ...rg,
-              [key]: {
-                ...rg[key],
-                [subKey]: [...rg[key][subKey], em],
-              },
-            };
-        }
+        } else
+          rg = {
+            ...rg,
+            [key]: {
+              ...rg[key],
+              [subKey]: [...rg[key][subKey], em],
+            },
+          };
       }
     });
     return rg;
