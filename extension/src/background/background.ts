@@ -14,8 +14,9 @@ import {
 
 import { type User } from '../Utils/interfaces';
 import { requestTypes } from '../Utils/enums';
+import { __prod__ } from '../constants';
 
-const newTabUrl = 'http://localhost:3000/google-login';
+const newTabUrl = __prod__?'https://moovychat.com/google-login':'http://localhost:3000/google-login';
 // When the extension in installed.
 chrome.runtime.onInstalled.addListener(async () => {
   const user: User = {

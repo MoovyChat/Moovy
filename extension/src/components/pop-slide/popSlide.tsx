@@ -41,7 +41,7 @@ const PopSlide = () => {
       case 'smiley':
         setInputs({
           title: 'Smiley',
-          subTitle: 'Quick Chat',
+          subTitle: 'MoovyChat',
         });
         break;
       case 'video-styles':
