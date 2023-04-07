@@ -425,6 +425,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
                 <StyledTextArea
                   id='bio'
                   name='bio'
+                  maxLength={150}
                   value={formData.bio.value}
                   onChange={handleInputChange}
                 />
