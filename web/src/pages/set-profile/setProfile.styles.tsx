@@ -46,6 +46,12 @@ export const StyledSetProfile = styled.div`
     .pic-container {
       width: 60px;
       height: 60px;
+      #blur-escape {
+        img {
+          width: 60px;
+          height: 60px;
+        }
+      }
     }
     .container {
       display: flex;
@@ -61,6 +67,19 @@ export const StyledSetProfile = styled.div`
       }
     }
   }
+  @media (max-width: 500px) {
+    .moovy-profile-title {
+      padding: 0 10px;
+      .container {
+        .description {
+          font-size: 12px;
+        }
+      }
+    }
+    .moovy-steps-container {
+      flex-direction: column;
+    }
+  }
 `;
 
 export const StyledSteps = styled.div`
@@ -74,6 +93,21 @@ export const StyledSteps = styled.div`
   justify-content: center;
   align-items: flex-start;
   .step {
+  }
+  @media (max-width: 768px) {
+    gap: 0px;
+    padding: 20px;
+    .step {
+      .line {
+        display: none;
+      }
+      .text {
+        .value {
+          text-align: unset;
+          padding: 10px 0;
+        }
+      }
+    }
   }
 `;
 export const StyledDescription = styled.div`
@@ -113,6 +147,19 @@ export const StyledDescription = styled.div`
       font-size: 25px;
       padding: 20px 10px;
     }
+  }
+  @media (max-width: 768px) {
+    .item {
+      gap: 3px;
+      .int-ctr {
+        input,
+        select,
+        textarea {
+          width: 90%;
+        }
+      }
+    }
+    margin-bottom: 10px;
   }
 `;
 

@@ -4,8 +4,8 @@ import { StyledEmbedContent } from './embedContent.styles';
 const EmbedContent = () => {
   return (
     <StyledEmbedContent>
-      <p>New version available. Please update to latest version.</p>
-      <div
+      <p>Welcome to Moovy! You're all set to enjoy a new level of interactive streaming. Add your favorite movies and TV shows to your watchlist, join the conversation in the comment section, and customize your viewing experience with video filters. Happy streaming!</p>
+      {/* <div
         className='arc-btn'
         onClick={(e) => {
           e.stopPropagation();
@@ -15,7 +15,7 @@ const EmbedContent = () => {
           );
         }}>
         Update
-      </div>
+      </div> */}
     </StyledEmbedContent>
   );
 };
