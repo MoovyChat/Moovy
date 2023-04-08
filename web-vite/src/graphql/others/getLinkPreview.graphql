@@ -1,0 +1,10 @@
+query GetLinkPreview($url: String!) {
+  getLinkPreview(url: $url) {
+    description
+    image
+    title
+    isVideo
+    videoSrc
+    videoType
+  }
+}

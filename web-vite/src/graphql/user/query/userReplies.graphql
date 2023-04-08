@@ -1,0 +1,18 @@
+query GetRepliesOfTheUser($first: Int!, $uid: String!, $after: String) {
+  getRepliesOfTheUser(first: $first, uid: $uid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      ...FullReply
+    }
+    edges {
+      cursor
+      node {
+        ...FullReply
+      }
+    }
+  }
+}

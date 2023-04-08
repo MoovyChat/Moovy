@@ -1,0 +1,16 @@
+query GetUserViewHistory($page: Float!, $limit: Float!, $uid: String!) {
+  getUserViewHistory(page: $page, limit: $limit, uid: $uid) {
+    count
+    lastPage
+    page
+    visited {
+      userId
+      movieId
+      visitCount
+      history
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+}

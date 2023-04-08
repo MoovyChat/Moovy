@@ -1,0 +1,23 @@
+query GetFeed($after: String!, $first: Int!, $uid: String!) {
+  getFeed(after: $after, first: $first, uid: $uid) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      id
+      type
+      commentedUserId
+      compositeKey
+      createdAt
+      updatedAt
+    }
+    edges {
+      node {
+        id
+      }
+      cursor
+    }
+  }
+}

@@ -1,0 +1,16 @@
+query getTitleInfo($getTitleInfoId: String!) {
+  getTitleInfo(id: $getTitleInfoId) {
+    advisories
+    artwork
+    boxart
+    createdAt
+    id
+    rating
+    runtime
+    storyart
+    synopsis
+    title
+    type
+    year
+  }
+}

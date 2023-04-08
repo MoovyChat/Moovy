@@ -1,0 +1,18 @@
+query GetRepliesOfReply($first: Int!, $rid: String!, $after: String) {
+  getRepliesOfReply(first: $first, rid: $rid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      ...FullReply
+    }
+    edges {
+      cursor
+      node {
+        ...FullReply
+      }
+    }
+  }
+}

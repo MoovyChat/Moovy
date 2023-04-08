@@ -1,0 +1,13 @@
+fragment ShortMovie on Movie {
+  id
+  name
+  stills
+  thumbs
+  year
+  runtime
+  viewsCount
+  platformId
+  titleId
+  season
+  parentTitleName
+}

@@ -1,0 +1,12 @@
+fragment FollowNotification on FollowNotifications {
+  __typename
+  id
+  toUserId
+  message
+  fromUser
+  fromUserPhotoUrl
+  isRead
+  createdAt
+  updatedAt
+  deletedAt
+}

@@ -1,0 +1,16 @@
+fragment FullReply on Reply {
+  __typename
+  id
+  message
+  movieId
+  parentCommentId
+  commentedUserName
+  parentRepliedUser
+  parentReplyId
+  commentedUserId
+  likesCount
+  repliesCount
+  platformId
+  createdAt
+  updatedAt
+}

@@ -1,0 +1,15 @@
+query GetCommentLikes($limit: Int!, $cid: String!, $page: Int) {
+  getCommentLikes(limit: $limit, cid: $cid, page: $page) {
+    likes {
+      id
+      name
+      nickname
+      photoUrl
+      followerCount
+      followingCount
+    }
+    likesCount
+    page
+    lastPage
+  }
+}

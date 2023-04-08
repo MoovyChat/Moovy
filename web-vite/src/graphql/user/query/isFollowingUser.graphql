@@ -1,0 +1,3 @@
+query isFollowingUser($fid: String!, $uid: String!) {
+  isFollowingUser(fid: $fid, uid: $uid)
+}

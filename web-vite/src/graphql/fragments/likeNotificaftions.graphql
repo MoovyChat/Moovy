@@ -1,0 +1,14 @@
+fragment LikeNotification on LikeNotifications {
+  __typename
+  id
+  toUserId
+  commentId
+  replyId
+  fromUser
+  message
+  fromUserPhotoUrl
+  isRead
+  createdAt
+  updatedAt
+  deletedAt
+}
