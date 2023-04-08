@@ -1,10 +1,15 @@
-import React from 'react';
-import { StyledEmbedContent } from './embedContent.styles';
+import React from "react";
+import { StyledEmbedContent } from "./embedContent.styles";
 
 const EmbedContent = () => {
   return (
     <StyledEmbedContent>
-      <p>Welcome to Moovy! You're all set to enjoy a new level of interactive streaming. Add your favorite movies and TV shows to your watchlist, join the conversation in the comment section, and customize your viewing experience with video filters. Happy streaming!</p>
+      <div>
+        Welcome to MoovyChat! You're all set to enjoy a new level of interactive
+        streaming. Add your favorite movies and TV shows to your watchlist, join
+        the conversation in the comment section, and customize your viewing
+        experience with video filters. Happy streaming!
+      </div>
       {/* <div
         className='arc-btn'
         onClick={(e) => {
