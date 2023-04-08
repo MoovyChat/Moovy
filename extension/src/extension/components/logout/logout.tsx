@@ -18,6 +18,7 @@ import {
 import Button from '../../../components/button/button';
 import { FcGoogle } from 'react-icons/fc';
 import { IoMdRefresh } from 'react-icons/io';
+import { MdHelp } from 'react-icons/md';
 import { OTTType } from '../app/app';
 import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
@@ -158,6 +159,11 @@ const LogOut: React.FC<props> = ({ user, setUser, OTTSite }) => {
           <IoMdRefresh size={40} />
         </Refresh>
       </SetTop>
+      <div className='login-agreement'>
+        <div className='help'>
+        <MdHelp size={20}/>
+        <div>Refresh the tab, if the comment icon is not visible</div></div>
+      </div>
     </WithOutLoginWindow>
   );
 };

@@ -17,6 +17,15 @@ export const WithOutLoginWindow = styled.div`
     font-size: 10px;
     text-align: center;
     margin: 10px 0px;
+
+    .help{
+      display: flex;
+      gap:10px;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid white;
+      padding: 10px;
+    }
   }
 
   .login-agreement a {

@@ -82,7 +82,7 @@ const IFrameComponent = () => {
           <MdInfo fill={accentColor} size={20} />
           <span>Message from server</span>
         </h3>
-        <IoCloseCircle size={20} fill={accentColor} onClick={closeHandler} />
+        <IoCloseCircle size={20} fill={accentColor} onClick={closeHandler} className='close'/>
       </div>
       <iframe src={url} />
     </StyledIFrameComponent>
