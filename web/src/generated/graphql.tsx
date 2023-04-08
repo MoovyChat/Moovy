@@ -121,6 +121,15 @@ export type Contact = {
   updatedAt: Scalars['String'];
 };
 
+export type EpisodeInfo = {
+  id?: InputMaybe<Scalars['Int']>;
+  runtime?: InputMaybe<Scalars['Int']>;
+  stills?: InputMaybe<Scalars['String']>;
+  synopsis?: InputMaybe<Scalars['String']>;
+  thumbs?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type ErrorField = {
   __typename?: 'ErrorField';
   field: Scalars['String'];
@@ -365,6 +374,20 @@ export type MovieEdge = {
   node?: Maybe<Movie>;
 };
 
+export type MovieFullInformation = {
+  advisories?: InputMaybe<Array<Scalars['String']>>;
+  artwork?: InputMaybe<Scalars['String']>;
+  boxart?: InputMaybe<Scalars['String']>;
+  rating?: InputMaybe<Scalars['String']>;
+  runtime?: InputMaybe<Scalars['Int']>;
+  seasons?: InputMaybe<Array<SeasonInfo>>;
+  storyart?: InputMaybe<Scalars['String']>;
+  synopsis?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  year?: InputMaybe<Scalars['Int']>;
+};
+
 export type MovieInput = {
   id: Scalars['String'];
   likesCount?: InputMaybe<Scalars['Int']>;
@@ -411,9 +434,9 @@ export type Mutation = {
   getUserFollowStats?: Maybe<UserFollowStats>;
   getUserMut?: Maybe<Users>;
   insertAdminNotification: AdminNotifications;
-  insertBulkMovie?: Maybe<Scalars['Boolean']>;
   insertComment?: Maybe<Comment>;
   insertMovie?: Maybe<Movie>;
+  insertMovieInformation?: Maybe<Movie>;
   insertReply?: Maybe<Reply>;
   insertTitle?: Maybe<Scalars['Boolean']>;
   insertVisited?: Maybe<Visited>;
@@ -537,11 +560,6 @@ export type MutationInsertAdminNotificationArgs = {
 };
 
 
-export type MutationInsertBulkMovieArgs = {
-  options: Array<MovieInput>;
-};
-
-
 export type MutationInsertCommentArgs = {
   options: CommentInput;
 };
@@ -549,6 +567,12 @@ export type MutationInsertCommentArgs = {
 
 export type MutationInsertMovieArgs = {
   options: MovieInput;
+};
+
+
+export type MutationInsertMovieInformationArgs = {
+  mid: Scalars['String'];
+  options: MovieFullInformation;
 };
 
 
@@ -1267,6 +1291,12 @@ export type SearchTitleObject = {
   titles?: Maybe<Array<Title>>;
 };
 
+export type SeasonInfo = {
+  episodes?: InputMaybe<Array<EpisodeInfo>>;
+  title?: InputMaybe<Scalars['String']>;
+  year?: InputMaybe<Scalars['Int']>;
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   adminNotifications: AdminNotifications;
@@ -1320,7 +1350,7 @@ export type TitleEdge = {
 };
 
 export type TitleOptions = {
-  advisories: Array<Scalars['String']>;
+  advisories?: InputMaybe<Array<Scalars['String']>>;
   artwork: Scalars['String'];
   boxart: Scalars['String'];
   id: Scalars['String'];
