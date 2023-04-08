@@ -1,14 +1,13 @@
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Suspense, useMemo, useState } from 'react';
-import { Users, useMeQuery } from '../generated/graphql';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Suspense, useMemo } from "react";
+import { Users, useMeQuery } from "../generated/graphql";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
-import LogoLoading from './logo-loading/logoLoading';
-import { sliceSetUser } from '../redux/slices/userSlice';
+import LogoLoading from "./logo-loading/logoLoading";
+import { sliceSetUser } from "../redux/slices/userSlice";
 
 const ProtectedRoutes = () => {
   const location = useLocation();
-  //   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [{ data, fetching, error }] = useMeQuery();
   const isAuth = useAppSelector((state) => state.user);
@@ -28,7 +27,7 @@ const ProtectedRoutes = () => {
       if (user) {
         // Update Redux store with user data and save user data in localStorage
         dispatch(sliceSetUser(user));
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
       }
     }
   }, [fetching, data, error]);
@@ -39,7 +38,7 @@ const ProtectedRoutes = () => {
       <Outlet />
     </Suspense>
   ) : (
-    <Navigate to='/' replace state={{ from: location.pathname }} />
+    <Navigate to="/" replace state={{ from: location.pathname }} />
   );
 };
 

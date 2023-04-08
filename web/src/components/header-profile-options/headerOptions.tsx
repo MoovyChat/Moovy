@@ -67,6 +67,7 @@ const HeaderOptions = () => {
         tabIndex={0}
         onClick={(e) => {
           e.stopPropagation();
+          console.log({EXT_ID})
           chrome.runtime.sendMessage(
             EXT_ID,
             { type: 'EXTENSION_LOG_IN', user: user },
