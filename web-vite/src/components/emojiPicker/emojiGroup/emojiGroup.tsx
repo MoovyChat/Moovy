@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import EmojiSubGroup from '../emojiSubGroup/emojiSubGroup';
 import { GroupParent } from './emojiGroup.styles';
-import ViewportList from 'react-viewport-list';
+import { SubGroup } from '../emojiPicker';
+import { ViewportList } from 'react-viewport-list';
 import { sliceSetEmojiGroupActive } from '../../../redux/slices/miscSlice';
-import { subGroup } from '../emojiPicker';
 import { useAppDispatch } from '../../../redux/hooks';
 
 type props = {
-  subGroup: subGroup;
+  subGroup: SubGroup;
   groupNumber: number;
   index: number;
 };

@@ -1,11 +1,11 @@
 import Dexie, { Table } from 'dexie';
 
 import { Emoji } from 'emojibase';
-import { refinedG } from '../components/emojiPicker/emojiPicker';
+import { RefinedG } from '../components/emojiPicker/emojiPicker';
 
 export interface Emojis {
   id?: number;
-  emojis: refinedG;
+  emojis: RefinedG;
 }
 
 export interface FrequentEmoji {
