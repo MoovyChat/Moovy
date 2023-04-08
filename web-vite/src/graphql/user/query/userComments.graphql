@@ -1,0 +1,44 @@
+query GetCommentsOfTheUser($first: Int!, $uid: String!, $after: String) {
+  getCommentsOfTheUser(first: $first, uid: $uid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
+      id
+      commentedUserId
+      commentedUserName
+      message
+      movieId
+      likesCount
+      repliesCount
+      platformId
+      toxicityScore
+      flagged
+      type
+      createdAt
+      updatedAt
+      deletedAt
+    }
+    edges {
+      node {
+        id
+        commentedUserId
+        commentedUserName
+        message
+        movieId
+        likesCount
+        repliesCount
+        platformId
+        toxicityScore
+        flagged
+        type
+        createdAt
+        updatedAt
+        deletedAt
+      }
+      cursor
+    }
+  }
+}

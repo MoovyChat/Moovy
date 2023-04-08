@@ -1,0 +1,16 @@
+query GetSearchResults($search: String!) {
+  getSearchResults(search: $search) {
+    movies {
+      ...ShortTitle
+    }
+    titles {
+      ...ShortTitle
+    }
+    users {
+      ...ShortUser
+    }
+    episodes {
+      ...ShortMovie
+    }
+  }
+}

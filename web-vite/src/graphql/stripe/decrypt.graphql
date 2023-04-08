@@ -1,0 +1,3 @@
+mutation DecryptData($data: String!, $iv: String!) {
+  decryptData(data: $data, iv: $iv)
+}

@@ -1,0 +1,9 @@
+query SearchTitles($page: Float!, $limit: Float!, $search: String!) {
+  searchTitles(page: $page, limit: $limit, search: $search) {
+    titles {
+      ...FullTitle
+    }
+    page
+    lastPage
+  }
+}

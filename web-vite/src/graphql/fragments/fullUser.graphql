@@ -1,0 +1,14 @@
+fragment FullUser on Users {
+  __typename
+  id
+  email
+  name
+  nickname
+  photoUrl
+  bg
+  watchedMovies
+  followerCount
+  followingCount
+  joinedAt
+  updatedAt
+}

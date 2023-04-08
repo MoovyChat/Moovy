@@ -1,0 +1,5 @@
+query getUserByNickName($nickname: String!) {
+  getUserByUserName(nickname: $nickname) {
+    ...FullUser
+  }
+}

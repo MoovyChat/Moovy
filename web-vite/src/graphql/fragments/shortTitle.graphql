@@ -1,0 +1,10 @@
+fragment ShortTitle on Title {
+  id
+  artwork
+  boxart
+  storyart
+  title
+  type
+  runtime
+  year
+}

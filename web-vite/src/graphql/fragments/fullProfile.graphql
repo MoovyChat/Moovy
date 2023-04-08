@@ -1,0 +1,11 @@
+fragment FullProfile on Profile {
+  __typename
+  bio
+  createdAt
+  deletedAt
+  dob
+  fullname
+  gender
+  updatedAt
+  userId
+}
