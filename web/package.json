@@ -100,7 +100,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "react-scripts build",
     "preview": "vite preview",
     "serve": "vite preview",
     "gen": "graphql-codegen --config codegen.yml"
