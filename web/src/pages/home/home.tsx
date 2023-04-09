@@ -112,7 +112,7 @@ const Home = () => {
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
-  if (profile.fetching || customLoading) return <LogoLoading />;
+  if (fetching || profile.fetching || customLoading) return <LogoLoading />;
 
   return (
     <ThemeProvider
