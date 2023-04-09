@@ -27,6 +27,8 @@ import { RiArrowRightCircleFill } from "react-icons/ri";
 import Screenshots from "./screenshots/screenshots";
 import { lazyIconFa } from "../../lazyLoad";
 import { sliceSetUser } from "../../redux/slices/userSlice";
+import { urqlClient } from "../../utils/urlClient";
+import { withUrqlClient } from "next-urql";
 
 const FaDiscord = lazyIconFa("FaDiscord");
 const FaTwitter = lazyIconFa("FaTwitter");
@@ -88,6 +90,7 @@ const Welcome = () => {
 
 
   useMemo(() => {
+    console.log(location);
     if (isAuth && isAuth.id) return;
     // Log any errors with fetching user data
     if (error) {
@@ -269,4 +272,4 @@ const Welcome = () => {
   );
 };
 
-export default Welcome;
+export default withUrqlClient(urqlClient)(Welcome);
