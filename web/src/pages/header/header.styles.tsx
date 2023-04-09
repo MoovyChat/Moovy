@@ -28,6 +28,7 @@ export const HeaderParent = styled.div`
       background-color: #343499;
       padding: 4px 6px;
       border-radius: 10px;
+      color: white;
     }
   }
   .header-buttons {

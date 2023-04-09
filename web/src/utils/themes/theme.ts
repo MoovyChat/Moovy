@@ -15,13 +15,13 @@ export interface ThemeProps {
 }
 
 export const lightTheme: ThemeProps = {
-  body: 'linear-gradient(180deg, #2c94ab 30%, #0e756b 70%);',
+  body: 'linear-gradient(86deg, rgb(174 233 255) 0%, rgb(255 255 255 / 68%) 100%);',
   text: '#363537',
   toggleBorder: '#b8b7b7',
   background: '#ffffff',
 };
 export const darkTheme: ThemeProps = {
-  body: 'linear-gradient(180deg, #750e0e 10%,#0a0a0a 30%,#000000 55%, #0e756b 70%);',
+  body: 'linear-gradient(86deg, #0f1130 0%, black 100%);',
   text: '#FAFAFA',
   toggleBorder: '#6B8096',
   background: '#000000',

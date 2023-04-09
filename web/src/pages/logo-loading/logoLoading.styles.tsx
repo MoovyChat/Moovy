@@ -7,7 +7,6 @@ export const StyledLogoLoading = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: black;
   .logo {
     height: 200px;
     display: flex;
