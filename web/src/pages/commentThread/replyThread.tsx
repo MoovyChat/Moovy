@@ -25,7 +25,7 @@ const ReplyThread = () => {
     document.title = 'Reply - Moovy';
   }, []);
   const userRef = useRef<Users | null>(null);
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const [page, setPage] = useState<number>(1);
   const [like, setLike] = useState<boolean>(false);
   const [replies, setReplies] = useState<Reply[]>([]);
@@ -68,7 +68,7 @@ const ReplyThread = () => {
     if (!fetching && data) {
       const _count = data.getReplyLikes?.likesCount!;
       const _users = data.getReplyLikes?.likes;
-      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
+      const findCurrentUser = _users?.find(u => u.id === loggedInUser.id);
       if (findCurrentUser) setLike(true);
       else setLike(false);
       setLikedUsers(_users!);
@@ -112,10 +112,10 @@ const ReplyThread = () => {
     setReplies,
     repliesQueryResult,
     cursor,
-    setCursor
+    setCursor,
   );
 
-  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async e => {
     e.stopPropagation();
     setLike(!like);
     like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
@@ -136,7 +136,7 @@ const ReplyThread = () => {
 
   return (
     <CommentTemplate
-      type='reply'
+      type="reply"
       userRef={userRef}
       comment={comment}
       replies={replies}

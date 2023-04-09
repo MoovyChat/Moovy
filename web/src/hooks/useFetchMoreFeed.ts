@@ -23,7 +23,7 @@ export const useFetchMoreFeed = (
     }>
   >,
   cursor: string,
-  setCursor: React.Dispatch<React.SetStateAction<string>>
+  setCursor: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const graphqlClient = useClient();
   const fetchMore = useCallback(() => {
@@ -38,7 +38,7 @@ export const useFetchMoreFeed = (
         uid: id,
       })
       .toPromise()
-      .then((moreData) => {
+      .then(moreData => {
         const { data, error } = moreData;
         console.log({ data });
         const _data = data?.getFeed!;
@@ -46,7 +46,7 @@ export const useFetchMoreFeed = (
         setCursor(() => pageInfo?.endCursor as string);
         const nodes = _data?.nodes as any[];
         setNodes((data: any) =>
-          _.chain(data).concat(nodes).uniqBy('id').value()
+          _.chain(data).concat(nodes).uniqBy('id').value(),
         );
       });
   }, [res]);

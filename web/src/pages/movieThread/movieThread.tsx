@@ -85,7 +85,7 @@ const MovieThread = () => {
     }
   }, [data, error, fetching]);
 
-  const scrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
+  const scrollHandler: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const scrollValue = ref.current!.scrollTop;
     setScrollValue(scrollValue);
@@ -98,53 +98,54 @@ const MovieThread = () => {
     <div>
       <Helmet>
         <title>{`${movieInfo.name}: Comments`}</title>
-        <meta name='description' content={`${movieInfo.name}: Comments`} />
+        <meta name="description" content={`${movieInfo.name}: Comments`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/movie/${movieInfo.id}`}
         />
       </Helmet>
       {valid ? (
         <MovieThreadParent onScroll={scrollHandler} ref={ref}>
-          <ChildHeader className='movie-header'>
+          <ChildHeader className="movie-header">
             <StyledHeader>
               <span>{headerTitle}</span>
               <WatchVideo
                 id={id}
-                platform='NETFLIX'
-                type='movie'
-                className='watch-video'
+                platform="NETFLIX"
+                type="movie"
+                className="watch-video"
               />
             </StyledHeader>
           </ChildHeader>
-          <div className='movie-container'>
-            <div className='thread-movie'>
+          <div className="movie-container">
+            <div className="thread-movie">
               <MovieCard movieId={movieInfo.id!} />
             </div>
             {comments && comments.length !== 0 ? (
-              <div className='thread-comments'>
-                {comments?.map((cmt) => (
+              <div className="thread-comments">
+                {comments?.map(cmt => (
                   <CommentCard comment={cmt} key={cmt.id} isMain={true} />
                 ))}
                 {hasMore && (
                   <div
-                    className='show-more'
-                    onClick={(e) => {
+                    className="show-more"
+                    onClick={e => {
                       e.stopPropagation();
                       setPage(page + 1);
                       setPageCount(() => page + 1);
-                    }}>
+                    }}
+                  >
                     Show more comments
                   </div>
                 )}
               </div>
             ) : (
-              <div className='no-data'>
-                <EmptyPage msg='No Comments yet. Make your first comment' />
+              <div className="no-data">
+                <EmptyPage msg="No Comments yet. Make your first comment" />
               </div>
             )}
           </div>
-          <CommentButton type='movie' data={movieInfo} />
+          <CommentButton type="movie" data={movieInfo} />
         </MovieThreadParent>
       ) : (
         <NotFound />

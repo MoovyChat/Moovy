@@ -54,16 +54,16 @@ export const HeaderKey = styled.div<props>`
   border-radius: 50%;
   padding: 5px;
   box-shadow: 0 0 5px white, inset 0 0 5px #6d0e85;
-  border: ${(p) => (p.selectedGroup ? '1px solid' : 'none')};
-  filter: ${(p) =>
+  border: ${p => (p.selectedGroup ? '1px solid' : 'none')};
+  filter: ${p =>
     p.active
       ? p.selectedGroup
         ? 'contrast(1.5)'
         : 'brightness(0.8)'
       : 'grayscale(1)'};
-  transform: ${(p) => (p.selectedGroup ? 'scale(1.3)' : 'scale(0.9)')};
+  transform: ${p => (p.selectedGroup ? 'scale(1.3)' : 'scale(0.9)')};
   transition: transform 0.5s linear;
-  pointer-events: ${(p) => (p.active ? 'auto' : 'none')};
+  pointer-events: ${p => (p.active ? 'auto' : 'none')};
 `;
 
 export const EmojiSearch = styled.div`
@@ -80,6 +80,6 @@ export const EmojiSearch = styled.div`
     border-radius: 0.25rem;
     outline: none;
     width: calc(100% - 50px);
-    color: ${(p) => p.theme.text};
+    color: ${p => p.theme.text};
   }
 `;

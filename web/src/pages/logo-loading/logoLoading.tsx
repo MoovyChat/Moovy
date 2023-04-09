@@ -8,12 +8,12 @@ const LogoLoading = () => {
     <StyledLogoLoading>
       <Helmet>
         <title>{`Loading...`}</title>
-        <meta name='description' content={`Loading...`} />
+        <meta name="description" content={`Loading...`} />
       </Helmet>
-      <div className='logo'>
-        <img src={Moovy} alt='Moovy' />
+      <div className="logo">
+        <img src={Moovy} alt="Moovy" />
       </div>
-      <div className='loading'>
+      <div className="loading">
         <Loading />
       </div>
     </StyledLogoLoading>

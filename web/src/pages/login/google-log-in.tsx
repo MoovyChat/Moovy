@@ -50,7 +50,7 @@ const GoogleLogIn = () => {
     'https://images-na.ssl-images-amazon.com/images/I/41mpv9rBhmL.png',
   ];
 
-  const loginHandler: MouseEventHandler<HTMLButtonElement> = async (e) => {
+  const loginHandler: MouseEventHandler<HTMLButtonElement> = async e => {
     e.stopPropagation();
     const signedInUser = await googleSignIn();
     const res = await loginAction({ uid: signedInUser.id });
@@ -67,7 +67,7 @@ const GoogleLogIn = () => {
             } else {
               setLoggedInError(true);
             }
-          }
+          },
         );
       } catch (e) {
         console.log(e);
@@ -87,7 +87,7 @@ const GoogleLogIn = () => {
       createUser({
         options: user as any,
       })
-        .then((res) => {
+        .then(res => {
           const { data, error } = res;
           if (error) console.log(error);
           const _data = data?.createUser;
@@ -101,7 +101,7 @@ const GoogleLogIn = () => {
                 } else {
                   setLoggedInError(true);
                 }
-              }
+              },
             );
           } catch (e) {
             console.log(e);
@@ -132,39 +132,39 @@ const GoogleLogIn = () => {
     <StyledGoogleLogin>
       <Helmet>
         <title>{`Google Login`}</title>
-        <meta name='description' content={`Google Login`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/google-login`} />
+        <meta name="description" content={`Google Login`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/google-login`} />
       </Helmet>
-      <div className='bubble-container'>
-        <div className='bubble'>
-          <img src={iconSources[0]} alt='Netflix' />
+      <div className="bubble-container">
+        <div className="bubble">
+          <img src={iconSources[0]} alt="Netflix" />
         </div>
-        <div className='bubble'>
-          <img src={iconSources[1]} alt='Disney+' />
+        <div className="bubble">
+          <img src={iconSources[1]} alt="Disney+" />
         </div>
-        <div className='bubble'>
-          <img src={iconSources[2]} alt='Amazon Prime Video' />
+        <div className="bubble">
+          <img src={iconSources[2]} alt="Amazon Prime Video" />
         </div>
-        <div className='bubble'>
-          <img src={iconSources[3]} alt='Hulu' />
+        <div className="bubble">
+          <img src={iconSources[3]} alt="Hulu" />
         </div>
-        <div className='bubble'>
-          <img src={iconSources[4]} alt='Hulk' />
+        <div className="bubble">
+          <img src={iconSources[4]} alt="Hulk" />
         </div>
       </div>
 
-      <div className='logo'>
-        <img src={Moovy} alt='Moovy' />
+      <div className="logo">
+        <img src={Moovy} alt="Moovy" />
       </div>
-      <button className='popup-spl-btn' onClick={loginHandler}>
+      <button className="popup-spl-btn" onClick={loginHandler}>
         Log in
       </button>
       {loggedInError && <div>Login Error</div>}
       {loggedInSuccess && <div>Login Success</div>}
-      <div className='text-msg'>
+      <div className="text-msg">
         <div>**Currently, only Netflix is supported</div>
         <div>MoovyChat, 2023</div>
-        <a href='www.moovychat.com' target='_blank'>
+        <a href="www.moovychat.com" target="_blank">
           www.moovychat.com
         </a>
       </div>

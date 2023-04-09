@@ -8,10 +8,11 @@ type props = {
 const MovieChip: React.FC<props> = ({ name }) => {
   return (
     <div
-      className='chip'
-      onClick={(e) => {
+      className="chip"
+      onClick={e => {
         e.stopPropagation();
-      }}>
+      }}
+    >
       {name}
     </div>
   );

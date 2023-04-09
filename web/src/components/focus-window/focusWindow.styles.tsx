@@ -17,37 +17,37 @@ export const StyledFocusWindow = styled.div<props>`
   }
   .tooltip {
     position: absolute;
-    display: ${(p) => (p.clicked ? 'flex' : 'none')};
+    display: ${p => (p.clicked ? 'flex' : 'none')};
     left: 0%;
     transform: translateX(-50%);
     border-radius: 10px;
     line-height: 1;
     z-index: 999;
-    width: ${(p) => p.width};
-    height: ${(p) => p.height};
+    width: ${p => p.width};
+    height: ${p => p.height};
     justify-content: center;
     align-items: center;
   }
   .tooltip.bottom-right {
-    bottom: calc((${(p) => p.height}) * -1);
-    left: calc((${(p) => p.width}) * 0.5);
+    bottom: calc((${p => p.height}) * -1);
+    left: calc((${p => p.width}) * 0.5);
   }
   .tooltip.bottom-left {
-    bottom: calc((${(p) => p.height}) * -1.05);
-    right: calc((${(p) => p.width}) * 0.5);
+    bottom: calc((${p => p.height}) * -1.05);
+    right: calc((${p => p.width}) * 0.5);
     left: -30px;
   }
   .tooltip.bottom {
-    bottom: calc((${(p) => p.height}) * -1);
+    bottom: calc((${p => p.height}) * -1);
   }
   .tooltip.top {
-    top: calc((${(p) => p.height}) * -1);
+    top: calc((${p => p.height}) * -1);
   }
   .tooltip.right {
-    left: calc((${(p) => p.width}) * 0.3);
+    left: calc((${p => p.width}) * 0.3);
     top: 50%;
     transform: translateX(0) translateY(-50%);
-    border-right-color: ${(p) => p.theme.background};
+    border-right-color: ${p => p.theme.background};
   }
   .tooltip.left {
     left: auto;

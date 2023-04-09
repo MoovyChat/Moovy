@@ -16,7 +16,7 @@ export const useDominantColor = (imageUrl: string): string | null => {
         0,
         0,
         image.width,
-        image.height
+        image.height,
       ).data;
       const colorCounts: Record<string, number> = {};
 

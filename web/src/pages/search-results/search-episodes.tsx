@@ -38,41 +38,42 @@ const SearchEpisodes = () => {
   }, [data, fetching, error, search]);
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
       if (page !== lastPage) {
-        setPage((page) => page + 1);
+        setPage(page => page + 1);
       }
     }
   };
 
   if (fetching) return <Loading />;
-  if (titles.length <= 0) return <EmptyPage msg='No Episodes found' />;
+  if (titles.length <= 0) return <EmptyPage msg="No Episodes found" />;
   return (
     <SearchTitles onScroll={handleScroll}>
       <Helmet>
         <title>{`${search}: Episodes`}</title>
-        <meta name='description' content={`${search}: Episodes`} />
+        <meta name="description" content={`${search}: Episodes`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/search/${search}/episodes}`}
         />
       </Helmet>
-      {titles.map((movie) => (
+      {titles.map(movie => (
         <MovieCardParent
           bg={movie?.stills!}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             if (location.pathname !== `/movie/${movie.id}`)
               navigate(`/movie/${movie.id}`);
-          }}>
-          <div className='container'>
-            <div className='thumbs'>
-              <Image src={movie?.thumbs!} alt='movie' />
+          }}
+        >
+          <div className="container">
+            <div className="thumbs">
+              <Image src={movie?.thumbs!} alt="movie" />
             </div>
-            <div className='info'>
+            <div className="info">
               <MovieInfo movie={movie!} />
             </div>
           </div>

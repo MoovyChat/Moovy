@@ -1,5 +1,5 @@
-import React from "react";
-import { StyledEmbedContent } from "./embedContent.styles";
+import React from 'react';
+import { StyledEmbedContent } from './embedContent.styles';
 
 const EmbedContent = () => {
   return (

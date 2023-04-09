@@ -8,7 +8,7 @@ export const StyledMiniCommentCard = styled.div<props>`
   display: flex;
   position: relative;
   width: 100%;
-  max-height: ${(p) => (p.showMore ? p.cardHeight : '100px')};
+  max-height: ${p => (p.showMore ? p.cardHeight : '100px')};
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 2px 1px;
@@ -54,7 +54,7 @@ export const StyledMiniCommentCard = styled.div<props>`
     .show-more {
       font-weight: 600;
       font-size: 0.8em;
-      color: ${(p) => p.theme.mention};
+      color: ${p => p.theme.mention};
     }
   }
 `;

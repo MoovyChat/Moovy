@@ -6,23 +6,20 @@ export const NotFoundParent = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100dvh;
   width: 100%;
   .bg {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     z-index: -2;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     opacity: 0.1;
-  }
-  .wave {
-    position: absolute;
-    z-index: -1;
-    bottom: 0px;
-    width: 100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    .bg-img{
+      width: 60vw;
+    }
   }
   .code {
     display: flex;

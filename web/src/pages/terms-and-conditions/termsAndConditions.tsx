@@ -12,9 +12,9 @@ const TermsAndConditions = () => {
     <PrivacyPolicyWrapper>
       <Helmet>
         <title>{`Terms and Conditions`}</title>
-        <meta name='description' content={`Terms and Conditions`} />
+        <meta name="description" content={`Terms and Conditions`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/terms-and-conditions}`}
         />
       </Helmet>
@@ -215,8 +215,8 @@ const TermsAndConditions = () => {
         <p>
           If you have any questions about these Terms and Conditions, please
           contact us at{' '}
-          <a href='mailto:support@moovychat.com'>support@moovychat.com</a> or{' '}
-          <a href='mailto:chatmoovy@gmail.com'>chatmoovy@gmail.com</a>.
+          <a href="mailto:support@moovychat.com">support@moovychat.com</a> or{' '}
+          <a href="mailto:chatmoovy@gmail.com">chatmoovy@gmail.com</a>.
         </p>
       </PrivacyPolicyContent>
     </PrivacyPolicyWrapper>

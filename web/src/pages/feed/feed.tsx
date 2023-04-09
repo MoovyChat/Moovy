@@ -11,12 +11,12 @@ import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import LogoLoading from '../logo-loading/logoLoading';
 import NotFound from '../notFound/notFound';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 import { useAppSelector } from '../../redux/hooks';
 import { useFetchMoreFeed } from '../../hooks/useFetchMoreFeed';
 
 const Feed = () => {
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -35,11 +35,11 @@ const Feed = () => {
     setItems,
     feedQuery,
     cursor,
-    setCursor
+    setCursor,
   );
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -63,25 +63,25 @@ const Feed = () => {
       <>
         <Helmet>
           <title>{`Feed`}</title>
-          <meta name='description' content={`Feed`} />
-          <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
+          <meta name="description" content={`Feed`} />
+          <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
         </Helmet>
-        <ChildHeader text='Feed' className='feed-header' />
-        <EmptyPage msg='Your Feed is empty!' />
+        <ChildHeader text="Feed" className="feed-header" />
+        <EmptyPage msg="Your Feed is empty!" />
       </>
     );
   }
   if (feedQuery.fetching) return <LogoLoading />;
   return (
     <>
-      <ChildHeader text='Feed' className='feed-header' />
+      <ChildHeader text="Feed" className="feed-header" />
       <Helmet>
         <title>{`Feed`}</title>
-        <meta name='description' content={`Feed`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
+        <meta name="description" content={`Feed`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
       <CommentParent>
-        <div className='child' ref={parentRef} onScroll={handleScroll}>
+        <div className="child" ref={parentRef} onScroll={handleScroll}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={items}>
             {(item, index) =>
               item.type === 'comment' ? (
@@ -91,7 +91,7 @@ const Feed = () => {
               )
             }
           </ViewportList>
-          <div className='extra'>{feedQuery.fetching && <Loading />}</div>
+          <div className="extra">{feedQuery.fetching && <Loading />}</div>
         </div>
       </CommentParent>
     </>

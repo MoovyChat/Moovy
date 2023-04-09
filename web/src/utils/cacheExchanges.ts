@@ -56,7 +56,7 @@ export const loginChanges = (
   result: LoginMutation,
   _args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   cache.updateQuery({ query: MeDocument }, (data: MeQuery | null) => {
     if (result.login?.error) return data;
@@ -68,7 +68,7 @@ export const logOutChanges = (
   _result: LogoutMutation,
   _args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   cache.updateQuery({ query: MeDocument }, (data: MeQuery | null) => {
     return { me: null };
@@ -79,7 +79,7 @@ export const commentLikeChanges = (
   _result: SetCommentLikeMutation,
   args: Variables,
   cache: Cache,
-  info: ResolveInfo
+  info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsNames = {
@@ -87,12 +87,12 @@ export const commentLikeChanges = (
     getComment: 'getComment',
   };
   const getCommentLikesFieldInfos = allFields.filter(
-    (info: any) => info.fieldName === fieldsNames.getCommentLikes
+    (info: any) => info.fieldName === fieldsNames.getCommentLikes,
   );
   const getCommentFieldInfos = allFields.filter(
-    (info: any) => info.fieldName === fieldsNames.getComment
+    (info: any) => info.fieldName === fieldsNames.getComment,
   );
-  getCommentLikesFieldInfos.forEach((fieldInfo) => {
+  getCommentLikesFieldInfos.forEach(fieldInfo => {
     if (args.cid !== fieldInfo?.arguments?.cid) return;
     cache.updateQuery(
       { query: GetCommentLikesDocument, variables: fieldInfo.arguments },
@@ -113,14 +113,14 @@ export const commentLikeChanges = (
               : Math.max(oldLikesCount - 1, 0),
             likes: isLike
               ? [...oldLikedUsers, user]
-              : oldLikedUsers?.filter((u) => u.id !== user.id),
+              : oldLikedUsers?.filter(u => u.id !== user.id),
           },
         };
         return newData;
-      }
+      },
     );
   });
-  getCommentFieldInfos.forEach((fieldInfo) => {
+  getCommentFieldInfos.forEach(fieldInfo => {
     if (args.cid !== fieldInfo?.arguments?.cid) return;
     cache.updateQuery(
       { query: GetCommentDocument, variables: fieldInfo.arguments },
@@ -140,7 +140,7 @@ export const commentLikeChanges = (
           },
         };
         return newData;
-      }
+      },
     );
   });
 };
@@ -149,12 +149,12 @@ export const replyLikeChanges = (
   _result: SetReplyLikeMutation,
   args: Variables,
   cache: Cache,
-  info: ResolveInfo
+  info: ResolveInfo,
 ) => {
   const fields = cache
     .inspectFields('Query')
-    .filter((field) => field.fieldName === 'getReplyLikes')
-    .forEach((field) => {
+    .filter(field => field.fieldName === 'getReplyLikes')
+    .forEach(field => {
       if (args.rid === field?.arguments?.rid) {
         cache.updateQuery(
           {
@@ -185,11 +185,11 @@ export const replyLikeChanges = (
                   : Math.max(oldLikesCount - 1, 0),
                 likes: isLike
                   ? [...oldLikedUsers, user]
-                  : oldLikedUsers?.filter((u) => u.id !== user.id),
+                  : oldLikedUsers?.filter(u => u.id !== user.id),
               },
             };
             return newData;
-          }
+          },
         );
       }
     });
@@ -199,13 +199,13 @@ export const profileUpdateChanges = (
   _result: UpdateProfileMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   let argsOptions = args.options as any;
   cache
     .inspectFields('Query')
-    .filter((field) => field.fieldName === 'getFullUserProfile')
-    .forEach((field) => {
+    .filter(field => field.fieldName === 'getFullUserProfile')
+    .forEach(field => {
       if (argsOptions?.uid === field?.arguments?.uid) {
         cache.updateQuery(
           {
@@ -226,7 +226,7 @@ export const profileUpdateChanges = (
               },
             };
             return newData;
-          }
+          },
         );
       }
     });
@@ -236,9 +236,9 @@ export const insertCommentChanges = (
   _result: InsertCommentMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
-  cache.inspectFields('Query').map((field) => {
+  cache.inspectFields('Query').map(field => {
     if (field.fieldName === 'getCommentsOfTheMovie') {
       if (
         field?.arguments?.mid === (args?.options as any).movieId! &&
@@ -266,7 +266,7 @@ export const insertCommentChanges = (
               },
             };
             return newData;
-          }
+          },
         );
       }
     } else return field;
@@ -277,7 +277,7 @@ export const insertReplyChanges = (
   _result: InsertReplyMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ): void => {
   const parentCommentId = (args?.options as Reply).parentCommentId;
 
@@ -294,7 +294,7 @@ export const insertReplyChanges = (
     const newReply = _result.insertReply;
     const newNodes = [newReply];
     const newTotalCount = 1;
-    const newEdges = newNodes.map((node) => ({
+    const newEdges = newNodes.map(node => ({
       __typename: 'ReplyEdge',
       cursor: node?.id,
       node,
@@ -324,10 +324,10 @@ export const insertReplyChanges = (
       },
       (_data: GetCommentRepliesQuery | null) => {
         return newData;
-      }
+      },
     );
   }
-  cache.inspectFields('Query').map((field) => {
+  cache.inspectFields('Query').map(field => {
     if (field.fieldName === 'getCommentReplies') {
       if (field?.arguments?.cid === (args?.options as Reply).parentCommentId) {
         cache.updateQuery(
@@ -358,7 +358,7 @@ export const insertReplyChanges = (
             const newTotalCount = data.getCommentReplies?.totalCount
               ? data.getCommentReplies.totalCount + 1
               : 1;
-            const newEdges = newNodes.map((node) => ({
+            const newEdges = newNodes.map(node => ({
               __typename: 'ReplyEdge',
               cursor: node.id,
               node,
@@ -381,7 +381,7 @@ export const insertReplyChanges = (
               },
             };
             return newData;
-          }
+          },
         );
       }
     } else if (field.fieldName === 'getCommentsOfTheMovie') {
@@ -397,17 +397,17 @@ export const insertReplyChanges = (
             const reply = args.options as Reply;
             const commentId = reply.parentCommentId;
             const filteredComment = comments?.filter(
-              (cmt) => cmt.id === commentId
+              cmt => cmt.id === commentId,
             );
             let updatedComments = comments;
             if (filteredComment && filteredComment.length > 0) {
-              updatedComments = comments?.map((cmt) =>
+              updatedComments = comments?.map(cmt =>
                 cmt.id === parentCommentId
                   ? {
                       ...cmt,
                       repliesCount: filteredComment[0].repliesCount! + 1,
                     }
-                  : cmt
+                  : cmt,
               );
             }
 
@@ -418,7 +418,7 @@ export const insertReplyChanges = (
                 comments: updatedComments,
               },
             };
-          }
+          },
         );
       }
     } else if (field.fieldName === 'getRepliesOfReply') {
@@ -451,7 +451,7 @@ export const insertReplyChanges = (
             const newTotalCount = data.getRepliesOfReply?.totalCount
               ? data.getRepliesOfReply.totalCount + 1
               : 1;
-            const newEdges = newNodes.map((node) => ({
+            const newEdges = newNodes.map(node => ({
               __typename: 'ReplyEdge',
               cursor: node.id,
               node,
@@ -474,7 +474,7 @@ export const insertReplyChanges = (
               },
             };
             return newData;
-          }
+          },
         );
       }
     }
@@ -485,13 +485,13 @@ export const toggleFollowChanges = (
   _result: ToggleFollowMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const isFollowingUserField = allFields.filter(
-    (field) => field.fieldName === 'isFollowingUser'
+    field => field.fieldName === 'isFollowingUser',
   );
-  isFollowingUserField.forEach((field) => {
+  isFollowingUserField.forEach(field => {
     if (field.arguments?.uid! === args.uid) {
       cache.updateQuery(
         {
@@ -507,15 +507,15 @@ export const toggleFollowChanges = (
             isFollowingUser: _result.toggleFollow?.follows,
           };
           return newData;
-        }
+        },
       );
     }
   });
 
   const getUserByUserNameField = allFields.filter(
-    (field) => field.fieldName === 'getUserByUserName'
+    field => field.fieldName === 'getUserByUserName',
   );
-  getUserByUserNameField.forEach((field) => {
+  getUserByUserNameField.forEach(field => {
     if (field.arguments?.uid! === args.uid) {
       cache.updateQuery(
         {
@@ -541,7 +541,7 @@ export const toggleFollowChanges = (
           };
 
           return newData;
-        }
+        },
       );
     }
   });
@@ -551,7 +551,7 @@ export const deleteCommentChanges = (
   _result: DeleteCommentMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -588,9 +588,9 @@ export const deleteCommentChanges = (
   //   );
   // });
   const getCommentsOfTheMovieFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getCommentsOfTheMovie
+    field => field.fieldName === fieldsInfos.getCommentsOfTheMovie,
   );
-  getCommentsOfTheMovieFields.forEach((fieldInfo) => {
+  getCommentsOfTheMovieFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).mid !== args.mid) return null;
     cache.updateQuery(
       {
@@ -609,17 +609,17 @@ export const deleteCommentChanges = (
           ...data,
           getCommentsOfTheMovie: {
             ...getCommentsOfTheMovie,
-            comments: comments.filter((comment) => comment.id !== args.cid),
+            comments: comments.filter(comment => comment.id !== args.cid),
             totalCommentCount: Math.max(totalCommentCount - 1, 0),
           },
         };
-      }
+      },
     );
   });
   const getMovieFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getMovie
+    field => field.fieldName === fieldsInfos.getMovie,
   );
-  getMovieFields.forEach((fieldInfo) => {
+  getMovieFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).mid !== args.mid) return null;
     cache.updateQuery(
       {
@@ -640,13 +640,13 @@ export const deleteCommentChanges = (
             commentCount: Math.max(commentCount - 1, 0),
           },
         };
-      }
+      },
     );
   });
   const getCommentFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getComment
+    field => field.fieldName === fieldsInfos.getComment,
   );
-  getCommentFields.forEach((fieldInfo) => {
+  getCommentFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).cid !== args.cid) return null;
     cache.updateQuery(
       {
@@ -666,7 +666,7 @@ export const deleteCommentChanges = (
             message: '[Message is deleted]',
           },
         };
-      }
+      },
     );
   });
 };
@@ -675,7 +675,7 @@ export const deleteReplyChanges = (
   _result: DeleteReplyMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   // const allFields = cache.inspectFields('Query');
   // const fieldsInfos = {
@@ -798,7 +798,7 @@ export const updateMovieLikesChanges = (
   _result: UpdateUserMovieStatsMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -808,15 +808,15 @@ export const updateMovieLikesChanges = (
   };
 
   const getMovieFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getMovie
+    field => field.fieldName === fieldsInfos.getMovie,
   );
   const getOnlyUserMovieStatsFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getOnlyUserMovieStats
+    field => field.fieldName === fieldsInfos.getOnlyUserMovieStats,
   );
   const getLikedTitlesFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getLikedTitles
+    field => field.fieldName === fieldsInfos.getLikedTitles,
   );
-  getMovieFields.forEach((fieldInfo) => {
+  getMovieFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).mid === args.mid) {
       cache.updateQuery(
         { query: GetMovieDocument, variables: fieldInfo.arguments },
@@ -835,11 +835,11 @@ export const updateMovieLikesChanges = (
               likesCount: like ? likesCount + 1 : Math.max(likesCount - 1, 0),
             },
           };
-        }
+        },
       );
     }
   });
-  getOnlyUserMovieStatsFields.forEach((fieldInfo) => {
+  getOnlyUserMovieStatsFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).mid === args.mid) {
       cache.updateQuery(
         {
@@ -860,11 +860,11 @@ export const updateMovieLikesChanges = (
               like: likeFromArg,
             },
           };
-        }
+        },
       );
     }
   });
-  getLikedTitlesFields.forEach((fieldInfo) => {
+  getLikedTitlesFields.forEach(fieldInfo => {
     console.log(fieldInfo, args);
     if ((fieldInfo.arguments as any).uid === args.uid) {
       cache.updateQuery(
@@ -898,7 +898,7 @@ export const updateMovieLikesChanges = (
               ],
             },
           } as GetLikedTitlesQuery;
-        }
+        },
       );
     }
   });
@@ -908,7 +908,7 @@ export const readNotificationChanges = (
   _result: ReadNotificationMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -916,9 +916,9 @@ export const readNotificationChanges = (
   };
 
   const getUserNotificationsFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getUserNotifications
+    field => field.fieldName === fieldsInfos.getUserNotifications,
   );
-  getUserNotificationsFields.forEach((fieldInfo) => {
+  getUserNotificationsFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).uid === args.uid) {
       cache.updateQuery(
         { query: GetUserNotificationsDocument, variables: fieldInfo.arguments },
@@ -934,16 +934,16 @@ export const readNotificationChanges = (
             ...data,
             getUserNotifications: {
               ...getUserNotifications,
-              like: likeNotifications.map((like) => {
+              like: likeNotifications.map(like => {
                 return { ...like, isRead: true };
               }),
-              follow: followNotifications.map((follow) => {
+              follow: followNotifications.map(follow => {
                 return { ...follow, isRead: true };
               }),
             },
           };
           return newData;
-        }
+        },
       );
     }
   });
@@ -953,7 +953,7 @@ export const clearNotificationsChanges = (
   _result: ClearNotificationsMutation,
   args: Variables,
   cache: Cache,
-  _info: ResolveInfo
+  _info: ResolveInfo,
 ) => {
   const allFields = cache.inspectFields('Query');
   const fieldsInfos = {
@@ -961,9 +961,9 @@ export const clearNotificationsChanges = (
   };
 
   const getUserNotificationsFields = allFields.filter(
-    (field) => field.fieldName === fieldsInfos.getUserNotifications
+    field => field.fieldName === fieldsInfos.getUserNotifications,
   );
-  getUserNotificationsFields.forEach((fieldInfo) => {
+  getUserNotificationsFields.forEach(fieldInfo => {
     if ((fieldInfo.arguments as any).uid === args.uid) {
       cache.updateQuery(
         { query: GetUserNotificationsDocument, variables: fieldInfo.arguments },
@@ -982,7 +982,7 @@ export const clearNotificationsChanges = (
             },
           };
           return newData;
-        }
+        },
       );
     }
   });

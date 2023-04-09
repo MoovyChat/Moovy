@@ -39,9 +39,9 @@ const VisitedTitles = () => {
     <>
       <Helmet>
         <title>{`${id}: History`}</title>
-        <meta name='description' content={`${id}: History`} />
+        <meta name="description" content={`${id}: History`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/activity/${id}/history`}
         />
       </Helmet>

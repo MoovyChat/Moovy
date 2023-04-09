@@ -19,7 +19,7 @@ const CatalogTemplate: React.FC<props> = ({
   page,
   lastPage,
 }) => {
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -38,7 +38,8 @@ const CatalogTemplate: React.FC<props> = ({
           justifyContent: 'center',
           alignItems: 'center',
           fontWeight: '600',
-        }}>
+        }}
+      >
         Catalog is empty
       </div>
     );

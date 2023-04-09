@@ -9,7 +9,7 @@ const CommentsComponent: React.FC<props> = ({ type }) => {
   const location = useLocation();
   return (
     <>
-      <ChildHeader text={type} className='comment-header' />
+      <ChildHeader text={type} className="comment-header" />
       <Outlet key={location.pathname} />
     </>
   );

@@ -1,6 +1,11 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
-import { Profile, Users, useGetUserProfileQuery, useMeQuery } from '../../generated/graphql';
+import {
+  Profile,
+  Users,
+  useGetUserProfileQuery,
+  useMeQuery,
+} from '../../generated/graphql';
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
@@ -29,18 +34,15 @@ import { withUrqlClient } from 'next-urql';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [{ data, fetching, error }] = useMeQuery();
-  const theme = useAppSelector((state) => state.settings.theme);
-  const isPopupOpen = useAppSelector((state) => state.popup.isPopupOpened);
-  const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
-  const user = useAppSelector((state) => state.user);
+  const theme = useAppSelector(state => state.settings.theme);
+  const isPopupOpen = useAppSelector(state => state.popup.isPopupOpened);
+  const isNavBarOpen = useAppSelector(state => state.misc.isNavBarOpen);
+  const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [prof, setProfile] = useState<Profile | null>(null);
   const [customLoading, setCustomLoading] = useState<boolean>(true);
-  const isProfileExists = useAppSelector((state) => state.misc.isProfileExists);
-  const handleEscapeKey: (this: Document, ev: KeyboardEvent) => any = (
-    event
-  ) => {
+  const isProfileExists = useAppSelector(state => state.misc.isProfileExists);
+  const handleEscapeKey: (this: Document, ev: KeyboardEvent) => any = event => {
     if (event.key.toLowerCase() === 'escape') {
       // code to close modal or perform other action
       if (isPopupOpen) {
@@ -54,25 +56,6 @@ const Home = () => {
       }
     }
   };
-
-
-  useMemo(() => {
-    // Log any errors with fetching user data
-    if (error) {
-      console.log(error);
-    }
-    // If user data is successfully fetched and not in the process of fetching, proceed
-    if (!fetching && data) {
-      // Retrieve user object and current path
-      const user = data?.me as Users;
-      // If a user object exists
-      if (user) {
-        // Update Redux store with user data and save user data in localStorage
-        dispatch(sliceSetUser(user));
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-    }
-  }, [fetching, data, error]);
 
   const [profile] = useGetUserProfileQuery({
     variables: { uid: user?.id },
@@ -92,7 +75,7 @@ const Home = () => {
     const { data, fetching } = profile;
     if (!fetching && data) {
       const _data = data.getUserProfile;
-  
+
       setProfile(_data as Profile);
 
       if (!_data) dispatch(sliceSetIsProfileExists(false));
@@ -112,27 +95,28 @@ const Home = () => {
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
-  if (fetching || profile.fetching || customLoading) return <LogoLoading />;
+  if (profile.fetching || customLoading) return <LogoLoading />;
 
   return (
     <ThemeProvider
-      theme={theme === themes.DARK ? darkThemeForHome : lightThemeForHome}>
+      theme={theme === themes.DARK ? darkThemeForHome : lightThemeForHome}
+    >
       <GlobalStyles />
       <Helmet>
         <title>Moovy</title>
-        <meta name='description' content='Home' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}`} />
+        <meta name="description" content="Home" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
 
       {isProfileExists ? (
         <HomeParent>
-          <HomeHeader className='home-header' />
-          <PanelsParent className='panels' isNavBarOpen={isNavBarOpen}>
-            <LeftPanel className='left'></LeftPanel>
-            <CenterPanel className='center' id='center'></CenterPanel>
-            <RightPanel className='right'></RightPanel>
+          <HomeHeader className="home-header" />
+          <PanelsParent className="panels" isNavBarOpen={isNavBarOpen}>
+            <LeftPanel className="left"></LeftPanel>
+            <CenterPanel className="center" id="center"></CenterPanel>
+            <RightPanel className="right"></RightPanel>
           </PanelsParent>
-            <Popup />
+          <Popup />
         </HomeParent>
       ) : (
         <SetProfile profile={prof} />

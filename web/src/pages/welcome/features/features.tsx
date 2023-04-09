@@ -75,8 +75,8 @@ const Features: React.FC<props> = ({ id }) => {
   };
   return (
     <StyledFeatures id={id} ref={ref} style={animProps}>
-      <div className='heading'>Features</div>
-      <div className='features'>
+      <div className="heading">Features</div>
+      <div className="features">
         <HomeCard info={content.filters} />
         <HomeCard info={content.accent} />
         <HomeCard info={content.ambience} />

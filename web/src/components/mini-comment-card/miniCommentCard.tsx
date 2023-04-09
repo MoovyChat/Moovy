@@ -51,7 +51,7 @@ const MiniCommentCard: React.FC<props> = ({
     if (!fetching && data) {
       const _data = data.getCommentOrReply;
       parentComment.current = _data?.comment ? _data.comment : _data?.reply;
-      getUser({ uid: parentComment?.current?.commentedUserId }).then((res) => {
+      getUser({ uid: parentComment?.current?.commentedUserId }).then(res => {
         const { data, error } = res;
         if (error) console.log(error);
         if (data) {
@@ -80,47 +80,49 @@ const MiniCommentCard: React.FC<props> = ({
       cardHeight={cardHeight}
       showMore={showMore}
       tabIndex={0}
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         if (type === 'reply') {
           navigate(`/home/reply/${id}`);
         } else if (type === 'comment') {
           navigate(`/home/comment/${id}`);
         }
-      }}>
+      }}
+    >
       {parentComment.current ? (
         <React.Fragment>
-          <div className='photo'>
+          <div className="photo">
             <ProfilePic
               src={user?.photoUrl!}
               user={user as Users}
               tooltip={true}
             />
           </div>
-          <div className='data'>
-            <div className='name'>
+          <div className="data">
+            <div className="name">
               <span>{user && (user.nickname as string)}</span>
-              <span className='time'>
+              <span className="time">
                 {getTimeFrame(parentComment.current.createdAt!)}
               </span>
             </div>
-            <div className='msg' ref={messageRef}>
+            <div className="msg" ref={messageRef}>
               {parentComment.current.message}
             </div>
             {isEllipsis && extendData && (
               <div
-                className='show-more'
-                onClick={(e) => {
+                className="show-more"
+                onClick={e => {
                   e.stopPropagation();
                   setShowMore(!showMore);
-                }}>
+                }}
+              >
                 {showMore ? 'Show less' : 'Show more'}
               </div>
             )}
           </div>
         </React.Fragment>
       ) : (
-        <div className='not-found'>The comment/reply has been deleted.</div>
+        <div className="not-found">The comment/reply has been deleted.</div>
       )}
     </StyledMiniCommentCard>
   );

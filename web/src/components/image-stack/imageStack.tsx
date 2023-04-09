@@ -44,7 +44,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
     ? `${count} followers`
     : `${count} following`;
 
-  const showFollowUsers: MouseEventHandler<HTMLDivElement> = (e) => {
+  const showFollowUsers: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const _sentData = {
       data: user.id,
@@ -61,18 +61,19 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
   let defaultText = isFollowerSection ? `No followers` : `0 following`;
   return (
     <ImageStackParent>
-      <div className='gp'>
-        <div className='one profile-box'>
+      <div className="gp">
+        <div className="one profile-box">
           {users[0] ? (
             <Tooltip
-              height='140px'
+              height="140px"
               message={TOOLTIP.USER}
-              width='200px'
+              width="200px"
               data={users[0]?.id}
-              dir={followers ? DIRECTION.BOTTOM_RIGHT : DIRECTION.BOTTOM}>
+              dir={followers ? DIRECTION.BOTTOM_RIGHT : DIRECTION.BOTTOM}
+            >
               <Image
                 src={users[0]?.photoUrl}
-                alt='profile'
+                alt="profile"
                 onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[0].nickname);
@@ -80,20 +81,21 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt="profile" />
           )}
         </div>
-        <div className='two profile-box'>
+        <div className="two profile-box">
           {users[1] ? (
             <Tooltip
-              height='140px'
+              height="140px"
               message={TOOLTIP.USER}
-              width='200px'
+              width="200px"
               data={users[1]?.id}
-              dir={DIRECTION.BOTTOM}>
+              dir={DIRECTION.BOTTOM}
+            >
               <Image
                 src={users[1]?.photoUrl}
-                alt='profile'
+                alt="profile"
                 onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[1].nickname);
@@ -101,20 +103,21 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt="profile" />
           )}
         </div>
-        <div className='three profile-box'>
+        <div className="three profile-box">
           {users[2] ? (
             <Tooltip
-              height='140px'
+              height="140px"
               message={TOOLTIP.USER}
-              width='200px'
+              width="200px"
               data={users[2]?.id}
-              dir={following ? DIRECTION.BOTTOM_LEFT : DIRECTION.BOTTOM}>
+              dir={following ? DIRECTION.BOTTOM_LEFT : DIRECTION.BOTTOM}
+            >
               <Image
                 src={users[2]?.photoUrl}
-                alt='profile'
+                alt="profile"
                 onClick={(e: any) => {
                   e.stopPropagation();
                   redirectToUserProfile(users[2].nickname);
@@ -122,11 +125,11 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt='profile' />
+            <Image src={MoovyIcon} alt="profile" />
           )}
         </div>
       </div>
-      <div className='count' onClick={showFollowUsers}>
+      <div className="count" onClick={showFollowUsers}>
         {count <= 0 ? defaultText : countText}
       </div>
     </ImageStackParent>

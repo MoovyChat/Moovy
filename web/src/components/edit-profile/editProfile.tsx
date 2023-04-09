@@ -34,8 +34,8 @@ interface ErrorIn {
   dob: string;
 }
 const EditProfile = () => {
-  const profile = useAppSelector((state) => state.profile);
-  const user = useAppSelector((state) => state.user);
+  const profile = useAppSelector(state => state.profile);
+  const user = useAppSelector(state => state.user);
   const [tempProfile, setTempProfile] = useState<Profile>(profile);
   const [nickname, setNickname] = useState<string>(user.nickname);
   const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ const EditProfile = () => {
   });
 
   useMemo(() => {
-    const values = Object.values(errors).filter((val) => val !== '');
+    const values = Object.values(errors).filter(val => val !== '');
     if (values.length > 0) setHasError(() => true);
     else setHasError(() => false);
   }, [errors, setHasError]);
@@ -64,23 +64,23 @@ const EditProfile = () => {
       tempProfile.fullname &&
       tempProfile.fullname.length < 2
     ) {
-      setErrors((err) => ({ ...err, fullname: 'Invalid name' }));
+      setErrors(err => ({ ...err, fullname: 'Invalid name' }));
     } else {
-      setErrors((err) => ({ ...err, fullname: '' }));
+      setErrors(err => ({ ...err, fullname: '' }));
     }
 
     if (tempProfile.gender === '') {
-      setErrors((err) => ({ ...err, gender: 'Invalid value' }));
+      setErrors(err => ({ ...err, gender: 'Invalid value' }));
     } else {
-      setErrors((err) => ({ ...err, gender: '' }));
+      setErrors(err => ({ ...err, gender: '' }));
     }
 
     if (nickname.length < 2) {
-      setErrors((err) => ({ ...err, nickname: 'Invalid user name' }));
+      setErrors(err => ({ ...err, nickname: 'Invalid user name' }));
     }
   }, [tempProfile, nickname, setErrors, setHasError]);
 
-  const updateValues: FormEventHandler<HTMLFormElement> = (e) => {
+  const updateValues: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation();
     setSaving(() => true);
     updateProfile({
@@ -93,7 +93,7 @@ const EditProfile = () => {
         bio: tempProfile.bio as string,
       },
     })
-      .then((res) => {
+      .then(res => {
         const { data, error } = res;
         if (error?.message) {
           setSaving(() => false);
@@ -111,7 +111,7 @@ const EditProfile = () => {
         setSaving(() => false);
         window.location.reload();
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error);
         setHasError(true);
         return <pre>error</pre>;
@@ -133,12 +133,12 @@ const EditProfile = () => {
     let regex = /^\d{4}-\d{2}-\d{2}$/;
     const dateMatch = regex.exec(value);
     if (dateMatch === null) {
-      setErrors((err) => ({ ...err, dob: `Invalid ${value}` }));
+      setErrors(err => ({ ...err, dob: `Invalid ${value}` }));
     } else {
       // check if input value is a valid date
       const date = new Date(value);
       if (isNaN(date.getTime())) {
-        setErrors((err) => ({
+        setErrors(err => ({
           ...err,
           dob: `Invalid ${value}: date is not valid`,
         }));
@@ -159,12 +159,12 @@ const EditProfile = () => {
         age--;
       }
       if (age < 13) {
-        setErrors((err) => ({
+        setErrors(err => ({
           ...err,
           dob: 'You must be at least 13 years old to sign up',
         }));
       } else {
-        setErrors((err) => ({
+        setErrors(err => ({
           ...err,
           dob: '',
         }));
@@ -176,7 +176,7 @@ const EditProfile = () => {
     let regex =
       /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/;
     const match1 = regex.exec(value);
-    setErrors((err) => ({
+    setErrors(err => ({
       ...err,
       nickname: match1
         ? match1[2]
@@ -186,17 +186,17 @@ const EditProfile = () => {
     }));
     if (match1 && !match1[2]) {
       isUserNameExists({ text: value })
-        .then((res) => {
+        .then(res => {
           const _data = res.data;
           const isExists = _data?.isUserNameExists;
           if (isExists)
-            setErrors((err) => ({
+            setErrors(err => ({
               ...err,
               nickname: `${value} already exists`,
             }));
         })
-        .catch((error) => {
-          setErrors((err) => ({
+        .catch(error => {
+          setErrors(err => ({
             ...err,
             nickname: `Server Error`,
           }));
@@ -204,7 +204,7 @@ const EditProfile = () => {
     }
   }, 500);
 
-  const cancelButtonHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const cancelButtonHandler: MouseEventHandler<HTMLButtonElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
@@ -220,9 +220,9 @@ const EditProfile = () => {
   if (serverError)
     return (
       <EditProfileParent hasError={true}>
-        <div id='title'>Server Error</div>
+        <div id="title">Server Error</div>
         <div
-          id='title'
+          id="title"
           style={{
             fontSize: '2.5rem',
             display: 'flex',
@@ -230,77 +230,78 @@ const EditProfile = () => {
             padding: '20px 30px',
             borderRadius: '50%',
             boxShadow: '0 0 5px',
-          }}>
-          <MdReportGmailerrorred fill='red' />
+          }}
+        >
+          <MdReportGmailerrorred fill="red" />
           <span>400</span>
         </div>
-        <div id='title'>{serverError}</div>
+        <div id="title">{serverError}</div>
       </EditProfileParent>
     );
   return (
     <EditProfileParent hasError={hasError}>
       <form onSubmit={updateValues}>
-        <div id='title'>
-          <span id='ic'>
+        <div id="title">
+          <span id="ic">
             <FaUserEdit size={25} />
           </span>
           <span>Edit Profile</span>
         </div>
-        <div className='nickname ext'>
+        <div className="nickname ext">
           <ProfileTextBox
-            title='Username*'
-            type='text'
+            title="Username*"
+            type="text"
             value={nickname}
-            keyItem='nickname'
+            keyItem="nickname"
             setValue={handleNickname}
             error={errors!.nickname}
           />
         </div>
-        <div className='first ext'>
+        <div className="first ext">
           <ProfileTextBox
-            title='Full Name*'
-            type='text'
-            keyItem='fullname'
+            title="Full Name*"
+            type="text"
+            keyItem="fullname"
             value={tempProfile.fullname as string}
             setValue={setValue}
             error={errors!.fullname}
           />
         </div>
-        <div className='dob ext'>
+        <div className="dob ext">
           <ProfileTextBox
-            title='DOB'
-            type='date'
-            keyItem='dob'
+            title="DOB"
+            type="date"
+            keyItem="dob"
             value={tempProfile.dob as string}
             setValue={handleDOB}
             error={errors!.dob}
           />
         </div>
-        <div className='gender ext'>
+        <div className="gender ext">
           <ProfileTextBox
-            title='Gender*'
-            type='select'
-            keyItem='gender'
+            title="Gender*"
+            type="select"
+            keyItem="gender"
             value={tempProfile.gender as string}
             setValue={setValue}
             error={errors!.gender}
           />
         </div>
-        <div className='gender ext'>
+        <div className="gender ext">
           <ProfileTextBox
-            title='Bio'
-            type='textarea'
-            keyItem='bio'
+            title="Bio"
+            type="textarea"
+            keyItem="bio"
             value={tempProfile.bio as string}
             setValue={setValue}
-            error='none'
+            error="none"
           />
         </div>
-        <div className='ext'>
-          <button id='save' type='submit'>
+        <div className="ext">
+          <button id="save" type="submit">
             Save
           </button>
-          <button id='cancel' onClick={cancelButtonHandler}>
+          <button id="cancel" onClick={cancelButtonHandler}>
             Cancel
           </button>
         </div>

@@ -5,7 +5,7 @@ import EmptyPage from '../../components/empty-page/emptyPage';
 import { LikedStyles } from './favorites.styles';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 
 type props = {
   page: number;
@@ -33,7 +33,7 @@ const TitleListTemplate: React.FC<props> = ({
     };
   }, []);
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -45,19 +45,22 @@ const TitleListTemplate: React.FC<props> = ({
   return (
     <CSSTransition
       in={mounted.current}
-      classNames='ttList'
+      classNames="ttList"
       timeout={100}
-      nodeRef={parentRef}>
+      nodeRef={parentRef}
+    >
       <LikedStyles
         onScroll={handleScroll}
         ref={parentRef}
-        className='styled-titleList'>
+        className="styled-titleList"
+      >
         {movieStatsData.length > 0 ? (
           <React.Fragment>
             <ViewportList
               ref={listRef}
               viewportRef={parentRef}
-              items={movieStatsData}>
+              items={movieStatsData}
+            >
               {(movieStat, index) => (
                 <MovieCard
                   movieId={movieStat.movieId!}
@@ -67,9 +70,9 @@ const TitleListTemplate: React.FC<props> = ({
             </ViewportList>
           </React.Fragment>
         ) : (
-          <EmptyPage msg='List is empty.' />
+          <EmptyPage msg="List is empty." />
         )}
-        <div className='extra'>{fetching && <Loading />}</div>
+        <div className="extra">{fetching && <Loading />}</div>
       </LikedStyles>
     </CSSTransition>
   );

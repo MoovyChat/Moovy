@@ -32,7 +32,7 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
   const [like, setLike] = useState<boolean>(false);
   const navigate = useNavigate();
   const [, setCommentLike] = useUpdateUserMovieStatsMutation();
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const [visitedData, setVisited] = useState<VisitedInterface | null>(null);
   const [visited] = useGetVisitedQuery({
     variables: {
@@ -50,7 +50,7 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
       if (_data !== null) {
         const history = _data.history;
         const parsedHistory: VisitedInterface | null = JSON.parse(
-          history.slice(-1)[0]
+          history.slice(-1)[0],
         );
         setVisited(() => parsedHistory);
       }
@@ -61,14 +61,14 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
     pause: isServer(),
   });
 
-  const parentClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const parentClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (movie) {
       if (location.pathname !== `/home/show/${movie.titleId!}`)
         navigate(`/home/show/${movie.titleId!}`);
     }
   };
-  const titleClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const titleClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (title) {
       if (location.pathname !== `/movie/${title.id!}`)
@@ -78,7 +78,7 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
         navigate(`/movie/${movie?.id!}`);
     }
   };
-  const updateLike: MouseEventHandler<HTMLDivElement> = (e) => {
+  const updateLike: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setLike(!like);
     setCommentLike({
@@ -87,7 +87,7 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
       options: {
         like: !like,
       },
-    }).then((res) => {
+    }).then(res => {
       const { data, error } = res;
       if (error) console.log(error);
       if (data) {
@@ -109,75 +109,75 @@ const MovieInfo: React.FC<props> = ({ movie, title }) => {
   }, [getUserMovieStats]);
   return (
     <MovieInfoParent>
-      <div className='title'>
+      <div className="title">
         <span onClick={titleClickHandler}>
           {movie ? movie.name : title?.title}
         </span>
       </div>
       {movie && movie.parentTitleName && (
-        <div className='parent'>
+        <div className="parent">
           <span onClick={parentClickHandler}>{movie?.parentTitleName}</span>
         </div>
       )}
-      <div className='group'>
+      <div className="group">
         {movie ? (
           <React.Fragment>
-            {movie.season && <div className='year'>{`${movie.season}`}</div>}
-            {movie.year && <div className='year'> Year {movie.year}</div>}
-            <div className='year'>
+            {movie.season && <div className="year">{`${movie.season}`}</div>}
+            {movie.year && <div className="year"> Year {movie.year}</div>}
+            <div className="year">
               {movie.runtime && `${Math.round(movie.runtime / 60)} min`}
             </div>
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <div className='year'>{title && title.type}</div>
+            <div className="year">{title && title.type}</div>
             {title &&
               title.advisories?.map((adv, index) => (
-                <div className='year' key={index}>
+                <div className="year" key={index}>
                   {adv}
                 </div>
               ))}
-            {title?.rating && <div className='year'>{title?.rating}</div>}
+            {title?.rating && <div className="year">{title?.rating}</div>}
           </React.Fragment>
         )}
       </div>
-      <div className='synopsis'>
-        <div className='a'>Synopsis</div>
-        <div className='b'>{movie ? movie.synopsis : title?.synopsis}</div>
+      <div className="synopsis">
+        <div className="a">Synopsis</div>
+        <div className="b">{movie ? movie.synopsis : title?.synopsis}</div>
       </div>
       {movie && (
-        <div className='stats-container'>
-          <div className='stats'>
-            <div className='likes' onClick={updateLike}>
-              <div className='count'>{movie?.likesCount}</div>
-              <div className='icon'>
+        <div className="stats-container">
+          <div className="stats">
+            <div className="likes" onClick={updateLike}>
+              <div className="count">{movie?.likesCount}</div>
+              <div className="icon">
                 {like ? (
-                  <MdFavorite size={20} fill='#ff005d' />
+                  <MdFavorite size={20} fill="#ff005d" />
                 ) : (
                   <MdOutlineFavoriteBorder size={20} />
                 )}
               </div>
             </div>
-            <div className='comments'>
-              <div className='count'>{movie?.commentCount}</div>
-              <div className='icon'>
-                <MdChatBubbleOutline size={20} fill='violet' />
+            <div className="comments">
+              <div className="count">{movie?.commentCount}</div>
+              <div className="icon">
+                <MdChatBubbleOutline size={20} fill="violet" />
               </div>
             </div>
-            <div className='views'>
-              <div className='count'>{movie?.viewsCount}</div>
-              <div className='icon'>
-                <MdVisibility size={20} fill='#00dfff' />
+            <div className="views">
+              <div className="count">{movie?.viewsCount}</div>
+              <div className="icon">
+                <MdVisibility size={20} fill="#00dfff" />
               </div>
             </div>
           </div>
           {visitedData && visitedData?.visitTime && (
-            <div className='stats '>
-              <div className='likes history'>
-                <div className='icon'>
+            <div className="stats ">
+              <div className="likes history">
+                <div className="icon">
                   <MdAccessTime size={20} />
                 </div>
-                <div className='count'>
+                <div className="count">
                   {getShortDateFormat(visitedData?.visitTime + '')}
                 </div>
               </div>

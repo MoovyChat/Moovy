@@ -38,11 +38,9 @@ interface SubscribePayload {
 }
 
 const subscribePayload: SubscribePayload = {
-  query: "", // set default value here
+  query: '', // set default value here
   // other properties
 };
-
-
 
 const wsClient = createWSClient({
   url: wsUrl,
@@ -150,8 +148,8 @@ export const urqlClient: any = (ssrExchange: any) => ({
     devtoolsExchange,
     cacheExchange(cache),
     subscriptionExchange({
-      forwardSubscription: (operation) => ({
-        subscribe: (sink) => ({
+      forwardSubscription: operation => ({
+        subscribe: sink => ({
           unsubscribe: wsClient.subscribe(operation as SubscribePayload, sink),
         }),
       }),

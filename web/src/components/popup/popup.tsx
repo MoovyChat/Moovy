@@ -27,10 +27,10 @@ import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
 
 const Popup = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const isPopupOpen = useAppSelector((state) => state.popup.isPopupOpened);
+  const isPopupOpen = useAppSelector(state => state.popup.isPopupOpened);
   const dispatch = useAppDispatch();
   const selectedElemFromRedux = useAppSelector(
-    (state) => state.popup.selectedElement
+    state => state.popup.selectedElement,
   );
 
   function handleOutSideClick(e: any) {
@@ -72,13 +72,14 @@ const Popup = () => {
   }, [selectedElemFromRedux]);
   return (
     <CSSTransition
-      classNames='alert'
+      classNames="alert"
       in={isPopupOpen}
       nodeRef={ref}
       timeout={500}
-      unmountOnExit>
-      <StyledPopUP id='popup-parent' ref={ref}>
-        <PopupParent id='popup-child'>
+      unmountOnExit
+    >
+      <StyledPopUP id="popup-parent" ref={ref}>
+        <PopupParent id="popup-child">
           <SelectedElement />
         </PopupParent>
       </StyledPopUP>

@@ -22,7 +22,7 @@ const UserProfileSlice = createSlice({
     },
     sliceUpdateProfileField: (
       state,
-      action: { payload: { key: string; value: string }; type: string }
+      action: { payload: { key: string; value: string }; type: string },
     ) => {
       const { key, value } = action.payload;
       return { ...state, [key]: value };

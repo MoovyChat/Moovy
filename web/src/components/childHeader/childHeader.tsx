@@ -19,7 +19,7 @@ const ChildHeader: React.FC<props> = ({ text, className, children }) => {
   const navigate = useNavigate();
 
   // Define a click handler for the back button.
-  const backButtonHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const backButtonHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     navigate(-1); // Navigate back to the previous page.
   };
@@ -28,11 +28,11 @@ const ChildHeader: React.FC<props> = ({ text, className, children }) => {
   return (
     <ChildHeaderStyles className={className}>
       {/* Render the back button. */}
-      <div className='back-button' onClick={backButtonHandler}>
+      <div className="back-button" onClick={backButtonHandler}>
         <MdKeyboardBackspace size={30} />
       </div>
       {/* Render the header text. */}
-      <HeaderText className='header-text'>{text ? text : children}</HeaderText>
+      <HeaderText className="header-text">{text ? text : children}</HeaderText>
     </ChildHeaderStyles>
   );
 };

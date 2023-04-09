@@ -21,7 +21,7 @@ export const EditProfileParent = styled.div<props>`
     #title {
       font-size: 1rem;
       font-weight: bold;
-      color: ${(p) => p.theme.text};
+      color: ${p => p.theme.text};
       margin-bottom: 1rem;
       height: 100%;
       display: flex;
@@ -41,8 +41,8 @@ export const EditProfileParent = styled.div<props>`
       gap: 10px;
       flex-wrap: wrap;
       #save {
-        background: ${(p) => (p.hasError ? '#9bbc86' : '#459d0e')};
-        pointer-events: ${(p) => (p.hasError ? 'none' : 'auto')};
+        background: ${p => (p.hasError ? '#9bbc86' : '#459d0e')};
+        pointer-events: ${p => (p.hasError ? 'none' : 'auto')};
       }
       #cancel {
         background: #ffffff;
@@ -57,10 +57,10 @@ export const EditProfileParent = styled.div<props>`
         margin: 20px 0;
         :hover {
           cursor: pointer;
-          box-shadow: 0 0 3px 1px ${(p) => p.theme.text}, inset 0 0 5px black;
+          box-shadow: 0 0 3px 1px ${p => p.theme.text}, inset 0 0 5px black;
         }
         :active {
-          box-shadow: 0 0 1px 1px ${(p) => p.theme.text}, inset 0 0 7px black;
+          box-shadow: 0 0 1px 1px ${p => p.theme.text}, inset 0 0 7px black;
         }
       }
     }

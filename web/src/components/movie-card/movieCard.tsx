@@ -15,7 +15,7 @@ type props = {
 const MovieCard: React.FC<props> = ({ movieId }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const [movie, setMovie] = useState<Movie | null>(null);
   // GraphQL: Get movie info
   const [movieData, _executeQuery] = useGetMovieQuery({
@@ -33,7 +33,7 @@ const MovieCard: React.FC<props> = ({ movieId }) => {
     }
   }, [movieData]);
 
-  const cardClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const cardClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (location.pathname !== `/home/movie/${movieId}`)
       navigate(`/home/movie/${movieId}`);
@@ -41,11 +41,11 @@ const MovieCard: React.FC<props> = ({ movieId }) => {
 
   return (
     <MovieCardParent bg={movie?.stills!} onClick={cardClickHandler}>
-      <div className='container'>
-        <div className='thumbs'>
-          <Image src={movie?.thumbs!} alt='movie' />
+      <div className="container">
+        <div className="thumbs">
+          <Image src={movie?.thumbs!} alt="movie" />
         </div>
-        <div className='info'>
+        <div className="info">
           <MovieInfo movie={movie!} />
         </div>
       </div>

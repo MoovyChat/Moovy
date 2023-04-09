@@ -13,17 +13,17 @@ const HomeCard: React.FC<props> = ({ info }) => {
   const { title, content, src } = info;
   return (
     <StyledHomeCard>
-      <div className='container'>
-        <div className='title'>{title}</div>
+      <div className="container">
+        <div className="title">{title}</div>
         <img
           src={src}
-          className='shc-img'
-          alt='image'
+          className="shc-img"
+          alt="image"
           srcSet={info.srcSet}
-          sizes='250px'
-          loading='lazy'
+          sizes="250px"
+          loading="lazy"
         />
-        <div className='content'>{content}</div>
+        <div className="content">{content}</div>
       </div>
     </StyledHomeCard>
   );

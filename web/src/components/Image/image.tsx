@@ -63,7 +63,8 @@ export const Image: React.FC<props> = ({
         height={height}
       />
       <div
-        style={{ display: imageError ? 'flex' : 'none', maxHeight: '100px' }}>
+        style={{ display: imageError ? 'flex' : 'none', maxHeight: '100px' }}
+      >
         <MoovyLogo />
       </div>
     </>

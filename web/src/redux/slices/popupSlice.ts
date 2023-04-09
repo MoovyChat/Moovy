@@ -23,7 +23,7 @@ const PopupSlice = createSlice({
     sliceSetPopupData: (state, action) => {
       return { ...state, popupData: action.payload };
     },
-    sliceResetPopup: (state) => {
+    sliceResetPopup: state => {
       return {
         ...state,
         popupData: {},

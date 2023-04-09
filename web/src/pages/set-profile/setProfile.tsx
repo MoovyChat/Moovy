@@ -75,7 +75,7 @@ const defaultFormData: FormData = {
   },
 };
 const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const [index, setIndex] = useState<number>(0);
   const navigate = useNavigate();
   const [, isUserNameExists] = useIsUserNameExistsMutation();
@@ -137,13 +137,13 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
           return Promise.resolve(`Invalid ${name}: '${match1[2]}' not allowed`);
         } else {
           return isUserNameExists({ text: value })
-            .then((res) => {
+            .then(res => {
               const _data = res.data;
               const isExists = _data?.isUserNameExists;
               if (isExists) return `${value} already exists`;
               return '';
             })
-            .catch((error) => {
+            .catch(error => {
               console.error(error);
               return '';
             });
@@ -200,12 +200,12 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       | HTMLTextAreaElement
       | HTMLSelectElement
       | HTMLInputElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
     let regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
     let error = await validateField(name, value, regex);
-    setFormData((prevFormData) => ({
+    setFormData(prevFormData => ({
       ...prevFormData,
       [name]: {
         value,
@@ -224,7 +224,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     const userName = formData.userName.value;
     const fullName = formData.fullName.value;
     if (userName === '') {
-      setFormData((prevFormData) => ({
+      setFormData(prevFormData => ({
         ...prevFormData,
         userName: {
           value: '',
@@ -234,7 +234,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       }));
     }
     if (fullName === '') {
-      setFormData((prevFormData) => ({
+      setFormData(prevFormData => ({
         ...prevFormData,
         fullName: {
           value: '',
@@ -244,7 +244,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       }));
     }
     if (dobValue === '') {
-      setFormData((prevFormData) => ({
+      setFormData(prevFormData => ({
         ...prevFormData,
         dob: {
           value: '',
@@ -254,7 +254,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       }));
     }
     if (genderValue === '') {
-      setFormData((prevFormData) => ({
+      setFormData(prevFormData => ({
         ...prevFormData,
         gender: {
           value: '',
@@ -283,7 +283,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
           dob: formData.dob.value,
           bio: formData.bio.value,
         },
-      }).then((res) => {
+      }).then(res => {
         const error = res.error;
         const _data = res.data;
         if (error) {
@@ -311,7 +311,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
 
   const handleYearInput = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
-    setFormData((prevFormData) => ({
+    setFormData(prevFormData => ({
       ...prevFormData,
       dob: {
         ...prevFormData.dob,
@@ -320,9 +320,9 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     }));
   };
 
-  const nextClickHandler: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const nextClickHandler: React.MouseEventHandler<HTMLButtonElement> = e => {
     e.stopPropagation();
-    if (index < RegistrationSteps.length - 1) setIndex((i) => i + 1);
+    if (index < RegistrationSteps.length - 1) setIndex(i => i + 1);
     else if (index === RegistrationSteps.length - 1) {
       handleSubmit();
     }
@@ -338,93 +338,95 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     <StyledSetProfile>
       <Helmet>
         <title>Update Profile</title>
-        <meta name='description' content='Update Profile' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/update-profile`} />
+        <meta name="description" content="Update Profile" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/update-profile`} />
       </Helmet>
-      <div className='title'>
-        <div className='logo'>
-          <img src={Moovy} alt='logo' />
+      <div className="title">
+        <div className="logo">
+          <img src={Moovy} alt="logo" />
         </div>
       </div>
-      <div className='moovy-profile-title'>
-        <div className='pic-container'>
+      <div className="moovy-profile-title">
+        <div className="pic-container">
           <ProfilePic src={user.photoUrl} tooltip={true} />
         </div>
-        <div className='container'>
-          <div className='title'>User Information</div>
-          <div className='description'>
+        <div className="container">
+          <div className="title">User Information</div>
+          <div className="description">
             You can edit the public information about yourself. The changes will
             be displayed for other users after the update.
           </div>
         </div>
       </div>
-      <div className='moovy-steps-container'>
+      <div className="moovy-steps-container">
         <StyledSteps>
           {RegistrationSteps.map((step, i) => (
             <StyledRegistrationStep
               isSelected={i === index}
               isError={Object.values(formData)[i].error !== ''}
-              className='step'
+              className="step"
               key={i}
-              onClick={() => setIndex(i)}>
-              <div className='index'>{i + 1}</div>
-              <div className='text'>
+              onClick={() => setIndex(i)}
+            >
+              <div className="index">{i + 1}</div>
+              <div className="text">
                 <div>{step.title}</div>
-                <div className='value'>{values[i]}</div>
+                <div className="value">{values[i]}</div>
               </div>
               {i !== RegistrationSteps.length - 1 && (
-                <div className='line'></div>
+                <div className="line"></div>
               )}
             </StyledRegistrationStep>
           ))}
         </StyledSteps>
         <StyledDescription>
-          <animated.div className='item' style={props}>
-            <div className='step-index'>{`Step ${currentIndex + 1}`}</div>
-            <div className='title'>
+          <animated.div className="item" style={props}>
+            <div className="step-index">{`Step ${currentIndex + 1}`}</div>
+            <div className="title">
               {RegistrationSteps[currentIndex].description}
             </div>
-            <div className='int-ctr'>
+            <div className="int-ctr">
               {currentIndex === 0 ? (
                 <StyledInput
-                  type='text'
-                  id='fullName'
-                  name='fullName'
+                  type="text"
+                  id="fullName"
+                  name="fullName"
                   value={formData.fullName.value}
                   onChange={handleInputChange}
                 />
               ) : currentIndex === 1 ? (
                 <StyledInput
-                  type='text'
-                  id='userName'
-                  name='userName'
+                  type="text"
+                  id="userName"
+                  name="userName"
                   value={formData.userName.value}
                   onChange={handleInputChange}
                 />
               ) : currentIndex === 2 ? (
                 <StyledSelect
-                  id='gender'
-                  name='gender'
+                  id="gender"
+                  name="gender"
                   value={formData.gender.value}
-                  onChange={handleInputChange}>
-                  <option value=''>-- Select Gender --</option>
-                  <option value='male'>Male</option>
-                  <option value='female'>Female</option>
-                  <option value='other'>Other</option>
+                  onChange={handleInputChange}
+                >
+                  <option value="">-- Select Gender --</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </StyledSelect>
               ) : currentIndex === 3 ? (
                 <StyledInput
-                  id='dob'
-                  name='dob'
-                  type='date'
+                  id="dob"
+                  name="dob"
+                  type="date"
                   value={formData.dob.value}
                   onChange={handleInputChange}
                   onInput={handleYearInput}
                 />
               ) : (
                 <StyledTextArea
-                  id='bio'
-                  name='bio'
+                  id="bio"
+                  name="bio"
                   maxLength={150}
                   value={formData.bio.value}
                   onChange={handleInputChange}
@@ -439,8 +441,9 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
               success && <Success>Profile updated successfully</Success>
             )}
             <button
-              className='step-index next-index'
-              onClick={nextClickHandler}>
+              className="step-index next-index"
+              onClick={nextClickHandler}
+            >
               {currentIndex === RegistrationSteps.length - 1
                 ? 'Finish'
                 : 'Next'}

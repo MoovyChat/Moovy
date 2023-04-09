@@ -12,7 +12,7 @@ const Premium = () => {
     const data = searchParams.get('data');
 
     if (iv && data) {
-      decrypt({ iv, data }).then((res) => {
+      decrypt({ iv, data }).then(res => {
         const { error, data } = res;
         if (error) console.log(error);
         if (data) {

@@ -62,68 +62,74 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
       selectedOption={selectedOption}
       id={id}
       ref={ref}
-      style={animProps}>
-      <div className='steps'>
-        <div className='heading'>Installation Guide</div>
+      style={animProps}
+    >
+      <div className="steps">
+        <div className="heading">Installation Guide</div>
         <div
-          className='step one'
-          onClick={(e) => {
+          className="step one"
+          onClick={e => {
             e.stopPropagation();
             setSelectedOption(1);
-          }}>
+          }}
+        >
           <p>1. Install MoovyChat</p>
           {selectedOption === 1 && (
-            <div className='info'>
+            <div className="info">
               Install the Chrome extension from{' '}
               <a
-                target='_blank'
+                target="_blank"
                 href={EXTENSION_URL}
-                style={{ padding: '0 5px', fontSize: '16px', color: 'white' }}>
+                style={{ padding: '0 5px', fontSize: '16px', color: 'white' }}
+              >
                 here
               </a>
             </div>
           )}
         </div>
         <div
-          className='step two'
-          onClick={(e) => {
+          className="step two"
+          onClick={e => {
             e.stopPropagation();
             setSelectedOption(2);
-          }}>
+          }}
+        >
           <p>2. Pin "MoovyChat" to Chrome</p>
           {selectedOption === 2 && (
-            <div className='info'>
+            <div className="info">
               Click on the
               <IoExtensionPuzzleSharp style={{ padding: '0 10px' }} />
               icon and pin the{' '}
-              <img src={MoovyLogo} alt='logo' width={30} height={30} /> icon
+              <img src={MoovyLogo} alt="logo" width={30} height={30} /> icon
             </div>
           )}
         </div>
         <div
-          className='step three'
-          onClick={(e) => {
+          className="step three"
+          onClick={e => {
             e.stopPropagation();
             setSelectedOption(3);
-          }}>
+          }}
+        >
           <p>3. Open your favorite show</p>
           {selectedOption === 3 && (
-            <div className='info'>Open your favorite show on Netflix</div>
+            <div className="info">Open your favorite show on Netflix</div>
           )}
         </div>
         <div
-          className='step four'
-          onClick={(e) => {
+          className="step four"
+          onClick={e => {
             e.stopPropagation();
             setSelectedOption(4);
-          }}>
+          }}
+        >
           <p>4. Login to MoovyChat</p>
           {selectedOption === 4 && (
-            <div className='info'>
+            <div className="info">
               <span style={{ display: 'inline-block' }}>Click on the</span>
               <img
                 src={MoovyLogo}
-                alt='logo'
+                alt="logo"
                 style={{
                   display: 'inline-block',
                   verticalAlign: 'middle',
@@ -138,11 +144,12 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
           )}
         </div>
         <div
-          className='step five'
-          onClick={(e) => {
+          className="step five"
+          onClick={e => {
             e.stopPropagation();
             setSelectedOption(5);
-          }}>
+          }}
+        >
           <p>
             5. Click on{' '}
             <GoCommentDiscussion
@@ -155,7 +162,7 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
             icon to open a chat window.
           </p>
           {selectedOption === 5 && (
-            <div className='info'>
+            <div className="info">
               You will see{' '}
               <GoCommentDiscussion
                 style={{
@@ -169,9 +176,9 @@ const InstallationGuide: React.FC<props> = ({ id }) => {
           )}
         </div>
       </div>
-      <div className='gif-container'>
-        <div className='gif'>
-          <img src={source} alt='ext' />
+      <div className="gif-container">
+        <div className="gif">
+          <img src={source} alt="ext" />
         </div>
       </div>
     </StyledInstallationGuide>

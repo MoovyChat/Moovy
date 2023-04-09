@@ -20,7 +20,7 @@ export const useFetchUserComments = (
       first: number;
       after?: InputMaybe<string> | undefined;
     }>
-  >
+  >,
 ) => {
   const graphqlClient = useClient();
   const fetchMore = useCallback(() => {
@@ -35,14 +35,14 @@ export const useFetchUserComments = (
         uid: id,
       })
       .toPromise()
-      .then((moreData) => {
+      .then(moreData => {
         const { data, error } = moreData;
         console.log(moreData);
         const _data = data?.getCommentsOfTheUser!;
         const pageInfo = _data?.pageInfo;
         const nodes = _data?.nodes as any[];
         setNodes((data: any) =>
-          _.chain(data).concat(nodes).uniqBy('id').value()
+          _.chain(data).concat(nodes).uniqBy('id').value(),
         );
       });
   }, [res]);

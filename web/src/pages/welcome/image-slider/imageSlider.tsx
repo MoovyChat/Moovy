@@ -56,10 +56,10 @@ const ImageSlider = () => {
   useEffect(() => {
     timeoutRef.current = setTimeout(
       () =>
-        setCurrentIndex((prevIndex) =>
-          prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        setCurrentIndex(prevIndex =>
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1,
         ),
-      autoSlideTime
+      autoSlideTime,
     );
 
     return () => {
@@ -86,7 +86,7 @@ const ImageSlider = () => {
   };
 
   return (
-    <StyledImageSlider className='slideshow'>
+    <StyledImageSlider className="slideshow">
       {images.map((image, index) => (
         <div
           key={index}
@@ -100,20 +100,21 @@ const ImageSlider = () => {
             (currentIndex === images.length - 1 && index === 0)
               ? 'next'
               : ''
-          }`}>
+          }`}
+        >
           <img
             srcSet={image}
             alt={`slide ${index + 1}`}
-            sizes='(min-width: 620px) 594px, 276px'
+            sizes="(min-width: 620px) 594px, 276px"
             src={image.split(' ')[0]}
-            loading='lazy'
+            loading="lazy"
           />
         </div>
       ))}
-      <button className='prev-arrow' onClick={goToPrevSlide}>
+      <button className="prev-arrow" onClick={goToPrevSlide}>
         &#10094;
       </button>
-      <button className='next-arrow' onClick={goToNextSlide}>
+      <button className="next-arrow" onClick={goToNextSlide}>
         &#10095;
       </button>
     </StyledImageSlider>

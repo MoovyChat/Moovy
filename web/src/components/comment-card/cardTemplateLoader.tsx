@@ -14,8 +14,8 @@ const StyledCardLoader = styled.div`
   overflow: hidden;
   cursor: pointer;
   align-items: center;
-  box-shadow: inset 0 0 7px 0px ${(p) => p.theme.hoverColor};
-  background: ${(p) =>
+  box-shadow: inset 0 0 7px 0px ${p => p.theme.hoverColor};
+  background: ${p =>
     ` linear-gradient(110deg, ${p.theme.trendingTiles} 8%, ${p.theme.hoverColor} 18%, ${p.theme.trendingTiles} 33%)`};
   border-radius: 5px;
   background-size: 200% 100%;
@@ -84,18 +84,18 @@ const StyledCardLoader = styled.div`
 const CardTemplateLoader = () => {
   return (
     <StyledCardLoader>
-      <div className='content'>
-        <div className='user-pic'></div>
-        <div className='message'>
-          <div className='username'></div>
-          <div className='msg'></div>
-          <div className='msg'></div>
+      <div className="content">
+        <div className="user-pic"></div>
+        <div className="message">
+          <div className="username"></div>
+          <div className="msg"></div>
+          <div className="msg"></div>
         </div>
       </div>
-      <div className='options'>
-        <div className='c'></div>
-        <div className='c'></div>
-        <div className='c'></div>
+      <div className="options">
+        <div className="c"></div>
+        <div className="c"></div>
+        <div className="c"></div>
       </div>
     </StyledCardLoader>
   );

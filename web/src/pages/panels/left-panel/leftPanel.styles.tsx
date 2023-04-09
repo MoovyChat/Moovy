@@ -53,7 +53,7 @@ export const LeftParent = styled.div`
       text-decoration: none;
       font-size: 14px;
       :hover {
-        background-color: ${(p) => p.theme.hoverColor};
+        background-color: ${p => p.theme.hoverColor};
         cursor: pointer;
       }
       .icon {
@@ -69,7 +69,7 @@ export const LeftParent = styled.div`
     }
     .active {
       transition: all 1s;
-      background-color: ${(p) => p.theme.hoverColor};
+      background-color: ${p => p.theme.hoverColor};
       .icon {
         svg {
           height: 27px;

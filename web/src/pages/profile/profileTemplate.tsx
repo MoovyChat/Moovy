@@ -54,7 +54,7 @@ const ProfileTemplate: React.FC<props> = ({
     }
   }, [profileQuery]);
 
-  const profileScrollHandler: UIEventHandler<HTMLDivElement> = (e) => {
+  const profileScrollHandler: UIEventHandler<HTMLDivElement> = e => {
     if (ref && ref.current) {
       const scrollValue = ref.current!.scrollTop;
       setScrollValue(() => scrollValue);
@@ -66,80 +66,81 @@ const ProfileTemplate: React.FC<props> = ({
     <ProfileParent
       ref={ref}
       onScroll={profileScrollHandler}
-      id='profile-parent'>
+      id="profile-parent"
+    >
       <Helmet>
         <title>{`${user ? user.nickname : 'Moovy'}: Profile`}</title>
         <meta
-          name='description'
+          name="description"
           content={`${user ? user.nickname : 'Moovy'}: Profile`}
         />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/profile/${user.nickname}}`}
         />
       </Helmet>
-      <ChildHeader text={headerTitle} className='comment-header' />
-      <div className='top'>
-        <div className='cover-photo'>
+      <ChildHeader text={headerTitle} className="comment-header" />
+      <div className="top">
+        <div className="cover-photo">
           <Image
             src={`${
               user.bg
                 ? user.bg
                 : 'https://i.pinimg.com/736x/43/f4/1a/43f41accb2871c580fb630e0e8a484e8--cover-picture-cover-pics.jpg'
             }`}
-            alt='cover-photo'
+            alt="cover-photo"
           />
         </div>
         {!isDifferentUser && (
-          <div className='change-background' onClick={bgChangeHandler}>
+          <div className="change-background" onClick={bgChangeHandler}>
             <MdCameraAlt size={18} />
-            <div className='add-cover'>Add Cover Photo</div>
+            <div className="add-cover">Add Cover Photo</div>
           </div>
         )}
-        <div className='user-photo'>
-          <div className='user-container'>
+        <div className="user-photo">
+          <div className="user-container">
             <ProfilePic
               src={user.photoUrl!}
               user={user as Users}
               tooltip={true}
             />
             {!isDifferentUser && (
-              <div className='edit' onClick={profilePicChangeHandler}>
+              <div className="edit" onClick={profilePicChangeHandler}>
                 <MdCameraAlt size={25} />
               </div>
             )}
           </div>
-          <div className='user-info'>
-            <div className='name'>
-              <span className='main'>{profile?.fullname}</span>
-              <span className='us'>@{user.nickname}</span>
+          <div className="user-info">
+            <div className="name">
+              <span className="main">{profile?.fullname}</span>
+              <span className="us">@{user.nickname}</span>
               {!isDifferentUser && (
-                <span className='i' onClick={editProfileHandler}>
+                <span className="i" onClick={editProfileHandler}>
                   <MdEdit size={18} />
                 </span>
               )}
             </div>
-            <div className='time'>
+            <div className="time">
               Joined on {getShortDateFormat(user?.joinedAt as string)}
             </div>
             {isDifferentUser && (
-              <div className='follow'>
+              <div className="follow">
                 <FollowButton userId={user.id} nickName={user.nickname} />
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className='sub-division'>
+      <div className="sub-division">
         {isDifferentUser && (
           <NavLinks>
-            <NavLink to='' end defaultChecked className='nav'>
+            <NavLink to="" end defaultChecked className="nav">
               <div>Basic</div>
             </NavLink>
-            <NavLink to='comments' className='nav'>
+            <NavLink to="comments" className="nav">
               <div>Comments</div>
             </NavLink>
-            <NavLink to='replies' className='nav'>
+            <NavLink to="replies" className="nav">
               <div>Replies</div>
             </NavLink>
           </NavLinks>

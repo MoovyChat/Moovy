@@ -101,7 +101,7 @@ export const WelcomeParent = styled.div`
           height: 100%;
           width: 0%;
           z-index: -1;
-          background-color: ${(p) => p.theme.background};
+          background-color: ${p => p.theme.background};
         }
         label {
           cursor: pointer;
@@ -211,8 +211,8 @@ export const StyledFlaps = styled.div`
     justify-content: space-evenly;
     border-radius: 20px;
     padding: 5px;
-    background: ${(p) => p.theme.trendingTiles};
-    box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
+    background: ${p => p.theme.trendingTiles};
+    box-shadow: 0 0 4px ${p => p.theme.toggleBorder};
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;

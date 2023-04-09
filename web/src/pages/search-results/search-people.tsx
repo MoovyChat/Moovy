@@ -38,13 +38,13 @@ const SearchPeople = () => {
     <StyledSearchPeople>
       <Helmet>
         <title>{`${search}: People`}</title>
-        <meta name='description' content={`${search}: People`} />
+        <meta name="description" content={`${search}: People`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/search/${search}/people}`}
         />
       </Helmet>
-      {people && people.map((user) => <PeopleCard user={user} />)}
+      {people && people.map(user => <PeopleCard user={user} />)}
     </StyledSearchPeople>
   );
 };

@@ -25,12 +25,12 @@ export const StyledNavLinks = styled.div`
       bottom: -2px;
       width: 0%;
       height: 2px;
-      background-color: ${(p) => p.theme.nav};
+      background-color: ${p => p.theme.nav};
       transition: width 0.3s ease-out, left 0.3s ease-out;
     }
 
     &:hover {
-      color: ${(p) => p.theme.nav};
+      color: ${p => p.theme.nav};
       &:before {
         width: 100%;
         left: 0;
@@ -39,7 +39,7 @@ export const StyledNavLinks = styled.div`
 
     &.active {
       font-weight: bold;
-      color: ${(p) => p.theme.nav};
+      color: ${p => p.theme.nav};
 
       &:before {
         width: 100%;

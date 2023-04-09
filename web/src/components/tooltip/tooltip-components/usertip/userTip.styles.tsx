@@ -13,7 +13,7 @@ export const UserTipParent = styled.div<props>`
   border-radius: 18px;
   overflow: hidden;
   transition: all 0.5s;
-  background-image: url(${(p) => p.bg});
+  background-image: url(${p => p.bg});
   background-size: cover;
   background-repeat: no-repeat;
   .container {

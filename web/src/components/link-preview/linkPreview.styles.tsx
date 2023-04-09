@@ -7,7 +7,7 @@ export const StyledLinkPreview = styled.div`
   border-radius: 18px;
   overflow: hidden;
   margin: 10px;
-  box-shadow: 0 0 4px ${(p) => (p.theme.themeType === 'dark' ? '#8b8b8b' : '')};
+  box-shadow: 0 0 4px ${p => (p.theme.themeType === 'dark' ? '#8b8b8b' : '')};
   .link-image {
     position: relative;
     width: 150px;

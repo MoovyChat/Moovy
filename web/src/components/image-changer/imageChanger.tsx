@@ -64,7 +64,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     msg: '',
     status: MsgObjType.INITIAL,
   });
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
@@ -95,8 +95,8 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       'image/jpg': [],
     },
     maxSize: maxFileSize,
-    onDropRejected: (fileRejections) => {
-      fileRejections.forEach((fileRejection) => {
+    onDropRejected: fileRejections => {
+      fileRejections.forEach(fileRejection => {
         const rejectedFile = fileRejection.file;
         const errors = fileRejection.errors;
         if (rejectedFile.size && rejectedFile.size > maxFileSize) {
@@ -104,7 +104,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         }
         console.log(`Rejected file: ${rejectedFile.name}`);
         console.log(`Reasons for rejection:`);
-        errors.forEach((error) => console.log(`- ${error.message}`));
+        errors.forEach(error => console.log(`- ${error.message}`));
       });
     },
     maxFiles: 1,
@@ -114,13 +114,13 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const handleFileSizeError = useCallback(
     (file: File) => {
       alert(
-        `File "${file.name}" exceeds the maximum file size of ${maxFileSize} bytes.`
+        `File "${file.name}" exceeds the maximum file size of ${maxFileSize} bytes.`,
       );
     },
-    [maxFileSize]
+    [maxFileSize],
   );
 
-  const fileRejectionItems = fileRejections.map((fileRejection) => (
+  const fileRejectionItems = fileRejections.map(fileRejection => (
     <li key={fileRejection.file.name}>
       {fileRejection.file.name} (
       {fileRejection.file.size || fileRejection?.file?.size} bytes) -{' '}
@@ -137,7 +137,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     `;
   }, []);
 
-  const savePhotoFromUrl: MouseEventHandler<HTMLDivElement> = async (e) => {
+  const savePhotoFromUrl: MouseEventHandler<HTMLDivElement> = async e => {
     e.stopPropagation();
     setSaveClicked(true);
     setSaved(false);
@@ -211,7 +211,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -230,7 +230,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     }
   }, [acceptedFiles]);
 
-  const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const closeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
@@ -241,31 +241,33 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const saveText = saveClicked ? (saved ? `Saved` : `Saving..`) : `Save`;
   return (
     <ImageChangerParent url={url}>
-      <div className='heading'>
+      <div className="heading">
         <span>Upload the photo</span>
         <div
-          role='button'
-          className='close'
-          color='#484242'
-          onClick={closeHandler}>
+          role="button"
+          className="close"
+          color="#484242"
+          onClick={closeHandler}
+        >
           <MdClose />
         </div>
       </div>
-      <div className='save-close'>
+      <div className="save-close">
         <StyledButton
-          className='save'
+          className="save"
           color={url ? '#de1328' : '#9c535b'}
-          onClick={savePhotoFromUrl}>
+          onClick={savePhotoFromUrl}
+        >
           {saveText}
         </StyledButton>
       </div>
 
-      <DisplayImage className='display'>
-        <div className='display-container'>
+      <DisplayImage className="display">
+        <div className="display-container">
           {!!url ? (
             selectedOption === 'fromLocal' ? (
               <>
-                <div className='cropper-container'>
+                <div className="cropper-container">
                   {type === ImageChangerTypes.PFP ? (
                     <Cropper
                       aspect={1}
@@ -279,7 +281,7 @@ const ImageChanger: React.FC<props> = ({ type }) => {
                     />
                   ) : (
                     <Cropper
-                      cropShape='rect'
+                      cropShape="rect"
                       aspect={3.5}
                       crop={crop}
                       zoom={zoom}
@@ -291,16 +293,16 @@ const ImageChanger: React.FC<props> = ({ type }) => {
                     />
                   )}
                 </div>
-                <div className='controls'>
+                <div className="controls">
                   <input
-                    type='range'
-                    id='image-slider'
+                    type="range"
+                    id="image-slider"
                     value={zoom}
                     min={1}
                     max={3}
                     step={0.1}
-                    aria-labelledby='Zoom'
-                    onChange={(e) => {
+                    aria-labelledby="Zoom"
+                    onChange={e => {
                       e.stopPropagation();
                       setZoom(Number(e.target.value));
                     }}
@@ -308,13 +310,14 @@ const ImageChanger: React.FC<props> = ({ type }) => {
                 </div>
               </>
             ) : (
-              <img alt='image-crop' src={url} />
+              <img alt="image-crop" src={url} />
             )
           ) : (
             <DropzoneContainer
               {...getRootProps({ className: 'dropzone' })}
               isDragActive={isDragActive}
-              isDragReject={isDragReject}>
+              isDragReject={isDragReject}
+            >
               <input {...getInputProps()} />
               <DropzoneIcon />
               <DropzoneText>
@@ -337,21 +340,21 @@ const ImageChanger: React.FC<props> = ({ type }) => {
           )}
         </div>
       </DisplayImage>
-      <div className='error'>
+      <div className="error">
         {loadingStatus.status !== MsgObjType.INITIAL ? (
-          <div className='in'>
-            <div className='loading'>
+          <div className="in">
+            <div className="loading">
               {loadingStatus.status === MsgObjType.LOADING ? (
                 <Loading />
               ) : loadingStatus.status === MsgObjType.ERROR ? (
-                <MdOutlineError size={20} fill='#c11d1d' />
+                <MdOutlineError size={20} fill="#c11d1d" />
               ) : loadingStatus.status === MsgObjType.SUCCESS ? (
-                <MdDone size={20} fill='#00ff2f' />
+                <MdDone size={20} fill="#00ff2f" />
               ) : (
                 ''
               )}
             </div>
-            <div className='e-in-e'>{loadingStatus.msg}</div>
+            <div className="e-in-e">{loadingStatus.msg}</div>
           </div>
         ) : (
           <></>

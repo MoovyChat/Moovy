@@ -1,18 +1,18 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { Suspense, useMemo } from "react";
-import { Users, useMeQuery } from "../generated/graphql";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Suspense, useMemo } from 'react';
+import { Users, useMeQuery } from '../generated/graphql';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
-import LogoLoading from "./logo-loading/logoLoading";
-import { sliceSetUser } from "../redux/slices/userSlice";
-import { urqlClient } from "../utils/urlClient";
-import { withUrqlClient } from "next-urql";
+import LogoLoading from './logo-loading/logoLoading';
+import { sliceSetUser } from '../redux/slices/userSlice';
+import { urqlClient } from '../utils/urlClient';
+import { withUrqlClient } from 'next-urql';
 
 const ProtectedRoutes = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const [{ data, fetching, error }] = useMeQuery();
-  const isAuth = useAppSelector((state) => state.user);
+  const isAuth = useAppSelector(state => state.user);
 
   // Memoize the following code block to optimize performance
   useMemo(() => {
@@ -29,7 +29,7 @@ const ProtectedRoutes = () => {
       if (user) {
         // Update Redux store with user data and save user data in localStorage
         dispatch(sliceSetUser(user));
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(user));
       }
     }
   }, [fetching, data, error]);

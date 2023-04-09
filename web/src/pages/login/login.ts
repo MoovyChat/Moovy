@@ -15,7 +15,7 @@ export const googleSignIn = (): Promise<Users> => {
   return new Promise((resolve, reject) => {
     // Call the Firebase signInWithPopup method with the auth and provider objects
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(result => {
         // If sign-in is successful, extract the access token and user information
         const credential = GoogleAuthProvider.credentialFromResult(result);
         if (!credential) {
@@ -35,7 +35,7 @@ export const googleSignIn = (): Promise<Users> => {
         };
         resolve(adjustToState);
       })
-      .catch((error) => {
+      .catch(error => {
         // If an error occurs during sign-in, log it to the console and reject the Promise
         console.error(error);
         reject(error);

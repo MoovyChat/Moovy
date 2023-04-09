@@ -92,7 +92,7 @@ const TitleCard: React.FC<props> = ({
     }
   };
 
-  const titleClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const titleClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (title.type === 'movie') {
       navigate(`/home/movie/${title.id}`);
@@ -108,15 +108,16 @@ const TitleCard: React.FC<props> = ({
       styledHover={styledHover}
       onClick={titleClickHandler}
       onMouseEnter={() => hoverHandler(true)}
-      onMouseLeave={() => hoverHandler(false)}>
-      <div className='container' ref={childRef}>
-        <div className='title-bg'>
-          <img src={title.artwork as string} alt='title' loading='lazy' />
+      onMouseLeave={() => hoverHandler(false)}
+    >
+      <div className="container" ref={childRef}>
+        <div className="title-bg">
+          <img src={title.artwork as string} alt="title" loading="lazy" />
         </div>
         {hovered && (
-          <div className='info'>
-            <div className='title'>{title.title}</div>
-            <div className='title-attr'>
+          <div className="info">
+            <div className="title">{title.title}</div>
+            <div className="title-attr">
               <div>{title.type}</div>
               {title.year !== 0 && <div>{title.year}</div>}
               <div>Rating: {title.rating}</div>

@@ -1,4 +1,3 @@
-import { Fonts } from '../../constants';
 import { ThemeProps } from './theme';
 import { createGlobalStyle } from 'styled-components';
 
@@ -36,8 +35,8 @@ export const GlobalStyles = createGlobalStyle`
 
   ::-webkit-scrollbar-thumb {
     border-radius: 8px;
-    -webkit-box-shadow: inset 0 0 6px ${(p) => p.theme.hoverColor};
-    box-shadow: inset 0 0 6px ${(p) => p.theme.hoverColor};
+    -webkit-box-shadow: inset 0 0 6px ${p => p.theme.hoverColor};
+    box-shadow: inset 0 0 6px ${p => p.theme.hoverColor};
     background-color: #555;
   }
 `;

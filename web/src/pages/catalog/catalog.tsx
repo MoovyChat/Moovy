@@ -12,18 +12,18 @@ const Catalog = () => {
   return (
     <CatalogContainer>
       {/* Use ChildHeader sub-component to display a heading above the navigation links */}
-      <ChildHeader text='Catalog' className='child-header' />
+      <ChildHeader text="Catalog" className="child-header" />
       {/* Render two NavLink components that direct users to either Movies or Shows categories */}
-      <NavLinks className='options'>
-        <NavLink to='' end className='movies nav' defaultChecked>
+      <NavLinks className="options">
+        <NavLink to="" end className="movies nav" defaultChecked>
           <div>Movies</div>
         </NavLink>
-        <NavLink to='shows' className='shows nav'>
+        <NavLink to="shows" className="shows nav">
           <div>Shows</div>
         </NavLink>
       </NavLinks>
       {/* Use the Outlet component from react-router-dom to render nested routes/components corresponding to either movies or shows */}
-      <div className='content'>
+      <div className="content">
         <Outlet />
       </div>
     </CatalogContainer>

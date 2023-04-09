@@ -20,7 +20,7 @@ type props = {
   type: string;
 };
 const DeleteComment: React.FC<props> = ({ type }) => {
-  const popup = useAppSelector((state) => state.popup);
+  const popup = useAppSelector(state => state.popup);
   const [comment, setComment] = useState<Comment | null>(null);
   const dispatch = useAppDispatch();
   const [reply, setReply] = useState<Reply | null>(null);
@@ -33,25 +33,23 @@ const DeleteComment: React.FC<props> = ({ type }) => {
       setReply(popup.popupData as Reply);
   }, [type]);
 
-  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (type === DeleteCommentTypes.COMMENT) {
-      deleteComment({ cid: comment?.id!, mid: comment?.movieId! }).then(
-        (res) => {
-          const { data, error } = res;
-          if (error) console.log(error);
-          if (data) {
-            batch(() => {
-              dispatch(sliceSetIsPopupOpened(false));
-              dispatch(sliceSetSelectedElement(''));
-              dispatch(sliceSetPopupData(null));
-            });
-          }
+      deleteComment({ cid: comment?.id!, mid: comment?.movieId! }).then(res => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        if (data) {
+          batch(() => {
+            dispatch(sliceSetIsPopupOpened(false));
+            dispatch(sliceSetSelectedElement(''));
+            dispatch(sliceSetPopupData(null));
+          });
         }
-      );
+      });
     } else {
       if (type === DeleteCommentTypes.REPLY) {
-        deleteReply({ rid: reply?.id! }).then((res) => {
+        deleteReply({ rid: reply?.id! }).then(res => {
           const { data, error } = res;
           if (error || !data) console.log(error);
           if (data) {
@@ -76,18 +74,18 @@ const DeleteComment: React.FC<props> = ({ type }) => {
 
   return (
     <DeleteCommentParent>
-      <div className='heading'>
+      <div className="heading">
         Delete {type === DeleteCommentTypes.COMMENT ? 'Comment' : 'Reply'}?
       </div>
-      <div className='sub'>
+      <div className="sub">
         The comment will be deleted permanently from your profile, the feed for
         all the users, that follows you.
       </div>
-      <div className='delete-cancel'>
-        <div className='del' onClick={deleteCommentHandler}>
+      <div className="delete-cancel">
+        <div className="del" onClick={deleteCommentHandler}>
           Delete
         </div>
-        <div className='cancel' onClick={cancelHandler}>
+        <div className="cancel" onClick={cancelHandler}>
           Cancel
         </div>
       </div>

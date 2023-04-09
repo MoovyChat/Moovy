@@ -37,7 +37,7 @@ const MiscSlice = createSlice({
     },
     sliceSetEmojiGroupActive: (
       state,
-      action: { payload: { key: number; value: boolean }; type: string }
+      action: { payload: { key: number; value: boolean }; type: string },
     ) => {
       const { key, value } = action.payload;
       return {

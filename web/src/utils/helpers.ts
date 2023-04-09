@@ -84,7 +84,7 @@ export const getShortDateFormat = (time: string | undefined) => {
 
 // Split a text string into an array of text maps, where each text map has a message and a type property
 export const getFormattedWordsArray = (text: string): textMap[] => {
-  return text.split(' ').map((word) => {
+  return text.split(' ').map(word => {
     if (word.startsWith('@')) {
       return { message: word, type: textMapTypes.USER };
     } else if (word.includes(':')) {
@@ -112,7 +112,7 @@ export const ParsedText = (text: string) => {
     /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 
   // Replace the links with HTML a elements
-  const linkText = text.replace(linkRegex, (link) => {
+  const linkText = text.replace(linkRegex, link => {
     return `<a href="${link}" target='_blank'>${link}</a>`;
   });
 
@@ -154,12 +154,12 @@ export async function compressImage(inputBlob: Blob): Promise<Blob | null> {
       canvas.height = img.height;
       ctx?.drawImage(img, 0, 0);
       canvas.toBlob(
-        (blob) => {
+        blob => {
           if (blob) resolve(blob);
           else reject(null);
         },
         'image/jpeg',
-        0.5
+        0.5,
       );
     };
   });

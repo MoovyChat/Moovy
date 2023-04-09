@@ -19,8 +19,8 @@ const ProfileTextBox: React.FC<props> = ({
 }) => {
   return (
     <ProfileTextBoxParent error={error}>
-      <div className='title'>{error && error !== 'none' ? error : title}</div>
-      <div className='in'>
+      <div className="title">{error && error !== 'none' ? error : title}</div>
+      <div className="in">
         {type === 'text' || type === 'date' ? (
           <input
             type={type}
@@ -29,7 +29,7 @@ const ProfileTextBox: React.FC<props> = ({
             value={value}
             maxLength={25}
             minLength={2}
-            onChange={(e) => {
+            onChange={e => {
               e.stopPropagation();
               setValue(keyItem!, e.target.value);
             }}
@@ -39,29 +39,30 @@ const ProfileTextBox: React.FC<props> = ({
             id={title}
             value={value}
             maxLength={100}
-            onChange={(e) => {
+            onChange={e => {
               e.stopPropagation();
               setValue(keyItem!, e.target.value);
             }}
           />
         ) : (
           <select
-            onChange={(e) => {
+            onChange={e => {
               e.stopPropagation();
               setValue(keyItem!, e.target.value);
             }}
-            value={value}>
-            <option defaultChecked value=''>
+            value={value}
+          >
+            <option defaultChecked value="">
               Choose your gender
             </option>
-            <option value='male'>Male</option>
-            <option value='female'>Female</option>
-            <option value='other'>Other</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
           </select>
         )}
       </div>
-      <div className='light-container'>
-        <div className='light'></div>
+      <div className="light-container">
+        <div className="light"></div>
       </div>
     </ProfileTextBoxParent>
   );

@@ -20,8 +20,8 @@ const PrivacyPolicy = () => {
     <PrivacyPolicyWrapper>
       <Helmet>
         <title>{`Privacy Policy`}</title>
-        <meta name='description' content={`Privacy Policy`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/privacy}`} />
+        <meta name="description" content={`Privacy Policy`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/privacy}`} />
       </Helmet>
       <PrivacyPolicyContent>
         <PrivacyPolicyTitle>Privacy Policy</PrivacyPolicyTitle>
@@ -161,8 +161,8 @@ const PrivacyPolicy = () => {
         <PrivacyPolicySectionTitle>Your Choices</PrivacyPolicySectionTitle>
         <PrivacyPolicyParagraph>
           You may access and update your information by contacting us at{' '}
-          <a href='mailto:support@moovychat.com'>support@moovychat.com</a> or{' '}
-          <a href='mailto:chatmoovy@gmail.com'>chatmoovy@gmail.com</a>. You may
+          <a href="mailto:support@moovychat.com">support@moovychat.com</a> or{' '}
+          <a href="mailto:chatmoovy@gmail.com">chatmoovy@gmail.com</a>. You may
           also opt-out of receiving promotional messages from us by following
           the instructions in those messages.
         </PrivacyPolicyParagraph>
@@ -179,8 +179,8 @@ const PrivacyPolicy = () => {
         <PrivacyPolicyParagraph>
           If you have any questions or concerns about this Privacy Policy,
           please contact us at{' '}
-          <a href='mailto:support@moovychat.com'>support@moovychat.com</a> or{' '}
-          <a href='mailto:chatmoovy@gmail.com'>chatmoovy@gmail.com</a> .
+          <a href="mailto:support@moovychat.com">support@moovychat.com</a> or{' '}
+          <a href="mailto:chatmoovy@gmail.com">chatmoovy@gmail.com</a> .
         </PrivacyPolicyParagraph>
       </PrivacyPolicyContent>
     </PrivacyPolicyWrapper>

@@ -10,7 +10,7 @@ export const MovieCardParent = styled.div<props>`
   align-items: center;
   margin: 10px 20px;
   border-radius: 3px;
-  background-image: url(${(p) => p.bg});
+  background-image: url(${p => p.bg});
   background-size: cover;
   background-repeat: no-repeat;
   cursor: pointer;

@@ -11,7 +11,7 @@ const useFetchEmojis = () => {
     let rg: refinedG = {};
     const data: Emoji[] = await fetchFromCDN('en/data.json');
     // Refining data to the object with keys and subKeys.
-    data.map((em) => {
+    data.map(em => {
       let key = em.group!;
       let subKey = em.subgroup!;
       if (rg[key] === undefined) {

@@ -11,7 +11,7 @@ export const AddCommentParent = styled.div<props>`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color: ${(p) => p.theme.background};
+  background-color: ${p => p.theme.background};
   .heading {
     position: relative;
     height: 10%;
@@ -232,7 +232,7 @@ export const StyledTextArea = styled.textarea`
   z-index: 2;
   background: transparent;
   color: #fafafa00;
-  caret-color: ${(p) => p.theme.text};
+  caret-color: ${p => p.theme.text};
 `;
 
 export const StyledTextAreaBack = styled.div`

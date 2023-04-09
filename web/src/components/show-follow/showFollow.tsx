@@ -13,7 +13,7 @@ import { isServer } from '../../constants';
 import { sliceResetPopup } from '../../redux/slices/popupSlice';
 
 const ShowFollow = () => {
-  const popup = useAppSelector((state) => state.popup);
+  const popup = useAppSelector(state => state.popup);
   const userId = (popup.popupData as any).data as string;
   const type = (popup.popupData as any).type;
   const isFollower = (popup.popupData as any).isFollower as boolean;
@@ -48,7 +48,7 @@ const ShowFollow = () => {
     if (!fetching && data) {
       const _followers = data.getFollowers?.followers!;
       setUsers(() => _followers);
-      setPage((p) => p + 1);
+      setPage(p => p + 1);
       setLastPage(() => data.getFollowers?.lastPage!);
       setUsersCount(() => data.getFollowers?.count!);
     }
@@ -62,40 +62,40 @@ const ShowFollow = () => {
     if (!fetching && data) {
       const _followings = data.getFollowings?.followings!;
       setUsers(() => _followings);
-      setPage((p) => p + 1);
+      setPage(p => p + 1);
       setLastPage(() => data.getFollowings?.lastPage!);
       setUsersCount(() => data.getFollowings?.count!);
     }
   }, [followingQuery.fetching]);
 
-  const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const closeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     dispatch(sliceResetPopup());
   };
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
       if (page !== lastPage) {
-        setPage((page) => page + 1);
+        setPage(page => page + 1);
       }
     }
   };
 
   return (
     <ShowFollowParent>
-      <div className='follow-head'>
+      <div className="follow-head">
         <span>
           {usersCount} {type}
         </span>
-        <div className='close' onClick={closeHandler}>
+        <div className="close" onClick={closeHandler}>
           <MdClose size={25} />
         </div>
       </div>
-      <div className='users-container' onScroll={handleScroll}>
-        {users && users.map((user) => <UserCard user={user} />)}
+      <div className="users-container" onScroll={handleScroll}>
+        {users && users.map(user => <UserCard user={user} />)}
       </div>
     </ShowFollowParent>
   );

@@ -34,8 +34,8 @@ const LikedTitles = () => {
     <>
       <Helmet>
         <title>{`${id}: Liked Titles`}</title>
-        <meta name='description' content={`${id}: Liked Titles`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/activity/${id}/liked`} />
+        <meta name="description" content={`${id}: Liked Titles`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/activity/${id}/liked`} />
       </Helmet>
       <TitleListTemplate
         page={page}

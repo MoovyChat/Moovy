@@ -18,7 +18,7 @@ import { batch } from 'react-redux';
 import { isServer } from '../../constants';
 
 const ShowLikes = () => {
-  const popup = useAppSelector((state) => state.popup);
+  const popup = useAppSelector(state => state.popup);
   const commentId = (popup.popupData as any).data as string;
   const type = (popup.popupData as any).type;
   const isReply = (popup.popupData as any).isReply as boolean;
@@ -73,7 +73,7 @@ const ShowLikes = () => {
     }
   }, [replyLikeQuery]);
 
-  const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const closeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
@@ -83,28 +83,28 @@ const ShowLikes = () => {
   };
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
       if (page !== lastPage) {
-        setPage((page) => page + 1);
+        setPage(page => page + 1);
       }
     }
   };
 
   return (
     <ShowFollowParent>
-      <div className='follow-head'>
+      <div className="follow-head">
         <span>
           {likesCount} {type}
         </span>
-        <div className='close' onClick={closeHandler}>
+        <div className="close" onClick={closeHandler}>
           <MdClose size={25} />
         </div>
       </div>
-      <div className='users-container' onScroll={handleScroll}>
-        {users && users.map((user) => <UserCard user={user} />)}
+      <div className="users-container" onScroll={handleScroll}>
+        {users && users.map(user => <UserCard user={user} />)}
       </div>
     </ShowFollowParent>
   );

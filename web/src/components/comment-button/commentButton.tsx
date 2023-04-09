@@ -17,8 +17,8 @@ type props = {
 };
 const CommentButton: React.FC<props> = ({ type, data }) => {
   const dispatch = useAppDispatch();
-  const isPopUpOpen = useAppSelector((state) => state.popup.isPopupOpened);
-  const addCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const isPopUpOpen = useAppSelector(state => state.popup.isPopupOpened);
+  const addCommentHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (isPopUpOpen) {
       batch(() => {

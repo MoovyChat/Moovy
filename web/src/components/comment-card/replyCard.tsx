@@ -20,9 +20,9 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
   const movieId = comment && comment.movieId;
   const navigate = useNavigate();
   const [likeCount, setLikeCount] = useState<number>(
-    comment ? comment.likesCount! : 0
+    comment ? comment.likesCount! : 0,
   );
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [, setReplyLike] = useSetReplyLikeMutation();
   const [isUserLikedQuery] = useGetIsUserLikedReplyQuery({
@@ -40,12 +40,12 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
     }
   }, [isUserLikedQuery]);
 
-  const goToReply: MouseEventHandler<HTMLDivElement> = (e) => {
+  const goToReply: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     navigate(`/home/reply/${comment.id}`);
   };
 
-  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async e => {
     e.stopPropagation();
     setLike(!like);
     like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
@@ -65,7 +65,7 @@ const ReplyCard: React.FC<props> = ({ comment, isMain }) => {
     <>
       {comment && (
         <CardTemplate
-          type='reply'
+          type="reply"
           isMain={isMain}
           updateLike={updateLike}
           likeCount={likeCount}

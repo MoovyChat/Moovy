@@ -19,7 +19,7 @@ type props = {
 const CommentCard: React.FC<props> = ({ comment, isMain }) => {
   const movieId = comment.movieId;
   const navigate = useNavigate();
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const [like, setLike] = useState<boolean>(false);
 
   const [likeCount, setLikeCount] = useState<number>(comment.likesCount!);
@@ -38,12 +38,12 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
     }
   }, [isUserLikedQuery]);
 
-  const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
+  const goToComment: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     navigate(`/home/comment/${comment.id}`);
   };
 
-  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async e => {
     e.stopPropagation();
     setLike(!like);
     like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
@@ -60,7 +60,7 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
 
   return (
     <CardTemplate
-      type='comment'
+      type="comment"
       isMain={isMain}
       updateLike={updateLike}
       likeCount={likeCount}

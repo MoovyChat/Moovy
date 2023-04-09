@@ -12,8 +12,8 @@ export const StyledEmbedContent = styled.div`
   flex-direction: column;
   background-color: #c034c0;
   padding: 0 5px;
-  div{
-    text-align:center;
+  div {
+    text-align: center;
   }
   /* .arc-btn {
     display: inline-block;

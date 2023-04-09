@@ -22,7 +22,7 @@ export const useFetchRepliesOfReply = (
     }>
   >,
   cursor: string,
-  setCursor: React.Dispatch<React.SetStateAction<string>>
+  setCursor: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const graphqlClient = useClient();
   const fetchMore = useCallback(() => {
@@ -37,7 +37,7 @@ export const useFetchRepliesOfReply = (
         rid: reply?.id,
       })
       .toPromise()
-      .then((moreData) => {
+      .then(moreData => {
         const { data, error } = moreData;
         console.log(data);
         const _data = data?.getRepliesOfReply!;
@@ -45,7 +45,7 @@ export const useFetchRepliesOfReply = (
         setCursor(() => pageInfo?.endCursor as string);
         const nodes = _data?.nodes as any[];
         setNodes((replies: any) =>
-          _.chain(replies).concat(nodes).uniqBy('id').value()
+          _.chain(replies).concat(nodes).uniqBy('id').value(),
         );
       });
   }, [res]);

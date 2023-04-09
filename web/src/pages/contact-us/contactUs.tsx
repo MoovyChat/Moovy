@@ -18,10 +18,10 @@ const ContactUs = () => {
   const [subject, setSubject] = useState<string>('');
   const [{ fetching, error }, createMessage] = useCreateMessageMutation();
 
-  const postMessage: FormEventHandler<HTMLFormElement> = (e) => {
+  const postMessage: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     createMessage({ name, email, subject, message })
-      .then((res) => {
+      .then(res => {
         const { error, data } = res;
         if (error) {
           alert('Failed to send message');
@@ -42,8 +42,8 @@ const ContactUs = () => {
     <PrivacyPolicyWrapper>
       <Helmet>
         <title>Contact Us</title>
-        <meta name='description' content='Contact us' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/contact`} />
+        <meta name="description" content="Contact us" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/contact`} />
       </Helmet>
       <PrivacyPolicyContent>
         <h1>Contact Us</h1>
@@ -53,51 +53,52 @@ const ContactUs = () => {
         </p>
         <p>
           You can reach us by email at{' '}
-          <a href='mailto:support@moovychat.com'>support@moovychat.com</a> or{' '}
-          <a href='mailto:chatmoovy@gmail.com'>chatmoovy@gmail.com</a> or by
+          <a href="mailto:support@moovychat.com">support@moovychat.com</a> or{' '}
+          <a href="mailto:chatmoovy@gmail.com">chatmoovy@gmail.com</a> or by
           filling out the contact form below:
         </p>
 
         <Form onSubmit={postMessage}>
-          <label htmlFor='name'>Name:</label>
+          <label htmlFor="name">Name:</label>
           <input
-            type='text'
-            id='name'
-            name='name'
+            type="text"
+            id="name"
+            name="name"
             value={name}
             required
-            onChange={(event) => setName(event.target.value)}
+            onChange={event => setName(event.target.value)}
           />
 
-          <label htmlFor='email'>Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
-            type='email'
-            id='email'
-            name='email'
+            type="email"
+            id="email"
+            name="email"
             value={email}
             required
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={event => setEmail(event.target.value)}
           />
 
-          <label htmlFor='subject'>Subject:</label>
+          <label htmlFor="subject">Subject:</label>
           <input
-            type='text'
-            id='subject'
-            name='subject'
+            type="text"
+            id="subject"
+            name="subject"
             value={subject}
             required
-            onChange={(event) => setSubject(event.target.value)}
+            onChange={event => setSubject(event.target.value)}
           />
 
-          <label htmlFor='message'>Message:</label>
+          <label htmlFor="message">Message:</label>
           <textarea
-            id='message'
-            name='message'
+            id="message"
+            name="message"
             value={message}
             required
-            onChange={(event) => setMessage(event.target.value)}></textarea>
+            onChange={event => setMessage(event.target.value)}
+          ></textarea>
 
-          <button type='submit' disabled={fetching}>
+          <button type="submit" disabled={fetching}>
             {fetching ? 'Sending message...' : 'Send'}
           </button>
           {error && <p>Error sending message</p>}

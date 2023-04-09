@@ -8,7 +8,7 @@ import {
   MdOutlineReply,
   MdOutlineWbSunny,
   MdPerson,
-  MdStorage
+  MdStorage,
 } from 'react-icons/md';
 import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
@@ -31,10 +31,10 @@ type props = {
 };
 const LeftPanel: React.FC<props> = ({ className }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const user = useAppSelector((state) => state.user);
-  const theme = useAppSelector((state) => state.settings.theme);
+  const user = useAppSelector(state => state.user);
+  const theme = useAppSelector(state => state.settings.theme);
   const dispatch = useDispatch();
-  const themeHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const themeHandler: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const value = theme === themes.DARK ? false : true;
     dispatch(sliceSetTheme(value));
@@ -57,7 +57,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
     };
   }, [ref]);
 
-  const linkClickHandler: MouseEventHandler<HTMLAnchorElement> = (e) => {
+  const linkClickHandler: MouseEventHandler<HTMLAnchorElement> = e => {
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
       dispatch(sliceSetSelectedElement(''));
@@ -66,90 +66,96 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   };
   return (
     <LeftParent className={className} ref={ref}>
-      <div className='parent-profile'>
-        <div className='profile'>
+      <div className="parent-profile">
+        <div className="profile">
           <ProfilePic
             src={user?.photoUrl!}
             user={user as Users}
-            tooltip={true}></ProfilePic>
+            tooltip={true}
+          ></ProfilePic>
         </div>
-        <div className='profile-text'>
-          <div className='welcome-text'>Welcome back</div>
-          <div className='user-text'>{user.nickname}</div>
+        <div className="profile-text">
+          <div className="welcome-text">Welcome back</div>
+          <div className="user-text">{user.nickname}</div>
         </div>
       </div>
-      <div className='options'>
-        <NavLink to='/home' className='option' end onClick={linkClickHandler}>
-          <div className='icon feed'>
+      <div className="options">
+        <NavLink to="/home" className="option" end onClick={linkClickHandler}>
+          <div className="icon feed">
             <MdDynamicFeed size={iconSize} />
           </div>
-          <div className='text'>Feed</div>
+          <div className="text">Feed</div>
         </NavLink>
-        <NavLink to='catalog' className='option' onClick={linkClickHandler}>
-          <div className='icon catalog'>
+        <NavLink to="catalog" className="option" onClick={linkClickHandler}>
+          <div className="icon catalog">
             <MdStorage size={iconSize} />
           </div>
-          <div className='text'>Catalog</div>
+          <div className="text">Catalog</div>
         </NavLink>
         <NavLink
           to={`profile/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon p'>
+          className="option"
+          onClick={linkClickHandler}
+        >
+          <div className="icon p">
             <MdPerson size={iconSize} />
           </div>
-          <div className='text'>Profile</div>
+          <div className="text">Profile</div>
         </NavLink>
         <NavLink
           to={`activity/${user.nickname}/favorites`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon favorites'>
+          className="option"
+          onClick={linkClickHandler}
+        >
+          <div className="icon favorites">
             <MdFavorite size={iconSize} />
           </div>
-          <div className='text'>Favorites</div>
+          <div className="text">Favorites</div>
         </NavLink>
         <NavLink
           to={`comments/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon comments'>
+          className="option"
+          onClick={linkClickHandler}
+        >
+          <div className="icon comments">
             <MdModeComment size={iconSize} />
           </div>
-          <div className='text'>Comments</div>
+          <div className="text">Comments</div>
         </NavLink>
         <NavLink
           to={`replies/${user.nickname}`}
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon replies'>
+          className="option"
+          onClick={linkClickHandler}
+        >
+          <div className="icon replies">
             <MdOutlineReply size={iconSize} />
           </div>
-          <div className='text'>Replies</div>
+          <div className="text">Replies</div>
         </NavLink>
         <NavLink
-          to='notifications'
-          className='option'
-          onClick={linkClickHandler}>
-          <div className='icon notifications'>
+          to="notifications"
+          className="option"
+          onClick={linkClickHandler}
+        >
+          <div className="icon notifications">
             <MdNotificationsActive size={iconSize} />
           </div>
-          <div className='text'>Notifications</div>
+          <div className="text">Notifications</div>
         </NavLink>
-        <div className='option' onClick={themeHandler}>
+        <div className="option" onClick={themeHandler}>
           {theme === themes.DARK ? (
             <React.Fragment>
-              <div className='icon'>
+              <div className="icon">
                 <MdOutlineWbSunny size={iconSize} />
               </div>
-              <div className='text'>Light</div>
+              <div className="text">Light</div>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <div className='icon'>
+              <div className="icon">
                 <MdNightlight size={iconSize} />
               </div>
-              <div className='text'>Dark</div>
+              <div className="text">Dark</div>
             </React.Fragment>
           )}
         </div>
@@ -157,38 +163,43 @@ const LeftPanel: React.FC<props> = ({ className }) => {
 
       <StyledLinks>
         <div
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open('/terms-and-conditions', '_blank');
-          }}>
+          }}
+        >
           Terms of Service
         </div>
         <div
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open('/privacy', '_blank');
-          }}>
+          }}
+        >
           Privacy Policy
         </div>
         <div
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open('/cookie-policy', '_blank');
-          }}>
+          }}
+        >
           Cookie Policy
         </div>
         <div
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open('/about-us', '_blank');
-          }}>
+          }}
+        >
           About us
         </div>
         <div
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open('/contact', '_blank');
-          }}>
+          }}
+        >
           Contact us
         </div>
         <div>© 2023 MoovyChat.</div>

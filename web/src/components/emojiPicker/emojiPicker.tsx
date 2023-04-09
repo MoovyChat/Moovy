@@ -34,9 +34,9 @@ let headerEmoji: any = {
 
 const EmojiPicker = () => {
   const { groups } = groupSet;
-  const value = useAppSelector((state) => state.misc.emojiSearchValue);
+  const value = useAppSelector(state => state.misc.emojiSearchValue);
   const dispatch = useAppDispatch();
-  let groupActive: any = useAppSelector((state) => state.misc.emojiGroupActive);
+  let groupActive: any = useAppSelector(state => state.misc.emojiGroupActive);
   const groupRef = useRef<HTMLDivElement | null>(null);
   const [groupNumber, setGroupNumber] = useState<number>(0);
   const refinedGroups = useFetchEmojis();
@@ -44,12 +44,12 @@ const EmojiPicker = () => {
     setGroupNumber(groupNum);
   };
 
-  const changeValueHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const changeValueHandler: ChangeEventHandler<HTMLInputElement> = e => {
     e.stopPropagation();
     dispatch(sliceSetEmojiSearchValue(e.target.value));
   };
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (!groupRef || !groupRef.current) return;
 
@@ -65,12 +65,12 @@ const EmojiPicker = () => {
     <EmojiPickerParent>
       <EmojiSearch>
         <input
-          type='text'
-          id='search'
-          name='search'
+          type="text"
+          id="search"
+          name="search"
           value={value}
           onChange={changeValueHandler}
-          placeholder='Search Emoji'
+          placeholder="Search Emoji"
         />
       </EmojiSearch>
       <EmojiPickerHeader>
@@ -80,20 +80,21 @@ const EmojiPicker = () => {
               <HeaderKey
                 active={groupActive[index]}
                 key={index}
-                className='header-key'
+                className="header-key"
                 selectedGroup={index === groupNumber}
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   selectGroup(index);
-                }}>
+                }}
+              >
                 {headerEmoji[value]}
               </HeaderKey>
-            )
+            ),
         )}
       </EmojiPickerHeader>
-      <div className='container' ref={groupRef} onScroll={handleScroll}>
+      <div className="container" ref={groupRef} onScroll={handleScroll}>
         {refinedGroups && (
-          <div className='group-container'>
+          <div className="group-container">
             {Object.values(refinedGroups).map(
               (group, index) =>
                 index !== 2 && (
@@ -103,7 +104,7 @@ const EmojiPicker = () => {
                     groupNumber={groupNumber}
                     index={index}
                   />
-                )
+                ),
             )}
           </div>
         )}

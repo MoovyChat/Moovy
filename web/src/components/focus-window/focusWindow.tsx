@@ -33,7 +33,7 @@ const FocusWindow: React.FC<props> = ({
         return <div></div>;
     }
   }, [message]);
-  const KeyDownHandler: EventListenerOrEventListenerObject = (e) => {
+  const KeyDownHandler: EventListenerOrEventListenerObject = e => {
     const target = e.target as HTMLElement;
     if (!ref.current?.contains(target)) {
       setClicked(false);
@@ -43,14 +43,15 @@ const FocusWindow: React.FC<props> = ({
   document.addEventListener('mousedown', KeyDownHandler);
   return (
     <StyledFocusWindow
-      id='tooltip'
+      id="tooltip"
       ref={ref}
-      className='tooltip-wrapper'
+      className="tooltip-wrapper"
       dir={dir}
       clicked={clicked}
       height={height}
-      width={width}>
-      <div className='component' onClick={() => setClicked(!clicked)}>
+      width={width}
+    >
+      <div className="component" onClick={() => setClicked(!clicked)}>
         {children}
       </div>
       {clicked && (

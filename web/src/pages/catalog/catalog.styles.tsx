@@ -95,15 +95,15 @@ export const StyledTitle = styled.div<props>`
 
   :hover {
     .container {
-      height: ${(p) => p.hover && '220px'};
-      width: ${(p) => p.hover && '300px'};
+      height: ${p => p.hover && '220px'};
+      width: ${p => p.hover && '300px'};
       z-index: 10;
       top: 50%;
       left: 50%;
-      transform: ${(p) =>
+      transform: ${p =>
         p.hover ? p.styledHover : 'translateX(-50%) translateY(-50%)'};
       overflow: hidden;
-      border-radius: ${(p) => p.hover && '10px'};
+      border-radius: ${p => p.hover && '10px'};
       .title-bg {
         overflow: hidden;
 

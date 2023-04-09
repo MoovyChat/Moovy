@@ -65,7 +65,7 @@ const CardTemplate: React.FC<props> = ({
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
   const commentedUserId = comment.commentedUserId;
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const isSameUserAsLoggedIn = commentedUserId === loggedInUser.id;
   const [movieRef, setMovieRef] = useState<Movie | null>(null);
   const [movieRefId, setMovieRefId] = useState<string>('');
@@ -108,14 +108,14 @@ const CardTemplate: React.FC<props> = ({
     };
   }, [mounted.current]);
 
-  const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     episodeEntered.current = true;
     setTimeout(() => {
       episodeEntered.current && setShowEpisodeInfo(true);
     }, timeout);
   };
-  const onEpisodeLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onEpisodeLeave: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     episodeEntered.current = false;
     setTimeout(() => {
@@ -123,14 +123,14 @@ const CardTemplate: React.FC<props> = ({
     }, timeout);
   };
 
-  const onTitleEnter: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onTitleEnter: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     titleEntered.current = true;
     setTimeout(() => {
       titleEntered.current && setShowTitleInfo(true);
     }, timeout);
   };
-  const onTitleLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onTitleLeave: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     titleEntered.current = false;
     setTimeout(() => {
@@ -181,7 +181,7 @@ const CardTemplate: React.FC<props> = ({
     }
   }, [messageRef.current]);
 
-  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = (e) => {
+  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
@@ -190,7 +190,7 @@ const CardTemplate: React.FC<props> = ({
     });
   };
 
-  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     // Send comment/reply id as data.
     const _sentData = {
@@ -205,7 +205,7 @@ const CardTemplate: React.FC<props> = ({
     });
   };
 
-  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
@@ -235,12 +235,13 @@ const CardTemplate: React.FC<props> = ({
   return (
     <CSSTransition
       in={mounted.current}
-      classNames='comment'
+      classNames="comment"
       timeout={300}
-      nodeRef={commentRef}>
+      nodeRef={commentRef}
+    >
       <CardParent
         tabIndex={0}
-        role='button'
+        role="button"
         onClick={goToComment}
         showEpisodeInfo={showEpisodeInfo}
         showTitleInfo={showTitleInfo}
@@ -248,27 +249,28 @@ const CardTemplate: React.FC<props> = ({
         titlePoster={titleRef?.artwork}
         isHover={showEpisodeInfo || showTitleInfo}
         cardHeight={cardHeight}
-        showMore={showMore}>
-        <div className='bg'>
+        showMore={showMore}
+      >
+        <div className="bg">
           {!isMain && showEpisodeInfo ? (
             <Image
-              key='episode'
+              key="episode"
               src={movieRef?.stills as string}
-              alt='background-image'
+              alt="background-image"
             />
           ) : !isMain && showTitleInfo ? (
             <Image
-              key='title'
+              key="title"
               src={titleRef?.artwork as string}
-              alt='background-image'
+              alt="background-image"
             />
           ) : (
             <></>
           )}
         </div>
-        <div className='content'>
-          <div className='user-pic'>
-            <div className='pic-container'>
+        <div className="content">
+          <div className="user-pic">
+            <div className="pic-container">
               <ProfilePic
                 src={
                   isSameUserAsLoggedIn
@@ -284,69 +286,72 @@ const CardTemplate: React.FC<props> = ({
               />
             </div>
           </div>
-          <div className='message' onClick={goToComment}>
-            <div className='username'>
-              <div className='container'>
-                <div className='user'>
+          <div className="message" onClick={goToComment}>
+            <div className="username">
+              <div className="container">
+                <div className="user">
                   {isSameUserAsLoggedIn
                     ? loggedInUser.nickname
                     : userRef.current?.nickname}
                 </div>
-                <div className='time'>
+                <div className="time">
                   {comment.createdAt === 'Posting...'
                     ? 'Posting...'
                     : getTimeFrame(comment.createdAt)}
                 </div>
               </div>
               {isReply && (
-                <div className='isReply'>
+                <div className="isReply">
                   <span>Replying to</span>{' '}
                   <span
-                    className='ru'
-                    onClick={(e) => {
+                    className="ru"
+                    onClick={e => {
                       e.stopPropagation();
                       navigate(`/home/profile/${comment.parentRepliedUser}`);
-                    }}>
+                    }}
+                  >
                     @{comment.parentRepliedUser}
                   </span>
                 </div>
               )}
               {!isMain && (
-                <div className='movie'>
+                <div className="movie">
                   {titleRef && titleRef?.type === 'show' && (
                     <React.Fragment>
                       <div
-                        className='name title'
+                        className="name title"
                         onMouseEnter={onTitleEnter}
                         onMouseLeave={onTitleLeave}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           navigate(`/home/show/${titleRef?.id}`);
-                        }}>
+                        }}
+                      >
                         {titleRef?.title} {movieRef?.season}
                       </div>
                     </React.Fragment>
                   )}
                   <div
-                    className='name episode'
+                    className="name episode"
                     onMouseEnter={onEpisodeEnter}
                     onMouseLeave={onEpisodeLeave}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       navigate(`/home/movie/${movieRef?.id}`);
-                    }}>
+                    }}
+                  >
                     {movieRef?.name}
                   </div>
                 </div>
               )}
             </div>
-            <div className='msg' ref={messageRef} onClick={goToComment}>
+            <div className="msg" ref={messageRef} onClick={goToComment}>
               {!isMain && showEpisodeInfo ? (
                 <MovieInfo movie={movieRef!} />
               ) : !isMain && showTitleInfo ? (
                 <MovieInfo title={titleRef!} />
               ) : (
-                <div className='message-box' onClick={goToComment}>
+                <div className="message-box" onClick={goToComment}>
                   {formattedMsg.map((msg: textMap, index) =>
                     msg.type === textMapTypes.SPOILER ? (
                       <SpoilerTag key={index}>{msg.message}</SpoilerTag>
@@ -355,27 +360,29 @@ const CardTemplate: React.FC<props> = ({
                         <span
                           key={index}
                           className={msg.type}
-                          onClick={(e) => {
+                          onClick={e => {
                             if (msg.type === 'user') {
                               e.stopPropagation();
                               navigate(`/home/profile/${msg.message.slice(1)}`);
                             }
-                          }}>
+                          }}
+                        >
                           {ParsedText(msg.message)}{' '}
                         </span>
                       </React.Fragment>
-                    )
+                    ),
                   )}
                 </div>
               )}
             </div>
             {isEllipsis && !showEpisodeInfo && !showTitleInfo && (
               <div
-                className='show-more'
-                onClick={(e) => {
+                className="show-more"
+                onClick={e => {
                   e.stopPropagation();
                   setShowMore(!showMore);
-                }}>
+                }}
+              >
                 {showMore ? 'Show less' : 'Show more'}
               </div>
             )}
@@ -385,42 +392,45 @@ const CardTemplate: React.FC<props> = ({
           <LinkPreviewComponent text={comment.message} />
         )}
         {!showEpisodeInfo && !showTitleInfo && (
-          <div className='options'>
-            <div className='likes c'>
-              <span className='icon' onClick={updateLike} tabIndex={0}>
+          <div className="options">
+            <div className="likes c">
+              <span className="icon" onClick={updateLike} tabIndex={0}>
                 {like ? (
-                  <MdFavorite size={20} fill='#ff005d' />
+                  <MdFavorite size={20} fill="#ff005d" />
                 ) : (
                   <MdOutlineFavoriteBorder size={20} />
                 )}
               </span>
               <span
-                className='count'
+                className="count"
                 onClick={showLikesWindowHandler}
-                tabIndex={0}>
+                tabIndex={0}
+              >
                 {getFormattedNumber(likeCount)} Likes
               </span>
             </div>
-            <div className='replies c'>
+            <div className="replies c">
               <span
-                className='icon'
+                className="icon"
                 onClick={openCommentWindowHandler}
-                tabIndex={0}>
+                tabIndex={0}
+              >
                 <MdReply size={20} />
               </span>
-              <span className='count'>
+              <span className="count">
                 {getFormattedNumber(comment.repliesCount!)} Replies
               </span>
             </div>
             {isSameUserAsLoggedIn && (
               <div
-                className='delete c'
+                className="delete c"
                 onClick={deleteCommentHandler}
-                tabIndex={0}>
-                <span className='icon'>
+                tabIndex={0}
+              >
+                <span className="icon">
                   <MdDelete size={20} />
                 </span>
-                <span className='count'>Delete</span>
+                <span className="count">Delete</span>
               </div>
             )}
           </div>

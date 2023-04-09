@@ -15,25 +15,25 @@ const SearchResults = () => {
     <StyledSearchResults>
       <Helmet>
         <title>{`${search}: Search`}</title>
-        <meta name='description' content={`${search}: Movies`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/search/${search}}`} />
+        <meta name="description" content={`${search}: Movies`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/search/${search}}`} />
       </Helmet>
-      <ChildHeader text={`Search Results (${search})`} className='child' />
-      <NavLinks className='options'>
-        <NavLink to='episodes' end className='episodes nav' defaultChecked>
+      <ChildHeader text={`Search Results (${search})`} className="child" />
+      <NavLinks className="options">
+        <NavLink to="episodes" end className="episodes nav" defaultChecked>
           <div>Episodes</div>
         </NavLink>
-        <NavLink to='shows' className='shows nav'>
+        <NavLink to="shows" className="shows nav">
           <div>Shows</div>
         </NavLink>
-        <NavLink to='people' className='people nav'>
+        <NavLink to="people" className="people nav">
           <div>People</div>
         </NavLink>
-        <NavLink to='movies' className='movies nav'>
+        <NavLink to="movies" className="movies nav">
           <div>Movies</div>
         </NavLink>
       </NavLinks>
-      <div className='content'>
+      <div className="content">
         <Outlet />
       </div>
     </StyledSearchResults>

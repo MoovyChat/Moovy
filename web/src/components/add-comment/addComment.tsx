@@ -41,10 +41,10 @@ type props = {
 const AddComment: React.FC<props> = ({ type }) => {
   const [_ic, insertComment] = useInsertCommentMutation();
   const [_ir, insertReply] = useInsertReplyMutation();
-  const text = useAppSelector((state) => state.textArea.text);
+  const text = useAppSelector(state => state.textArea.text);
   const ref = useRef<HTMLDivElement | null>(null);
-  const user = useAppSelector((state) => state.user);
-  let popupData = useAppSelector((state) => state.popup.popupData);
+  const user = useAppSelector(state => state.user);
+  let popupData = useAppSelector(state => state.popup.popupData);
   const [movieInfo, setMovieInfo] = useState<Movie>();
   const [comment, setComment] = useState<Comment | Reply>();
   const dispatch = useAppDispatch();
@@ -54,7 +54,7 @@ const AddComment: React.FC<props> = ({ type }) => {
     else setComment(() => popupData as any);
   }, [type]);
 
-  const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const closeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
@@ -64,7 +64,7 @@ const AddComment: React.FC<props> = ({ type }) => {
     });
   };
 
-  const postCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const postCommentHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (text === '') {
       return;
@@ -80,7 +80,7 @@ const AddComment: React.FC<props> = ({ type }) => {
           movieId: movieInfo?.id!,
           platformId: 1,
         },
-      }).then((res) => {
+      }).then(res => {
         const { data, error } = res;
         if (error) {
           console.log(error);
@@ -117,7 +117,7 @@ const AddComment: React.FC<props> = ({ type }) => {
             : parentComment,
           parentReplyId: commentData.id,
         },
-      }).then((res) => {
+      }).then(res => {
         const { data, error } = res;
         if (error) {
           console.log(error);
@@ -138,88 +138,92 @@ const AddComment: React.FC<props> = ({ type }) => {
 
   return (
     <AddCommentParent>
-      <div className='heading'>
-        <MdModeComment size={25} className='icon' />
+      <div className="heading">
+        <MdModeComment size={25} className="icon" />
         <span> Post your comment</span>
-        <div className='close' onClick={closeHandler}>
+        <div className="close" onClick={closeHandler}>
           <MdClose size={20} />
         </div>
       </div>
-      <div className='context'>
-        <div className='user-container'>
-          <div className='user'>
+      <div className="context">
+        <div className="user-container">
+          <div className="user">
             <ProfilePic src={user?.photoUrl!} tooltip={true} />
           </div>
         </div>
-        <div className='comment-section'>
-          <div className='textarea-container'>
+        <div className="comment-section">
+          <div className="textarea-container">
             <StyledTextArea
-              placeholder='Hmm...'
+              placeholder="Hmm..."
               value={text}
               maxLength={300}
               autoFocus
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 dispatch(sliceSetTextAreaMessage(e.target.value));
-              }}></StyledTextArea>
+              }}
+            ></StyledTextArea>
             <StyledTextAreaBack ref={ref}>{text}</StyledTextAreaBack>
           </div>
-          <div className='options'>
+          <div className="options">
             <FocusWindow
               message={FOCUS_WINDOW.EMOJI}
-              height='200px'
-              width='200px'>
-              <div className='chip'>
-                <div className='icon'>
+              height="200px"
+              width="200px"
+            >
+              <div className="chip">
+                <div className="icon">
                   <MdEmojiEmotions size={15} />
                 </div>
-                <div className='text'>Emoji</div>
+                <div className="text">Emoji</div>
               </div>
             </FocusWindow>
             <div
-              className='chip'
-              onClick={(e) => {
+              className="chip"
+              onClick={e => {
                 e.stopPropagation();
                 dispatch(sliceSetTextAreaMessage(text + '<s></s>'));
-              }}>
-              <div className='icon'>
+              }}
+            >
+              <div className="icon">
                 <MdCode size={15} />
               </div>
-              <div className='text'>Spoiler</div>
+              <div className="text">Spoiler</div>
             </div>
             <div
-              className='chip down'
+              className="chip down"
               style={{
                 background: `linear-gradient(90deg, #df1212 ${
                   text.length / 3
                 }%,#6d0e85 0%)`,
-              }}>
-              <div className='icon'>
+              }}
+            >
+              <div className="icon">
                 <AiOutlineNumber size={15} />
               </div>
-              <div className='text'>{text.length}/300</div>
+              <div className="text">{text.length}/300</div>
             </div>
           </div>
           {type === AddCommentTypes.COMMENT && comment && (
-            <div className='comment'>
+            <div className="comment">
               <MiniCommentCard
                 id={comment.id}
                 type={(comment as any).parentCommentId ? 'reply' : 'comment'}
-                className='mini'
+                className="mini"
                 extendData={false}
               />
             </div>
           )}
 
-          <div className='title-details'>
+          <div className="title-details">
             {type === 'movie' && <MovieChip name={movieInfo?.name!} />}
-            {commentInserted === 1 && <MovieChip name='Posting Comment' />}
-            {commentInserted === 2 && <MovieChip name='Comment posted' />}
+            {commentInserted === 1 && <MovieChip name="Posting Comment" />}
+            {commentInserted === 2 && <MovieChip name="Comment posted" />}
             {commentInserted === 3 && (
-              <MovieChip name='Error posting comment' />
+              <MovieChip name="Error posting comment" />
             )}
-            <div className='post' onClick={postCommentHandler}>
-              <MdSend size={25} fill='white' />
+            <div className="post" onClick={postCommentHandler}>
+              <MdSend size={25} fill="white" />
             </div>
           </div>
         </div>

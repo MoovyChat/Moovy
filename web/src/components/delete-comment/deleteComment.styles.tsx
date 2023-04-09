@@ -41,7 +41,7 @@ export const DeleteCommentParent = styled.div`
       background-color: #ce1515;
       color: white;
       box-shadow: 0 0 5px
-        ${(p) => (p.theme.themeType === 'light' ? 'black' : 'white')};
+        ${p => (p.theme.themeType === 'light' ? 'black' : 'white')};
     }
     .cancel {
     }

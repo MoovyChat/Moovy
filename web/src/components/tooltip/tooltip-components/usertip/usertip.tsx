@@ -29,29 +29,29 @@ const UserTip: React.FC<props> = ({ userId }) => {
   if (getUser.error) return <>Error</>;
   return (
     <UserTipParent bg={user?.bg!}>
-      <div className='container'>
-        <div className='first'>
-          <div className='pic'>
+      <div className="container">
+        <div className="first">
+          <div className="pic">
             <ProfilePic src={user?.photoUrl!} tooltip={true} />
           </div>
-          <div className='text'>
-            <div className='username'>@{user?.nickname!}</div>
-            <div className='joined'>{getShortDateFormat(user?.joinedAt!)}</div>
+          <div className="text">
+            <div className="username">@{user?.nickname!}</div>
+            <div className="joined">{getShortDateFormat(user?.joinedAt!)}</div>
           </div>
         </div>
-        <div className='second'>
-          <div className='sec-follow'>
+        <div className="second">
+          <div className="sec-follow">
             <FollowButton userId={user?.id!} nickName={user?.nickname!} />
           </div>
-          <div className='batch'>
-            <div className='name'>Followers</div>
-            <div className='count'>
+          <div className="batch">
+            <div className="name">Followers</div>
+            <div className="count">
               {user?.followerCount ? user?.followerCount : 0}
             </div>
           </div>
-          <div className='batch'>
-            <div className='name'>Following</div>
-            <div className='count'>
+          <div className="batch">
+            <div className="name">Following</div>
+            <div className="count">
               {user?.followingCount ? user?.followingCount : 0}
             </div>
           </div>

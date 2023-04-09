@@ -45,24 +45,26 @@ const LinkPreviewComponent: React.FC<props> = ({ text }) => {
     return <React.Fragment></React.Fragment>;
   return (
     <StyledLinkPreview
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         // link && !isVideo && window.open(link, '_open');
         link && window.open(link, '_open');
-      }}>
+      }}
+    >
       <div
-        className='link-image'
-        onClick={(e) => {
+        className="link-image"
+        onClick={e => {
           e.stopPropagation();
           // isVideo
           //   ? isPlayClicked(true)
           //   : link && window.open(link, '_open');
           link && window.open(link, '_open');
-        }}>
+        }}
+      >
         <Image
           src={linkData.image as string}
-          alt='link-image'
-          className='link-img'
+          alt="link-image"
+          className="link-img"
         />
         {/* {isVideo && (
               <div className='play-btn'>
@@ -72,14 +74,15 @@ const LinkPreviewComponent: React.FC<props> = ({ text }) => {
             )} */}
       </div>
       <div
-        className='link-data'
-        onClick={(e) => {
+        className="link-data"
+        onClick={e => {
           e.stopPropagation();
           link && window.open(link, '_open');
-        }}>
-        <div className='link-title'>{domainName}</div>
-        <div className='link-desc'>{linkData.title}</div>
-        <div className='link-sub'>{linkData.description}</div>
+        }}
+      >
+        <div className="link-title">{domainName}</div>
+        <div className="link-desc">{linkData.title}</div>
+        <div className="link-sub">{linkData.description}</div>
       </div>
     </StyledLinkPreview>
   );

@@ -12,7 +12,7 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
 import { useParams } from 'react-router-dom';
@@ -52,7 +52,7 @@ const ShowsThread = () => {
 
   const { fetchMore } = useFetchMoreMovies(id!, setMovies, getMovies);
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -68,7 +68,8 @@ const ShowsThread = () => {
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-      }}>
+      }}
+    >
       <Loading />
     </div>;
   }
@@ -76,30 +77,30 @@ const ShowsThread = () => {
     <ShowThreadParent onScroll={handleScroll}>
       <Helmet>
         <title>{`Moovy: Show`}</title>
-        <meta name='description' content={`List of all episodes of a show.`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/show/${id}}`} />
+        <meta name="description" content={`List of all episodes of a show.`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/show/${id}}`} />
       </Helmet>
-      <ChildHeader className='movie-header'>
+      <ChildHeader className="movie-header">
         <StyledTitleHeader>
-          <div className='title-image'>
-            <img src={titleRef.current?.boxart as string} alt='title' />
+          <div className="title-image">
+            <img src={titleRef.current?.boxart as string} alt="title" />
           </div>
-          <div className='title-text'>{titleRef.current?.title}</div>
+          <div className="title-text">{titleRef.current?.title}</div>
           <WatchVideo
-            className='watch-video'
-            platform='NETFLIX'
+            className="watch-video"
+            platform="NETFLIX"
             id={titleRef.current?.id}
-            type='show'
+            type="show"
           />
         </StyledTitleHeader>
       </ChildHeader>
-      <div className='movies-container' ref={parentRef}>
+      <div className="movies-container" ref={parentRef}>
         {movies && (
           <ViewportList ref={listRef} viewportRef={parentRef} items={movies}>
             {(movie, index) => {
               if (movie)
                 return (
-                  <div className='movie' key={movie.id}>
+                  <div className="movie" key={movie.id}>
                     <MovieCard movieId={movie.id} />
                   </div>
                 );

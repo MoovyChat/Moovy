@@ -20,14 +20,15 @@ const EmptyPage: React.FC<props> = ({ msg }) => {
   return (
     <CSSTransition
       in={mounted.current}
-      classNames='empty'
+      classNames="empty"
       timeout={500}
-      nodeRef={parentRef}>
+      nodeRef={parentRef}
+    >
       <EmptyParent>
-        <div className='logo'>
-          <img src={Moovy} alt='Moovy' />
+        <div className="logo">
+          <img src={Moovy} alt="Moovy" />
         </div>
-        <div className='text'>{msg}</div>
+        <div className="text">{msg}</div>
       </EmptyParent>
     </CSSTransition>
   );

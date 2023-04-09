@@ -29,7 +29,7 @@ const ShowsCatalog = () => {
 
   const { fetchMore } = useFetchMoreTitles('show', setTitles, paginatedTitles);
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -38,14 +38,14 @@ const ShowsCatalog = () => {
   };
 
   if (titles && titles.length <= 0)
-    return <EmptyPage msg='Shows catalog is empty' />;
+    return <EmptyPage msg="Shows catalog is empty" />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
       <Helmet>
         <title>Moovy: Shows</title>
-        <meta name='description' content='List of all shows' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog/shows`} />
+        <meta name="description" content="List of all shows" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/catalog/shows`} />
       </Helmet>
       {titles &&
         titles.map((title, index) => (

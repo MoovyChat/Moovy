@@ -13,7 +13,7 @@ type props = {
   nickName: string;
 };
 const FollowButton: React.FC<props> = ({ userId, nickName }) => {
-  const loggedUser = useAppSelector((state) => state.user);
+  const loggedUser = useAppSelector(state => state.user);
   const isDifferentUser = loggedUser.id !== userId;
   const [followHovered, setFollowHovered] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -33,14 +33,14 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
     }
   }, [amIFollowingUser]);
 
-  const toggleFollowHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const toggleFollowHandler: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setIsFollowing(!isFollowing);
     toggleFollow({
       uid: loggedUser.id,
       followingId: userId,
       follow: !isFollowing,
-    }).then((res) => {
+    }).then(res => {
       const { error, data } = res;
       if (error) console.log(error);
       const isFollowingRes = data?.toggleFollow?.follows;
@@ -51,15 +51,17 @@ const FollowButton: React.FC<props> = ({ userId, nickName }) => {
   };
   return (
     <div
-      className='follow'
+      className="follow"
       onMouseEnter={() => setFollowHovered(() => true)}
-      onMouseLeave={() => setFollowHovered(() => false)}>
+      onMouseLeave={() => setFollowHovered(() => false)}
+    >
       {isDifferentUser && (
         <StyledButton
-          className='follow-btn'
+          className="follow-btn"
           color={isFollowing ? '#13dbde31' : '#de1328'}
           isFollowingUser={isFollowing}
-          onClick={toggleFollowHandler}>
+          onClick={toggleFollowHandler}
+        >
           {isFollowing ? (followHovered ? 'UnFollow' : 'Following') : 'Follow'}
         </StyledButton>
       )}

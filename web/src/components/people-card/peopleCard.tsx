@@ -12,21 +12,22 @@ const PeopleCard: React.FC<props> = ({ user }) => {
   const navigate = useNavigate();
   return (
     <StyledPeopleCard>
-      <div className='usr-sec-1'>
+      <div className="usr-sec-1">
         <ProfilePic user={user} src={user.photoUrl} tooltip={true} />
       </div>
-      <div className='usr-sec-2'>
+      <div className="usr-sec-2">
         <div
-          className='name'
-          onClick={(e) => {
+          className="name"
+          onClick={e => {
             e.stopPropagation();
             navigate(`/profile/${user.nickname}`);
-          }}>
+          }}
+        >
           {user.name}
         </div>
-        <div className='nickname'>@{user.nickname}</div>
+        <div className="nickname">@{user.nickname}</div>
       </div>
-      <div className='usr-sec-3'>
+      <div className="usr-sec-3">
         <FollowButton userId={user.id} nickName={user.nickname} />
       </div>
     </StyledPeopleCard>

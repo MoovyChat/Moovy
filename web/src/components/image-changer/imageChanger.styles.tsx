@@ -44,7 +44,7 @@ export const ImageChangerParent = styled.div<props>`
     .save {
       z-index: 2;
       position: absolute;
-      pointer-events: ${(p) => (p.url ? 'all' : 'none')};
+      pointer-events: ${p => (p.url ? 'all' : 'none')};
       right: 15px;
       bottom: 20px;
     }
@@ -101,7 +101,7 @@ export const ImageChangerParent = styled.div<props>`
           background: none;
           width: 90%;
           height: 100%;
-          color: ${(p) => p.theme.text};
+          color: ${p => p.theme.text};
           :active,
           :focus {
             border: none;

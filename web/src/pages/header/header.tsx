@@ -20,7 +20,7 @@ import { withUrqlClient } from 'next-urql';
 
 const Header = () => {
   const navigate = useNavigate();
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [_userResult, createUser] = useCreateUserMutation();
   const [, loginAction] = useLoginMutation();
@@ -37,12 +37,10 @@ const Header = () => {
     }
   }, [me.fetching]);
 
-  const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.stopPropagation();
     const signedInUser = await googleSignIn();
-    loginAction({ uid: signedInUser.id }).then((res) => {
+    loginAction({ uid: signedInUser.id }).then(res => {
       const { data } = res;
       const user = data?.login?.user;
       if (user) {
@@ -60,7 +58,7 @@ const Header = () => {
         createUser({
           options: user as any,
         })
-          .then((res) => {
+          .then(res => {
             const { data, error } = res;
             if (error) console.log(error);
             const _data = data?.createUser;
@@ -77,9 +75,7 @@ const Header = () => {
     });
   };
 
-  const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.stopPropagation();
     const result = await logOutAction({});
     const data = result.data;
@@ -97,80 +93,86 @@ const Header = () => {
   };
   return (
     <HeaderParent>
-      <div className='header'>
-        <div className='logo-image'>
+      <div className="header">
+        <div className="logo-image">
           <img
-            className='image'
+            className="image"
             src={MoovyLogo}
-            alt='QuietChat'
-            id='blur-escape'
-            loading='lazy'
-            width='150'
-            height='150'
+            alt="QuietChat"
+            id="blur-escape"
+            loading="lazy"
+            width="150"
+            height="150"
           />
-          <div className='beta'>beta</div>
+          <div className="beta">beta</div>
         </div>
       </div>
-      <div className='header-buttons'>
+      <div className="header-buttons">
         {user && user.id && (
           <HeaderButton
             tabIndex={0}
-            role='button'
-            className='install-button hb'
-            onClick={(e) => {
+            role="button"
+            className="install-button hb"
+            onClick={e => {
               e.stopPropagation();
               navigate('/home');
-            }}>
+            }}
+          >
             Home
           </HeaderButton>
         )}
         <HeaderButton
           tabIndex={0}
-          role='button'
-          className='install-button hb'
-          onClick={(e) => {
+          role="button"
+          className="install-button hb"
+          onClick={e => {
             e.stopPropagation();
             scrollIntoView('screenshots');
-          }}>
+          }}
+        >
           Screenshots
         </HeaderButton>
         <HeaderButton
           tabIndex={0}
-          role='button'
-          className='install-button hb'
-          onClick={(e) => {
+          role="button"
+          className="install-button hb"
+          onClick={e => {
             e.stopPropagation();
             scrollIntoView('features');
-          }}>
+          }}
+        >
           Features
         </HeaderButton>
         {user && user.id ? (
           <HeaderButton
-            className='hb'
-            id='logout-btn'
+            className="hb"
+            id="logout-btn"
             onClick={logOutHandler}
-            role='button'
-            tabIndex={0}>
+            role="button"
+            tabIndex={0}
+          >
             Logout
           </HeaderButton>
         ) : (
           <HeaderButton
-            className='hb'
-            id='login-btn'
+            className="hb"
+            id="login-btn"
             onClick={loginHandler}
-            role='button'
-            tabIndex={0}>
+            role="button"
+            tabIndex={0}
+          >
             Login
           </HeaderButton>
         )}
         <HeaderButton
-          className='install-button hb'
-          role='button'
+          className="install-button hb"
+          role="button"
           tabIndex={0}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');
-          }}>
+          }}
+        >
           Install Extension
         </HeaderButton>
       </div>

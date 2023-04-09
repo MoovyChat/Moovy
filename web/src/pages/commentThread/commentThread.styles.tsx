@@ -33,7 +33,7 @@ export const CommentThreadParent = styled.div<props>`
     }
     .comment-container {
       position: relative;
-      /* top: ${(p) => (p.isReply ? '27%' : '8%')}; */
+      /* top: ${p => (p.isReply ? '27%' : '8%')}; */
       display: flex;
       width: 90%;
       flex-direction: column;
@@ -101,7 +101,7 @@ export const CommentThreadParent = styled.div<props>`
                 font-size: 0.8em;
                 align-items: center;
                 box-shadow: 0px 0px 5px, 0px 0px 3px 1px;
-                background: ${(p) => p.theme.body};
+                background: ${p => p.theme.body};
                 .opo {
                   display: flex;
                   justify-content: center;
@@ -119,7 +119,7 @@ export const CommentThreadParent = styled.div<props>`
                     flex: 1 1 80%;
                   }
                   :hover {
-                    background-color: ${(p) => p.theme.hoverColor};
+                    background-color: ${p => p.theme.hoverColor};
                     color: white;
                   }
                 }
@@ -158,13 +158,13 @@ export const CommentThreadParent = styled.div<props>`
             width: 100%;
             font-size: 1.3em;
             padding-bottom: 10px;
-            max-height: ${(p) => (p.showMore ? p.cardHeight : '200px')};
+            max-height: ${p => (p.showMore ? p.cardHeight : '200px')};
             overflow: hidden;
             transition: all 0.4s;
             white-space: pre-line;
             .time,
             .user {
-              color: ${(p) => p.theme.mention};
+              color: ${p => p.theme.mention};
               :hover {
                 cursor: pointer;
                 text-decoration: underline;
@@ -175,7 +175,7 @@ export const CommentThreadParent = styled.div<props>`
           .show-more {
             font-weight: 600;
             font-size: 12px;
-            color: ${(p) => p.theme.mention};
+            color: ${p => p.theme.mention};
             text-decoration: underline;
             margin-bottom: 10px;
             cursor: pointer;
@@ -210,11 +210,11 @@ export const CommentThreadParent = styled.div<props>`
               cursor: pointer;
               padding: 2px 10px 2px 10px;
               :hover {
-                background-color: ${(p) =>
+                background-color: ${p =>
                   p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
               }
               :active {
-                background-color: ${(p) =>
+                background-color: ${p =>
                   p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
               }
             }
@@ -229,11 +229,11 @@ export const CommentThreadParent = styled.div<props>`
               box-shadow: 0 0 2px;
               cursor: pointer;
               :hover {
-                background-color: ${(p) =>
+                background-color: ${p =>
                   p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
               }
               :active {
-                background-color: ${(p) =>
+                background-color: ${p =>
                   p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
               }
             }
@@ -284,10 +284,10 @@ export const CommentThreadParent = styled.div<props>`
           font-weight: normal;
           overflow: hidden;
           border-radius: 10px;
-          padding: ${(p) =>
+          padding: ${p =>
             p.showEpisodeInfo || p.showTitleInfo ? '10px' : '0px'};
           height: 300px;
-          max-height: ${(p) =>
+          max-height: ${p =>
             p.showEpisodeInfo || p.showTitleInfo ? '180px' : '0px'};
           transition: max-height 1s;
           .bg {
@@ -352,12 +352,12 @@ export const StyledButton = styled.div<ButtonProps>`
   font-weight: 700;
   border-radius: 10px;
   color: white;
-  background-color: ${(p) => p.color};
+  background-color: ${p => p.color};
   :hover {
     cursor: pointer;
-    background-color: ${(p) => (p.isFollowingUser ? 'transparent' : p.color)};
-    box-shadow: ${(p) => p.isFollowingUser && 'inset 0 0 2px red'};
-    color: ${(p) => p.isFollowingUser && 'red'};
+    background-color: ${p => (p.isFollowingUser ? 'transparent' : p.color)};
+    box-shadow: ${p => p.isFollowingUser && 'inset 0 0 2px red'};
+    color: ${p => p.isFollowingUser && 'red'};
   }
 `;
 

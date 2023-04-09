@@ -17,8 +17,8 @@ export const RightParent = styled.div`
     padding-top: 10px;
     padding-bottom: 15px;
     border-radius: 20px;
-    background: ${(p) => p.theme.trendingTiles};
-    box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
+    background: ${p => p.theme.trendingTiles};
+    box-shadow: 0 0 4px ${p => p.theme.toggleBorder};
     .content {
       display: flex;
       flex-direction: column;
@@ -73,8 +73,8 @@ export const RightParent = styled.div`
         justify-content: space-evenly;
         border-radius: 20px;
         padding: 10px;
-        background: ${(p) => p.theme.trendingTiles};
-        box-shadow: 0 0 4px ${(p) => p.theme.toggleBorder};
+        background: ${p => p.theme.trendingTiles};
+        box-shadow: 0 0 4px ${p => p.theme.toggleBorder};
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;

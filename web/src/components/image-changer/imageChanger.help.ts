@@ -3,7 +3,7 @@ import { Area } from 'react-easy-crop';
 export function getCroppedImg(
   imageSrc: string,
   crop: Area,
-  outputSize: { width: number; height: number }
+  outputSize: { width: number; height: number },
 ): Promise<Blob | null> {
   const image = new Image();
   image.src = imageSrc;
@@ -12,7 +12,7 @@ export function getCroppedImg(
   canvas.height = outputSize.height;
   const ctx = canvas.getContext('2d');
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     image.onload = () => {
       const scaleX = image.naturalWidth / image.width;
       const scaleY = image.naturalHeight / image.height;
@@ -35,15 +35,15 @@ export function getCroppedImg(
         0,
         0,
         pixelCrop.width,
-        pixelCrop.height
+        pixelCrop.height,
       );
 
       canvas.toBlob(
-        (blob) => {
+        blob => {
           resolve(blob);
         },
         'image/jpeg',
-        1
+        1,
       );
     };
   });

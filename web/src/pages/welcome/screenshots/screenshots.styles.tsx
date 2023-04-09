@@ -10,7 +10,7 @@ export const welcomeHeaderColumn = css`
   margin-left: 20px;
   letter-spacing: 10px;
   color: transparent;
-  -webkit-text-stroke: 2px ${(p) => p.theme.text};
+  -webkit-text-stroke: 2px ${p => p.theme.text};
   word-break: break-all;
   @media (max-width: 500px) {
     font-size: 2rem;

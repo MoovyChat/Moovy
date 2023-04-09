@@ -1,5 +1,11 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
-import { MouseEventHandler, UIEventHandler, useEffect, useRef, useState } from 'react';
+import {
+  MouseEventHandler,
+  UIEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   NotificationObject,
   useClearNotificationsMutation,
@@ -15,7 +21,7 @@ import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 import _ from 'lodash';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
@@ -23,7 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const NotificationsModule = () => {
-  const user = useAppSelector((state) => state.user);
+  const user = useAppSelector(state => state.user);
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -40,11 +46,11 @@ const NotificationsModule = () => {
   }, []);
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      setPage((page) => page + 1);
+      setPage(page => page + 1);
     }
   };
 
@@ -85,7 +91,7 @@ const NotificationsModule = () => {
     } else navigate(`/profile/${notification.fromUser}`);
   };
 
-  const clearNotifications: MouseEventHandler<HTMLDivElement> = (e) => {
+  const clearNotifications: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     deleteNotifications({ uid: user.id });
   };
@@ -96,34 +102,35 @@ const NotificationsModule = () => {
     <NotificationParent>
       <Helmet>
         <title>{`Moovy: Notifications`}</title>
-        <meta name='description' content={`Notifications`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/notifications}`} />
+        <meta name="description" content={`Notifications`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/notifications}`} />
       </Helmet>
-      <ChildHeader className='header'>
-        <HeaderText className='heading'>
+      <ChildHeader className="header">
+        <HeaderText className="heading">
           <div>
             <span>Notifications</span>
-            <span className='count'>
+            <span className="count">
               {
                 notifications?.filter(
-                  (notification: any) => !notification.isRead
+                  (notification: any) => !notification.isRead,
                 ).length
               }
             </span>
           </div>
           {notifications.length > 0 && (
-            <div className='clear' onClick={clearNotifications}>
+            <div className="clear" onClick={clearNotifications}>
               Clear Notifications
             </div>
           )}
         </HeaderText>
       </ChildHeader>
       {notifications.length > 0 ? (
-        <div className='notifications' onScroll={handleScroll} ref={parentRef}>
+        <div className="notifications" onScroll={handleScroll} ref={parentRef}>
           <ViewportList
             ref={listRef}
             viewportRef={parentRef}
-            items={notifications}>
+            items={notifications}
+          >
             {(notification: any, index: number) =>
               notification && (
                 <NotificationCard
@@ -140,7 +147,7 @@ const NotificationsModule = () => {
           </ViewportList>
         </div>
       ) : (
-        <EmptyPage msg='Notifications are empty' />
+        <EmptyPage msg="Notifications are empty" />
       )}
     </NotificationParent>
   );

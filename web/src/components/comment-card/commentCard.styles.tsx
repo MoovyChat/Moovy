@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { animateHeart } from '../../utils/keyframes';
 
 const commentStyleMixin = () => css`
-  color: ${(p) => p.theme.mention};
+  color: ${p => p.theme.mention};
 `;
 
 type props = {
@@ -23,7 +23,7 @@ export const CardParent = styled.div<props>`
   width: 99%;
   min-height: 120px;
   justify-content: space-evenly;
-  align-items: ${(p) => (p.isReply ? 'flex-end' : 'center')};
+  align-items: ${p => (p.isReply ? 'flex-end' : 'center')};
   background-color: transparent;
   overflow: hidden;
   cursor: pointer;
@@ -96,7 +96,7 @@ export const CardParent = styled.div<props>`
       .show-more {
         font-weight: 600;
         font-size: 12px;
-        color: ${(p) => p.theme.mention};
+        color: ${p => p.theme.mention};
         text-decoration: underline;
       }
       .username {
@@ -123,7 +123,7 @@ export const CardParent = styled.div<props>`
           font-weight: 400;
           font-size: 0.7em;
           .ru {
-            color: ${(p) => p.theme.mention};
+            color: ${p => p.theme.mention};
             font-weight: 600;
             :hover {
               text-decoration: underline;
@@ -184,7 +184,7 @@ export const CardParent = styled.div<props>`
         font-weight: normal;
         overflow: hidden;
         margin: 10px 0;
-        max-height: ${(p) =>
+        max-height: ${p =>
           p.showMore ? p.cardHeight : p.isHover ? '200px' : '100px'};
         transition: max-height 0.5s;
         white-space: pre-line;
@@ -245,11 +245,11 @@ export const CardParent = styled.div<props>`
         cursor: pointer;
         padding: 2px 10px 2px 10px;
         :hover {
-          background-color: ${(p) =>
+          background-color: ${p =>
             p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
         }
         :active {
-          background-color: ${(p) =>
+          background-color: ${p =>
             p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
         }
       }
@@ -264,11 +264,11 @@ export const CardParent = styled.div<props>`
         box-shadow: 0 0 2px;
         cursor: pointer;
         :hover {
-          background-color: ${(p) =>
+          background-color: ${p =>
             p.theme.themeType === 'light' ? ' #c4c4c4' : ' #343434'};
         }
         :active {
-          background-color: ${(p) =>
+          background-color: ${p =>
             p.theme.themeType === 'light' ? ' #aeaeae' : ' #535353'};
         }
       }
@@ -313,7 +313,7 @@ export const MovieInfoParent = styled.div`
     .runtime {
       padding: 5px 10px;
       border-radius: 3px;
-      border: 1px solid ${(p) => p.theme.border};
+      border: 1px solid ${p => p.theme.border};
       margin: 2px;
     }
   }

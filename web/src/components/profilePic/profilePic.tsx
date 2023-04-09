@@ -13,24 +13,25 @@ type props = {
 };
 const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
   const navigate = useNavigate();
-  const navigateToUser: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const navigateToUser: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     user && navigate(`/home/profile/${user?.nickname}`);
   };
   return (
     <React.Fragment>
       {tooltip ? (
-        <ProfilePicParent onClick={navigateToUser} id='blur-escape'>
-          <img src={src} alt='profilePic' id='blur-escape' />
+        <ProfilePicParent onClick={navigateToUser} id="blur-escape">
+          <img src={src} alt="profilePic" id="blur-escape" />
         </ProfilePicParent>
       ) : (
         <Tooltip
-          height='140px'
-          width='200px'
+          height="140px"
+          width="200px"
           data={user?.id}
-          message={TOOLTIP.USER}>
-          <ProfilePicParent id='blur-escape'>
-            <Image src={src} alt='profilePic' lazy />
+          message={TOOLTIP.USER}
+        >
+          <ProfilePicParent id="blur-escape">
+            <Image src={src} alt="profilePic" lazy />
           </ProfilePicParent>
         </Tooltip>
       )}

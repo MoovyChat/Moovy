@@ -12,22 +12,22 @@ type props = {
 const NotificationCard: React.FC<props> = ({ notification, onClick, type }) => {
   return (
     <NotificationCardParent onClick={onClick}>
-      <div className='first'>
-        <div className='profile-pic'>
+      <div className="first">
+        <div className="profile-pic">
           <ProfilePic src={notification.fromUserPhotoUrl} tooltip={true} />
         </div>
-        <div className='message'>
-          {!notification.isRead && <span className='new'>New</span>}
+        <div className="message">
+          {!notification.isRead && <span className="new">New</span>}
           <span>{notification.message}</span>
         </div>
-        <div className='timestamp'>{getTimeFrame(notification.createdAt!)}</div>
+        <div className="timestamp">{getTimeFrame(notification.createdAt!)}</div>
       </div>
-      <div className='second'>
+      <div className="second">
         {type === 'LikeNotifications' && (
           <MiniCommentCard
             id={notification.commentId}
-            type='comment'
-            className='mini'
+            type="comment"
+            className="mini"
           />
         )}
       </div>

@@ -48,7 +48,7 @@ export const PanelsParent = styled.div<props>`
       top: 0;
       z-index: 99;
       width: 60%;
-      left: ${(p) => (p.isNavBarOpen ? '0%' : '-60%')};
+      left: ${p => (p.isNavBarOpen ? '0%' : '-60%')};
       backdrop-filter: blur(15px);
       transition: left 0.3s linear;
     }

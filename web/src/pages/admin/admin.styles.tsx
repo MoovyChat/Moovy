@@ -3,7 +3,7 @@ import { AiFillDelete, AiOutlineCheckCircle } from 'react-icons/ai';
 import styled from 'styled-components';
 
 export const FullMessageContainer = styled.div<adminProps>`
-  display: ${(p) => (p.contactSelected ? 'flex' : 'none')};
+  display: ${p => (p.contactSelected ? 'flex' : 'none')};
   justify-content: center;
   align-items: flex-start;
 
@@ -56,7 +56,7 @@ export const Container = styled.div<props>`
   padding: 10px;
   cursor: pointer;
   border-bottom: 1px solid #ddd;
-  background-color: ${(p) => !p.read && '#051f2a'};
+  background-color: ${p => !p.read && '#051f2a'};
   &:last-child {
     border-bottom: none;
   }

@@ -17,7 +17,7 @@ const MessageBox = () => {
   const [text, setText] = useState<string>('');
   const textAreaHeight = 500;
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = () => {};
-  const handleInputText: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+  const handleInputText: ChangeEventHandler<HTMLTextAreaElement> = e => {
     e.stopPropagation();
     setText(e.target.value);
   };
@@ -27,11 +27,11 @@ const MessageBox = () => {
         ref={textAreaRef}
         textAreaHeight={textAreaHeight}
         autoFocus={false}
-        key='editor'
-        id='comment'
-        name='comment'
-        autoComplete='off'
-        autoCorrect='off'
+        key="editor"
+        id="comment"
+        name="comment"
+        autoComplete="off"
+        autoCorrect="off"
         maxLength={500}
         onScroll={textAreaScrollListener}
         onFocus={onFocusHandler}

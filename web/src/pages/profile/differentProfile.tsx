@@ -18,7 +18,7 @@ const DifferentProfile = () => {
   const { id } = useParams();
 
   const [user, setUser] = useState<Users | null>(null);
-  const userFromRedux = useAppSelector((state) => state.user);
+  const userFromRedux = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const isSameUser = id !== userFromRedux.nickname;
   const [{ error, fetching, data }] = useGetUserByNickNameQuery({
@@ -26,14 +26,14 @@ const DifferentProfile = () => {
     pause: isServer(),
   });
 
-  const profilePicChangeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const profilePicChangeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
       dispatch(sliceSetSelectedElement(popupStates.IMAGE_POP_UP));
     });
   };
-  const bgChangeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const bgChangeHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
@@ -41,7 +41,7 @@ const DifferentProfile = () => {
     });
   };
 
-  const editProfileHandler: MouseEventHandler<HTMLSpanElement> = (e) => {
+  const editProfileHandler: MouseEventHandler<HTMLSpanElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));

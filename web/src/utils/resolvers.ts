@@ -15,7 +15,7 @@ export const movieCommentsResolver = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -24,7 +24,7 @@ export const movieCommentsResolver = (): Resolver => {
     const fieldKeys = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     const isInCache = cache.resolve(
       cache.resolve(entityKey, fieldKeys) as string,
-      'comments'
+      'comments',
     );
     let newComments = [] as string[];
 
@@ -71,7 +71,7 @@ export const paginatedUserNotificationsResolver = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -106,7 +106,7 @@ export const getPaginatedMovieStatsResolver = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -141,7 +141,7 @@ export const getUserViewHistoryResolver = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -179,7 +179,7 @@ export const getPaginatedSearchTitles = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -215,7 +215,7 @@ export const getPaginatedSearchEpisodes = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {
@@ -251,7 +251,7 @@ export const getPaginatedSearchPeople = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter(
-      (info: any) => info.fieldName === fieldName
+      (info: any) => info.fieldName === fieldName,
     );
     const size = fieldInfos.length;
     if (size === 0) {

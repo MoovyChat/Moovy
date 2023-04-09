@@ -9,7 +9,7 @@ export const EmojiButtonParent = styled.div`
   align-items: center;
   flex: 0 0 10%;
   button {
-    color: ${(p) => p.theme.text};
+    color: ${p => p.theme.text};
     height: 100%;
     width: 100%;
     display: flex;

@@ -98,7 +98,7 @@ const CommentTemplate: React.FC<props> = ({
   const [movieRefId, setMovieRefId] = useState<string>('');
   const messageRef = useRef<HTMLDivElement | null>(null);
 
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
   const isReply = comment?.parentCommentId ? true : false;
@@ -136,7 +136,7 @@ const CommentTemplate: React.FC<props> = ({
     }
   }, [getTitleInfo]);
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -144,20 +144,20 @@ const CommentTemplate: React.FC<props> = ({
     }
   };
 
-  const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onEpisodeEnter: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setShowEpisodeInfo(true);
   };
-  const onEpisodeLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onEpisodeLeave: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setShowEpisodeInfo(false);
   };
 
-  const onTitleEnter: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onTitleEnter: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setShowTitleInfo(true);
   };
-  const onTitleLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onTitleLeave: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     setShowTitleInfo(false);
   };
@@ -174,7 +174,7 @@ const CommentTemplate: React.FC<props> = ({
     }
   }, [messageRef.current]);
 
-  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
 
     batch(() => {
@@ -189,7 +189,7 @@ const CommentTemplate: React.FC<props> = ({
     });
   };
 
-  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const showLikesWindowHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const _sentData = {
       data: likedUsers,
@@ -202,7 +202,7 @@ const CommentTemplate: React.FC<props> = ({
     });
   };
 
-  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = (e) => {
+  const openCommentWindowHandler: MouseEventHandler<HTMLSpanElement> = e => {
     e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
@@ -221,26 +221,27 @@ const CommentTemplate: React.FC<props> = ({
       showTitleInfo={showTitleInfo}
       isReply={isReply}
       movieBg={movieRef?.stills as string}
-      titleBg={titleRef?.boxart as string}>
+      titleBg={titleRef?.boxart as string}
+    >
       <Helmet>
         <title>{titleRef?.title}</title>
-        <meta name='description' content={comment.message} />
+        <meta name="description" content={comment.message} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/${isReply ? 'reply' : 'comment'}/${
             comment.id
           }`}
         />
       </Helmet>
       <ChildHeader
-        className='comment-header'
+        className="comment-header"
         text={type.charAt(0).toUpperCase() + type.slice(1)}
       />
 
-      <div className='main-container' onScroll={handleScroll}>
+      <div className="main-container" onScroll={handleScroll}>
         {isReply && (
           <MiniCommentCard
-            className='cc'
+            className="cc"
             id={comment?.parentReplyId! as string}
             type={
               comment?.parentCommentId === comment?.parentReplyId
@@ -250,20 +251,20 @@ const CommentTemplate: React.FC<props> = ({
             extendData={true}
           />
         )}
-        <div className='comment-container' ref={ref}>
-          <div className='inner'>
-            <div className='comment-usr-detail'>
-              <div className='user-container'>
-                <div className='user'>
+        <div className="comment-container" ref={ref}>
+          <div className="inner">
+            <div className="comment-usr-detail">
+              <div className="user-container">
+                <div className="user">
                   <ProfilePic
                     src={userRef.current?.photoUrl!}
                     user={userRef.current as Users}
                     tooltip={true}
                   />
                 </div>
-                <div className='name'>{userRef.current?.nickname}</div>
+                <div className="name">{userRef.current?.nickname}</div>
               </div>
-              <div className='options-container'>
+              <div className="options-container">
                 {userRef.current?.nickname !== loggedInUser.nickname &&
                   userRef &&
                   userRef.current && (
@@ -272,52 +273,57 @@ const CommentTemplate: React.FC<props> = ({
                       nickName={userRef.current?.nickname!}
                     />
                   )}
-                <div className='option'>
+                <div className="option">
                   <div
-                    className='option-icon'
-                    onClick={(e) => {
+                    className="option-icon"
+                    onClick={e => {
                       e.stopPropagation();
                       setOpenOptionWindow(() => !openOptionWindow);
-                    }}>
-                    <MdOutlineMoreHoriz className='icon' size={20} />
+                    }}
+                  >
+                    <MdOutlineMoreHoriz className="icon" size={20} />
                   </div>
                   {openOptionWindow && (
-                    <div className='option-window'>
+                    <div className="option-window">
                       {userRef.current?.nickname === loggedInUser.nickname && (
                         <div
-                          className='opo delete'
-                          onClick={deleteCommentHandler}>
-                          <div className='opo-icon'>
+                          className="opo delete"
+                          onClick={deleteCommentHandler}
+                        >
+                          <div className="opo-icon">
                             <MdDelete size={20} />
                           </div>
-                          <div className='opo-text'>Delete</div>
+                          <div className="opo-text">Delete</div>
                         </div>
                       )}
                       <div
-                        className='opo'
-                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
-                        <div className='opo-icon'>
+                        className="opo"
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}
+                      >
+                        <div className="opo-icon">
                           <MdFlag size={20} />
                         </div>
-                        <div className='opo-text'>Flag this comment (Beta)</div>
+                        <div className="opo-text">Flag this comment (Beta)</div>
                       </div>
                       <div
-                        className='opo'
-                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
-                        <div className='opo-icon'>
+                        className="opo"
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}
+                      >
+                        <div className="opo-icon">
                           <MdBlock size={20} />
                         </div>
-                        <div className='opo-text'>
+                        <div className="opo-text">
                           Block @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
                       <div
-                        className='opo'
-                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
-                        <div className='opo-icon'>
+                        className="opo"
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}
+                      >
+                        <div className="opo-icon">
                           <MdReport size={20} />
                         </div>
-                        <div className='opo-text'>
+                        <div className="opo-text">
                           Report @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
@@ -326,8 +332,8 @@ const CommentTemplate: React.FC<props> = ({
                 </div>
               </div>
             </div>
-            <div className='comment-usr-msg'>
-              <div className='cm-us-xt' ref={messageRef}>
+            <div className="comment-usr-msg">
+              <div className="cm-us-xt" ref={messageRef}>
                 {formattedMsg.map((msg: textMap, index) =>
                   msg.type === textMapTypes.SPOILER ? (
                     <SpoilerTag key={index}>{msg.message}</SpoilerTag>
@@ -336,75 +342,79 @@ const CommentTemplate: React.FC<props> = ({
                       <span
                         key={index}
                         className={msg.type}
-                        onClick={(e) => {
+                        onClick={e => {
                           if (msg.type === 'user') {
                             navigate(`/home/profile/${msg.message.slice(1)}`);
                           }
-                        }}>
+                        }}
+                      >
                         {ParsedText(msg.message)}{' '}
                       </span>
                     </React.Fragment>
-                  )
+                  ),
                 )}
               </div>
               {isEllipsis && (
                 <div
-                  className='show-more'
-                  onClick={(e) => {
+                  className="show-more"
+                  onClick={e => {
                     e.stopPropagation();
                     setShowMore(!showMore);
-                  }}>
+                  }}
+                >
                   {showMore ? 'Show less' : 'Show more'}
                 </div>
               )}
             </div>
-            <div className='comment-usr-time'>
+            <div className="comment-usr-time">
               {getDateFormat(comment?.createdAt)}
             </div>
-            <div className='movie-chips'>
+            <div className="movie-chips">
               {titleRef && titleRef?.type === 'show' && (
                 <React.Fragment>
                   <div
-                    className='name title'
+                    className="name title"
                     onMouseEnter={onTitleEnter}
                     onMouseLeave={onTitleLeave}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       navigate(`/home/show/${titleRef?.id}`);
-                    }}>
+                    }}
+                  >
                     {titleRef?.title} {movieRef?.season}
                   </div>
                 </React.Fragment>
               )}
               <div
-                className='name'
+                className="name"
                 onMouseEnter={onEpisodeEnter}
                 onMouseLeave={onEpisodeLeave}
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   navigate(`/home/movie/${movieRef?.id}`);
-                }}>
+                }}
+              >
                 {movieRef?.name}
               </div>
             </div>
-            <div className='show-details'>
-              <div className='bg'>
+            <div className="show-details">
+              <div className="bg">
                 {showEpisodeInfo ? (
                   <Image
-                    key='episode'
+                    key="episode"
                     src={movieRef?.stills as string}
-                    alt='background-image'
+                    alt="background-image"
                   />
                 ) : showTitleInfo ? (
                   <Image
-                    key='title'
+                    key="title"
                     src={titleRef?.artwork as string}
-                    alt='background-image'
+                    alt="background-image"
                   />
                 ) : (
                   <Image
-                    src='https://png.pngtree.com/thumb_back/fh260/background/20210316/pngtree-black-abstract-fluorescent-line-background-image_587942.jpg'
-                    alt='background-image'
+                    src="https://png.pngtree.com/thumb_back/fh260/background/20210316/pngtree-black-abstract-fluorescent-line-background-image_587942.jpg"
+                    alt="background-image"
                   />
                 )}
               </div>
@@ -414,29 +424,29 @@ const CommentTemplate: React.FC<props> = ({
                 showTitleInfo && <MovieInfo title={titleRef!} />
               )}
             </div>
-            <div className='comment-usr-stats'>
-              <div className='likes cus'>
-                <span className='icon' onClick={updateLike}>
+            <div className="comment-usr-stats">
+              <div className="likes cus">
+                <span className="icon" onClick={updateLike}>
                   {like ? (
-                    <MdFavorite size={20} fill='#ff005d' />
+                    <MdFavorite size={20} fill="#ff005d" />
                   ) : (
                     <MdOutlineFavoriteBorder size={20} />
                   )}
                 </span>
-                <span className='count' onClick={showLikesWindowHandler}>
+                <span className="count" onClick={showLikesWindowHandler}>
                   {getFormattedNumber(likesCount)} Likes
                 </span>
               </div>
-              <div className='comment cus'>
-                <span className='icon' onClick={openCommentWindowHandler}>
+              <div className="comment cus">
+                <span className="icon" onClick={openCommentWindowHandler}>
                   <MdReply size={20} />
                 </span>
-                <span className='count'>
+                <span className="count">
                   {getFormattedNumber(comment?.repliesCount!)} Replies
                 </span>
               </div>
             </div>
-            <div className='comment-replies'>
+            <div className="comment-replies">
               {replies?.length! > 0 ? (
                 replies?.map((reply: Reply) => (
                   <ReplyCard
@@ -446,14 +456,14 @@ const CommentTemplate: React.FC<props> = ({
                   />
                 ))
               ) : (
-                <div className='no-data'>
-                  <EmptyPage msg='No Replies yet' />
+                <div className="no-data">
+                  <EmptyPage msg="No Replies yet" />
                 </div>
               )}
             </div>
           </div>
         </div>
-        <CommentButton type='comment' data={comment} />
+        <CommentButton type="comment" data={comment} />
       </div>
     </CommentThreadParent>
   );

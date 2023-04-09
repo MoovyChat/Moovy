@@ -7,9 +7,9 @@ const Loading = () => {
     <LoadingParent>
       <Helmet>
         <title>{`Loading...`}</title>
-        <meta name='description' content={`Loading...`} />
+        <meta name="description" content={`Loading...`} />
       </Helmet>
-      <div className='lds-ellipsis'>
+      <div className="lds-ellipsis">
         <div></div>
         <div></div>
         <div></div>

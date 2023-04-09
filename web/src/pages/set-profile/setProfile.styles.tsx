@@ -245,7 +245,7 @@ export const StyledRegistrationStep = styled.div<stepProps>`
     display: flex;
     z-index: 2;
     color: white;
-    background-color: ${(p) =>
+    background-color: ${p =>
       p.isError ? 'red' : p.isSelected ? 'blueviolet' : '#343434'};
   }
   .line {

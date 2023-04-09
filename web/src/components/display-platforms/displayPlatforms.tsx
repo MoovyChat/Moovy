@@ -8,12 +8,12 @@ import React from 'react';
 import { streamingServices } from '../../pages/welcome/welcome';
 
 type logoSetProp = {
-  platform: typeof streamingServices[0];
+  platform: (typeof streamingServices)[0];
 };
 export const LogoSet: React.FC<logoSetProp> = ({ platform }) => {
   return (
-    <LogoSetParent className='platform'>
-      <div className='set'>
+    <LogoSetParent className="platform">
+      <div className="set">
         <Image src={platform.imgUrl} alt={platform.title} />
       </div>
     </LogoSetParent>
@@ -22,8 +22,8 @@ export const LogoSet: React.FC<logoSetProp> = ({ platform }) => {
 
 const DisplayPlatforms = () => {
   return (
-    <DisplayPlatformsStyles className='platform-buttons'>
-      {streamingServices.map((platform) => (
+    <DisplayPlatformsStyles className="platform-buttons">
+      {streamingServices.map(platform => (
         <LogoSet platform={platform} key={platform.title} />
       ))}
     </DisplayPlatformsStyles>

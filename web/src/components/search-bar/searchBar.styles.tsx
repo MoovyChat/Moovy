@@ -25,7 +25,7 @@ export const SearchBarParent = styled.div`
       border-radius: 0.25rem;
       outline: none;
       width: calc(100% - 50px);
-      color: ${(p) => p.theme.text};
+      color: ${p => p.theme.text};
     }
   }
 `;

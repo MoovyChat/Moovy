@@ -9,7 +9,7 @@ type props = {
   user: Users;
 };
 export const UserCard: React.FC<props> = ({ user }) => {
-  const currentUser = useAppSelector((state) => state.user);
+  const currentUser = useAppSelector(state => state.user);
   const isSameUser = user.id === currentUser.id;
   const navigate = useNavigate();
   const cardClickHandler = (userId: string) => {
@@ -18,15 +18,16 @@ export const UserCard: React.FC<props> = ({ user }) => {
 
   return (
     <StyledUserCard
-      onClick={(e) => {
+      onClick={e => {
         e.stopPropagation();
         cardClickHandler(user.nickname);
-      }}>
-      <div className='user-block'>
-        <div className='pic-container'>
+      }}
+    >
+      <div className="user-block">
+        <div className="pic-container">
           <ProfilePic src={user.photoUrl} tooltip={true} user={user} />
         </div>
-        <div className='user-name'>{user.nickname}</div>
+        <div className="user-name">{user.nickname}</div>
       </div>
       {!isSameUser && (
         <FollowButton userId={user.id} nickName={user.nickname} />

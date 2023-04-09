@@ -36,7 +36,7 @@ const BasicInfo = () => {
   const [likedMovies, setLikedMovies] = useState<Movie[]>([]);
   const [visitedMovies, setVisitedMovies] = useState<Movie[]>([]);
   const [dobInTime, setDOBInTime] = useState<string>('');
-  const userFromRedux = useAppSelector((state) => state.user);
+  const userFromRedux = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const isDifferentUser = id !== userFromRedux.nickname;
   const [{ error, fetching, data }] = useGetUserByNickNameQuery({
@@ -63,7 +63,7 @@ const BasicInfo = () => {
     }
     let UTCTimeString = (profile.dob as string).split('-').join('/');
     let dobTimeString = getShortDateFormat(
-      new Date(UTCTimeString).getTime().toString()
+      new Date(UTCTimeString).getTime().toString(),
     );
     if (dobTimeString) setDOBInTime(dobTimeString);
   }, [profile?.dob]);
@@ -91,26 +91,26 @@ const BasicInfo = () => {
 
   return (
     <SubGroups>
-      <div className='pro'>
-        <div className='block'>
-          <div className='icon'>
+      <div className="pro">
+        <div className="block">
+          <div className="icon">
             <MdOutlineCake size={25} />
           </div>
-          <div className='info'>
+          <div className="info">
             {dobInTime === '' ? 'Not Specified' : ParsedText(dobInTime)}
           </div>
         </div>
 
         {profile && profile.gender && (
-          <div className='block'>
-            <div className='icon'>
+          <div className="block">
+            <div className="icon">
               {profile?.gender === 'male' ? (
                 <MdMale size={25} />
               ) : (
                 <MdFemale size={25} />
               )}
             </div>
-            <div className='info'>
+            <div className="info">
               {profile && profile.gender
                 ? profile.gender.charAt(0).toUpperCase() +
                   profile.gender.slice(1)
@@ -118,19 +118,19 @@ const BasicInfo = () => {
             </div>
           </div>
         )}
-        <div className='block'>
-          <div className='icon'>
+        <div className="block">
+          <div className="icon">
             <MdOutlineContacts size={25} />
           </div>
-          <div className='info'>
+          <div className="info">
             {profile && profile.bio ? ParsedText(profile.bio) : 'Not Specified'}
           </div>
         </div>
       </div>
-      <div className='follow'>
-        <div className='followers'>
-          <div className='fd'>Followers</div>
-          <div className='pd'>
+      <div className="follow">
+        <div className="followers">
+          <div className="fd">Followers</div>
+          <div className="pd">
             {user && (
               <ImageStack
                 user={user}
@@ -140,9 +140,9 @@ const BasicInfo = () => {
             )}
           </div>
         </div>
-        <div className='following'>
-          <div className='fd'>Following</div>
-          <div className='pd'>
+        <div className="following">
+          <div className="fd">Following</div>
+          <div className="pd">
             {user && (
               <ImageStack
                 user={user}
@@ -153,24 +153,25 @@ const BasicInfo = () => {
           </div>
         </div>
       </div>
-      <div className='con'>
-        <div className='history box'>
-          <div className='hd'>
+      <div className="con">
+        <div className="history box">
+          <div className="hd">
             <div>Recently watched</div>
             {visitedMovies.length > 0 && (
               <div
-                className='sm'
-                onClick={(e) => {
+                className="sm"
+                onClick={e => {
                   e.stopPropagation();
                   navigate(`/activity/${user?.nickname}/history`);
-                }}>
+                }}
+              >
                 Show more
               </div>
             )}
           </div>
           {visitedMovies.length > 0 ? (
-            <div className='bd'>
-              {visitedMovies.map((movie) => (
+            <div className="bd">
+              {visitedMovies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movieId={movie.id} />
                 </div>
@@ -180,23 +181,24 @@ const BasicInfo = () => {
             <NoTitle>No titles</NoTitle>
           )}
         </div>
-        <div className='fav box'>
-          <div className='hd'>
+        <div className="fav box">
+          <div className="hd">
             <div>Favorite Titles</div>
             {favMovies.length > 0 && (
               <div
-                className='sm'
-                onClick={(e) => {
+                className="sm"
+                onClick={e => {
                   e.stopPropagation();
                   navigate(`/activity/${user?.nickname}/favorites`);
-                }}>
+                }}
+              >
                 Show more
               </div>
             )}
           </div>
           {favMovies.length > 0 ? (
-            <div className='bd'>
-              {favMovies.map((movie) => (
+            <div className="bd">
+              {favMovies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movieId={movie.id} />
                 </div>
@@ -206,23 +208,24 @@ const BasicInfo = () => {
             <NoTitle>No titles</NoTitle>
           )}
         </div>
-        <div className='liked box'>
-          <div className='hd'>
+        <div className="liked box">
+          <div className="hd">
             <div>Liked Titles</div>
             {likedMovies.length > 0 && (
               <div
-                className='sm'
-                onClick={(e) => {
+                className="sm"
+                onClick={e => {
                   e.stopPropagation();
                   navigate(`/activity/${user?.nickname}/liked`);
-                }}>
+                }}
+              >
                 Show more
               </div>
             )}
           </div>
           {likedMovies.length > 0 ? (
-            <div className='bd'>
-              {likedMovies.map((movie) => (
+            <div className="bd">
+              {likedMovies.map(movie => (
                 <div key={movie.id}>
                   <MovieCard movieId={movie.id} />
                 </div>

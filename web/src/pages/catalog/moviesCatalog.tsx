@@ -32,7 +32,7 @@ const MoviesCatalog = () => {
 
   const { fetchMore } = useFetchMoreTitles('movie', setTitles, paginatedTitles);
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -48,14 +48,14 @@ const MoviesCatalog = () => {
     );
 
   if (titles && titles?.length <= 0)
-    return <EmptyPage msg='Movies catalog is empty' />;
+    return <EmptyPage msg="Movies catalog is empty" />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
       <Helmet>
         <title>Moovy: Movies</title>
-        <meta name='description' content='List of all movies' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog`} />
+        <meta name="description" content="List of all movies" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/catalog`} />
       </Helmet>
       {titles &&
         titles.map(
@@ -68,7 +68,7 @@ const MoviesCatalog = () => {
                 totalItems={titles.length}
                 key={title.id}
               />
-            )
+            ),
         )}
     </CatalogParent>
   );

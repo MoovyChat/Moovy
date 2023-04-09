@@ -26,10 +26,10 @@ export const ChatAreaParent = styled.textarea<props>`
   ${textAreaMixin()}
   position: relative;
   /* background: transparent; */
-  height: ${(p) => p.textAreaHeight}px !important;
+  height: ${p => p.textAreaHeight}px !important;
   /* z-index: 9; */
   /* color: rgba(0, 0, 0, 0.001); */
-  /* caret-color: ${(p) => p.theme.text}; */
+  /* caret-color: ${p => p.theme.text}; */
 
   /* ::placeholder {
     Chrome, Firefox, Opera, Safari 10.1+

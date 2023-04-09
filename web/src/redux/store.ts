@@ -7,13 +7,13 @@ import { persistStore } from 'redux-persist';
 import { rootReducer } from './reducer/rootReducer';
 import thunk from 'redux-thunk';
 
-const debounceNotify = debounce((notify) => notify());
+const debounceNotify = debounce(notify => notify());
 const enhancer = compose(
   applyMiddleware(thunk),
-  batchedSubscribe((notify) => {
+  batchedSubscribe(notify => {
     notify();
   }),
-  batchedSubscribe(debounceNotify)
+  batchedSubscribe(debounceNotify),
 );
 export const store = configureStore({
   reducer: rootReducer,

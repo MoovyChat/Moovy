@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import EmojiSubGroup from '../emojiSubGroup/emojiSubGroup';
 import { GroupParent } from './emojiGroup.styles';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 import { sliceSetEmojiGroupActive } from '../../../redux/slices/miscSlice';
 import { subGroup } from '../emojiPicker';
 import { useAppDispatch } from '../../../redux/hooks';
@@ -28,7 +28,7 @@ const EmojiGroup: React.FC<props> = ({ subGroup, groupNumber, index }) => {
     }
   }, [groupNumber, index, parentRef?.current]);
   useEffect(() => {
-    let res = Object.values(values).filter((v) => v !== 0);
+    let res = Object.values(values).filter(v => v !== 0);
     if (res.length === 0) {
       dispatch(sliceSetEmojiGroupActive({ key: index, value: false }));
     } else {
@@ -41,7 +41,8 @@ const EmojiGroup: React.FC<props> = ({ subGroup, groupNumber, index }) => {
         <ViewportList
           ref={listRef}
           viewportRef={parentRef}
-          items={Object.values(subGroup)}>
+          items={Object.values(subGroup)}
+        >
           {(value, index) => (
             <EmojiSubGroup
               key={index}

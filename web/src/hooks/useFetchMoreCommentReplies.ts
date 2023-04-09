@@ -24,7 +24,7 @@ export const useFetchMoreRepliesOfComment = (
     }>
   >,
   cursor: string,
-  setCursor: React.Dispatch<React.SetStateAction<string>>
+  setCursor: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const graphqlClient = useClient();
   const fetchMore = useCallback(() => {
@@ -39,14 +39,14 @@ export const useFetchMoreRepliesOfComment = (
         cid: comment?.id,
       })
       .toPromise()
-      .then((moreData) => {
+      .then(moreData => {
         const { data, error } = moreData;
         const _data = data.getCommentReplies!;
         const pageInfo = _data.pageInfo;
         setCursor(() => pageInfo.endCursor as string);
         const nodes = _data.nodes as any[];
         setNodes((replies: any) =>
-          _.chain(replies).concat(nodes).uniqBy('id').value()
+          _.chain(replies).concat(nodes).uniqBy('id').value(),
         );
       });
   }, [res]);

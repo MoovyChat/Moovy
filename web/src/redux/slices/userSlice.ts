@@ -26,7 +26,7 @@ const UserSlice = createSlice({
     },
     sliceSetUserNickName: (
       state,
-      action: { payload: string; type: string }
+      action: { payload: string; type: string },
     ) => {
       return { ...state, nickname: action.payload };
     },

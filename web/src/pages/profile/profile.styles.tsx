@@ -283,7 +283,7 @@ export const SubGroups = styled.div`
       width: 100%;
       .hd {
         padding: 20px;
-        background: ${(p) => p.theme.background};
+        background: ${p => p.theme.background};
         font-size: 0.9rem;
         font-weight: 600;
         display: flex;
@@ -351,7 +351,7 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     justify-content: flex-end;
     padding-right: 10px;
     align-items: center;
-    color: ${(p) => (p.error && p.error !== 'none' ? 'red' : p.theme.text)};
+    color: ${p => (p.error && p.error !== 'none' ? 'red' : p.theme.text)};
   }
   .in {
     flex: 1 1 60%;
@@ -364,7 +364,7 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
       font-family: inherit;
       width: 100%;
       padding: 10px;
-      color: ${(p) => p.theme.text};
+      color: ${p => p.theme.text};
       display: flex;
       justify-content: center;
       align-items: center;
@@ -385,14 +385,14 @@ export const ProfileTextBoxParent = styled.div<tbProps>`
     align-items: center;
     .light {
       border-radius: 50%;
-      background-color: ${(p) =>
+      background-color: ${p =>
         p.error === 'none'
           ? '#43586b'
           : p.error === ''
           ? '#00ff00'
           : '#ff0000'};
       box-shadow: 0 0 15px 6px
-          ${(p) =>
+          ${p =>
             p.error === 'none'
               ? '#43586b'
               : p.error === ''

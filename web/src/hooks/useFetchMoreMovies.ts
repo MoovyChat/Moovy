@@ -20,7 +20,7 @@ export const useFetchMoreMovies = (
       first: number;
       after?: InputMaybe<string> | undefined;
     }>
-  >
+  >,
 ) => {
   const graphqlClient = useClient();
   const fetchMore = useCallback(() => {
@@ -35,12 +35,12 @@ export const useFetchMoreMovies = (
         tid: tid,
       })
       .toPromise()
-      .then((moreData) => {
+      .then(moreData => {
         const { data, error } = moreData;
         const _data = data?.getMoviesByTitleId!;
         const nodes = _data?.nodes as any[];
         setNodes((data: any) =>
-          _.chain(data).concat(nodes).uniqBy('id').value()
+          _.chain(data).concat(nodes).uniqBy('id').value(),
         );
       });
   }, [res]);

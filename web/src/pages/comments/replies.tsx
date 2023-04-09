@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ReplyCard from '../../components/comment-card/replyCard';
-import {ViewportList} from 'react-viewport-list';
+import { ViewportList } from 'react-viewport-list';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserReplies } from '../../hooks/useFetchUserReplies';
 import { useParams } from 'react-router-dom';
@@ -36,7 +36,7 @@ const Replies = () => {
     }
   }, [userReplies]);
 
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
@@ -49,23 +49,23 @@ const Replies = () => {
   if (!id || userReplies.error) return <NotFound />;
 
   if (replies.length <= 0) {
-    return <EmptyPage msg='No Replies!' />;
+    return <EmptyPage msg="No Replies!" />;
   }
   return (
     <CommentParent>
       <Helmet>
         <title>{`${id}: Replies`}</title>
-        <meta name='description' content={`${id} replies`} />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/replies/${id}`} />
+        <meta name="description" content={`${id} replies`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/replies/${id}`} />
       </Helmet>
       <Fragment>
-        <div className='child' onScroll={handleScroll} ref={parentRef}>
+        <div className="child" onScroll={handleScroll} ref={parentRef}>
           <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
             {(reply, index) =>
               reply && <ReplyCard comment={reply} key={reply.id} />
             }
           </ViewportList>
-          <div className='extra'>{userReplies.fetching && <Loading />}</div>
+          <div className="extra">{userReplies.fetching && <Loading />}</div>
         </div>
       </Fragment>
     </CommentParent>

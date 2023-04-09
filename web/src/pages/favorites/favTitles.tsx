@@ -34,9 +34,9 @@ const FavTitles = () => {
     <>
       <Helmet>
         <title>{`${id}: Favorites`}</title>
-        <meta name='description' content={`${id}: Favorites`} />
+        <meta name="description" content={`${id}: Favorites`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/activity/${id}/favorites`}
         />
       </Helmet>

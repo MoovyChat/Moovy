@@ -27,7 +27,7 @@ const CommentThread = () => {
     document.title = 'Comment - Moovy';
   }, []);
   const userRef = useRef<Users | null>(null);
-  const loggedInUser = useAppSelector((state) => state.user);
+  const loggedInUser = useAppSelector(state => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [replies, setReplies] = useState<Reply[]>([]);
@@ -59,7 +59,7 @@ const CommentThread = () => {
     if (!fetching && data) {
       const _count = data.getCommentLikes?.likesCount!;
       const _users = data.getCommentLikes?.likes;
-      const findCurrentUser = _users?.find((u) => u.id === loggedInUser.id);
+      const findCurrentUser = _users?.find(u => u.id === loggedInUser.id);
       if (findCurrentUser) setLike(true);
       else setLike(false);
       setLikedUsers(_users!);
@@ -111,9 +111,9 @@ const CommentThread = () => {
     setReplies,
     repliesQueryResult,
     cursor,
-    setCursor
+    setCursor,
   );
-  const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+  const updateLike: MouseEventHandler<HTMLSpanElement> = async e => {
     e.stopPropagation();
     setLike(!like);
     like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
@@ -127,12 +127,12 @@ const CommentThread = () => {
     if (error) console.log(error);
     const _like = data?.setCommentLike?.likeStatus.like!;
     setLike(_like);
-    setLikedUsers((users) => {
+    setLikedUsers(users => {
       let newUsers = [];
       if (_like) {
         newUsers = [...users, loggedInUser];
       } else {
-        newUsers = users.filter((user) => user?.id !== loggedInUser?.id);
+        newUsers = users.filter(user => user?.id !== loggedInUser?.id);
       }
       return newUsers;
     });
@@ -142,7 +142,7 @@ const CommentThread = () => {
   if (!comment) return <NotFound />;
   return (
     <CommentTemplate
-      type='comment'
+      type="comment"
       userRef={userRef}
       replies={replies}
       comment={comment}

@@ -31,7 +31,7 @@ const FeedReply: React.FC<props> = ({ id }) => {
     <StyledFeedReply>
       <ReplyCard comment={reply} />
       <MiniCommentCard
-        className='mini'
+        className="mini"
         type={
           reply.parentCommentId === reply.parentReplyId ? 'comment' : 'reply'
         }

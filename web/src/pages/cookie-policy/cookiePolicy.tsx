@@ -12,8 +12,8 @@ const CookiePolicy: React.FC = () => {
     <PrivacyPolicyWrapper>
       <Helmet>
         <title>Cookie Policy</title>
-        <meta name='description' content='Cookie Policy' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/privacy`} />
+        <meta name="description" content="Cookie Policy" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}/privacy`} />
       </Helmet>
       <PrivacyPolicyContent>
         <h1>Cookie Policy</h1>
@@ -94,7 +94,7 @@ const CookiePolicy: React.FC = () => {
           <p>
             If you have any questions about this Cookie Policy, please contact
             us at{' '}
-            <a href='mailto:contact@moovychat.com'>contact@moovychat.com</a>.
+            <a href="mailto:contact@moovychat.com">contact@moovychat.com</a>.
           </p>
         </div>
       </PrivacyPolicyContent>

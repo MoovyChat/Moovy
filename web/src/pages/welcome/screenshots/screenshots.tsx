@@ -26,7 +26,7 @@ const Screenshots: React.FC<props> = ({ id }) => {
   });
   return (
     <StyledScreenShots id={id} ref={ref} style={animProps}>
-      <div className='heading'>Screenshots</div>
+      <div className="heading">Screenshots</div>
       <ImageSlider />
     </StyledScreenShots>
   );

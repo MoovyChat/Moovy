@@ -42,12 +42,12 @@ const SearchBar = () => {
   const [movies, setMovies] = useState<ShortTitleFragment[]>([]);
   const [episodes, setEpisodes] = useState<ShortMovieFragment[]>([]);
   const [titles, setTitles] = useState<ShortTitleFragment[]>([]);
-  const changeValueHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const changeValueHandler: ChangeEventHandler<HTMLInputElement> = e => {
     e.stopPropagation();
     setValue(() => e.target.value);
   };
   useEffect(() => {
-    const debouncedSetValue = _.debounce((v) => {
+    const debouncedSetValue = _.debounce(v => {
       setDebouncedValue(v);
     }, 500);
 
@@ -85,14 +85,14 @@ const SearchBar = () => {
   };
   document.addEventListener('mousedown', mouseDownHandler);
 
-  const onFocusHandler: FocusEventHandler<HTMLInputElement> = (e) => {
+  const onFocusHandler: FocusEventHandler<HTMLInputElement> = e => {
     e.stopPropagation();
     setSearchBarActive(() => true);
   };
-  const onBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
+  const onBlurHandler: FocusEventHandler<HTMLInputElement> = e => {
     e.stopPropagation();
   };
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.stopPropagation();
     e.preventDefault();
     let path = location.pathname;
@@ -107,59 +107,61 @@ const SearchBar = () => {
   return (
     <div ref={divRef}>
       <SearchBarParent>
-        <div className='icon blur-escape'>
+        <div className="icon blur-escape">
           <MdSearch size={25} />
         </div>
         <form onSubmit={handleSubmit}>
           <input
-            type='text'
-            id='search blur-escape'
-            name='search'
+            type="text"
+            id="search blur-escape"
+            name="search"
             value={value}
             onFocus={onFocusHandler}
             onBlur={onBlurHandler}
             onChange={changeValueHandler}
-            placeholder='Search people, movies, shows.'
+            placeholder="Search people, movies, shows."
           />
         </form>
       </SearchBarParent>
       {searchBarActive && value && (
-        <StyledSearchResults className='search-results'>
+        <StyledSearchResults className="search-results">
           {searchResults.fetching ? (
             <Loading />
           ) : (
             <Fragment>
-              <div className='heading'>
+              <div className="heading">
                 {value ? 'Search Results' : 'Recent searches'}
               </div>
-              <div className='content'>
+              <div className="content">
                 {!users && !movies && !titles && !episodes ? (
                   <div>No Recent searches were found</div>
                 ) : (
-                  <div className='content-container'>
+                  <div className="content-container">
                     {users.length > 0 && (
                       <React.Fragment>
-                        <div className='people'>People</div>
-                        <div className='users-content'>
+                        <div className="people">People</div>
+                        <div className="users-content">
                           {users.map((user: any) => (
                             <StyledUserCard
-                              onClick={(e) => {
+                              onClick={e => {
                                 navigate(`/home/profile/${user.nickname}`);
                                 setSearchBarActive(() => false);
-                              }}>
+                              }}
+                            >
                               <div
-                                className='p'
-                                onClick={(e) => {
+                                className="p"
+                                onClick={e => {
                                   navigate(`/home/profile/${user.nickname}`);
                                   setSearchBarActive(() => false);
-                                }}>
+                                }}
+                              >
                                 <ProfilePic
                                   src={user.photoUrl}
                                   tooltip={true}
                                   user={user}
                                 />
                               </div>
-                              <div className='n'>{user.nickname}</div>
+                              <div className="n">{user.nickname}</div>
                             </StyledUserCard>
                           ))}
                         </div>
@@ -167,21 +169,22 @@ const SearchBar = () => {
                     )}
                     {titles.length > 0 && (
                       <React.Fragment>
-                        <div className='shows'>Shows</div>
-                        <div className='titles-content'>
+                        <div className="shows">Shows</div>
+                        <div className="titles-content">
                           {titles.map((title: any) => (
                             <StyledTitleCard
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 navigate(`/home/show/${title.id}`);
                                 setSearchBarActive(() => false);
-                              }}>
+                              }}
+                            >
                               <Image
                                 src={title.boxart}
                                 alt={title.title}
-                                className='thumbs'
+                                className="thumbs"
                               />
-                              <div className='t'>{title.title}</div>
+                              <div className="t">{title.title}</div>
                             </StyledTitleCard>
                           ))}
                         </div>
@@ -189,21 +192,22 @@ const SearchBar = () => {
                     )}
                     {movies.length > 0 && (
                       <React.Fragment>
-                        <div className='movies'>Movies</div>
-                        <div className='movies-content'>
+                        <div className="movies">Movies</div>
+                        <div className="movies-content">
                           {movies.map((movie: any) => (
                             <StyledTitleCard
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 navigate(`/home/movie/${movie.id}`);
                                 setSearchBarActive(() => false);
-                              }}>
+                              }}
+                            >
                               <Image
                                 src={movie.boxart}
                                 alt={movie.title}
-                                className='thumbs'
+                                className="thumbs"
                               />
-                              <div className='t'>
+                              <div className="t">
                                 {movie.title} ({movie.year})
                               </div>
                             </StyledTitleCard>
@@ -213,23 +217,24 @@ const SearchBar = () => {
                     )}
                     {episodes.length > 0 && (
                       <React.Fragment>
-                        <div className='movies'>Episodes</div>
-                        <div className='movies-content'>
-                          {episodes.map((episode) => (
+                        <div className="movies">Episodes</div>
+                        <div className="movies-content">
+                          {episodes.map(episode => (
                             <StyledTitleCard
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 navigate(`/home/movie/${episode.id}`);
                                 setSearchBarActive(() => false);
-                              }}>
+                              }}
+                            >
                               {episode.thumbs && (
                                 <Image
                                   src={episode.thumbs}
                                   alt={episode.name}
-                                  className='thumbs'
+                                  className="thumbs"
                                 />
                               )}
-                              <div className='t'>
+                              <div className="t">
                                 {episode.parentTitleName} - {episode.season} -
                                 {episode.name} ({episode.year})
                               </div>
@@ -242,12 +247,13 @@ const SearchBar = () => {
                 )}
                 {value && (
                   <div
-                    className='more'
-                    onClick={(e) => {
+                    className="more"
+                    onClick={e => {
                       e.stopPropagation();
                       navigate(`/home/search/${value}/episodes`);
                       setSearchBarActive(() => false);
-                    }}>
+                    }}
+                  >
                     Search more for "{value}"
                   </div>
                 )}

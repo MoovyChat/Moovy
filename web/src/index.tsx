@@ -8,7 +8,7 @@ import GoogleAnalytics from './components/google-analytics/googleAnalytics';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { router } from './utils/router';
 
@@ -27,7 +27,7 @@ root &&
           </React.Fragment>
         </PersistGate>
       </Provider>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 
 // If you want to start measuring performance in your app, pass a function

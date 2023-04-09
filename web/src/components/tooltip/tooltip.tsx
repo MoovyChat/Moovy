@@ -40,14 +40,15 @@ const Tooltip: React.FC<props> = ({
   }, [message]);
   return (
     <ToolTipParent
-      className='tooltip-wrapper'
+      className="tooltip-wrapper"
       dir={dir}
       height={height}
       width={width}
       visible={visible}
       onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}>
-      <div className='component'>{children}</div>
+      onMouseLeave={() => setVisible(false)}
+    >
+      <div className="component">{children}</div>
       {!touch && (
         <div className={`tooltip ${dir || DIRECTION.BOTTOM}`}>
           <SelectedElement />

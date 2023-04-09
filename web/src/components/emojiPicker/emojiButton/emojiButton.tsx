@@ -13,9 +13,9 @@ type props = {
   emoji: Emoji;
 };
 const EmojiButton: React.FC<props> = ({ emoji }) => {
-  const text = useAppSelector((state) => state.textArea.text);
+  const text = useAppSelector(state => state.textArea.text);
   const dispatch = useAppDispatch();
-  const handleEmojiClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const handleEmojiClick: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (text.length >= 300) return;
     dispatch(sliceSetTextAreaMessage(`${text}${emoji.emoji}`));
@@ -27,7 +27,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           emoji,
         });
         const deleteEmoji = await db.recent
-          .filter((r) => r.emoji.emoji === emoji.emoji)
+          .filter(r => r.emoji.emoji === emoji.emoji)
           .keys();
         await db.recent.bulkDelete(deleteEmoji);
         const insertEmoji = await db.recent.add({
@@ -44,7 +44,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
     const addToFrequentIndexedDB = async () => {
       try {
         const record = await db.frequent.filter(
-          (f) => f.emoji.emoji === emoji.emoji
+          f => f.emoji.emoji === emoji.emoji,
         );
         let foundEmoji = await record.first();
         if (!foundEmoji) {
@@ -69,8 +69,8 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
   };
 
   return (
-    <EmojiButtonParent className='emoji-button' onClick={handleEmojiClick}>
-      <button id='text-focus'>{emoji.emoji}</button>
+    <EmojiButtonParent className="emoji-button" onClick={handleEmojiClick}>
+      <button id="text-focus">{emoji.emoji}</button>
     </EmojiButtonParent>
   );
 };

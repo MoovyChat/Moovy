@@ -15,8 +15,8 @@ export const StyledButton = styled.div<ButtonProps>`
 
   :hover {
     cursor: pointer;
-    background-color: ${(p) =>
+    background-color: ${p =>
       p.isFollowingUser ? 'transparent' : p.theme.body};
-    color: ${(p) => p.isFollowingUser && 'red'};
+    color: ${p => p.isFollowingUser && 'red'};
   }
 `;

@@ -17,7 +17,7 @@ const WatchVideo: React.FC<props> = ({
   type,
   id,
 }) => {
-  const onClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+  const onClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     if (platform === 'NETFLIX') {
       let url = `https://www.netflix.com/${

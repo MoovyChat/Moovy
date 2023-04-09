@@ -35,25 +35,25 @@ const SearchShows = () => {
   }, [data, fetching, error, search]);
 
   // Scroll handler.
-  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
       if (page !== lastPage) {
-        setPage((page) => page + 1);
+        setPage(page => page + 1);
       }
     }
   };
 
   if (fetching) return <Loading />;
-  if (titles.length <= 0) return <EmptyPage msg='No Shows found' />;
+  if (titles.length <= 0) return <EmptyPage msg="No Shows found" />;
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
       <Helmet>
         <title>{`${search}: Shows`}</title>
-        <meta name='description' content={`${search}: Shows`} />
+        <meta name="description" content={`${search}: Shows`} />
         <link
-          rel='canonical'
+          rel="canonical"
           href={`${CURRENT_DOMAIN}/search/${search}/shows}`}
         />
       </Helmet>
