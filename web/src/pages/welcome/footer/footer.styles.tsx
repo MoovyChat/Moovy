@@ -3,11 +3,11 @@ import styled from 'styled-components';
 export const StyledFooter = styled.div`
   height: 200px;
   width: 99.5vw;
-  background-color: #222;
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
 `;
 
 export const FooterText = styled.p`
@@ -16,10 +16,18 @@ export const FooterText = styled.p`
   opacity: 0.8;
   line-height: 1.5;
   text-align: center;
+  .year{
+    font-weight: 600;
+      font-size: 10px;
+      align-self: center;
+      background-color: #343499;
+      padding: 4px 6px;
+      border-radius: 10px;
+      color: white;
+  }
 `;
 
 export const FooterContainer = styled.footer`
-  background-color: #222;
   color: #fff;
   padding: 20px;
   display: flex;
