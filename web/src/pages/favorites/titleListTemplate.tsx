@@ -5,8 +5,7 @@ import EmptyPage from '../../components/empty-page/emptyPage';
 import { LikedStyles } from './favorites.styles';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
-import { MovieStats } from '../../generated/graphql';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 
 type props = {
   page: number;

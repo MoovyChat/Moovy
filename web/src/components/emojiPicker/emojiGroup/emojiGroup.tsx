@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import EmojiSubGroup from '../emojiSubGroup/emojiSubGroup';
 import { GroupParent } from './emojiGroup.styles';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 import { sliceSetEmojiGroupActive } from '../../../redux/slices/miscSlice';
 import { subGroup } from '../emojiPicker';
 import { useAppDispatch } from '../../../redux/hooks';
