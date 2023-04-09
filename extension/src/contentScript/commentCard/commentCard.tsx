@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { User, textMap } from '../../Utils/interfaces';
 import { getFormattedWordsArray, getTimeFrame } from '../../Utils/utilities';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useCommentLikesSubscription,
   useGetCommentLikesQuery,
@@ -14,18 +15,20 @@ import {
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
 
+import { COMMENT } from '../../redux/actionTypes';
 import CommentInterface from '../commentInterface/commentInterface';
 import _ from 'lodash';
+import { msgPlace } from '../../Utils/enums';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { textMapTypes } from '../../constants';
 import { urqlClient } from '../../Utils/urqlClient';
-import { useAppSelector } from '../../redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
 interface props {
   comment: any;
   responseFromReplyWindow: (comment: any) => void;
   type: string;
-  className: string;
+  className: any;
   cardRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
@@ -36,8 +39,8 @@ const CommentCard: React.FC<props> = ({
   className,
 }) => {
   const { id, message, createdAt } = comment;
-  const [commentedUser] = useGetCommentedUserQuery({
-    variables: { cid: id },
+  const [commentedUser, _q] = useGetCommentedUserQuery({
+    variables: { cid: id! },
   });
   const user = useAppSelector((state) => state.user);
   const uid = useAppSelector((state) => state.user.id);
@@ -48,11 +51,12 @@ const CommentCard: React.FC<props> = ({
   const [loadedCommentedUser, setCommentedUser] = useState<User>();
   const [mArray, setMessageArray] = useState<textMap[]>([]);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const [, setCommentLike] = useSetCommentLikeMutation();
+  const dispatch = useAppDispatch();
+  const [_likeRes, setCommentLike] = useSetCommentLikeMutation();
 
-  const [commentLikeCountQuery] = useGetCommentLikesQuery({
+  const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
-      cid: id,
+      cid: id!,
       page: 1,
       limit: 10,
     },
@@ -60,43 +64,52 @@ const CommentCard: React.FC<props> = ({
 
   const [commentLikesSub] = useCommentLikesSubscription({
     variables: {
-      cid: id,
+      cid: id!,
     },
   });
 
   useEffect(() => {
-    const { data, fetching } = commentLikeCountQuery;
+    const { data, fetching, error } = commentLikeCountQuery;
+    if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getCommentLikes;
-      if (_data) {
-        const _count = _data.likesCount;
-        const _users = _data.likes;
-        const findCurrentUser = _users?.find((u) => u.id === uid);
-        if (findCurrentUser) setLike(true);
-        else setLike(false);
-        setLikedUser(_users);
-        setLikesCount(_count);
-      }
+      const _count = data.getCommentLikes?.likesCount!;
+      const _users = data.getCommentLikes?.likes;
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
+      const findCurrentUser = _users?.find((u) => u.id === uid);
+      if (findCurrentUser) setLike(true);
+      else setLike(false);
+      setLikedUser(_users!);
+      setLikesCount(_count);
     }
   }, [commentLikeCountQuery.fetching]);
 
   //Set Comment likes count
   useEffect(() => {
-    const { data, fetching } = commentLikesSub;
+    const { data, fetching, error } = commentLikesSub;
+    if (error) console.log(error);
     if (!fetching && data) {
-      const commentLikesCount = data.commentLikesUpdate.likesCount;
-      setLikesCount(commentLikesCount);
-      const _users = data.commentLikesUpdate.likes;
+      const commentLikesCount = data.commentLikesUpdate?.likesCount;
+      setLikesCount(commentLikesCount!);
+      const _users = data.commentLikesUpdate?.likes;
+      dispatch(
+        sliceComment({
+          payload: { _users, id },
+          type: COMMENT.ADD_TO_COMMENT_LIKES,
+        })
+      );
       setLikedUser(_users);
     }
   }, [commentLikesSub.fetching]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    const getTime = () => {
-      if (createdAt === 'Posting...') {
-        setTime(createdAt);
-      } else setTime(getTimeFrame(createdAt));
+    let interval: any;
+    let getTime = () => {
+      setTime(getTimeFrame(createdAt!));
       interval = setTimeout(getTime, 60000);
     };
     getTime();
@@ -108,35 +121,44 @@ const CommentCard: React.FC<props> = ({
 
   // Set commented user info.
   useMemo(() => {
-    const { data, fetching } = commentedUser;
+    let { data, fetching, error } = commentedUser;
+    if (error) console.log(error);
     if (!fetching && data) {
       const commentData = data.getCommentedUser;
+      if (!commentData) console.log('Comment data is not available');
       setCommentedUser(commentData as User);
     }
+    return () => {};
   }, [commentedUser]);
 
   // (Spoiler) Converting message to messageArray
   useMemo(() => {
     let msgArray: textMap[] = [];
     if (message) {
-      const msg: string = message;
+      let msg: string = message;
       let finalEnd = 0;
       let index = 0;
       while (index < msg.length) {
-        const remaining: string = msg.substring(index, msg.length);
-        const l = remaining.indexOf('<s>');
-        const r = remaining.indexOf('</s>');
+        let remaining: string = msg.substring(index, msg.length);
+        let l = remaining.indexOf('<s>');
+        let r = remaining.indexOf('</s>');
         if (l === -1) break;
         if (r === -1) break;
         if (l > r) break;
         if (l > 0) {
           // non-spoiler.
-          const text = remaining.substring(0, l);
-          const res = getFormattedWordsArray(text);
+          let text = remaining.substring(0, l);
+          let res = getFormattedWordsArray(
+            text,
+            msgPlace.COMMENT_CARD,
+            dispatch,
+            comment.commentedUserId!,
+            comment.createdAt!
+          );
           msgArray = _.concat(msgArray, res);
         }
         if (l < r) {
-          const spoilerObj: textMap = {
+          let spoilerObj: textMap = {
             type: textMapTypes.SPOILER,
             message: remaining.substring(l + 3, r),
           };
@@ -149,8 +171,14 @@ const CommentCard: React.FC<props> = ({
       // End of loop
       if (finalEnd !== msg.length && finalEnd < msg.length) {
         // Final non-spoiler.
-        const finalPhrase: string = msg.substring(finalEnd, msg.length);
-        const res = getFormattedWordsArray(finalPhrase);
+        let finalPhrase: string = msg.substring(finalEnd, msg.length);
+        let res = getFormattedWordsArray(
+          finalPhrase,
+          msgPlace.COMMENT_CARD,
+          dispatch,
+          comment.commentedUserId!,
+          comment.createdAt!
+        );
         msgArray = _.concat(msgArray, res);
       }
     }
@@ -173,15 +201,15 @@ const CommentCard: React.FC<props> = ({
           like ? prevLikesCount - 1 : prevLikesCount + 1
         );
         setCommentLike({
-          cid: id,
+          cid: id!,
           uid,
           mid,
           like: !like,
         }).then((res) => {
-          const { data } = res;
+          const { error, data } = res;
+          if (error) console.log(error);
           if (data) {
-            if (data && data.setCommentLike)
-              setLike(data.setCommentLike.likeStatus.like as boolean);
+            setLike(data.setCommentLike?.likeStatus?.like!);
           }
         });
       }
@@ -205,7 +233,7 @@ const CommentCard: React.FC<props> = ({
       className={className}
       subjectLike={subjectLike}
       type={type}
-      commentedUser={loadedCommentedUser}
+      commentedUser={loadedCommentedUser!}
       messageArray={mArray}
       time={time}
       likedUsers={likedUsers}

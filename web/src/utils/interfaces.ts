@@ -1,3 +1,14 @@
+export interface Profile {
+  userId: string;
+  fullname: string;
+  dob: string;
+  gender: string;
+  bio?: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
+}
+
 export interface Comment {
   __typename?: 'Comment';
   commentedUserId: string;
@@ -28,6 +39,18 @@ export interface Reply {
   createdAt: string;
   updatedAt: string;
 }
+export interface Movie {
+  __typename?: 'Movie' | undefined;
+  commentCount: number;
+  createdAt: string;
+  favCount: number;
+  id: string;
+  likesCount: number;
+  name: string;
+  platformId: number;
+  updatedAt: string;
+  viewsCount: number;
+}
 
 export interface FeedObject {
   __typename?: 'MiniCommentFormat' | undefined;
@@ -38,9 +61,27 @@ export interface FeedObject {
   updatedAt: string;
 }
 
+export interface Notifications {
+  __typename?: 'Notifications' | undefined;
+  id: string;
+  userId: string;
+  message: string;
+  fromUser: string;
+  fromUserPhotoUrl: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface textMap {
   message: string;
   type: string;
+}
+
+export interface timeMessage {
+  time: string;
+  message: string;
+  madeBy: string;
+  timeStamp: number;
 }
 
 export interface VisitedInterface {

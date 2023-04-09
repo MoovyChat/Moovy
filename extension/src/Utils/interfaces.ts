@@ -23,6 +23,9 @@ export interface timeMessage {
   timeStamp: number;
 }
 
+interface timeMsgObj {
+  [key: string]: timeMessage[];
+}
 export interface Movie {
   id: string;
   name: string;
@@ -70,7 +73,6 @@ export interface CommentInfo {
   flagged?: boolean;
   reported?: boolean;
   toxicityScore?: boolean;
-  type?: string;
   __typename?: any;
 }
 
@@ -118,6 +120,10 @@ export interface SettingsInterface {
   popSlideData: { data: any };
 }
 
+// export interface videoBorderSettings {
+//   color?: string;
+// }
+
 export interface textMap {
   message: string;
   type: string;
@@ -139,4 +145,43 @@ export interface loadingInterface {
 export interface borderType {
   title: string;
   color: string;
+}
+
+export interface EpisodeInfo {
+  id: number;
+  title: string;
+  synopsis: string;
+  stills: string;
+  thumbs: string;
+  runtime: number;
+}
+
+export interface SeasonInfo {
+  title: string;
+  year: number;
+  episodes: EpisodeInfo[];
+}
+export interface MovieFullInformation {
+  title?: string;
+  type?: string;
+  artwork?: string;
+  boxart?: string;
+  storyart?: string;
+  rating?: string;
+  synopsis?: string;
+  advisories?: string[];
+  runtime?: number;
+  year?: number;
+  seasons: SeasonInfo[] | null;
+}
+
+export interface AudioNodesInterface {
+  audioContext: AudioContext | null;
+  biQuadFilter: BiquadFilterNode | null;
+  stereo: StereoPannerNode | null;
+  analyser: AnalyserNode | null;
+  gain: GainNode | null;
+  audioSource: MediaElementAudioSourceNode | null;
+  pitchShift: any;
+  distortion: WaveShaperNode | null;
 }

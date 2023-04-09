@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { sliceSetToxicValues } from '../../redux/slices/misc/miscSlice';
-import { useAppDispatch } from '../../redux/hooks';
-
 interface DetoxifyResults {
   predictions: { [label: string]: number };
   document: string;
@@ -11,7 +8,6 @@ interface DetoxifyResults {
 const useDetoxify = (inputText: string): [DetoxifyResults | null, boolean] => {
   const [results, setResults] = useState<DetoxifyResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useAppDispatch();
   const url = 'https://toxic.moovychat.com/predict';
   useEffect(() => {
     const fetchResults = async () => {
@@ -25,7 +21,6 @@ const useDetoxify = (inputText: string): [DetoxifyResults | null, boolean] => {
       });
       const data = await response.json();
       setResults(data);
-      dispatch(sliceSetToxicValues(data));
       setIsLoading(false);
     };
 
@@ -33,7 +28,6 @@ const useDetoxify = (inputText: string): [DetoxifyResults | null, boolean] => {
       fetchResults();
     } else {
       setResults(null);
-      dispatch(sliceSetToxicValues(null));
     }
   }, [inputText]);
 

@@ -79,13 +79,12 @@ const MiniCommentCard: React.FC<props> = ({
       className={className}
       cardHeight={cardHeight}
       showMore={showMore}
-      tabIndex={0}
       onClick={(e) => {
         e.stopPropagation();
         if (type === 'reply') {
-          navigate(`/home/reply/${id}`);
+          navigate(`/reply/${id}`);
         } else if (type === 'comment') {
-          navigate(`/home/comment/${id}`);
+          navigate(`/comment/${id}`);
         }
       }}>
       {parentComment.current ? (

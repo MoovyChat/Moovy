@@ -1,8 +1,0 @@
-mutation InsertMovieInformation(
-  $mid: String!
-  $options: MovieFullInformation!
-) {
-  insertMovieInformation(mid: $mid, options: $options) {
-    ...FullMovie
-  }
-}

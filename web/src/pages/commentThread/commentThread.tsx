@@ -1,23 +1,27 @@
+import { Comment, Reply } from '../../utils/interfaces';
 import {
-  Comment,
-  Reply,
+  MouseEventHandler,
+  UIEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
   Users,
   useGetCommentLikesQuery,
   useGetCommentQuery,
-  useGetCommentRepliesQuery,
   useGetCommentedUserQuery,
+  useGetRepliesOfCommentQuery,
   useSetCommentLikeMutation,
 } from '../../generated/graphql';
-import { MouseEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import CommentTemplate from './commentTemplate';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
-import _ from 'lodash';
 import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
-import { useFetchMoreRepliesOfComment } from '../../hooks/useFetchMoreCommentReplies';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
@@ -30,8 +34,6 @@ const CommentThread = () => {
   const loggedInUser = useAppSelector((state) => state.user);
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
-  const [replies, setReplies] = useState<Reply[]>([]);
-  const [cursor, setCursor] = useState<string>('');
   const [likedUsers, setLikedUsers] = useState<any[]>([]);
   const [commentQueyResults] = useGetCommentQuery({
     variables: { cid: id! },
@@ -42,6 +44,8 @@ const CommentThread = () => {
     pause: isServer(),
   });
   const [comment, setComment] = useState<Comment>();
+  const [page, setPage] = useState<number>(1);
+  const [lastPage, setLastPage] = useState<number>(1);
   const [, setCommentLike] = useSetCommentLikeMutation();
 
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
@@ -87,38 +91,34 @@ const CommentThread = () => {
     }
   }, [commentedQueryResult]);
 
-  const [repliesQueryResult] = useGetCommentRepliesQuery({
+  const [repliesQueryResult] = useGetRepliesOfCommentQuery({
     variables: {
       cid: id!,
-      first: 5,
-      after: cursor,
+      limit: 5,
+      page: page,
     },
-    pause: isServer(),
   });
   // Get replies.
-  useEffect(() => {
-    const { error, data, fetching } = repliesQueryResult;
+  useMemo(() => {
+    const { data, error, fetching } = repliesQueryResult;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getCommentReplies!;
-      const nodes = _data.nodes as Reply[];
-      setReplies(() => nodes);
+      const _lastPage = data.getRepliesOfComment.lastPage!;
+      const _repliesCount = data.getRepliesOfComment.repliesCount!;
+      setComment((comm) => {
+        let newComment = { ...comm, repliesCount: _repliesCount } as Comment;
+        return newComment;
+      });
+      setLastPage(() => _lastPage);
     }
   }, [repliesQueryResult]);
 
-  const { fetchMore } = useFetchMoreRepliesOfComment(
-    comment,
-    setReplies,
-    repliesQueryResult,
-    cursor,
-    setCursor
-  );
   const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
     e.stopPropagation();
     setLike(!like);
     like ? setLikeCount(likeCount - 1) : setLikeCount(likeCount + 1);
     const res = await setCommentLike({
-      uid: loggedInUser?.id,
+      uid: loggedInUser.id,
       cid: id!,
       like: !like,
       mid: comment?.movieId!,
@@ -132,7 +132,7 @@ const CommentThread = () => {
       if (_like) {
         newUsers = [...users, loggedInUser];
       } else {
-        newUsers = users.filter((user) => user?.id !== loggedInUser?.id);
+        newUsers = users.filter((user) => user.id !== loggedInUser.id);
       }
       return newUsers;
     });
@@ -140,14 +140,20 @@ const CommentThread = () => {
 
   if (commentQueyResults.fetching) return <Loading />;
   if (!comment) return <NotFound />;
+  if (repliesQueryResult.fetching) return <Loading />;
+  const data = repliesQueryResult.data!;
+  const _data = data && data.getRepliesOfComment;
+  const replies = _data && _data.replies ? _data.replies : [];
   return (
     <CommentTemplate
       type='comment'
       userRef={userRef}
       replies={replies}
       comment={comment}
+      page={page}
+      setPage={setPage}
+      lastPage={lastPage}
       like={like}
-      fetchMore={fetchMore}
       setLike={setLike}
       likesCount={likeCount}
       likedUsers={likedUsers}

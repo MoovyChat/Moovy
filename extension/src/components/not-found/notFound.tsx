@@ -33,8 +33,8 @@ const NotFound: React.FC<props> = ({ type }) => {
   }, [type]);
   return (
     <NotFoundParent>
-      <div className="heading">{texts.heading}</div>
-      <div className="sub">{texts.sub}</div>
+      <div className='heading'>{texts.heading}</div>
+      <div className='sub'>{texts.sub}</div>
     </NotFoundParent>
   );
 };

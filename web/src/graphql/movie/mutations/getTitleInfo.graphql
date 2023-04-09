@@ -1,4 +1,4 @@
-query getTitleInfo($getTitleInfoId: String!) {
+mutation getTitleInfo($getTitleInfoId: String!) {
   getTitleInfo(id: $getTitleInfoId) {
     advisories
     artwork

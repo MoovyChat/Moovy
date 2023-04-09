@@ -6,8 +6,7 @@
   },
   "parserOptions": {
     "ecmaVersion": "latest",
-    "allowImportExportEverywhere": true,
-    "sourceType": "module"
+    "allowImportExportEverywhere": true
   },
 
   "env": {

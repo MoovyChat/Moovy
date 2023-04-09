@@ -1,18 +1,12 @@
-query GetMoviesByTitleId($first: Int!, $tid: String!, $after: String) {
-  getMoviesByTitleId(first: $first, tid: $tid, after: $after) {
-    totalCount
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-    nodes {
+query GetMoviesByTitleId($limit: Int!, $tid: String!, $page: Int) {
+  getMoviesByTitleId(limit: $limit, tid: $tid, page: $page) {
+    hasMoreTitles
+    id
+    lastPage
+    page
+    movieCount
+    movies {
       ...FullMovie
-    }
-    edges {
-      cursor
-      node {
-        ...FullMovie
-      }
     }
   }
 }

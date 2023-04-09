@@ -11,7 +11,6 @@ import {
   useGetReplyLikesQuery,
 } from '../../generated/graphql';
 
-import EmptyPage from '../../contentScript/empty-page/emptyPage';
 import FollowButton from '../follow-button/followButton';
 import _ from 'lodash';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -52,11 +51,12 @@ const LikesWindow = () => {
 
   useMemo(() => {
     if (type !== 'comment') return;
-    const { data, fetching } = commentLikes;
+    const { data, error, fetching } = commentLikes;
+    if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getCommentLikes.likes;
+      const _data = data.getCommentLikes.likes!;
       const _lastPage = data.getCommentLikes.lastPage;
-      const newData = _.chain(users).concat(_data).uniqBy('id').value();
+      let newData = _.chain(users).concat(_data).uniqBy('id').value();
       setUsers(() => newData);
       setLastPage(() => _lastPage);
     }
@@ -74,22 +74,22 @@ const LikesWindow = () => {
 
   useMemo(() => {
     if (type !== 'reply') return;
-    const { data, fetching } = replyLikes;
+    const { data, error, fetching } = replyLikes;
+    if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getReplyLikes.likes;
-      const _lastPage = data.getReplyLikes.lastPage;
-      const newData = _.chain(users).concat(_data).uniqBy('id').value();
+      const _data = data.getReplyLikes.likes!;
+      const _lastPage = data.getReplyLikes.lastPage!;
+      let newData = _.chain(users).concat(_data).uniqBy('id').value();
       setUsers(() => newData);
       setLastPage(() => _lastPage);
     }
   }, [replyLikes]);
-  if (users.length === 0) return <EmptyPage msg="No likes yet!" />;
+  if (users.length === 0) return <div>No Data</div>;
   return (
-    <LikesWindowStyle className="likes-window" onScroll={handleScroll}>
-      {users.map(
-        (user, index) =>
-          user && <UserCard user={user} key={`${user.id}${index}`}></UserCard>
-      )}
+    <LikesWindowStyle className='likes-window' onScroll={handleScroll}>
+      {users.map((user) => (
+        <UserCard user={user}></UserCard>
+      ))}
     </LikesWindowStyle>
   );
 };
@@ -100,7 +100,7 @@ type props = {
 const UserCard: React.FC<props> = ({ user }) => {
   const goToUser: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    const url = `${MOOVY_URL}/home/profile/${user.nickname}`;
+    let url = `${MOOVY_URL}/profile/${user.nickname}`;
     chrome.runtime.sendMessage({
       type: 'OPEN_LINK',
       url: url,
@@ -108,11 +108,11 @@ const UserCard: React.FC<props> = ({ user }) => {
   };
   return (
     <StyledUserCard onClick={goToUser}>
-      <div className="user-container">
-        <div className="profile-pic">
-          <img src={user.photoUrl} alt="pfp" />
+      <div className='user-container'>
+        <div className='profile-pic'>
+          <img src={user.photoUrl} alt='pfp' />
         </div>
-        <div className="name">{user.nickname}</div>
+        <div className='name'>{user.nickname}</div>
       </div>
       <FollowButton userId={user.id} nickName={user.nickname} />
     </StyledUserCard>

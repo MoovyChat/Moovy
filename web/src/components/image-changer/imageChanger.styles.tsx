@@ -22,20 +22,10 @@ export const ImageChangerParent = styled.div<props>`
     align-items: center;
     height: 40px;
     .close {
-      cursor: pointer;
       position: absolute;
       right: 15px;
-      top: 15px;
+      top: 20px;
       z-index: 2;
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      :hover {
-        box-shadow: inset 0 0 5px;
-      }
     }
   }
   .save-close {
@@ -136,7 +126,7 @@ export const ImageChangerParent = styled.div<props>`
   }
   @media (max-width: 500px) {
     width: 100vw;
-    height: 50vh;
+    height: 990vh;
     .heading {
       font-size: 1em;
       font-weight: 600;
@@ -149,10 +139,10 @@ export const ImageChangerParent = styled.div<props>`
     }
     .save-close {
       width: 90%;
+      top: 40px;
       .save {
         position: absolute;
         right: 20px;
-        bottom: 100px;
       }
     }
     .options {
@@ -182,21 +172,7 @@ export const DisplayImage = styled.div`
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    margin: 25px;
-    .controls {
-      position: absolute;
-      bottom: 0;
-      width: 200px;
-      background-color: #181818bd;
-      padding: 10px 20px;
-      border-radius: 20px;
-    }
-    .cropper-container {
-      display: flex;
-      flex-direction: column;
-      .container {
-      }
-    }
+    overflow: auto;
     .dropzone {
       width: 99%;
       height: 99%;
@@ -205,6 +181,7 @@ export const DisplayImage = styled.div`
       justify-content: center;
       align-items: center;
       :hover {
+        backdrop-filter: contrast(0.7);
         cursor: pointer;
       }
     }
@@ -212,6 +189,22 @@ export const DisplayImage = styled.div`
       width: 100%;
       height: 100%;
       border: 0.3px solid;
+    }
+    .ReactCrop {
+      margin: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .ReactCrop__child-wrapper {
+        height: 100%;
+        width: 100%;
+        img {
+          width: 100%;
+          height: 100%;
+          border: 0.3px solid;
+        }
+      }
     }
   }
 `;
@@ -268,11 +261,17 @@ export const DropzoneText = styled.p`
   font-size: 1.2em;
   font-weight: bold;
   margin-bottom: 1em;
-  text-align: center;
 `;
 
 export const FileRejectionList = styled.ul`
   margin-top: 1em;
   list-style: none;
   padding-left: 0;
+`;
+
+export const FileRejectionItem = styled.li`
+  color: #ff1744;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-top: 0.5em;
 `;

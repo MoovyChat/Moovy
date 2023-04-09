@@ -1,4 +1,5 @@
-import {
+import { ChatAreaParent, Parent } from './messageBox.styles';
+import React, {
   ChangeEventHandler,
   FocusEventHandler,
   KeyboardEventHandler,
@@ -6,9 +7,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { ChatAreaParent, Parent } from './messageBox.styles';
 
 const MessageBox = () => {
+  const ref = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const textAreaScrollListener: UIEventHandler<HTMLTextAreaElement> = () => {};
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = () => {};

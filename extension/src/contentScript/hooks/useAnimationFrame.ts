@@ -11,14 +11,14 @@ export const useAnimationFrame = (callback: any) => {
       const deltaTime = time - previousTimeRef.current;
       callback(deltaTime);
     }
-    previousTimeRef.current = time;
+    previousTimeRef!.current = time;
     requestAnimationFrame(animate);
   };
 
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
+    requestRef!.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef!.current);
   }, []);
 
-  return requestRef.current;
+  return requestRef!.current;
 };

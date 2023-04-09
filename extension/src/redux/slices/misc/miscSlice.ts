@@ -12,8 +12,6 @@ type toxicProps = {
 type props = {
   theme: string;
   enableBackground: boolean;
-  openFilterSection: boolean;
-  openBorderSection: boolean;
   accentColor: string;
   subTitleColor: string;
   autoSkip: boolean;
@@ -33,8 +31,6 @@ const miscState: props = {
   subTitleColor: '#ffffff',
   autoSkip: false,
   autoNextEpisode: false,
-  openFilterSection: false,
-  openBorderSection: false,
   intervalIds: [] as NodeJS.Timeout[],
   isProfileNeedsToBeUpdated: false,
   isReportActive: '',
@@ -59,12 +55,6 @@ const miscSlice = createSlice({
     },
     sliceSetIsReportActive: (state, action) => {
       return { ...state, isReportActive: action.payload };
-    },
-    sliceSetOpenFilterSection: (state, action) => {
-      return { ...state, openFilterSection: action.payload };
-    },
-    sliceSetOpenBorderSection: (state, action) => {
-      return { ...state, openBorderSection: action.payload };
     },
     sliceSetToxicValues: (state, action) => {
       return { ...state, toxicScores: action.payload };
@@ -103,9 +93,7 @@ export const {
   sliceSetTheme,
   sliceSetFont,
   sliceSetAutoNextEpisode,
-  sliceSetOpenFilterSection,
   sliceSetAutoSkip,
-  sliceSetOpenBorderSection,
   sliceSetEnableBackground,
   sliceSetAccentColor,
   sliceResetMisc,

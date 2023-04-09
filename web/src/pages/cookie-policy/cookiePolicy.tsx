@@ -4,17 +4,12 @@ import {
 } from '../privacy-policy/privacyPolicy.styles';
 import React, { useEffect } from 'react';
 
-import { CURRENT_DOMAIN } from '../../constants';
-import { Helmet } from 'react-helmet';
-
 const CookiePolicy: React.FC = () => {
+  useEffect(() => {
+    document.title = 'Cookie Policy';
+  }, []);
   return (
     <PrivacyPolicyWrapper>
-      <Helmet>
-        <title>Cookie Policy</title>
-        <meta name='description' content='Cookie Policy' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/privacy`} />
-      </Helmet>
       <PrivacyPolicyContent>
         <h1>Cookie Policy</h1>
         <div>

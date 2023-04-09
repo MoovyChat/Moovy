@@ -183,7 +183,6 @@ export const CardParent = styled.div<props>`
         font-weight: 600;
         font-weight: normal;
         overflow: hidden;
-        margin: 10px 0;
         max-height: ${(p) =>
           p.showMore ? p.cardHeight : p.isHover ? '200px' : '100px'};
         transition: max-height 0.5s;

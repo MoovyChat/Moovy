@@ -1,3 +1,4 @@
+import { AiOutlineCloseCircle, AiOutlineSend } from 'react-icons/ai';
 import {
   ChatTextBox,
   MessageBoxParent,
@@ -34,14 +35,17 @@ import {
 } from '../../redux/slices/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { AnyAction } from 'redux';
+import { COMMENT } from '../../redux/actionTypes';
 import ChatArea from '../../components/chat-area/chatArea';
 import { IoArrowForwardCircle } from 'react-icons/io5';
 import { MdTagFaces } from 'react-icons/md';
+import { Pic } from '../../extension/components/logout/logout.styles';
 import { Profile } from '../commentInterface/commentInterface.styles';
 import { batch } from 'react-redux';
 import { iconsEnum } from '../../Utils/enums';
+import { sliceAddReply } from '../../redux/slices/reply/replySlice';
+import { sliceComment } from '../../redux/slices/comment/commentSlice';
 import { sliceSetNetworkError } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetPastLoadedCount } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -49,16 +53,16 @@ import { withUrqlClient } from 'next-urql';
 
 type props = {
   replyWindowResponse: CommentInfo | undefined;
-  setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>;
+  setReplyClickResponse: (e: any) => void;
 };
 const MessageBox: React.FC<props> = ({
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
   // GraphQL: Mutations
-  const [, insertComment] = useInsertCommentMutation();
-  const [, getUser] = useGetUserMutMutation();
-  const [, insertReply] = useInsertReplyMutation();
+  const [_ic, insertComment] = useInsertCommentMutation();
+  const [_gu, getUser] = useGetUserMutMutation();
+  const [_ir, insertReply] = useInsertReplyMutation();
   // Redux: App selectors.
   const movieIdFromRedux = useAppSelector((state) => state.movie.id);
   const userFromRedux = useAppSelector((state) => state.user);
@@ -66,9 +70,11 @@ const MessageBox: React.FC<props> = ({
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
+  const score = useAppSelector((state) => state.misc.toxicScores);
   // React: useState hooks.
   const [isReply, setIsReply] = useState<boolean>(false);
   const [repliedUser, setRepliedUser] = useState<string>('');
+  const flagged = useAppSelector((state) => state.misc.flagged);
   const smileyHandler: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetPopSlide(true));
@@ -78,11 +84,11 @@ const MessageBox: React.FC<props> = ({
   const postComment = async (
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
-    replyWindowResponse: CommentInfo | undefined,
-    setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>
+    replyWindowResponse: any,
+    setReplyClickResponse: (e: any) => void
   ) => {
     if (replyWindowResponse) {
-      const newReply: ReplyInput = {
+      let newReply: ReplyInput = {
         commentedUserId: userFromRedux.id,
         likesCount: 0,
         repliesCount: 0,
@@ -100,46 +106,53 @@ const MessageBox: React.FC<props> = ({
         // Adding replies to 'reply' collection in database.
         insertReply({
           options: newReply,
-        }).then((response) => {
-          const { data, error } = response;
-          if (error) {
-            if (error.networkError) dispatch(sliceSetNetworkError(true));
-            dispatch(sliceSetToastVisible(true));
-            dispatch(
-              sliceSetToastBody({
-                icon: iconsEnum.ERROR,
-                message: 'Error adding Reply',
-              })
-            );
-          }
-          if (data) {
-            batch(() => {
+        })
+          .then((response) => {
+            const { data, error } = response;
+            if (error) {
+              if (error.networkError) dispatch(sliceSetNetworkError(true));
               dispatch(sliceSetToastVisible(true));
               dispatch(
                 sliceSetToastBody({
-                  icon: iconsEnum.SUCCESS,
-                  message: 'Reply added',
+                  icon: iconsEnum.ERROR,
+                  message: 'Error adding reply',
                 })
               );
-            });
-          }
-          setIsReply(false);
-          setReplyClickResponse(undefined);
-        });
+            }
+            if (data) {
+              const insertedReply = data?.insertReply;
+              batch(() => {
+                dispatch(sliceAddReply({ ...insertedReply, likes: [] }));
+                dispatch(sliceSetToastVisible(true));
+                dispatch(
+                  sliceSetToastBody({
+                    icon: iconsEnum.SUCCESS,
+                    message: 'Reply added',
+                  })
+                );
+              });
+            }
+            setIsReply(false);
+            setReplyClickResponse(undefined);
+          })
+          .catch((err) => console.log(err));
         dispatch(sliceSetTextAreaMessage(''));
       }
     } else {
-      if (text && user) {
+      let newComment: CommentInfo | any = {
+        commentedUserId: user?.id,
+        likesCount: 0,
+        message: text,
+        commentedUserName: user?.nickname,
+        movieId: movieIdFromRedux,
+        platformId: 1,
+        toxicityScore: score.toxicity,
+        flagged: flagged,
+      };
+      if (text) {
         // Adding comments to 'comment' collection in database.
         insertComment({
-          options: {
-            commentedUserId: user.id,
-            likesCount: 0,
-            message: text,
-            commentedUserName: user.nickname,
-            movieId: movieIdFromRedux,
-            platformId: 1,
-          },
+          options: newComment,
         }).then((response) => {
           const { error, data } = response;
           if (error) {
@@ -148,33 +161,29 @@ const MessageBox: React.FC<props> = ({
             dispatch(
               sliceSetToastBody({
                 icon: iconsEnum.ERROR,
-                message: 'Error adding Comment',
+                message: 'Error adding reply',
               })
             );
           }
           if (data) {
             const insertedComment = data?.insertComment;
-            if (!insertedComment) {
+            // Adds the new comment to redux store.
+            batch(() => {
+              dispatch(
+                sliceComment({
+                  payload: { ...insertedComment, isReplyWindowOpen: false },
+                  type: COMMENT.ADD_COMMENT,
+                })
+              );
+              dispatch(sliceSetPastLoadedCount(1));
               dispatch(sliceSetToastVisible(true));
               dispatch(
                 sliceSetToastBody({
-                  icon: iconsEnum.ERROR,
-                  message: 'Error adding Comment',
+                  icon: iconsEnum.SUCCESS,
+                  message: 'Comment added',
                 })
               );
-            }
-            // Adds the new comment to redux store.
-            else
-              batch(() => {
-                dispatch(sliceSetPastLoadedCount(1));
-                dispatch(sliceSetToastVisible(true));
-                dispatch(
-                  sliceSetToastBody({
-                    icon: iconsEnum.SUCCESS,
-                    message: 'Comment added',
-                  })
-                );
-              });
+            });
           }
           setIsReply(false);
           setReplyClickResponse(undefined);
@@ -192,22 +201,21 @@ const MessageBox: React.FC<props> = ({
       setIsReply(true);
       const parentComment = replyWindowResponse as CommentInfo;
       // GraphQL: Handle reply user data.
-      const referredUser = parentComment.commentedUserId;
-      if (referredUser) {
-        getUser({ uid: referredUser }).then((res) => {
-          const { data } = res;
-          const nickName = data?.getUserMut?.nickname;
-          nickName && dispatch(sliceSetTextAreaMessage(`@${nickName} `));
-          nickName && setRepliedUser(nickName);
-        });
-      }
+      const referredUser = parentComment.commentedUserId!;
+      getUser({ uid: referredUser }).then((res) => {
+        const { data, error } = res;
+        if (error) console.log(error);
+        const nickName = data?.getUserMut?.nickname;
+        dispatch(sliceSetTextAreaMessage(`@${nickName!} `));
+        setRepliedUser(nickName!);
+      });
     }
   }, [replyWindowResponse]);
 
   return (
-    <ChatTextBox className="chat-text-box" isReply={isReply}>
-      <TextAreaIcon className="text-area-icon">
-        <Profile profilePic={userFromRedux?.photoUrl}></Profile>
+    <ChatTextBox className='chat-text-box' isReply={isReply}>
+      <TextAreaIcon className='text-area-icon'>
+        <Profile profilePic={userFromRedux?.photoUrl!}></Profile>
       </TextAreaIcon>
       <MessageBoxParent>
         <ChatArea
@@ -219,14 +227,13 @@ const MessageBox: React.FC<props> = ({
           <ReplyTo>
             <p>Replying to {repliedUser}</p>
             <div
-              className="close-button"
+              className='close-button'
               onClick={() => {
                 setReplyClickResponse(undefined);
                 setIsReply(false);
                 setRepliedUser('');
                 dispatch(sliceSetTextAreaMessage(''));
-              }}
-            >
+              }}>
               <AiOutlineCloseCircle size={20} />
             </div>
           </ReplyTo>
@@ -234,12 +241,12 @@ const MessageBox: React.FC<props> = ({
           <React.Fragment></React.Fragment>
         )}
       </MessageBoxParent>
-      <div className="smiley" onClick={smileyHandler}>
-        <MdTagFaces className="icon" size={25} />
+      <div className='smiley' onClick={smileyHandler}>
+        <MdTagFaces className='icon' size={25} />
       </div>
       <TextAreaPost>
         <div
-          className="text-send"
+          className='text-send'
           onClick={(e: MouseEvent<HTMLDivElement>) => {
             e.preventDefault();
             e.stopPropagation();
@@ -249,8 +256,7 @@ const MessageBox: React.FC<props> = ({
               replyWindowResponse,
               setReplyClickResponse
             );
-          }}
-        >
+          }}>
           <IoArrowForwardCircle fill={accentColor} size={25} />
         </div>
       </TextAreaPost>

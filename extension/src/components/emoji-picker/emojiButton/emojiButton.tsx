@@ -46,7 +46,7 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
         const record = await db.frequent.filter(
           (f) => f.emoji.emoji === emoji.emoji
         );
-        const foundEmoji = await record.first();
+        let foundEmoji = await record.first();
         if (!foundEmoji) {
           const id = await db.frequent.add({
             count: 1,
@@ -54,11 +54,10 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
           });
           console.log(`Successfully added: ${id}`);
         } else {
-          foundEmoji.id &&
-            (await db.frequent.update(foundEmoji.id, {
-              count: foundEmoji.count + 1,
-              emoji,
-            }));
+          await db.frequent.update(foundEmoji.id!, {
+            count: foundEmoji.count! + 1,
+            emoji,
+          });
         }
       } catch (error) {
         console.log(`Failed to add} ${error}`);
@@ -70,8 +69,8 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
   };
 
   return (
-    <EmojiButtonParent className="emoji-button" onClick={handleEmojiClick}>
-      <button id="text-focus">{emoji.emoji}</button>
+    <EmojiButtonParent className='emoji-button' onClick={handleEmojiClick}>
+      <button id='text-focus'>{emoji.emoji}</button>
     </EmojiButtonParent>
   );
 };

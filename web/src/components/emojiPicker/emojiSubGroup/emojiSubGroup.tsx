@@ -28,18 +28,12 @@ const EmojiSubGroup: React.FC<props> = ({ emojiSet, setValues, index }) => {
 
   useMemo(() => {
     let filtered = emojiSet.filter((em) => {
-      // Check if any tag partially matches the searchValue
-      let tagMatch = em.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchValue.toLowerCase())
+      let results = em.tags?.filter((tag) =>
+        tag.match(new RegExp(searchValue, 'i'))
       );
-
-      // Check if the label partially matches the searchValue
-      let labelMatch = em.label
-        .toLowerCase()
-        .includes(searchValue.toLowerCase());
-
-      // Return the emoji if either tag or label partially matches the searchValue
-      return tagMatch || labelMatch;
+      if (!results) return null;
+      if (results.length > 0) return em;
+      else return null;
     });
     if (searchValue.length <= 0) setEmojis(() => emojiSet);
     else setEmojis(() => filtered);
@@ -53,7 +47,7 @@ const EmojiSubGroup: React.FC<props> = ({ emojiSet, setValues, index }) => {
           </div>
           <div className='subgroup-emojis'>
             {emojis.map((emoji, index) => (
-              <EmojiButton key={`${emoji.label}${index}`} emoji={emoji} />
+              <EmojiButton key={emoji.label} emoji={emoji} />
             ))}
           </div>
         </SubGroupParent>

@@ -132,25 +132,10 @@ export const Like = styled.div<likeProps>`
   height: 100%;
   cursor: pointer;
   z-index: 10;
-  .like-icon {
-    width: 27px;
-    height: 27px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
   :focus,
   :hover {
     cursor: pointer;
     color: ${(p) => p.accentColor};
-    .like-icon {
-      box-shadow: inset 0 0 5px ${(p) => p.accentColor};
-    }
   }
   :active {
     transform: rotate(0.1deg) scale(1);
@@ -200,9 +185,6 @@ export const SpoilerTag = styled.span`
 export const MessageParent = styled.span`
   white-space: pre-line;
   word-break: break-word;
-  .one-emoji {
-    font-size: 30px;
-  }
   .time,
   .user {
     ${commentStyleMixin()};

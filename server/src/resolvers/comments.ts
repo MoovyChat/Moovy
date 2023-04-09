@@ -158,20 +158,17 @@ export class CommentResolver {
     };
   }
 
-  TOXIC_API_URL = 'https://toxic.moovychat.com/predict';
-  COMMENT_COUNT_UPDATE = 'COMMENT_COUNT_UPDATE';
   @Mutation(() => Comment, { nullable: true })
   async insertComment(
     @Arg('options') options: CommentInput,
     @PubSub() pubSub: PubSubEngine
   ) {
-    // Validate input data
-    if (!options.commentedUserId) {
-      throw new Error('User does not exist');
-    }
-
-    // Predict toxicity score
-    const response = await fetch(this.TOXIC_API_URL, {
+    // return User.create(options).save();
+    if (!options.commentedUserId) throw new Error('User does not exist');
+    let comment;
+    const url = 'https://toxic.moovychat.com/predict';
+    let flagged = false;
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -179,30 +176,36 @@ export class CommentResolver {
       body: JSON.stringify({ input_text: options.message }),
     });
     const data = await response.json();
-    const toxicityScore = data.toxicity;
-    const isFlagged = toxicityScore * 100 > 70;
-
-    // Insert comment and update movie comment count
-    const comment = await conn.transaction(async (manager) => {
-      const commentRepo = manager.getRepository(Comment);
-      const movieRepo = manager.getRepository(Movie);
-
-      const comment = await commentRepo.create({
-        message: options.message,
-        likesCount: options.likesCount,
-        movieId: options.movieId,
-        commentedUserId: options.commentedUserId,
-        platformId: options.platformId,
-        commentedUserName: options.commentedUserName,
-        toxicityScore,
-        flagged: isFlagged,
-      });
-
-      await commentRepo.save(comment);
-      await movieRepo.increment({ id: options.movieId }, 'commentCount', 1);
+    const score = data.toxicity;
+    console.log(score);
+    if (score * 100 > 70) {
+      flagged = true;
+    }
+    await conn.transaction(async (manager) => {
+      // Insert comment.
+      const result = await manager
+        .createQueryBuilder()
+        .insert()
+        .into(Comment)
+        .values([
+          {
+            message: options.message,
+            likesCount: options.likesCount,
+            movieId: options.movieId,
+            commentedUserId: options.commentedUserId,
+            platformId: options.platformId,
+            commentedUserName: options.commentedUserName,
+            toxicityScore: score,
+            flagged: flagged,
+          },
+        ])
+        .returning('*')
+        .execute();
       await pubSub.publish(COMMENT_COUNT_UPDATE, options.movieId);
+      comment = result.raw[0];
 
-      return comment;
+      const movieRepo = manager.getRepository(Movie);
+      await movieRepo.increment({ id: options.movieId }, 'commentCount', 1);
     });
     return comment;
   }

@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import EmojiButton from '../emoji-picker/emojiButton/emojiButton';
 import { NameObject } from '../../Utils/interfaces';
+import { Profile } from '../../contentScript/commentInterface/commentInterface.styles';
 import { SmileyWindowParent } from './smileyWindow.styles';
 import TinyUserCard from '../tiny-user-card/tinyUserCard';
 import ToxicitySlider from '../toxicity-slider/toxicitySlider';
@@ -49,9 +50,9 @@ const SmileyWindow = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (ems) {
-      const recent = ers ? ers.slice(-10).reverse() : [];
+      let recent = ers ? ers.slice(-10).reverse() : [];
       if (ers) setRecent(recent);
-      const sorted = _.chain(ems)
+      let sorted = _.chain(ems)
         .sortBy((a) => -a.count)
         .take(10)
         .value();
@@ -60,20 +61,20 @@ const SmileyWindow = () => {
   }, [ems, ers]);
 
   const setSpoiler = () => {
-    const newText = textAreaMessage + '<s></s>';
+    let newText = textAreaMessage + '<s></s>';
     dispatch(sliceSetTextAreaMessage(newText));
   };
   const handleWord: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    const el = e.target as HTMLDivElement;
-    const msgArr = textAreaMessage.split(' ');
+    let el = e.target as HTMLDivElement;
+    let msgArr = textAreaMessage.split(' ');
     msgArr.pop();
-    el.textContent && msgArr.push(el.textContent);
+    msgArr.push(el.textContent!);
     dispatch(sliceSetTextAreaMessage(msgArr.join(' ')));
   };
 
   const handleName = (username: string) => {
-    const msgArr = textAreaMessage.split(' ');
+    let msgArr = textAreaMessage.split(' ');
     msgArr.pop();
     msgArr.push(`@${username}`);
     dispatch(sliceSetTextAreaMessage(msgArr.join(' ')));
@@ -83,32 +84,30 @@ const SmileyWindow = () => {
     <React.Fragment>
       {textAreaFocussed && (
         <SmileyWindowParent>
-          <div className="child">
+          <div className='child'>
             {((wordSuggestions && wordSuggestions.length > 0) ||
               (nameSuggestions && nameSuggestions.length > 0)) && (
-              <div className="section">
-                <div className="title">Suggestions</div>
-                <div className="wn-suggestions">
+              <div className='section'>
+                <div className='title'>Suggestions</div>
+                <div className='wn-suggestions'>
                   {wordSuggestions.slice(0, 3).map((word, key) => (
                     <div
-                      id="text-focus"
-                      className="word"
+                      id='text-focus'
+                      className='word'
                       key={`${key}-${word}`}
-                      onClick={handleWord}
-                    >
+                      onClick={handleWord}>
                       {word}
                     </div>
                   ))}
                   {nameSuggestions.slice(0, 3).map((name, key) => (
                     <div
-                      id="text-focus"
-                      className="word"
+                      id='text-focus'
+                      className='word'
                       key={`${name.name}-${key}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleName(name.name);
-                      }}
-                    >
+                      }}>
                       <TinyUserCard name={name} />
                     </div>
                   ))}
@@ -116,178 +115,167 @@ const SmileyWindow = () => {
               </div>
             )}
             {scores && (
-              <div className="section">
-                <div className="title">
+              <div className='section'>
+                <div className='title'>
                   Toxic Meter <i>(Powered By Detoxify)</i>
                 </div>
                 <ToxicitySlider
-                  text="Identity Attack"
+                  text='Identity Attack'
                   scores={{ identity_attack: scores.identity_attack }}
                 />
                 <ToxicitySlider
-                  text="Insult"
+                  text='Insult'
                   scores={{ insult: scores.insult }}
                 />
                 <ToxicitySlider
-                  text="Obscene"
+                  text='Obscene'
                   scores={{ obscene: scores.obscene }}
                 />
                 <ToxicitySlider
-                  text="Severe Toxicity"
+                  text='Severe Toxicity'
                   scores={{ severe_toxicity: scores.severe_toxicity }}
                 />
                 <ToxicitySlider
-                  text="Threat"
+                  text='Threat'
                   scores={{ threat: scores.threat }}
                 />
                 <ToxicitySlider
-                  text="Toxicity"
+                  text='Toxicity'
                   scores={{ toxicity: scores.toxicity }}
                 />
               </div>
             )}
             {recentEmojis && recentEmojis.length > 0 && (
-              <div className="section">
-                <div className="title">Recently used</div>
-                <div className="emojis">
+              <div className='section'>
+                <div className='title'>Recently used</div>
+                <div className='emojis'>
                   {recentEmojis.map((emoji, key) => (
                     <div
-                      className="emoji-child recent"
-                      key={`${emoji.id}-${key}`}
-                    >
+                      className='emoji-child recent'
+                      key={`${emoji.id}-${key}`}>
                       <EmojiButton
                         key={emoji.id}
-                        emoji={emoji.emoji}
-                      ></EmojiButton>
+                        emoji={emoji.emoji}></EmojiButton>
                     </div>
                   ))}
                 </div>
               </div>
             )}
             {frequentEmojis && frequentEmojis.length > 0 && (
-              <div className="section">
-                <div className="title">Frequently used</div>
-                <div className="emojis">
+              <div className='section'>
+                <div className='title'>Frequently used</div>
+                <div className='emojis'>
                   {frequentEmojis.map((emoji, key) => (
                     <div
-                      className="emoji-child frequent"
-                      key={`${key}-${emoji.id}`}
-                    >
+                      className='emoji-child frequent'
+                      key={`${key}-${emoji.id}`}>
                       <EmojiButton
                         key={emoji.id}
-                        emoji={emoji.emoji}
-                      ></EmojiButton>
+                        emoji={emoji.emoji}></EmojiButton>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-            <div className="section">
-              <div className="title">Comment options</div>
+            <div className='section'>
+              <div className='title'>Comment options</div>
               <div
-                className="spoiler"
+                className='spoiler'
                 onClick={(e) => {
                   e.stopPropagation();
                   setSpoiler();
-                }}
-              >
-                <div className="tag" id="text-focus">
+                }}>
+                <div className='tag' id='text-focus'>
                   Spoiler
                 </div>
               </div>
             </div>
-            <div className="section">
-              <div className="title">Socials</div>
-              <div className="socials">
+            <div className='section'>
+              <div className='title'>Socials</div>
+              <div className='socials'>
                 <div
-                  id="text-focus"
-                  className="discord"
+                  id='text-focus'
+                  className='discord'
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(DISCORD_INVITE_LINK, '_blank');
-                  }}
-                >
+                  }}>
                   <FaDiscord
-                    color="cornflowerblue"
+                    color='cornflowerblue'
                     size={iconSize}
                     style={{ pointerEvents: 'none' }}
                   />
                 </div>
                 <div
-                  className="twitter"
-                  id="text-focus"
+                  className='twitter'
+                  id='text-focus'
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(TWITTER_LINK, '_blank');
-                  }}
-                >
+                  }}>
                   <FaTwitter
-                    color="deepskyblue"
+                    color='deepskyblue'
                     size={iconSize}
                     style={{ pointerEvents: 'none' }}
                   />
                 </div>
                 <div
-                  className="tiktok"
-                  id="text-focus"
+                  className='tiktok'
+                  id='text-focus'
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(TIKTOK_LINK, '_blank');
-                  }}
-                >
+                  }}>
                   <FaTiktok
-                    className="icon"
+                    className='icon'
                     size={iconSize}
                     style={{ pointerEvents: 'none' }}
                   />
                 </div>
                 <div
-                  className="instagram"
-                  id="text-focus"
+                  className='instagram'
+                  id='text-focus'
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(INSTAGRAM_LINK, '_blank');
-                  }}
-                >
+                  }}>
                   <FaInstagram
-                    color="hotpink"
+                    color='hotpink'
                     size={iconSize}
                     style={{ pointerEvents: 'none' }}
                   />
                 </div>
               </div>
-              <div className="section">
-                <div className="title">Donate & Support</div>
-                <div className="donate">
+              <div className='section'>
+                <div className='title'>Donate & Support</div>
+                <div className='donate'>
                   <div
-                    className="patreon"
-                    id="text-focus"
+                    className='patreon'
+                    id='text-focus'
                     onClick={(e) => {
                       e.stopPropagation();
                       window.open(PATREON, '_blank');
-                    }}
-                  >
-                    <div className="logo" id="text-focus">
+                    }}>
+                    <div className='logo' id='text-focus'>
                       <img
-                        src={`${EXT_URL}/patreon-word.webp`}
-                        alt="patreon"
-                        id="text-focus"
+                        src={`${EXT_URL}/patreon-word.png`}
+                        alt='patreon'
+                        id='text-focus'
                       />
                     </div>
                   </div>
                   <div
-                    className="patreon"
-                    id="text-focus"
+                    className='patreon'
+                    id='text-focus'
                     onClick={(e) => {
                       e.stopPropagation();
                       window.open(BUY_ME_A_COFFEE, '_blank');
-                    }}
-                  >
-                    <div className="logo" id="text-focus">
+                    }}>
+                    <div className='logo' id='text-focus'>
                       <img
-                        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                        alt="bmc"
-                        id="text-focus"
+                        src={`${EXT_URL}/bmc.png`}
+                        alt='bmc'
+                        id='text-focus'
                       />
                     </div>
                   </div>

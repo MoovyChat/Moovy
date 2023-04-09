@@ -1,17 +1,3 @@
-self.addEventListener('beforeinstallprompt', (event) => {
-  event.preventDefault();
-  const promptEvent = event;
-  // Disable zooming
-  document
-    .querySelector('meta[name="viewport"]')
-    .setAttribute(
-      'content',
-      'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0'
-    );
-  // Show install prompt
-  promptEvent.prompt();
-});
-
 // Listen for the install event
 self.addEventListener('install', (event) => {
   // Install the service worker

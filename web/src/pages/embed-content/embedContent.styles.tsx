@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const StyledEmbedContent = styled.div`
   width: 100%;
-  min-height: 100px;
+  height: 100px;
   color: white;
   font-size: 12px;
   font-weight: 600;
@@ -11,11 +11,7 @@ export const StyledEmbedContent = styled.div`
   align-items: center;
   flex-direction: column;
   background-color: #c034c0;
-  padding: 0 5px;
-  div{
-    text-align:center;
-  }
-  /* .arc-btn {
+  .arc-btn {
     display: inline-block;
     padding: 10px 20px;
     background-color: #3498db;
@@ -60,5 +56,5 @@ export const StyledEmbedContent = styled.div`
         opacity: 1;
       }
     }
-  } */
+  }
 `;

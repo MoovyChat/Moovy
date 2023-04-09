@@ -6,7 +6,6 @@ type props = {
     title: string;
     content: string;
     src: string;
-    srcSet?: string;
   };
 };
 const HomeCard: React.FC<props> = ({ info }) => {
@@ -15,14 +14,7 @@ const HomeCard: React.FC<props> = ({ info }) => {
     <StyledHomeCard>
       <div className='container'>
         <div className='title'>{title}</div>
-        <img
-          src={src}
-          className='shc-img'
-          alt='image'
-          srcSet={info.srcSet}
-          sizes='250px'
-          loading='lazy'
-        />
+        <img src={src} className='shc-img' alt='image' />
         <div className='content'>{content}</div>
       </div>
     </StyledHomeCard>

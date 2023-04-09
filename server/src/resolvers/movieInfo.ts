@@ -1,5 +1,3 @@
-import { TitleConnection } from '../connections';
-import { PageInfo } from '../pagination';
 import {
   Arg,
   Field,
@@ -8,6 +6,7 @@ import {
   Query,
   Resolver,
   Int,
+  ObjectType,
 } from 'type-graphql';
 import { conn } from '../dataSource';
 import { Title } from '../entities/Title';
@@ -44,8 +43,22 @@ class TitleOptions {
   @Field(() => String)
   rating: string;
 
-  @Field(() => [String], { nullable: true, defaultValue: [] })
+  @Field(() => [String])
   advisories: string[];
+}
+
+@ObjectType()
+class PaginatedTitles {
+  @Field(() => [Title])
+  titles: Title[];
+  @Field(() => Boolean)
+  hasMoreTitles: boolean;
+  @Field(() => Int)
+  totalTitleCount: number;
+  @Field(() => Int)
+  lastPage: number;
+  @Field(() => Int)
+  page: number;
 }
 
 @Resolver()
@@ -57,57 +70,93 @@ export class TitleResolver {
     return info;
   }
 
-  @Query(() => Title, { nullable: true })
+  @Mutation(() => Title, { nullable: true })
   async getTitleInfo(@Arg('id') id: string): Promise<Title> {
     const info = await Title.findOne({ where: { id } });
     if (!info) throw new Error('Title not found');
     return info;
   }
 
-  @Query(() => TitleConnection, { nullable: true })
-  async getPaginatedTitles(
-    @Arg('type', () => String) type: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after', () => String, { nullable: true }) after: string
-  ): Promise<TitleConnection> {
+  @Query(() => PaginatedTitles, { nullable: true })
+  async getPaginatedMovies(
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
+    @Arg('ASC', () => Boolean, { defaultValue: true }) ASC: boolean | true
+  ): Promise<PaginatedTitles | null> {
     // const totalCommentCount = await Comment.count({ where: { movieId: mid } });
     const query = conn
       .getRepository(Title)
       .createQueryBuilder('title')
-      .where('title.type = :movie', { movie: type });
+      .where('title.type = :movie', { movie: 'movie' });
 
-    const totalCount = await query.getCount();
-    // If `after` cursor is provided, filter replies by cursor
-    if (after) {
-      query.andWhere('title.createdAt < :cursor', { cursor: new Date(after) });
-    }
-    // Get `first` number of replies, plus 1 to check for next page
+    const totalTitleCount = await query.getCount();
     const titles = await query
-      .orderBy('title.createdAt', 'DESC')
-      .take(first + 1)
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .orderBy('title.id', ASC ? 'ASC' : 'DESC')
       .getMany();
 
-    const nodes = titles.slice(0, first);
-    const hasNextPage = titles.length > first;
-    const endCursor =
-      titles.length === 0
-        ? String(totalCount)
-        : String(titles[titles.length - 1].createdAt);
-    const edges = nodes.map((node) => ({
-      node,
-      cursor: String(node.createdAt),
-    }));
-
-    const pageInfo: PageInfo = {
-      endCursor,
-      hasNextPage,
+    return {
+      page,
+      titles: titles.slice(0, limit),
+      totalTitleCount,
+      hasMoreTitles: titles.length === totalTitleCount + 1,
+      lastPage: totalTitleCount === 0 ? 1 : Math.ceil(totalTitleCount / limit),
     };
+  }
+
+  @Query(() => PaginatedTitles, { nullable: true })
+  async getPaginatedShows(
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
+    @Arg('ASC', () => Boolean, { defaultValue: true }) ASC: boolean | true
+  ): Promise<PaginatedTitles | null> {
+    const query = conn
+      .getRepository(Title)
+      .createQueryBuilder('title')
+      .where('title.type = :movie', { movie: 'show' });
+
+    const totalTitleCount = await query.getCount();
+    const titles = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .orderBy('title.id', ASC ? 'ASC' : 'DESC')
+      .getMany();
 
     return {
-      totalCount,
-      pageInfo,
-      edges,
-      nodes,
+      page,
+      titles: titles.slice(0, limit),
+      totalTitleCount,
+      hasMoreTitles: titles.length === totalTitleCount + 1,
+      lastPage: totalTitleCount === 0 ? 1 : Math.ceil(totalTitleCount / limit),
+    };
+  }
+
+  @Query(() => PaginatedTitles, { nullable: true })
+  async getPaginatedTitles(
+    @Arg('limit', () => Int) limit: number,
+    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
+    @Arg('ASC', () => Boolean, { defaultValue: true }) ASC: boolean | true,
+    @Arg('type', { nullable: true, defaultValue: '' }) type: string | ''
+  ): Promise<PaginatedTitles | null> {
+    // const totalCommentCount = await Comment.count({ where: { movieId: mid } });
+    const query = conn.getRepository(Title).createQueryBuilder('title');
+    if (type !== '') {
+      query.where('title.type = :movie', { movie: type });
+    }
+    const totalTitleCount = await query.getCount();
+    const titles = await query
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .orderBy('title.id', ASC ? 'ASC' : 'DESC')
+      .getMany();
+
+    return {
+      titles: titles.slice(0, limit),
+      totalTitleCount,
+      page,
+      hasMoreTitles: titles.length === totalTitleCount + 1,
+      lastPage: totalTitleCount === 0 ? 1 : Math.ceil(totalTitleCount / limit),
     };
   }
 

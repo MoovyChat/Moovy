@@ -8,7 +8,6 @@ export const LikesWindowStyle = styled.div`
   align-items: flex-start;
   gap: 10px;
   overflow: auto;
-  padding: 10px 0;
 `;
 
 export const StyledUserCard = styled.div`
@@ -16,22 +15,14 @@ export const StyledUserCard = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  :hover {
-    cursor: pointer;
-    .user-container {
-      .name {
-        text-decoration: underline;
-      }
-    }
-  }
+  cursor: pointer;
   .user-container {
     display: flex;
     align-items: center;
     padding-left: 15px;
-    gap: 10px;
     .profile-pic {
-      width: 35px;
-      height: 35px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
       margin-right: 5px;
       img {

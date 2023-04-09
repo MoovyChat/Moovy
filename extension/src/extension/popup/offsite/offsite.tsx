@@ -49,29 +49,27 @@ const streamingServices = [
 
 const Offsite = () => {
   return (
-    <AppWindow className="app" id="app" color={constants.main_color}>
-      <div className="floatRight">
+    <AppWindow className='app' id='app' color={constants.main_color}>
+      <div className='floatRight'>
         <Header></Header>
         <OffsiteContent>
-          <div className="content">
+          <div className='content'>
             Please open the video on below streaming services
           </div>
-          <div className="services">
+          <div className='services'>
             {streamingServices.map((service) => (
               <FilterView
-                key={service.title}
                 onClick={(e) => {
                   e.stopPropagation();
                   chrome.tabs.create({
                     url: service.home,
                     active: true,
                   });
-                }}
-              >
-                <div className="photo">
+                }}>
+                <div className='photo'>
                   <img src={service.imgUrl} alt={service.title} />
                   {service.title !== 'Netflix' ? (
-                    <div className="layover">
+                    <div className='layover'>
                       <MdLockClock size={30} color={service.color} />
                     </div>
                   ) : (
@@ -88,7 +86,7 @@ const Offsite = () => {
   );
 };
 
-const reactApp = document.createElement('div');
+var reactApp = document.createElement('div');
 document.body.appendChild(reactApp);
 document.body.style.setProperty('margin', '0');
 const root = createRoot(reactApp);

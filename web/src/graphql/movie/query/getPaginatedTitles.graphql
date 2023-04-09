@@ -1,44 +1,16 @@
-query GetPaginatedTitles($first: Int!, $type: String!, $after: String) {
-  getPaginatedTitles(first: $first, type: $type, after: $after) {
-    totalCount
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
-    nodes {
-      id
-      artwork
-      boxart
-      storyart
-      synopsis
-      title
-      type
-      runtime
-      year
-      rating
-      advisories
-      createdAt
-      updatedAt
-      deletedAt
-    }
-    edges {
-      node {
-        id
-        artwork
-        boxart
-        storyart
-        synopsis
-        title
-        type
-        runtime
-        year
-        rating
-        advisories
-        createdAt
-        updatedAt
-        deletedAt
-      }
-      cursor
+query getPaginatedTitles(
+  $limit: Int!
+  $page: Int
+  $asc: Boolean
+  $type: String
+) {
+  getPaginatedTitles(limit: $limit, page: $page, ASC: $asc, type: $type) {
+    hasMoreTitles
+    page
+    lastPage
+    totalTitleCount
+    titles {
+      ...FullTitle
     }
   }
 }

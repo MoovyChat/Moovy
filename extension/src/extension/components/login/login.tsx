@@ -36,7 +36,7 @@ interface Props {
   OTTSite: OTTType;
 }
 const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
-  const BrowserType = {
+  let BrowserType = {
     Chrome: 'Chrome',
     Edge: 'Edge',
   };
@@ -52,7 +52,7 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
       setUserFromAuth(() => result);
       setIsUserFetched(() => true);
     } catch (err) {
-      //Error block
+      console.log(err);
     }
   };
 
@@ -74,44 +74,44 @@ const LogIn: React.FC<Props> = ({ setUser, OTTSite }) => {
           {browserModel === BrowserType.Chrome && (
             <ButtonParent>
               <Button
-                className=""
-                bgColor={OTTSite.color}
-                textColor="white"
+                className=''
+                bgColor='#990100'
+                textColor='white'
                 iconSize={25}
                 text={constants.chrome}
-                padding="10px 0px"
+                padding='10px 0px'
                 onClick={async () => SignIn()}
                 Icon={RiChromeFill}
-                textShadow="0 0 6px black, 0 0 5px #0000ff"
+                textShadow='0 0 6px black, 0 0 5px #0000ff'
               />
             </ButtonParent>
           )}
           <ButtonParent>
             <Button
-              id="google-log-in"
-              className=""
-              bgColor={OTTSite.color}
-              textColor="white"
+              id='google-log-in'
+              className=''
+              bgColor='#990100'
+              textColor='white'
               iconSize={25}
               text={constants.login}
-              padding="10px 0px"
+              padding='10px 0px'
               onClick={() => {
                 chrome.runtime.sendMessage({ type: 'GOOGLE_LOGIN_IN_BCK' });
               }}
               Icon={FcGoogle}
-              textShadow="0 0 6px black, 0 0 5px #0000ff"
+              textShadow='0 0 6px black, 0 0 5px #0000ff'
             />
           </ButtonParent>
         </React.Fragment>
       ) : (
-        <LoginAfter setUser={setUser} userFromAuth={userFromAuth} />
+        <LoginAfter setUser={setUser} userFromAuth={userFromAuth!} />
       )}
-      <div className="login-agreement">
+      <div className='login-agreement'>
         By logging in, you agree to our{' '}
-        <a href="https://www.moovychat.com/terms-and-conditions">
+        <a href='https://www.moovychat.com/terms-and-conditions'>
           Terms and Conditions
         </a>{' '}
-        and <a href="https://www.moovychat.com/privacy">Privacy Policy</a>.
+        and <a href='https://www.moovychat.com/privacy'>Privacy Policy</a>.
       </div>
     </WithOutLoginWindow>
   );

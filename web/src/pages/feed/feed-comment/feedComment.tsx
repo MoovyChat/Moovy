@@ -7,8 +7,9 @@ import { isServer } from '../../../constants';
 
 type props = {
   id: string;
+  commentedUserId: string;
 };
-const FeedComment: React.FC<props> = ({ id }) => {
+const FeedComment: React.FC<props> = ({ id, commentedUserId }) => {
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentQuery] = useGetCommentQuery({
     variables: { cid: id },
@@ -17,6 +18,8 @@ const FeedComment: React.FC<props> = ({ id }) => {
 
   useEffect(() => {
     const { error, data, fetching } = commentQuery;
+    console.log(commentQuery);
+    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getComment! as Comment;
       setComment(() => _data);

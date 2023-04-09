@@ -28,27 +28,47 @@ const Footer: React.FC<props> = ({ id }) => {
       </div>
       <FooterContainer>
         <FooterText>
-          <FooterLink href='/privacy' target='_blank'>
+          <FooterLink
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/privacy', '_blank');
+            }}>
             Privacy Policy
           </FooterLink>{' '}
           |{' '}
-          <FooterLink href='/cookie-policy' target='_blank'>
+          <FooterLink
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/cookie-policy', '_blank');
+            }}>
             Cookie Policy
           </FooterLink>{' '}
           |{' '}
-          <FooterLink href='/terms-and-conditions' target='_blank'>
+          <FooterLink
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/terms-and-conditions', '_blank');
+            }}>
             Terms and Conditions
           </FooterLink>{' '}
           |{' '}
-          <FooterLink href='/about-us' target='_blank'>
+          <FooterLink
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/about-us', '_blank');
+            }}>
             About us
           </FooterLink>{' '}
           |{' '}
-          <FooterLink href='/contact' target='_blank'>
+          <FooterLink
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open('/contact', '_blank');
+            }}>
             Contact Us
           </FooterLink>
         </FooterText>
-        <FooterText>MoovyChat, 2023</FooterText>
+        <FooterText>MoovyChat Ltd. 2023</FooterText>
       </FooterContainer>
     </StyledFooter>
   );

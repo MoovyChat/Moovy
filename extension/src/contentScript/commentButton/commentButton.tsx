@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
 import {
   getIdFromNetflixURL,
   getPlayerViewElement,
@@ -9,8 +7,8 @@ import { useEffect, useState } from 'react';
 
 import ChatWindow from '../createChatWindow/chatWindow';
 import { CommentHeader } from './commentButton.styles';
-import { EXT_URL } from '../../constants';
 import { GoCommentDiscussion } from 'react-icons/go';
+import { IoMdArrowDroprightCircle } from 'react-icons/io';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createRoot } from 'react-dom/client';
 import { sliceSetIntervalIds } from '../../redux/slices/misc/miscSlice';
@@ -35,9 +33,9 @@ const Loader = (chatElement: HTMLDivElement) => {
   }
 };
 
-const createChatWindow = () => {
-  const chatElement = document.createElement('div');
-  const chatElementId = 'NComments';
+const createChatWindow = (_chatWindowSize: string) => {
+  let chatElement = document.createElement('div');
+  let chatElementId = 'NComments';
   chatElement.id = chatElementId;
   chatElement.className = chatElementId;
   chatElement.style.cssText = `
@@ -63,6 +61,9 @@ const CommentButton: React.FC<props> = ({ visible }) => {
   const user = useAppSelector((state) => state.user);
   const [, insertVisited] = useInsertVisitedMutation();
   const smoothWidth = useAppSelector((state) => state.settings.smoothWidth);
+  const chatWindowSize = useAppSelector(
+    (state) => state.settings.chatWindowSize
+  );
   const movieId = useAppSelector((state) => state.movie.id);
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
@@ -76,50 +77,51 @@ const CommentButton: React.FC<props> = ({ visible }) => {
   // Logs user view history.
   useEffect(() => {
     if (intervalId) {
-      clearInterval(intervalId);
+      clearInterval(intervalId!);
       intervalIds.forEach((id) => clearInterval(id));
       setIntervalIds([]);
     }
     intervalIds.forEach((id) => clearInterval(id));
     setIntervalIds([]);
     if (!user) return;
-    const sessionId = v4();
-    const visitInterval = setInterval(async () => {
+    let sessionId = v4();
+    let visitInterval = setInterval(async () => {
       const url = window.location.href;
       const netflixId = await getIdFromNetflixURL(url);
-      chrome.runtime.onMessage.addListener((request, sender) => {
+      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!sender.tab && request.type === 'SET_MOVIE_ID') {
           clearInterval(visitInterval);
-          intervalId && clearInterval(intervalId);
+          clearInterval(intervalId!);
           intervalIds.forEach((id) => clearInterval(id));
           setIntervalIds([]);
         }
       });
       if (netflixId === null) {
         clearInterval(visitInterval);
-        intervalId && clearInterval(intervalId);
+        clearInterval(intervalId!);
         intervalIds.forEach((id) => clearInterval(id));
         setIntervalIds([]);
       }
-      if (movieId && user.id && netflixId)
+      if (movieId && user.id! && netflixId)
         insertVisited({
-          uid: user.id,
+          uid: user.id!,
           mid: netflixId + '',
           insertVisitedId: sessionId,
           time: 5,
         }).then((res) => {
-          const { error } = res;
+          const { data, error } = res;
           if (error) {
             clearInterval(visitInterval);
+            console.log(error);
           }
         });
       else clearInterval(visitInterval);
     }, 300000);
-    setIntervalIds((prevIds) => [...prevIds, visitInterval]);
+    setIntervalIds((prevIds) => [...prevIds, visitInterval!]);
     setIntervalId(visitInterval);
     dispatch(sliceSetIntervalIds(visitInterval));
     () => {
-      intervalId && clearInterval(intervalId);
+      clearInterval(intervalId!);
       clearInterval(visitInterval);
     };
   }, [user?.id, movieId]);
@@ -130,31 +132,22 @@ const CommentButton: React.FC<props> = ({ visible }) => {
       onClick={(e) => {
         e.stopPropagation();
         setTimeout(() => {
-          const nComments = document.getElementById('NComments');
+          let nComments = document.getElementById('NComments');
           if (nComments === null) {
             dispatch(sliceSetIsOpenChatWindow(true));
-            createChatWindow();
+            createChatWindow(chatWindowSize);
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);
-      }}
-    >
+      }}>
       <CommentHeader
         accentColor={accentColor}
         isVisible={visible}
-        id="comment-header"
-        className="comment-header"
+        id='comment-header'
+        className='comment-header'
         chatWindowSize={smoothWidth + ''}
-        openChatWindow={openChatWindow}
-      >
+        openChatWindow={openChatWindow}>
         {openChatWindow ? (
-          <div className="logo">
-            <img
-              src={`${EXT_URL}/Moovy/moovyIcon.webp`}
-              alt="logo"
-              width="25"
-              height="25"
-            />
-          </div>
+          <IoMdArrowDroprightCircle size={40} fill={accentColor} />
         ) : (
           <GoCommentDiscussion size={40} fill={accentColor} />
         )}

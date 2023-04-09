@@ -6,17 +6,16 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import FocusWindow from '../../components/focus-window/focusWindow';
 import { HomeHeaderParent } from './homeHeader.styles';
 import { Image } from '../../components/Image/image';
-import MoovyBlackLogo from '../../svgs/moovy-black.svg';
-import MoovyWhiteLogo from '../../svgs/moovy-white.svg';
+import MoovyLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
-import { useTheme } from 'styled-components';
+import useIsAuth from '../../utils/isAuthUser';
 
 type props = {
   className: string;
 };
 const HomeHeader: React.FC<props> = ({ className }) => {
-  const theme = useTheme();
+  useIsAuth();
   const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
   const dispatch = useAppDispatch();
   const navBarHandler: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -31,27 +30,18 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         <div className='logo-image'>
           <img
             className='image'
-            src={
-              (theme as any).themeType === 'light'
-                ? MoovyBlackLogo
-                : MoovyWhiteLogo
-            }
+            src={MoovyLogo}
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'
-            width='40'
-            height='40'
           />
           <p
             style={{
               fontWeight: 600,
-              fontSize: '10px',
+              fontSize: '12px',
               alignSelf: 'flex-end',
-              backgroundColor: '#993434',
-              padding: '4px 6px',
-              borderRadius: '10px',
             }}>
-            Beta
+            (Beta)
           </p>
         </div>
         <div className='logo-icon' onClick={navBarHandler}>
@@ -72,13 +62,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         width='220px'>
         <div className='user'>
           <div className='logo-image'>
-            <Image
-              className='image'
-              src={user.photoUrl}
-              alt='user'
-              width='40'
-              height='40'
-            />
+            <Image className='image' src={user.photoUrl} alt='user' />
           </div>
         </div>
       </FocusWindow>

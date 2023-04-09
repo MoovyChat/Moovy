@@ -1,16 +1,14 @@
-import { Helmet } from 'react-helmet';
 import { ReactComponent as Moovy } from '../../svgs/moovy-white.svg';
 import { NotFoundParent } from './notFound.styles';
 import { ReactComponent as Wave } from '../../svgs/wave.svg';
 import { useEffect } from 'react';
 
 const NotFound = () => {
+  useEffect(() => {
+    document.title = '404-NotFound';
+  }, []);
   return (
     <NotFoundParent>
-      <Helmet>
-        <title>{`404: Not Found`}</title>
-        <meta name='description' content={`404: Not Found`} />
-      </Helmet>
       <div className='bg'>
         <Moovy />
       </div>

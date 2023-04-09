@@ -15,13 +15,13 @@ const ProfilePic: React.FC<props> = ({ src, user, tooltip }) => {
   const navigate = useNavigate();
   const navigateToUser: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    user && navigate(`/home/profile/${user?.nickname}`);
+    user && navigate(`/profile/${user?.nickname}`);
   };
   return (
     <React.Fragment>
       {tooltip ? (
         <ProfilePicParent onClick={navigateToUser} id='blur-escape'>
-          <img src={src} alt='profilePic' id='blur-escape' />
+          <img src={src} alt='profilePic' id='blur-escape' loading='lazy' />
         </ProfilePicParent>
       ) : (
         <Tooltip

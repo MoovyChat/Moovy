@@ -9,7 +9,7 @@ import {
   MdPersonOff,
   MdReport,
 } from 'react-icons/md';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { IoMdMoon } from 'react-icons/io';
@@ -73,15 +73,14 @@ const Toast = () => {
       <ToastParent
         visible={visible.toString()}
         accentcolor={accentcolor}
-        style={{ bottom: animationProps.bottom }}
-      >
-        <div className="container">
-          <div className="fill"></div>
-          <div className="toast-msg">
-            <div className="icon">
+        style={{ bottom: animationProps.bottom }}>
+        <div className='container'>
+          <div className='fill'></div>
+          <div className='toast-msg'>
+            <div className='icon'>
               <SelectedIcon />
             </div>
-            <div className="msg">{message}</div>
+            <div className='msg'>{message}</div>
           </div>
         </div>
       </ToastParent>

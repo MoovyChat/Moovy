@@ -8,32 +8,12 @@ export const LeftParent = styled.div`
   align-items: center;
   width: 100%;
   border-right: 0.3px solid #8f8f8f81;
-  .parent-profile {
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    gap: 25px;
-    width: 100%;
-    justify-content: center;
-    .profile {
-      width: 50px;
-      height: 50px;
-      aspect-ratio: 1;
-      position: relative;
-      margin: 10% 0;
-    }
-    .profile-text {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      .welcome-text {
-        font-size: 13px;
-      }
-      .user-text {
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
+  .profile {
+    width: 100px;
+    aspect-ratio: 1;
+    position: relative;
+    margin: 10% 0;
+    height: 100px;
   }
   .options {
     width: 100%;
@@ -41,17 +21,16 @@ export const LeftParent = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: center;
+    align-items: flex-end;
     .option {
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 18px;
-      width: 50%;
+      border-radius: 20px 0px 0px 20px;
+      width: 70%;
       padding: 10px;
       color: inherit;
       text-decoration: none;
-      font-size: 14px;
       :hover {
         background-color: ${(p) => p.theme.hoverColor};
         cursor: pointer;
@@ -69,11 +48,10 @@ export const LeftParent = styled.div`
     }
     .active {
       transition: all 1s;
-      background-color: ${(p) => p.theme.hoverColor};
       .icon {
         svg {
-          height: 27px;
-          width: 27px;
+          height: 35px;
+          width: 35px;
         }
       }
       .icon.feed {
@@ -112,32 +90,28 @@ export const LeftParent = styled.div`
         }
       }
       .text {
+        font-size: 1.1rem;
       }
     }
   }
 
   @media (max-height: 700px) {
-    .parent-profile {
-      .profile {
-        width: 70px;
-        height: 70px;
-        margin: 20% 0;
-      }
+    .profile {
+      width: 70px;
+      height: 70px;
+      margin: 20% 0;
     }
   }
 
   @media (max-height: 550px) {
-    .parent-profile {
+    .profile {
       display: none;
-      .profile {
-        display: none;
-      }
     }
 
     .options {
       display: flex;
-      justify-content: flex-start;
-      margin-top: 20px;
+      justify-content: center;
+
       height: 100%;
       overflow: auto;
       .option {
@@ -157,25 +131,6 @@ export const LeftParent = styled.div`
           font-weight: 600;
         }
       }
-    }
-  }
-`;
-
-export const StyledLinks = styled.div`
-  padding: 20px;
-  flex-wrap: wrap;
-  width: 80%;
-  font-size: 10px;
-  line-height: 15px;
-  color: #71767b;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  div {
-    cursor: pointer;
-    :hover {
-      text-decoration: underline;
     }
   }
 `;

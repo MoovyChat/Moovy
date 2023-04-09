@@ -1,16 +1,11 @@
-import React from "react";
-import { StyledEmbedContent } from "./embedContent.styles";
+import React from 'react';
+import { StyledEmbedContent } from './embedContent.styles';
 
 const EmbedContent = () => {
   return (
     <StyledEmbedContent>
-      <div>
-        Welcome to MoovyChat! You're all set to enjoy a new level of interactive
-        streaming. Add your favorite movies and TV shows to your watchlist, join
-        the conversation in the comment section, and customize your viewing
-        experience with video filters. Happy streaming!
-      </div>
-      {/* <div
+      <p>New version available. Please update to latest version.</p>
+      <div
         className='arc-btn'
         onClick={(e) => {
           e.stopPropagation();
@@ -20,7 +15,7 @@ const EmbedContent = () => {
           );
         }}>
         Update
-      </div> */}
+      </div>
     </StyledEmbedContent>
   );
 };

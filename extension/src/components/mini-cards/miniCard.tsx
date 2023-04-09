@@ -8,8 +8,8 @@ type props = {
 const MiniCard: React.FC<props> = ({ body, options }) => {
   return (
     <MiniCardParent>
-      <div className="body">{body}</div>
-      <div className="options">{options}</div>
+      <div className='body'>{body}</div>
+      <div className='options'>{options}</div>
     </MiniCardParent>
   );
 };

@@ -1,4 +1,5 @@
-import { Movie } from '../../../Utils/interfaces';
+import { Movie, timeMessage } from '../../../Utils/interfaces';
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const movieState: Movie = {
@@ -14,7 +15,7 @@ const movieState: Movie = {
   lastPage: 1,
   currentPage: 1,
   pastLoadedCount: 0,
-  newlyLoadedCommentTimeStamp: new Date().getTime().toString(), // For loading new comments...'
+  newlyLoadedCommentTimeStamp: '', // For loading new comments...'
   loadNew: 0,
   viewsCount: 0,
   commentCount: 0,
@@ -30,7 +31,7 @@ const MovieSlice = createSlice({
   initialState: movieState,
   reducers: {
     sliceAddMovie: (state, action: { payload: Movie }) => {
-      const movieObject: Movie = action.payload;
+      let movieObject: Movie = action.payload;
       return {
         ...state,
         commentCount: movieObject.commentCount,
@@ -60,8 +61,31 @@ const MovieSlice = createSlice({
     sliceUpdateViewsCount: (state, action) => {
       return { ...state, viewsCount: action.payload };
     },
+    sliceSetCommentsLoadedCount: (state, action) => {
+      return {
+        ...state,
+        commentsLoadedCount: state.commentsLoadedCount
+          ? state.commentsLoadedCount + action.payload
+          : 0,
+      };
+    },
+    sliceSetLikesCount: (state, action) => {
+      return { ...state, likesCount: action.payload };
+    },
+    sliceSetTotalRepliesOfTheMovie: (state, action) => {
+      return { ...state, totalCommentsCountOfMovie: action.payload };
+    },
+    sliceSetLastPage: (state, action) => {
+      return { ...state, lastPage: action.payload };
+    },
+    sliceSetCurrentPage: (state, action) => {
+      return { ...state, currentPage: action.payload };
+    },
     sliceSetNewlyLoadedTimeStamp: (state, action) => {
       return { ...state, newlyLoadedCommentTimeStamp: action.payload };
+    },
+    sliceSetFetchingComments: (state, action) => {
+      return { ...state, fetchingComments: action.payload };
     },
     sliceSetPastLoadedCount: (state, action) => {
       return {
@@ -70,7 +94,13 @@ const MovieSlice = createSlice({
       };
     },
     sliceSetLoadNew: (state, action) => {
-      return { ...state, loadNew: action.payload };
+      return { ...state, loadNew: state.loadNew! + 1 };
+    },
+    sliceSetFavCount: (state, action) => {
+      return { ...state, favCount: action.payload };
+    },
+    sliceSetFetched: (state, action: { payload: boolean }) => {
+      return { ...state, fetched: true };
     },
     sliceResetMovie: () => {
       return movieState;
@@ -81,12 +111,20 @@ const MovieSlice = createSlice({
 export const {
   sliceAddMovie,
   sliceAddMovieId,
+  sliceSetFetchingComments,
   sliceSetPastLoadedCount,
   sliceAddMovieName,
   sliceSetLoadNew,
+  sliceSetFetched,
   sliceUpdateViewsCount,
   sliceSetTotalCommentsOfTheMovie,
+  sliceSetCommentsLoadedCount,
+  sliceSetLikesCount,
+  sliceSetTotalRepliesOfTheMovie,
   sliceSetNewlyLoadedTimeStamp,
+  sliceSetLastPage,
+  sliceSetFavCount,
+  sliceSetCurrentPage,
   sliceResetMovie,
 } = MovieSlice.actions;
 export default MovieSlice.reducer;

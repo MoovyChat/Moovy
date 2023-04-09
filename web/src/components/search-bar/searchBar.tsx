@@ -96,10 +96,10 @@ const SearchBar = () => {
     e.stopPropagation();
     e.preventDefault();
     let path = location.pathname;
-    let defaultPath = `/home/search/${value}/episodes`;
+    let defaultPath = `/search/${value}/episodes`;
     let pathArr = path.split('/');
     if (pathArr[1] === 'search') {
-      defaultPath = `/home/${pathArr[1]}/${value}/${pathArr[3]}`;
+      defaultPath = `/${pathArr[1]}/${value}/${pathArr[3]}`;
     }
     navigate(defaultPath);
     setSearchBarActive(() => false);
@@ -144,13 +144,13 @@ const SearchBar = () => {
                           {users.map((user: any) => (
                             <StyledUserCard
                               onClick={(e) => {
-                                navigate(`/home/profile/${user.nickname}`);
+                                navigate(`/profile/${user.nickname}`);
                                 setSearchBarActive(() => false);
                               }}>
                               <div
                                 className='p'
                                 onClick={(e) => {
-                                  navigate(`/home/profile/${user.nickname}`);
+                                  navigate(`/profile/${user.nickname}`);
                                   setSearchBarActive(() => false);
                                 }}>
                                 <ProfilePic
@@ -173,7 +173,7 @@ const SearchBar = () => {
                             <StyledTitleCard
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/home/show/${title.id}`);
+                                navigate(`/show/${title.id}`);
                                 setSearchBarActive(() => false);
                               }}>
                               <Image
@@ -195,7 +195,7 @@ const SearchBar = () => {
                             <StyledTitleCard
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/home/movie/${movie.id}`);
+                                navigate(`/movie/${movie.id}`);
                                 setSearchBarActive(() => false);
                               }}>
                               <Image
@@ -219,7 +219,7 @@ const SearchBar = () => {
                             <StyledTitleCard
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/home/movie/${episode.id}`);
+                                navigate(`/movie/${episode.id}`);
                                 setSearchBarActive(() => false);
                               }}>
                               {episode.thumbs && (
@@ -245,7 +245,7 @@ const SearchBar = () => {
                     className='more'
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/home/search/${value}/episodes`);
+                      navigate(`/search/${value}/episodes`);
                       setSearchBarActive(() => false);
                     }}>
                     Search more for "{value}"

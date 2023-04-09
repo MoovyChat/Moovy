@@ -1,12 +1,19 @@
+import { Emoji, fetchFromCDN } from 'emojibase';
 import {
   EmojiPickerHeader,
   EmojiPickerParent,
   HeaderKey,
 } from './emojiPicker.styles';
-import { TouchEventHandler, WheelEventHandler, useRef, useState } from 'react';
+import { FrequentEmoji, RecentEmoji, db } from '../../indexedDB/db';
+import {
+  TouchEventHandler,
+  WheelEventHandler,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-/* eslint-disable react/react-in-jsx-scope */
-import { Emoji } from 'emojibase';
 import EmojiGroup from './emojiGroup/emojiGroup';
 import groupSet from 'emojibase-data/meta/groups.json';
 import useFetchEmojis from '../../contentScript/hooks/useFetchEmojis';
@@ -18,7 +25,7 @@ export interface refinedG {
   [key: number]: subGroup;
 }
 
-const headerEmoji: any = {
+let headerEmoji: any = {
   'smileys-emotion': '🤣',
   'people-body': '👨‍👩‍👧',
   'animals-nature': '🐵',
@@ -78,21 +85,19 @@ const EmojiPicker = () => {
     <EmojiPickerParent
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
+      onTouchEnd={handleTouchEnd}>
       <EmojiPickerHeader>
         {Object.values(groups).map(
           (value, index) =>
             index !== 2 && (
               <HeaderKey
                 key={index}
-                className="header-key"
+                className='header-key'
                 selectedGroup={index === groupNumber}
                 onClick={(e) => {
                   e.stopPropagation();
                   selectGroup(index);
-                }}
-              >
+                }}>
                 {headerEmoji[value]}
               </HeaderKey>
             )

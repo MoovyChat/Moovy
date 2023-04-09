@@ -1,18 +1,18 @@
-/* eslint-disable no-undef */
 const path = require('path');
 var webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-
+// const BundleAnalyzerPlugin =
+//   require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
   entry: {
     popup: path.resolve('src/extension/popup/popup.tsx'),
+    offsite: path.resolve('src/extension/popup/offsite/offsite.tsx'),
     App: path.resolve('src/extension/components/app/app.tsx'),
     background: path.resolve('src/background/background.ts'),
     index: path.resolve('src/contentScript/index.tsx'),
-    graphql: path.resolve('src/generated/graphql.tsx'),
+    options: path.resolve('src/extension/options/options.tsx'),
   },
   module: {
     rules: [
@@ -102,8 +102,6 @@ module.exports = {
     publicPath: '',
   },
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
     splitChunks: {
       chunks(chunk) {
         return chunk.name !== 'index';
@@ -116,7 +114,7 @@ function getHTMLPlugins(chunks) {
   return chunks.map(
     (chunk) =>
       new HTMLPlugin({
-        title: 'Moovy Chat',
+        title: 'Netflix Comments',
         filename: `${chunk}.html`,
         chunks: [chunk],
       })

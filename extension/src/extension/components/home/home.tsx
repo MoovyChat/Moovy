@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 
 import { HomeWindow } from './home.styles';
 import LogIn from '../login/login';
 import LogOut from '../logout/logout';
 import { OTTType } from '../app/app';
+import Ott from '../ott/ott';
 import { User } from '../../../Utils/interfaces';
 
 type props = {

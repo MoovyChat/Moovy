@@ -20,6 +20,7 @@ chrome.runtime.onMessage.addListener(async function (
   const { type, url } = request;
   if (type === 'NEW_URL') {
     const id = await getIdFromNetflixURL(url);
+    console.log(id);
     if (!id) return;
     main(id);
     sendResponse({ message: 'URL Change notified' });
@@ -40,7 +41,9 @@ async function main(id: number | null) {
   setTimeout(() => {
     chrome.runtime.sendMessage(
       { type: 'CHANGE_MOVIE_ID', movieId: netflixId },
-      (response) => {}
+      (response) => {
+        console.log(response);
+      }
     );
   }, 1000);
 

@@ -1,4 +1,3 @@
-import { AdminResolver } from './resolvers/adminUsers';
 import { CommentResolver } from './resolvers/comments';
 import { CommentStatsResolver } from './resolvers/commentStats';
 import { ContactResolver } from './resolvers/contact';
@@ -39,5 +38,4 @@ export const resolvers = [
   ProxyResolver,
   ContactResolver,
   ReportResolver,
-  AdminResolver,
 ];

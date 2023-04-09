@@ -2,9 +2,7 @@ import React, { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { Title, useSearchMoviesQuery } from '../../generated/graphql';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CURRENT_DOMAIN } from '../../constants';
 import EmptyPage from '../../components/empty-page/emptyPage';
-import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
 import Loading from '../loading/loading';
 import { MovieCardParent } from '../../components/movie-card/movieCard.styles';
@@ -53,14 +51,6 @@ const SearchMovies = () => {
 
   return (
     <SearchTitles onScroll={handleScroll} ref={parentRef}>
-      <Helmet>
-        <title>{`${search}: Movies`}</title>
-        <meta name='description' content={`${search}: Movies`} />
-        <link
-          rel='canonical'
-          href={`${CURRENT_DOMAIN}/search/${search}/movies}`}
-        />
-      </Helmet>
       {titles.map((movie) => (
         <MovieCardParent
           bg={movie?.artwork as string}

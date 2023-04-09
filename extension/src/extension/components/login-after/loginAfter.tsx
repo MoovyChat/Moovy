@@ -8,7 +8,6 @@ import Loading from '../../../components/loading/loading';
 import { User } from '../../../Utils/interfaces';
 import { UserCredential } from 'firebase/auth';
 import { isServerSide } from '../../../constants';
-import { randomUserNameGenerator } from '../../utils';
 import { setStoredUserLoginDetails } from '../../../Utils/storage';
 import { urqlClient } from '../../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
@@ -29,47 +28,51 @@ const LoginAfter: React.FC<loginAfterProps> = ({ setUser, userFromAuth }) => {
       }, 5000);
     });
   };
-  const [, createUser] = useCreateUserMutation();
-  const [{ data, fetching }, _] = useGetUserQuery({
+  const [_userResult, createUser] = useCreateUserMutation();
+  const [{ data, error, fetching }, _] = useGetUserQuery({
     variables: {
       uid: userFromAuth.user.uid,
     },
     pause: isServerSide(),
   });
   useEffect(() => {
+    if (error) console.log(error);
     if (!fetching) {
       const { uid, email, displayName, photoURL } = userFromAuth.user;
-      if (!uid || !email || !displayName || !photoURL) return;
-      const nickName = displayName?.split(' ')[0];
-      const user: User = {
-        name: displayName,
-        email: email,
-        photoUrl: photoURL,
-        nickname: randomUserNameGenerator(nickName),
+      const nickName = displayName?.split(' ').pop();
+      let user: User = {
+        name: displayName!,
+        email: email!,
+        photoUrl: photoURL!,
+        nickname: nickName!,
         id: uid,
       };
       // User doesn't exist in the database yet.
-      if (!data || data.getUser === null) {
+      if (!data || data!.getUser === null) {
         createUser({
           options: user as any,
         })
-          .then(() => {
+          .then((res) => {
+            const { data, error } = res;
+            if (error) console.log(error);
             setUserToStore(user, setUser);
             chrome.windows.getCurrent((w) => {
               chrome.tabs.query({ active: true, windowId: w.id }, (tabs) => {
-                tabs[0].id &&
-                  chrome.tabs.sendMessage(tabs[0].id, {
-                    user: user,
-                    from: 'withOutLogin',
-                  });
+                chrome.tabs.sendMessage(
+                  tabs[0].id!,
+                  { user: user, from: 'withOutLogin' },
+                  (response) => {
+                    console.log(response);
+                  }
+                );
               });
             });
           })
-          .catch(() => {
-            //Error block
+          .catch((err: any) => {
+            console.log('ERR: Unable to create user', err);
           });
       } else {
-        setUserToStore(data.getUser as any, setUser);
+        setUserToStore(data!.getUser as any, setUser);
       }
     }
   }, [data, userFromAuth, fetching]);

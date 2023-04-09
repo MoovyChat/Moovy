@@ -12,11 +12,12 @@ export const StyledMiniCommentCard = styled.div<props>`
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 2px 1px;
+  border-radius: 18px;
   transition: max-height 0.3s;
   cursor: pointer;
   .photo {
     align-self: flex-start;
-    margin: 15px 5px 15px 15px;
+    margin-top: 10px;
     width: 40px;
     height: 40px;
   }
@@ -25,7 +26,7 @@ export const StyledMiniCommentCard = styled.div<props>`
     flex-direction: column;
     align-items: flex-start;
     width: calc(100% - 50px);
-
+    padding-bottom: 15px;
     height: 100%;
     .name {
       font-size: 0.9em;

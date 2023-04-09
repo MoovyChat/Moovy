@@ -2,10 +2,8 @@ import { Title, useSearchTitlesQuery } from '../../generated/graphql';
 import { UIEventHandler, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CURRENT_DOMAIN } from '../../constants';
 import { CatalogParent } from '../catalog/catalog.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
-import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import TitleCard from '../catalog/titleCard';
 
@@ -49,14 +47,6 @@ const SearchShows = () => {
   if (titles.length <= 0) return <EmptyPage msg='No Shows found' />;
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
-      <Helmet>
-        <title>{`${search}: Shows`}</title>
-        <meta name='description' content={`${search}: Shows`} />
-        <link
-          rel='canonical'
-          href={`${CURRENT_DOMAIN}/search/${search}/shows}`}
-        />
-      </Helmet>
       {titles &&
         titles.map((title, index) => (
           <TitleCard

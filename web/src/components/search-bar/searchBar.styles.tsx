@@ -35,12 +35,12 @@ export const StyledSearchResults = styled.div`
   width: 50%;
   height: 70vh;
   overflow: auto;
-  top: 8%;
+  top: 7%;
   left: 50%;
   transform: translate(-50%, 0%);
   z-index: 99;
-  border-radius: 9px;
-  box-shadow: 0px 0px 5px, 0px 0px 1px 0px;
+  border-radius: 20px;
+  box-shadow: 0 0 5px, inset 0 0 5px;
   backdrop-filter: blur(10px) brightness(0.6);
   display: flex;
   flex-direction: column;
@@ -54,7 +54,7 @@ export const StyledSearchResults = styled.div`
   .content {
     margin-left: 20px;
     margin-top: 20px;
-    width: 95%;
+    width: 97%;
     .content-container {
       width: 98%;
       .people,
@@ -82,17 +82,6 @@ export const StyledSearchResults = styled.div`
         cursor: pointer;
         text-decoration: underline;
       }
-    }
-  }
-
-  @media (max-width: 800px) {
-    width: 95%;
-    border-radius: 5px;
-    box-shadow: 0px 0px 1px 0px, 0px 0px 5px inset;
-    .content {
-      margin-left: 20px;
-      margin-top: 20px;
-      width: 93%;
     }
   }
 `;

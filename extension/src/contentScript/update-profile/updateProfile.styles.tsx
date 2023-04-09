@@ -24,7 +24,6 @@ export const ParentProfile = styled.div`
   }
 `;
 
-const C_O_L_O_R = '#1b86a7';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -58,7 +57,7 @@ export const StepContainer = styled.div<props>`
       height: 2rem;
       border-radius: 50%;
       background-color: ${(p) => p.theme.chatText};
-      color: ${C_O_L_O_R};
+      color: ${(p) => p.accentColor};
       border: 2px solid #ccc;
       font-size: 1rem;
       font-weight: bold;
@@ -74,11 +73,11 @@ export const StepContainer = styled.div<props>`
     }
 
     .line.active {
-      background-color: ${C_O_L_O_R};
+      background-color: ${(p) => p.accentColor};
     }
 
     .circle.active {
-      background-color: ${C_O_L_O_R};
+      background-color: ${(p) => p.accentColor};
       color: ${(p) => p.theme.chatText};
     }
   }
@@ -113,13 +112,13 @@ export const FieldContainer = styled.div<props>`
     }
 
     &:hover {
-      border-color: ${C_O_L_O_R};
+      border-color: ${(p) => p.accentColor};
     }
 
     /* Change border when input focus*/
 
     &:focus {
-      border-color: ${C_O_L_O_R};
+      border-color: ${(p) => p.accentColor};
     }
 
     &:focus ~ .label,
@@ -201,13 +200,13 @@ export const TextArea = styled.textarea<props>`
   }
 
   &:hover {
-    border-color: ${C_O_L_O_R};
+    border-color: ${(p) => p.accentColor};
   }
 
   /* Change border when textarea focus*/
 
   &:focus {
-    border-color: ${C_O_L_O_R};
+    border-color: ${(p) => p.accentColor};
   }
 
   &:focus ~ .label,

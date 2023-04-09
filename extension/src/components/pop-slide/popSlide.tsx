@@ -12,12 +12,7 @@ import { sliceResetPopUp } from '../../redux/slices/settings/settingsSlice';
 
 const PopSlide = () => {
   const dispatch = useAppDispatch();
-  const [inputs, setInputs] = useState<{
-    title: string;
-    subTitle?: string;
-  }>({
-    title: 'Title',
-  });
+  const [inputs, setInputs] = useState<any>({});
   const [openInFull, setOpenInFull] = useState<number>(0);
   const isPopSlideOpen = useAppSelector(
     (state) => state.settings.isPopSlideOpen
@@ -34,33 +29,38 @@ const PopSlide = () => {
   useEffect(() => {
     switch (PopSlideContentType) {
       case 'likes':
-        setInputs({
+        let ex = {
           title: 'Likes',
-        });
+        };
+        setInputs(ex);
         break;
       case 'smiley':
-        setInputs({
+        let smiles = {
           title: 'Smiley',
-          subTitle: 'MoovyChat',
-        });
+          subTitle: 'Quick Chat',
+        };
+        setInputs(smiles);
         break;
       case 'video-styles':
-        setInputs({
+        let styles = {
           title: 'Paint',
           subTitle: 'Video styles ',
-        });
+        };
+        setInputs(styles);
         break;
       case 'profile':
-        setInputs({
+        let profile = {
           title: 'Profile',
           subTitle: 'Brief info',
-        });
+        };
+        setInputs(profile);
         break;
       default:
-        setInputs({
+        let defaults = {
           title: 'Title',
           subTitle: 'SubTitle',
-        });
+        };
+        setInputs(defaults);
     }
   }, [PopSlideContentType]);
 
@@ -87,13 +87,12 @@ const PopSlide = () => {
   return (
     <PopSlideParent
       isPopSlideOpen={isPopSlideOpen}
-      className="pop-slide"
-      openInFull={openInFull}
-    >
-      <div className="header">
+      className='pop-slide'
+      openInFull={openInFull}>
+      <div className='header'>
         {openInFull % 2 === 0 ? (
           <MdOpenInFull
-            className="min-max-icon"
+            className='min-max-icon'
             size={20}
             onClick={(e) => {
               e.stopPropagation();
@@ -102,7 +101,7 @@ const PopSlide = () => {
           />
         ) : (
           <MdOutlineCloseFullscreen
-            className="min-max-icon"
+            className='min-max-icon'
             size={20}
             onClick={(e) => {
               e.stopPropagation();
@@ -110,17 +109,17 @@ const PopSlide = () => {
             }}
           />
         )}
-        <div className="section">
-          <div className="title">{inputs.title}</div>
-          <div className="sub">{inputs.subTitle}</div>
+        <div className='section'>
+          <div className='title'>{inputs.title}</div>
+          <div className='sub'>{inputs.subTitle}</div>
         </div>
         <IoMdCloseCircle
-          className="close-icon"
+          className='close-icon'
           size={20}
           onClick={closePopSlide}
         />
       </div>
-      <div className="content">
+      <div className='content'>
         <SelectedElement />
       </div>
     </PopSlideParent>

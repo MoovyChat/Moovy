@@ -1,7 +1,6 @@
 import 'dotenv-safe/config';
 
 import { AdminNotifications } from './entities/AdminNotifications';
-import { AdminUser } from './entities/Admin';
 import { Comment } from './entities/Comment';
 import { CommentReport } from './entities/CommentReport';
 import { CommentStats } from './entities/CommentStat';
@@ -33,7 +32,6 @@ export const conn = new DataSource({
   // synchronize: true,
   entities: [
     Users,
-    AdminUser,
     Comment,
     Movie,
     Reply,

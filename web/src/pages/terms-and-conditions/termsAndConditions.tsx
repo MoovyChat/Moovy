@@ -3,21 +3,14 @@ import {
   PrivacyPolicyWrapper,
 } from '../privacy-policy/privacyPolicy.styles';
 
-import { CURRENT_DOMAIN } from '../../constants';
-import { Helmet } from 'react-helmet';
 import { useEffect } from 'react';
 
 const TermsAndConditions = () => {
+  useEffect(() => {
+    document.title = 'Terms and Conditions';
+  }, []);
   return (
     <PrivacyPolicyWrapper>
-      <Helmet>
-        <title>{`Terms and Conditions`}</title>
-        <meta name='description' content={`Terms and Conditions`} />
-        <link
-          rel='canonical'
-          href={`${CURRENT_DOMAIN}/terms-and-conditions}`}
-        />
-      </Helmet>
       <PrivacyPolicyContent>
         <h2>Terms and Conditions</h2>
         <p>Welcome to MoovyChat Ltd.!</p>

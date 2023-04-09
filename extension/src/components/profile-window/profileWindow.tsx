@@ -1,3 +1,11 @@
+import {
+  FollowerObject,
+  FollowingObject,
+  Profile,
+  Users,
+  useGetUserMiniProfileQuery,
+  useGetUserQuery,
+} from '../../generated/graphql';
 import { MOOVY_URL, isServerSide } from '../../constants';
 import {
   MdFemale,
@@ -5,12 +13,6 @@ import {
   MdOutlineCake,
   MdOutlineContacts,
 } from 'react-icons/md';
-import {
-  Profile,
-  Users,
-  useGetUserMiniProfileQuery,
-  useGetUserQuery,
-} from '../../generated/graphql';
 import React, { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { getFormattedNumber, getShortDateFormat } from '../../Utils/utilities';
 
@@ -38,9 +40,14 @@ const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
   const [userBasicInfo, setUserBasic] = useState<Users | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  // const [follower, setFollower] = useState<FollowerObject | null>(null);
+  // const [following, setFollowing] = useState<FollowingObject | null>(null);
   const [favMovies, setFavMovies] = useState<favTitles[]>([]);
   const [likedMovies, setLikedMovies] = useState<favTitles[]>([]);
   const [visitedMovies, setVisitedMovies] = useState<favTitles[]>([]);
+  // const [historyCount, setHistoryCount] = useState<number>(0);
+  // const [likedMoviesCount, setLikedMoviesCount] = useState<number>(0);
+  // const [favMoviesCount, setFavMoviesCount] = useState<number>(0);
   const [dobInTime, setDOBInTime] = useState<string>('');
 
   const [userData] = useGetUserQuery({
@@ -55,7 +62,7 @@ const ProfileWindow = () => {
   });
 
   useMemo(() => {
-    const { data, fetching } = userData;
+    const { data, error, fetching } = userData;
     if (!fetching && data) {
       const _data = data?.getUser as Users;
       setUserBasic(() => _data);
@@ -68,31 +75,42 @@ const ProfileWindow = () => {
       setDOBInTime('');
       return;
     }
-    const UTCTimeString = (profile.dob as string).split('-').join('/');
-    const dobTimeString = getShortDateFormat(
+    let UTCTimeString = (profile.dob as string).split('-').join('/');
+    let dobTimeString = getShortDateFormat(
       new Date(UTCTimeString).getTime().toString()
     );
     if (dobTimeString) setDOBInTime(dobTimeString);
   }, [profile?.dob]);
 
   useEffect(() => {
-    const { data, fetching } = miniProfile;
+    const { error, data, fetching } = miniProfile;
+    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getFullUserProfile;
       const _profileData = _data?.profile;
-      const _favMoviesData = _data?.favorites?.favorites;
-      const _likedMoviesData = _data?.likes?.likes;
-      const _visitedMoviesData = _data?.history?.recentMovies;
+      const _followerData = _data?.followers!;
+      const _followingData = _data?.following!;
+      const _favMoviesData = _data?.favorites?.favorites!;
+      const _likedMoviesData = _data?.likes?.likes!;
+      const _visitedMoviesData = _data?.history?.recentMovies!;
+      const _historyCount = _data?.history?.historyCount!;
+      const _likedMoviesCount = _data?.likes?.likesCount!;
+      const _favoriteMoviesCount = _data?.favorites?.favCount!;
+      // setHistoryCount(() => _historyCount);
+      // setLikedMoviesCount(() => _likedMoviesCount);
+      // setFavMoviesCount(() => _favoriteMoviesCount);
       setProfile(_profileData as Profile);
-      _favMoviesData && setFavMovies(() => _favMoviesData);
-      _likedMoviesData && setLikedMovies(() => _likedMoviesData);
-      _visitedMoviesData && setVisitedMovies(() => _visitedMoviesData);
+      // setFollower(() => _followerData);
+      // setFollowing(() => _followingData);
+      setFavMovies(() => _favMoviesData);
+      setLikedMovies(() => _likedMoviesData);
+      setVisitedMovies(() => _visitedMoviesData);
     }
   }, [miniProfile.fetching, userId]);
 
   const goToProfile: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    const profileUrl = `${MOOVY_URL}/home/profile/${userBasicInfo?.nickname}`;
+    let profileUrl = `${MOOVY_URL}/profile/${userBasicInfo?.nickname}`;
     chrome.runtime.sendMessage({
       type: 'OPEN_LINK',
       url: profileUrl,
@@ -102,50 +120,50 @@ const ProfileWindow = () => {
   if (userData.error) return <div>Server Error.</div>;
   if (!userBasicInfo) return <div>User not found!.</div>;
   return (
-    <ProfileParent className="mini-profile">
+    <ProfileParent className='mini-profile'>
       <React.Fragment>
-        <div className="profile-header">
-          <div className="bg">
-            <img src={userBasicInfo?.bg as string} alt="bg" />
+        <div className='profile-header'>
+          <div className='bg'>
+            <img src={userBasicInfo?.bg as string} alt='bg' />
           </div>
           <FollowButton
-            userId={userBasicInfo?.id}
-            nickName={userBasicInfo?.nickname}
+            userId={userBasicInfo?.id!}
+            nickName={userBasicInfo?.nickname!}
           />
 
-          <div className="profile-pic">
-            <img src={userBasicInfo?.photoUrl as string} alt="dp" />
+          <div className='profile-pic'>
+            <img src={userBasicInfo?.photoUrl! as string} alt='dp' />
           </div>
-          <div className="name" onClick={goToProfile}>
-            <div className="fullName p">{`${profile?.fullname}`}</div>
-            <div className="nickName p">@{userBasicInfo?.nickname}</div>
-            <div className="nickname p">{`${getFormattedNumber(
+          <div className='name' onClick={goToProfile}>
+            <div className='fullName p'>{`${profile?.fullname}`}</div>
+            <div className='nickName p'>@{userBasicInfo?.nickname}</div>
+            <div className='nickname p'>{`${getFormattedNumber(
               userBasicInfo?.followerCount as number
             )} Followers ${getFormattedNumber(
               userBasicInfo?.followingCount as number
             )} Following`}</div>
           </div>
         </div>
-        <div className="pro">
-          <div className="block">
-            <div className="icon">
+        <div className='pro'>
+          <div className='block'>
+            <div className='icon'>
               <MdOutlineCake size={25} />
             </div>
-            <div className="info">
+            <div className='info'>
               {!dobInTime ? 'Not Specified' : dobInTime}
             </div>
           </div>
 
           {profile && profile.gender && (
-            <div className="block">
-              <div className="icon">
+            <div className='block'>
+              <div className='icon'>
                 {profile?.gender === 'male' ? (
                   <MdMale size={25} />
                 ) : (
                   <MdFemale size={25} />
                 )}
               </div>
-              <div className="info">
+              <div className='info'>
                 {profile && profile.gender
                   ? profile.gender.charAt(0).toUpperCase() +
                     profile.gender.slice(1)
@@ -153,22 +171,22 @@ const ProfileWindow = () => {
               </div>
             </div>
           )}
-          <div className="block">
-            <div className="icon">
+          <div className='block'>
+            <div className='icon'>
               <MdOutlineContacts size={25} />
             </div>
-            <div className="info">
+            <div className='info'>
               {profile && profile.bio ? profile.bio : 'Not Specified'}
             </div>
           </div>
         </div>
-        <div className="movies">
-          <div className="title">History</div>
-          <div className="list">
+        <div className='movies'>
+          <div className='title'>History</div>
+          <div className='list'>
             {visitedMovies.length > 0 ? (
               visitedMovies.map((movie) => (
-                <div className="movie" key={movie.id}>
-                  <img src={movie.thumbs as string} alt="movie" />
+                <div className='movie' key={movie.id}>
+                  <img src={movie.thumbs as string} alt='movie' />
                 </div>
               ))
             ) : (
@@ -176,13 +194,13 @@ const ProfileWindow = () => {
             )}
           </div>
         </div>
-        <div className="movies">
-          <div className="title">Favorite Titles</div>
-          <div className="list">
+        <div className='movies'>
+          <div className='title'>Favorite Titles</div>
+          <div className='list'>
             {favMovies.length > 0 ? (
               favMovies.map((movie) => (
-                <div className="movie" key={movie.id}>
-                  <img src={movie.thumbs as string} alt="movie" />
+                <div className='movie' key={movie.id}>
+                  <img src={movie.thumbs as string} alt='movie' />
                 </div>
               ))
             ) : (
@@ -190,13 +208,13 @@ const ProfileWindow = () => {
             )}
           </div>
         </div>
-        <div className="movies">
-          <div className="title">Liked Titles</div>
-          <div className="list">
+        <div className='movies'>
+          <div className='title'>Liked Titles</div>
+          <div className='list'>
             {likedMovies.length > 0 ? (
               likedMovies.map((movie) => (
-                <div className="movie" key={movie.id}>
-                  <img src={movie.thumbs as string} alt="movie" />
+                <div className='movie' key={movie.id}>
+                  <img src={movie.thumbs as string} alt='movie' />
                 </div>
               ))
             ) : (

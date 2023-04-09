@@ -1,34 +1,36 @@
-import { LeftParent, StyledLinks } from './leftPanel.styles';
-import React, { MouseEventHandler, Suspense, useEffect, useRef } from 'react';
+import {
+  MdDynamicFeed,
+  MdFavorite,
+  MdModeComment,
+  MdNightlight,
+  MdNotificationsActive,
+  MdOutlineReply,
+  MdOutlineWbSunny,
+  MdPerson,
+  MdStorage,
+} from 'react-icons/md';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
 } from '../../../redux/slices/popupSlice';
 
+import { LeftParent } from './leftPanel.styles';
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
 import { Users } from '../../../generated/graphql';
-import { lazyIconMd } from '../../../lazyLoad';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
 import { useAppSelector } from '../../../redux/hooks';
-
-const MdDynamicFeed = lazyIconMd('MdDynamicFeed');
-const MdFavorite = lazyIconMd('MdFavorite');
-const MdModeComment = lazyIconMd('MdModeComment');
-const MdNightlight = lazyIconMd('MdNightlight');
-const MdNotificationsActive = lazyIconMd('MdNotificationsActive');
-const MdOutlineReply = lazyIconMd('MdOutlineReply');
-const MdOutlineWbSunny = lazyIconMd('MdOutlineWbSunny');
-const MdPerson = lazyIconMd('MdPerson');
-const MdStorage = lazyIconMd('MdStorage');
+import useIsAuth from '../../../utils/isAuthUser';
 
 type props = {
   className: string;
 };
 const LeftPanel: React.FC<props> = ({ className }) => {
+  useIsAuth();
   const ref = useRef<HTMLDivElement>(null);
   const user = useAppSelector((state) => state.user);
   const theme = useAppSelector((state) => state.settings.theme);
@@ -38,7 +40,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
     const value = theme === themes.DARK ? false : true;
     dispatch(sliceSetTheme(value));
   };
-  const iconSize = 25;
+  const iconSize = 30;
   // log changed data
   useEffect(() => {
     // console.log(user.photoUrl);
@@ -57,6 +59,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   }, [ref]);
 
   const linkClickHandler: MouseEventHandler<HTMLAnchorElement> = (e) => {
+    e.stopPropagation();
     batch(() => {
       dispatch(sliceSetIsPopupOpened(false));
       dispatch(sliceSetSelectedElement(''));
@@ -65,33 +68,27 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   };
   return (
     <LeftParent className={className} ref={ref}>
-      <div className='parent-profile'>
-        <div className='profile'>
-          <ProfilePic
-            src={user?.photoUrl!}
-            user={user as Users}
-            tooltip={true}></ProfilePic>
-        </div>
-        <div className='profile-text'>
-          <div className='welcome-text'>Welcome back</div>
-          <div className='user-text'>{user.nickname}</div>
-        </div>
+      <div className='profile'>
+        <ProfilePic
+          src={user?.photoUrl!}
+          user={user as Users}
+          tooltip={true}></ProfilePic>
       </div>
       <div className='options'>
-        <NavLink to='/home' className='option' end onClick={linkClickHandler}>
+        <NavLink to='/' className='option' end onClick={linkClickHandler}>
           <div className='icon feed'>
             <MdDynamicFeed size={iconSize} />
           </div>
           <div className='text'>Feed</div>
         </NavLink>
-        <NavLink to='catalog' className='option' onClick={linkClickHandler}>
+        <NavLink to='/catalog' className='option' onClick={linkClickHandler}>
           <div className='icon catalog'>
             <MdStorage size={iconSize} />
           </div>
           <div className='text'>Catalog</div>
         </NavLink>
         <NavLink
-          to={`profile/${user.nickname}`}
+          to={`/profile/${user.nickname}`}
           className='option'
           onClick={linkClickHandler}>
           <div className='icon p'>
@@ -109,7 +106,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className='text'>Favorites</div>
         </NavLink>
         <NavLink
-          to={`comments/${user.nickname}`}
+          to={`/comments/${user.nickname}`}
           className='option'
           onClick={linkClickHandler}>
           <div className='icon comments'>
@@ -118,7 +115,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className='text'>Comments</div>
         </NavLink>
         <NavLink
-          to={`replies/${user.nickname}`}
+          to={`/replies/${user.nickname}`}
           className='option'
           onClick={linkClickHandler}>
           <div className='icon replies'>
@@ -127,7 +124,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className='text'>Replies</div>
         </NavLink>
         <NavLink
-          to='notifications'
+          to='/notifications'
           className='option'
           onClick={linkClickHandler}>
           <div className='icon notifications'>
@@ -153,45 +150,6 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-
-      <StyledLinks>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/terms-and-conditions', '_blank');
-          }}>
-          Terms of Service
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/privacy', '_blank');
-          }}>
-          Privacy Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/cookie-policy', '_blank');
-          }}>
-          Cookie Policy
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/about-us', '_blank');
-          }}>
-          About us
-        </div>
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open('/contact', '_blank');
-          }}>
-          Contact us
-        </div>
-        <div>© 2023 MoovyChat.</div>
-      </StyledLinks>
     </LeftParent>
   );
 };

@@ -12,11 +12,11 @@ const EmojiSubGroup: React.FC<props> = ({ emojiSet }) => {
   const subGroupKey = emojiSet[0].subgroup;
   const groupName = subGroupKey ? subgroups[subGroupKey] : 'smiley';
   return (
-    <SubGroupParent className="emoji-sub-group">
-      <div className="subgroup-name">{groupName}</div>
-      <div className="subgroup-emojis">
+    <SubGroupParent className='emoji-sub-group'>
+      <div className='subgroup-name'>{groupName}</div>
+      <div className='subgroup-emojis'>
         {emojiSet.map((emoji, index) => (
-          <EmojiButton key={`${emoji.label}:${index}`} emoji={emoji} />
+          <EmojiButton key={emoji.label} emoji={emoji} />
         ))}
       </div>
     </SubGroupParent>

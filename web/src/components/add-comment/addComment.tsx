@@ -49,6 +49,7 @@ const AddComment: React.FC<props> = ({ type }) => {
   const [comment, setComment] = useState<Comment | Reply>();
   const dispatch = useAppDispatch();
   const [commentInserted, setCommentInserted] = useState<number>(0);
+
   useEffect(() => {
     if (type === AddCommentTypes.MOVIE) setMovieInfo(popupData as Movie);
     else setComment(() => popupData as any);
@@ -92,7 +93,6 @@ const AddComment: React.FC<props> = ({ type }) => {
             dispatch(sliceSetIsPopupOpened(false));
             dispatch(sliceSetSelectedElement(''));
             dispatch(sliceSetPopupData({}));
-            dispatch(sliceSetTextAreaMessage(''));
           });
         }
       });
@@ -129,7 +129,6 @@ const AddComment: React.FC<props> = ({ type }) => {
             dispatch(sliceSetIsPopupOpened(false));
             dispatch(sliceSetSelectedElement(''));
             dispatch(sliceSetPopupData({}));
-            dispatch(sliceSetTextAreaMessage(''));
           });
         }
       });

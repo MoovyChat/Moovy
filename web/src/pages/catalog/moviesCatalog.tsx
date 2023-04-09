@@ -1,46 +1,55 @@
-import { CURRENT_DOMAIN, isServer } from '../../constants';
-import { Title, useGetPaginatedTitlesQuery } from '../../generated/graphql';
+import { Title, useGetPaginatedMoviesQuery } from '../../generated/graphql';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
 import CatalogTemplate from './catalogTemplate';
 import EmptyPage from '../../components/empty-page/emptyPage';
-import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import TitleCard from './titleCard';
 import _ from 'lodash';
-import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
+import { isServer } from '../../constants';
 
 const MoviesCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-
-  const [titles, setTitles] = useState<Title[]>([]);
-  const [paginatedTitles] = useGetPaginatedTitlesQuery({
-    variables: { type: 'movie', first: 15, after: '' },
+  const [page, setPage] = useState<number>(1);
+  const [titles, setTitles] = useState<Title[] | null>(null);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const totalTitleCount = useRef<number | null>(null);
+  const [{ error, fetching, data }] = useGetPaginatedMoviesQuery({
+    variables: { limit: 15, page: page },
     pause: isServer(),
   });
+  useEffect(() => {
+    document.title = 'Movies - Moovy';
+  }, []);
 
   useMemo(() => {
-    const { data, error, fetching } = paginatedTitles;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getPaginatedTitles;
-      const _titles = _data?.nodes as Title[];
-      setTitles(_titles);
+      const _data = data.getPaginatedMovies;
+      setLastPage(_data?.lastPage!);
+      setTitles((t) => {
+        return _.chain(t)
+          .concat(_data?.titles as Title[])
+          .uniqBy('id')
+          .orderBy('id')
+          .value();
+      });
+      totalTitleCount.current = _data?.totalTitleCount!;
     }
-  }, [paginatedTitles]);
-
-  const { fetchMore } = useFetchMoreTitles('movie', setTitles, paginatedTitles);
+  }, [page, fetching]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      fetchMore();
+      if (page !== lastPage) {
+        setPage((p: number) => p + 1);
+      }
     }
   };
 
-  if (paginatedTitles.fetching)
+  if (fetching)
     return (
       <CatalogParent>
         <Loading />;
@@ -52,11 +61,6 @@ const MoviesCatalog = () => {
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
-      <Helmet>
-        <title>Moovy: Movies</title>
-        <meta name='description' content='List of all movies' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog`} />
-      </Helmet>
       {titles &&
         titles.map(
           (title, index) =>

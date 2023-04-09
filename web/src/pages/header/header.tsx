@@ -36,10 +36,11 @@ const Header = () => {
       dispatch(sliceSetUser(data.me as Users));
     }
   }, [me.fetching]);
-
-  const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const themeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetTheme(e.target.checked));
+  };
+  const loginHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     const signedInUser = await googleSignIn();
     loginAction({ uid: signedInUser.id }).then((res) => {
@@ -67,19 +68,17 @@ const Header = () => {
             localStorage.setItem('user', JSON.stringify(_data));
             dispatch(sliceSetUser(_data as Users));
             loginAction({ uid: _data?.id! });
-            navigate('/home');
+            navigate('/');
           })
           .catch((err: any) => {
             console.log('ERR: Unable to create user', err);
           });
       }
-      navigate('/home');
+      navigate('/');
     });
   };
 
-  const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const logOutHandler: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     const result = await logOutAction({});
     const data = result.data;
@@ -105,28 +104,12 @@ const Header = () => {
             alt='QuietChat'
             id='blur-escape'
             loading='lazy'
-            width='150'
-            height='150'
           />
-          <div className='beta'>beta</div>
+          <div className='beta'>(beta)</div>
         </div>
       </div>
       <div className='header-buttons'>
-        {user && user.id && (
-          <HeaderButton
-            tabIndex={0}
-            role='button'
-            className='install-button hb'
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate('/home');
-            }}>
-            Home
-          </HeaderButton>
-        )}
         <HeaderButton
-          tabIndex={0}
-          role='button'
           className='install-button hb'
           onClick={(e) => {
             e.stopPropagation();
@@ -135,8 +118,6 @@ const Header = () => {
           Screenshots
         </HeaderButton>
         <HeaderButton
-          tabIndex={0}
-          role='button'
           className='install-button hb'
           onClick={(e) => {
             e.stopPropagation();
@@ -145,28 +126,16 @@ const Header = () => {
           Features
         </HeaderButton>
         {user && user.id ? (
-          <HeaderButton
-            className='hb'
-            id='logout-btn'
-            onClick={logOutHandler}
-            role='button'
-            tabIndex={0}>
+          <HeaderButton className='hb' id='logout-btn' onClick={logOutHandler}>
             Logout
           </HeaderButton>
         ) : (
-          <HeaderButton
-            className='hb'
-            id='login-btn'
-            onClick={loginHandler}
-            role='button'
-            tabIndex={0}>
+          <HeaderButton className='hb' id='login-btn' onClick={loginHandler}>
             Login
           </HeaderButton>
         )}
         <HeaderButton
           className='install-button hb'
-          role='button'
-          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');

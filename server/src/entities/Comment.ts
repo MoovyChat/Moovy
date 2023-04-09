@@ -22,9 +22,9 @@ import { Users } from './Users';
 @ObjectType()
 @Entity()
 export class Comment extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_comment_id' })
   @Field(() => String)
-  id: string;
+  id!: string;
 
   @Field(() => String)
   @Column()
@@ -54,11 +54,11 @@ export class Comment extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   platformId!: number;
 
-  @Field(() => Float, { nullable: true })
+  @Field(() => Float)
   @Column({ type: 'float', default: 0.0 })
   toxicityScore!: number;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean)
   @Column({ default: false })
   flagged!: boolean;
 
@@ -90,11 +90,11 @@ export class Comment extends BaseEntity {
   @ManyToOne(() => Platform, (platform) => platform.comments)
   platform: Platform;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
 

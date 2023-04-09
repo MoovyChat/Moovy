@@ -1,52 +1,57 @@
-import { CURRENT_DOMAIN, isServer } from '../../constants';
-import { Title, useGetPaginatedTitlesQuery } from '../../generated/graphql';
+import { Title, useGetPaginatedShowsQuery } from '../../generated/graphql';
 import { UIEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CatalogParent } from './catalog.styles';
+import CatalogTemplate from './catalogTemplate';
 import EmptyPage from '../../components/empty-page/emptyPage';
-import { Helmet } from 'react-helmet';
+import Loading from '../loading/loading';
 import TitleCard from './titleCard';
-import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
+import _ from 'lodash';
+import { isServer } from '../../constants';
 
 const ShowsCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-  const [titles, setTitles] = useState<Title[]>([]);
-
-  const [paginatedTitles] = useGetPaginatedTitlesQuery({
-    variables: { type: 'show', first: 15, after: '' },
+  const [page, setPage] = useState<number>(1);
+  const [titles, setTitles] = useState<Title[] | null>([]);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const totalTitleCount = useRef<number | null>(null);
+  useEffect(() => {
+    document.title = 'Shows - Moovy';
+  }, []);
+  const [{ error, fetching, data }] = useGetPaginatedShowsQuery({
+    variables: { limit: 15, page: page },
     pause: isServer(),
   });
-
   useMemo(() => {
-    const { data, error, fetching } = paginatedTitles;
     if (error) console.log(error);
     if (!fetching && data) {
-      const _data = data.getPaginatedTitles;
-      const _titles = _data?.nodes as Title[];
-      setTitles(_titles);
+      const _data = data.getPaginatedShows;
+      setLastPage(_data?.lastPage!);
+      setTitles((t) => {
+        return _.chain(t)
+          .concat(_data?.titles as Title[])
+          .uniqBy('id')
+          .orderBy('id')
+          .value();
+      });
+      totalTitleCount.current = _data?.totalTitleCount!;
     }
-  }, [paginatedTitles]);
-
-  const { fetchMore } = useFetchMoreTitles('show', setTitles, paginatedTitles);
+  }, [page, fetching, data]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      fetchMore();
+      if (page !== lastPage) {
+        setPage((p: number) => p + 1);
+      }
     }
   };
-
   if (titles && titles.length <= 0)
     return <EmptyPage msg='Shows catalog is empty' />;
 
   return (
     <CatalogParent ref={parentRef} onScroll={handleScroll}>
-      <Helmet>
-        <title>Moovy: Shows</title>
-        <meta name='description' content='List of all shows' />
-        <link rel='canonical' href={`${CURRENT_DOMAIN}/catalog/shows`} />
-      </Helmet>
       {titles &&
         titles.map((title, index) => (
           <TitleCard

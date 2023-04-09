@@ -29,7 +29,7 @@ const ShowLikes = () => {
   const [lastPage, setLastPage] = useState<number>(1);
   const [commentLikeCountQuery, _executeQuery] = useGetCommentLikesQuery({
     variables: {
-      cid: commentId,
+      cid: commentId!,
       limit: 10,
       page: page,
     },
@@ -57,7 +57,7 @@ const ShowLikes = () => {
       setLikedUsers(_users! as Users[]);
       setLikesCount(_count);
     }
-  }, [commentLikeCountQuery]);
+  }, [commentLikeCountQuery.fetching]);
 
   useEffect(() => {
     if (!isReply) return;
@@ -71,7 +71,7 @@ const ShowLikes = () => {
       setLikedUsers(_users! as Users[]);
       setLikesCount(_count);
     }
-  }, [replyLikeQuery]);
+  }, [replyLikeQuery.fetching]);
 
   const closeHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
