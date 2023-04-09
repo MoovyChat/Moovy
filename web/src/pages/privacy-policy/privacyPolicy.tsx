@@ -27,7 +27,7 @@ const PrivacyPolicy = () => {
         <PrivacyPolicyTitle>Privacy Policy</PrivacyPolicyTitle>
         <LastUpdated>Last updated: {lastUpdated}</LastUpdated>
         <PrivacyPolicyParagraph>
-          This Privacy Policy sets out how MoovyChat Ltd. (“MoovyChat”) uses and
+          This Privacy Policy sets out how MoovyChat (“MoovyChat”) uses and
           protects any information that you give MoovyChat when you use our
           website, tool, and Chrome extension (collectively, the “Service”).
         </PrivacyPolicyParagraph>
