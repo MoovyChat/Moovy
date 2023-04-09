@@ -9,7 +9,6 @@ import FeedComment from './feed-comment/feedComment';
 import FeedReply from './feed-reply/feedReply';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
-import LogoLoading from '../logo-loading/logoLoading';
 import NotFound from '../notFound/notFound';
 import { ViewportList } from 'react-viewport-list';
 import { useAppSelector } from '../../redux/hooks';
