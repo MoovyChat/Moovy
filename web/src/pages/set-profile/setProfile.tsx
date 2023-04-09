@@ -300,6 +300,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
             dispatch(sliceSetProfile(profile));
             dispatch(sliceSetUserNickName(formData.userName.value));
           });
+          navigate("/home");
         } else {
           setSuccess(() => false);
           setError(() => true);
