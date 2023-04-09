@@ -76,117 +76,112 @@ export const router = createBrowserRouter([
       element: <GoogleLogIn />
     },
     {
-      element: <ProtectedRoutes />,
+      path:"home",
+      element: <Home />,
       errorElement: <NotFound />,
       children:[
         {
-          path:"home",
-          element: <Home />,
+          index:true,
+          element: <Feed />
+        },
+        {
+          path: "catalog",
+          element: <Catalog />,
+          errorElement:<NotFound />,
           children:[
-            {
-              index:true,
-              element: <Feed />
-            },
-            {
-              path: "catalog",
-              element: <Catalog />,
-              errorElement:<NotFound />,
-              children:[
-                {index:true, element: <MoviesCatalog />},
-                {path: "shows", element:<ShowsCatalog />}
-              ]
-            },
-            {
-              path: "profile/:id",
-              element: <DifferentProfile />,    
-              errorElement:<NotFound />,
-              children: [
-                {index:true, element:<BasicInfo />},
-                {
-                  path: "comments",
-                  element:<Comments />
-                },
-                {
-                  path: "replies",
-                  element:<Replies />
-                }
-              ]
-            },
-            {
-              path: "activity",
-              element: <Favorites />,
-              errorElement: <NotFound />,
-              children:[
-                {index:true, path:":id/favorites", element:<FavTitles />},
-                {path: ":id/liked", element: <LikedTitles />},
-                {path: ":id/history", element: <VisitedTitles />}
-              ]
-            },
+            {index:true, element: <MoviesCatalog />},
+            {path: "shows", element:<ShowsCatalog />}
+          ]
+        },
+        {
+          path: "profile/:id",
+          element: <DifferentProfile />,    
+          errorElement:<NotFound />,
+          children: [
+            {index:true, element:<BasicInfo />},
             {
               path: "comments",
-              element: <CommentsComponent type='Comments' />,
-              errorElement: <NotFound />,
-              children:[
-                {path:":id", element: <Comments />},
-              ]
+              element:<Comments />
             },
             {
               path: "replies",
-              element: <CommentsComponent type='Replies' />,
-              errorElement: <NotFound />,
-              children: [
-                {path:":id", element: <Replies />},
-              ]
-            },
-            {
-              path: "notifications",
-              element: <NotificationsModule />
-            },
-            {
-              path:"comment/:id",
-              element: <CommentThread />,
-              errorElement:<NotFound />,
-            },
-            {
-              path: "reply/:id",
-              element: <ReplyThread />,
-              errorElement:<NotFound />,
-            },
-            {
-              path: "search",
-              element: <ShowsThreadComponent />,
-              errorElement: <NotFound />,
-              children:[
-                {
-                  path:":search", 
-                  element: <SearchResults />,
-                  errorElement: <NotFound />,
-                  children: [
-                    {
-                      path: "",
-                      element: <EmptyPage msg='Choose any of the above options' />
-                    },
-                    {index:true, path: "episodes", element: <SearchEpisodes />},
-                    {path: "shows", element:<SearchShows />},
-                    {path: "movies", element: <SearchMovies />},
-                    {path: "people", element: <SearchPeople />},
-                  ]
-                },
-
-              ]
-            },
-            {
-              path: "show/:id",
-              element: <ShowsThread />,
-              errorElement: <NotFound />
-            },
-            {
-              path: "movie/:id",
-              element: <MovieThread />,
-              errorElement: <NotFound />,
+              element:<Replies />
             }
           ]
         },
+        {
+          path: "activity",
+          element: <Favorites />,
+          errorElement: <NotFound />,
+          children:[
+            {index:true, path:":id/favorites", element:<FavTitles />},
+            {path: ":id/liked", element: <LikedTitles />},
+            {path: ":id/history", element: <VisitedTitles />}
+          ]
+        },
+        {
+          path: "comments",
+          element: <CommentsComponent type='Comments' />,
+          errorElement: <NotFound />,
+          children:[
+            {path:":id", element: <Comments />},
+          ]
+        },
+        {
+          path: "replies",
+          element: <CommentsComponent type='Replies' />,
+          errorElement: <NotFound />,
+          children: [
+            {path:":id", element: <Replies />},
+          ]
+        },
+        {
+          path: "notifications",
+          element: <NotificationsModule />
+        },
+        {
+          path:"comment/:id",
+          element: <CommentThread />,
+          errorElement:<NotFound />,
+        },
+        {
+          path: "reply/:id",
+          element: <ReplyThread />,
+          errorElement:<NotFound />,
+        },
+        {
+          path: "search",
+          element: <ShowsThreadComponent />,
+          errorElement: <NotFound />,
+          children:[
+            {
+              path:":search", 
+              element: <SearchResults />,
+              errorElement: <NotFound />,
+              children: [
+                {
+                  path: "",
+                  element: <EmptyPage msg='Choose any of the above options' />
+                },
+                {index:true, path: "episodes", element: <SearchEpisodes />},
+                {path: "shows", element:<SearchShows />},
+                {path: "movies", element: <SearchMovies />},
+                {path: "people", element: <SearchPeople />},
+              ]
+            },
+
+          ]
+        },
+        {
+          path: "show/:id",
+          element: <ShowsThread />,
+          errorElement: <NotFound />
+        },
+        {
+          path: "movie/:id",
+          element: <MovieThread />,
+          errorElement: <NotFound />,
+        }
       ]
-    }
+    },
 ]);
