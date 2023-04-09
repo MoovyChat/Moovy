@@ -97,25 +97,18 @@ export const router = createBrowserRouter([
               ]
             },
             {
-              path: "profile",
-              element: <ShowsThreadComponent />,    
+              path: "profile/:id",
+              element: <DifferentProfile />,    
               errorElement:<NotFound />,
               children: [
+                {index:true, element:<BasicInfo />},
                 {
-                  path: ":id",
-                  element:<DifferentProfile />,
-                  errorElement:<NotFound />,
-                  children:[
-                    {index:true, element:<BasicInfo />},
-                    {
-                      path: "comments",
-                      element:<Comments />
-                    },
-                    {
-                      path: "replies",
-                      element:<Replies />
-                    }
-                  ]
+                  path: "comments",
+                  element:<Comments />
+                },
+                {
+                  path: "replies",
+                  element:<Replies />
                 }
               ]
             },
@@ -150,20 +143,14 @@ export const router = createBrowserRouter([
               element: <NotificationsModule />
             },
             {
-              path:"comment",
-              element: <ShowsThreadComponent />,
+              path:"comment/:id",
+              element: <CommentThread />,
               errorElement:<NotFound />,
-              children: [
-                {path:":id", element: <CommentThread />}
-              ]
             },
             {
-              path: "reply",
-              element: <ShowsThreadComponent />,
+              path: "reply/:id",
+              element: <ReplyThread />,
               errorElement:<NotFound />,
-              children: [
-                {path:":id", element: <ReplyThread />}
-              ]
             },
             {
               path: "search",
@@ -189,20 +176,14 @@ export const router = createBrowserRouter([
               ]
             },
             {
-              path: "show",
-              element: <ShowsThreadComponent />,
-              errorElement: <NotFound />,
-              children:[
-                {path: ":id", element: <ShowsThread />}
-              ]
+              path: "show/:id",
+              element: <ShowsThread />,
+              errorElement: <NotFound />
             },
             {
-              path: "movie",
-              element: <ShowsThreadComponent />,
+              path: "movie/:id",
+              element: <MovieThread />,
               errorElement: <NotFound />,
-              children:[
-                {path: ":id", element: <MovieThread />}
-              ]
             }
           ]
         },
