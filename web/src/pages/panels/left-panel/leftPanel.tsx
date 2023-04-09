@@ -202,7 +202,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
         >
           Contact us
         </div>
-        <div>© 2023 MoovyChat.</div>
+        <div>© {new Date().getFullYear()} MoovyChat.</div>
       </StyledLinks>
     </LeftParent>
   );
