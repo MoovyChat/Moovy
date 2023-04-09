@@ -5,11 +5,12 @@ import * as ReactDOMClient from 'react-dom/client';
 import { persistedStore, store } from './redux/store';
 
 import GoogleAnalytics from './components/google-analytics/googleAnalytics';
-import HomeRouter from './routes';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
+import { RouterProvider } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+import { router } from './utils/router';
 
 const rootElement = document.getElementById('root');
 
@@ -22,7 +23,7 @@ root &&
         <PersistGate loading={null} persistor={persistedStore}>
           <React.Fragment>
             <GoogleAnalytics />
-            <HomeRouter />
+            <RouterProvider router={router} />
           </React.Fragment>
         </PersistGate>
       </Provider>

@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 import LogoLoading from "./logo-loading/logoLoading";
 import { sliceSetUser } from "../redux/slices/userSlice";
+import { urqlClient } from "../utils/urlClient";
+import { withUrqlClient } from "next-urql";
 
 const ProtectedRoutes = () => {
   const location = useLocation();
@@ -42,4 +44,4 @@ const ProtectedRoutes = () => {
   );
 };
 
-export default ProtectedRoutes;
+export default withUrqlClient(urqlClient)(ProtectedRoutes);

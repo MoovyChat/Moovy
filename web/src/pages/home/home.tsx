@@ -1,7 +1,7 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
   sliceSetIsPopupOpened,
@@ -9,10 +9,8 @@ import {
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useEffect, useMemo, useState } from 'react';
 
 import CenterPanel from '../panels/center-panel/centerPanel';
-// import CenterPanel from '../panels/center-panel/centerPanel';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
 import { Helmet } from 'react-helmet';
 import HomeHeader from '../home-header/homeHeader';
@@ -20,12 +18,6 @@ import LeftPanel from '../panels/left-panel/leftPanel';
 import LogoLoading from '../logo-loading/logoLoading';
 import RightPanel from '../panels/right-panel/rightPanel';
 import SetProfile from '../set-profile/setProfile';
-// import HomeHeader from '../home-header/homeHeader';
-// import LeftPanel from '../panels/left-panel/leftPanel';
-// import LogoLoading from '../logo-loading/logoLoading';
-// import Popup from '../../components/popup/popup';
-// import RightPanel from '../panels/right-panel/rightPanel';
-// import SetProfile from '../set-profile/setProfile';
 import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
@@ -78,8 +70,10 @@ const Home = () => {
 
   useEffect(() => {
     const { data, fetching } = profile;
+    console.log({profile, user})
     if (!fetching && data) {
       const _data = data.getUserProfile;
+  
       setProfile(_data as Profile);
 
       if (!_data) dispatch(sliceSetIsProfileExists(false));
@@ -92,7 +86,7 @@ const Home = () => {
         dispatch(sliceSetIsProfileExists(true));
       } else dispatch(sliceSetIsProfileExists(false));
     }
-  }, [profile]);
+  }, [profile, user]);
 
   useMemo(() => {
     document.addEventListener('keydown', handleEscapeKey);
