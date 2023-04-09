@@ -101,7 +101,7 @@ const Welcome = () => {
       if (user) {
         // Update Redux store with user data and save user data in localStorage
         dispatch(sliceSetUser(user));
-        navigate(location.pathname);
+        navigate("/home");
         localStorage.setItem("user", JSON.stringify(user));
       }
     }
