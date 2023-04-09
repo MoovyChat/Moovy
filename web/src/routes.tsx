@@ -73,6 +73,7 @@ const ShowsThreadComponent = lazy(
 );
 const VisitedTitles = lazy(() => import('./pages/favorites/visitedTitles'));
 
+
 // Define the application's routing logic using the `react-router-dom` package
 
 const HomeRouter = () => {
@@ -90,8 +91,8 @@ const HomeRouter = () => {
         <Route path='embedded-content' element={<EmbedContent />} />
         <Route path='google-login' element={<GoogleLogIn />} />
 
-        <Route path='home' element={<ProtectedRoutes />}>
-          <Route path='' element={<Home />}>
+        <Route element={<ProtectedRoutes />}>
+          <Route path='home' element={<Home />}>
             <Route index element={<Feed />} />
             <Route path='catalog' element={<Catalog />}>
               <Route index element={<MoviesCatalog />} />
