@@ -34,12 +34,11 @@ const HeaderOptions = () => {
         console.log(error);
         return;
       }
-      if(data){
+      if (data) {
         navigate('/');
         dispatch(sliceResetUser());
         return;
       }
-     
     });
   };
   return (

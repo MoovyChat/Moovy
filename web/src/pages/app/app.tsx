@@ -1,6 +1,6 @@
 import { CURRENT_DOMAIN, themes } from '../../constants';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { Users, useMeQuery } from '../../generated/graphql';
 import { darkTheme, lightTheme } from '../../utils/themes/theme';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -37,15 +37,15 @@ const App = () => {
       if (user) {
         // Update Redux store with user data and save user data in localStorage
         dispatch(sliceSetUser(user));
-        if(location.pathname === '/') navigate("/home");
+        if (location.pathname === '/') navigate('/home');
         else navigate(location.pathname);
         localStorage.setItem('user', JSON.stringify(user));
       }
     }
   }, [fetching, data, error]);
 
-  if(fetching) return <LogoLoading />;
-  
+  if (fetching) return <LogoLoading />;
+
   return (
     <ThemeProvider theme={theme === themes.DARK ? darkTheme : lightTheme}>
       <Helmet>
@@ -55,7 +55,9 @@ const App = () => {
       </Helmet>
       <GlobalStyles />
       {isAuth && isAuth.id ? (
-        <Outlet />
+        <Suspense fallback={<LogoLoading />}>
+          <Outlet />
+        </Suspense>
       ) : (
         <React.Fragment>
           <Header />
