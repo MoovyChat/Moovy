@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "license": "MIT",
+  "homepage": "",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
