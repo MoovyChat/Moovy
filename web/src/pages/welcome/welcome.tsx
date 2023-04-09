@@ -82,7 +82,6 @@ const Welcome = () => {
   const navigate = useNavigate();
   const isAuth = useAppSelector((state) => state.user);
   const handleReloadMessage = () => {
-    // reload the page
     window.location.reload();
   };
 
