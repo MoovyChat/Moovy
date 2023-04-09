@@ -21,8 +21,10 @@ import { StyledGoogleLogin } from './google-log-in.styles';
 import { app } from '../../firebase';
 import { googleSignIn } from './login';
 import { sliceSetUser } from '../../redux/slices/userSlice';
+import { urqlClient } from '../../utils/urlClient';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
+import { withUrqlClient } from 'next-urql';
 
 const GoogleLogIn = () => {
   const [, loginAction] = useLoginMutation();
@@ -172,4 +174,4 @@ const GoogleLogIn = () => {
   );
 };
 
-export default GoogleLogIn;
+export default withUrqlClient(urqlClient)(GoogleLogIn);
