@@ -1,6 +1,6 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
 import { FeedItem, useGetFeedQuery } from '../../generated/graphql';
-import { UIEventHandler, useEffect, useRef, useState } from 'react';
+import { Fragment, UIEventHandler, useEffect, useRef, useState } from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import { CommentParent } from '../comments/comments.styles';
@@ -23,7 +23,7 @@ const Feed = () => {
   const [cursor, setCursor] = useState<string>('');
   const [feedQuery] = useGetFeedQuery({
     variables: {
-      uid: user?.id,
+      uid: user.id,
       first: 10,
       after: cursor,
     },
@@ -60,7 +60,7 @@ const Feed = () => {
   if (feedQuery.error) return <NotFound />;
   if (items.length <= 0) {
     return (
-      <>
+      <Fragment>
         <Helmet>
           <title>{`Feed`}</title>
           <meta name="description" content={`Feed`} />
@@ -68,12 +68,11 @@ const Feed = () => {
         </Helmet>
         <ChildHeader text="Feed" className="feed-header" />
         <EmptyPage msg="Your Feed is empty!" />
-      </>
+      </Fragment>
     );
   }
-  if (feedQuery.fetching) return <LogoLoading />;
   return (
-    <>
+    <Fragment>
       <ChildHeader text="Feed" className="feed-header" />
       <Helmet>
         <title>{`Feed`}</title>
@@ -94,7 +93,7 @@ const Feed = () => {
           <div className="extra">{feedQuery.fetching && <Loading />}</div>
         </div>
       </CommentParent>
-    </>
+    </Fragment>
   );
 };
 
