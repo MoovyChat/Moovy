@@ -69,10 +69,10 @@ const HomeRouter = () => {
         <Route path='premium' element={<Premium />} />
         <Route path='embedded-content' element={<EmbedContent />} />
         <Route path='google-login' element={<GoogleLogIn />} />
-
-        <Route element={<ProtectedRoutes />}>
-          <Route path='home' element={<Home />}>
-            <Route index element={<Feed />} />
+        <Route path='*' element={<NotFound />} />
+        <Route path='home' element={<ProtectedRoutes />}>
+          <Route path='' element={<Home />}>
+            <Route path='feed' element={<Feed />} />
             <Route path='catalog' element={<Catalog />}>
               <Route index element={<MoviesCatalog />} />
               <Route path='shows' element={<ShowsCatalog />} />

@@ -1,19 +1,11 @@
 import { CURRENT_DOMAIN, isServer } from '../../constants';
+import { MouseEventHandler, UIEventHandler, useEffect, useRef, useState } from 'react';
 import {
-  FollowNotifications,
-  LikeNotifications,
   NotificationObject,
   useClearNotificationsMutation,
   useGetUserNotificationsQuery,
   useReadNotificationMutation,
 } from '../../generated/graphql';
-import React, {
-  MouseEventHandler,
-  UIEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import EmptyPage from '../../components/empty-page/emptyPage';
@@ -23,7 +15,7 @@ import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 import _ from 'lodash';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';

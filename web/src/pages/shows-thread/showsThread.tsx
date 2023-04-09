@@ -12,7 +12,7 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
 import { useParams } from 'react-router-dom';

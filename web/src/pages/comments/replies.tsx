@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import ReplyCard from '../../components/comment-card/replyCard';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserReplies } from '../../hooks/useFetchUserReplies';
 import { useParams } from 'react-router-dom';

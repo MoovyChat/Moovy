@@ -7,7 +7,7 @@ import { CommentParent } from './comments.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
-import ViewportList from 'react-viewport-list';
+import {ViewportList} from 'react-viewport-list';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserComments } from '../../hooks/useFetchUserComments';
 import { useParams } from 'react-router-dom';
