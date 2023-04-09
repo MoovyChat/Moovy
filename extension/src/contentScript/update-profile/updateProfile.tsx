@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable no-case-declarations */
+/* eslint-disable react/prop-types */
 import './update-profile.scss';
 
 import {
@@ -21,11 +24,12 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  Profile,
   useIsUserNameExistsMutation,
   useUpsertProfileMutation,
 } from '../../generated/graphql';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EXT_URL } from '../../constants';
 import { ThemeContext } from 'styled-components';
@@ -110,9 +114,40 @@ const steps = [
   },
 ];
 
-const UpdateProfile = () => {
-  const [formData, setFormData] = useState<FormData>(defaultFormData);
+type props = {
+  profile: Profile | null | undefined;
+};
+const UpdateProfile: React.FC<props> = ({ profile }) => {
   const user = useAppSelector((state) => state.user);
+  const [formData, setFormData] = useState<FormData>({
+    userName: {
+      value: user.nickname,
+      error: '',
+      regex:
+        /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/,
+    },
+    fullName: {
+      value: profile?.fullname as string,
+      error: '',
+      regex: /^[a-zA-Z ]{2,30}$/,
+    },
+    gender: {
+      value: profile?.gender as string,
+      error: '',
+      regex: /^(Male|Female|Other)$/i,
+    },
+    dob: {
+      value: profile?.dob as string,
+      error: '',
+      regex: /^\d{4}-\d{2}-\d{2}$/,
+    },
+    bio: {
+      value: profile?.bio as string,
+      error: '',
+      regex: /^.{0,150}$/,
+    },
+  });
+
   const dobRef = useRef<HTMLInputElement | null>(null);
   const bioRef = useRef<HTMLTextAreaElement | null>(null);
   const userNameRef = useRef<HTMLInputElement | null>(null);
@@ -123,6 +158,8 @@ const UpdateProfile = () => {
   const themeContext: ThemeProps = useContext(ThemeContext);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const [isTextAreaFocussed, setIsTextAreaFocussed] = useState<boolean>(false);
+  const [isTextAreaClicked, setIsTextAreaClicked] = useState<boolean>(false);
   const [, isUserNameExists] = useIsUserNameExistsMutation();
   const [, upsertProfile] = useUpsertProfileMutation();
   const [success, setSuccess] = useState<boolean>(false);
@@ -137,8 +174,12 @@ const UpdateProfile = () => {
   };
 
   useEffect(() => {
-    focussedElement?.current?.focus();
-  }, [focussedElement]);
+    if (isTextAreaFocussed) bioRef.current?.focus();
+    else {
+      focussedElement?.current?.focus();
+      bioRef.current?.blur();
+    }
+  }, [focussedElement, isTextAreaFocussed]);
 
   const onBlurHandler: FocusEventHandler<
     HTMLTextAreaElement | HTMLInputElement
@@ -208,19 +249,31 @@ const UpdateProfile = () => {
     }
   };
   const handleInputChange = async (
-    event: React.ChangeEvent<
+    e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = event.target;
-    let regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
-    let error = await validateField(name, value, regex);
+    e.stopPropagation();
+    const { name, value } = e.target;
+    const regex = (defaultFormData as Record<string, FormDataType>)[name].regex;
+    const error = await validateField(name, value, regex);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: {
         value,
         error,
         regex: regex,
+      },
+    }));
+  };
+
+  const handleYearInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dob: {
+        ...prevFormData.dob,
+        value: value,
       },
     }));
   };
@@ -329,6 +382,51 @@ const UpdateProfile = () => {
     }
   };
 
+  const handleTextAreaBlur = () => {
+    if (isTextAreaClicked) {
+      bioRef.current?.focus();
+      setIsTextAreaFocussed(() => true);
+    } else {
+      setIsTextAreaFocussed(() => false);
+    }
+  };
+
+  const handleTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    console.log(e.key);
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.stopPropagation();
+    } else if (
+      (e.key >= 'a' && e.key <= 'z') ||
+      (e.key >= 'A' && e.key <= 'Z')
+    ) {
+      e.stopPropagation();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', textAreaClicked, !0);
+    function textAreaClicked(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (target && target.id === 'bio') {
+        setIsTextAreaClicked(() => true);
+        setIsTextAreaFocussed(() => true);
+      } else {
+        setIsTextAreaClicked(() => false);
+        setIsTextAreaFocussed(() => false);
+      }
+    }
+    return () => {
+      document.removeEventListener('click', textAreaClicked);
+    };
+  }, []);
+
+  const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
+    e.stopPropagation();
+    setIsTextAreaFocussed(() => true);
+  };
+
   const commonSetFR = (name: string) => {
     setFocussedElement(() =>
       name === 'userName'
@@ -337,19 +435,23 @@ const UpdateProfile = () => {
         ? fullNameRef
         : name === 'dob'
         ? dobRef
-        : name === 'bio'
-        ? bioRef
         : null
     );
   };
 
   return (
     <ParentProfile>
-      <div className='logo'>
+      <div className="logo">
         {themeContext.theme === 'dark' ? (
-          <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
+          <img
+            src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`}
+            alt="Moovy"
+          />
         ) : (
-          <img src={`${EXT_URL}/Moovy/moovy-text-logo-black.png`} alt='Moovy' />
+          <img
+            src={`${EXT_URL}/Moovy/moovy-text-logo-black.webp`}
+            alt="Moovy"
+          />
         )}
       </div>
 
@@ -359,13 +461,15 @@ const UpdateProfile = () => {
             <StepContainer
               key={index}
               visible={index === currentStep}
-              accentColor={accentColor}>
-              <div className='progress-bar'>
+              accentColor={accentColor}
+            >
+              <div className="progress-bar">
                 <div className={`circle ${step.label === 1 ? 'active' : ''}`}>
                   <span>1</span>
                 </div>
                 <div
-                  className={`line ${step.label >= 2 ? 'active' : ''}`}></div>
+                  className={`line ${step.label >= 2 ? 'active' : ''}`}
+                ></div>
                 <div className={`circle ${step.label >= 2 ? 'active' : ''}`}>
                   <span>2</span>
                 </div>
@@ -373,35 +477,38 @@ const UpdateProfile = () => {
               {step.fields.map(({ name, label }) => (
                 <FieldContainer
                   key={name}
-                  className='form'
+                  className="form"
                   accentColor={accentColor}
-                  onClick={(e) => {
+                  onClick={() => {
                     commonSetFR(name);
-                  }}>
+                  }}
+                >
                   {name === 'gender' ? (
                     <select
-                      id='gender'
-                      name='gender'
+                      id="gender"
+                      name="gender"
                       value={formData.gender.value}
                       onChange={handleInputChange}
-                      required>
-                      <option value=''>Select gender</option>
-                      <option value='Male'>Male</option>
-                      <option value='Female'>Female</option>
-                      <option value='Other'>Other</option>
+                      required
+                    >
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </select>
                   ) : name === 'dob' ? (
                     <input
-                      type='date'
-                      id='dob'
-                      name='dob'
+                      type="date"
+                      id="dob"
+                      name="dob"
                       ref={dobRef}
                       value={formData.dob.value}
                       onKeyDown={handleKeyDown}
                       onChange={handleInputChange}
                       onBlur={onBlurHandler}
+                      onInput={handleYearInput}
                       onFocus={() => handleFocus(dobRef)}
-                      onClick={(e) => {
+                      onClick={() => {
                         commonSetFR(name);
                       }}
                       className={formData.dob.error ? 'input error' : 'input'}
@@ -413,12 +520,15 @@ const UpdateProfile = () => {
                       id={name}
                       name={name}
                       ref={bioRef}
-                      onFocus={() => handleFocus(bioRef)}
                       value={formData[name].value}
-                      onKeyPress={handleKeyDown}
-                      onBlur={onBlurHandler}
-                      onClick={(e) => {
-                        commonSetFR(name);
+                      autoFocus={false}
+                      onFocus={onFocusHandler}
+                      onBlur={handleTextAreaBlur}
+                      onKeyPress={handleTextAreaKeyDown}
+                      onKeyDown={handleTextAreaKeyDown}
+                      onClick={() => {
+                        setIsTextAreaFocussed(() => true);
+                        setIsTextAreaFocussed(() => true);
                       }}
                       className={formData[name].error ? 'input error' : 'input'}
                       placeholder={label}
@@ -426,12 +536,12 @@ const UpdateProfile = () => {
                     />
                   ) : (
                     <input
-                      type='text'
+                      type="text"
                       tabIndex={name === 'userName' ? 1 : 2}
                       id={name}
                       name={name}
                       onKeyDown={handleKeyDown}
-                      onClick={(e) => {
+                      onClick={() => {
                         commonSetFR(name);
                       }}
                       value={formData[name].value}
@@ -440,7 +550,7 @@ const UpdateProfile = () => {
                       ref={name === 'userName' ? userNameRef : fullNameRef}
                       onBlur={onBlurHandler}
                       onFocus={() => {
-                        let ref =
+                        const ref =
                           name === 'userName' ? userNameRef : fullNameRef;
                         handleFocus(ref);
                       }}
@@ -450,14 +560,15 @@ const UpdateProfile = () => {
                   )}
                   <label
                     htmlFor={name}
-                    className='label'
-                    onClick={(e) => {
+                    className="label"
+                    onClick={() => {
                       commonSetFR(name);
-                    }}>
+                    }}
+                  >
                     {label}
                   </label>
                   {formData[name].error && (
-                    <div className='error'>{formData[name].error}</div>
+                    <div className="error">{formData[name].error}</div>
                   )}
                 </FieldContainer>
               ))}
@@ -468,7 +579,7 @@ const UpdateProfile = () => {
               <BackButton onClick={handleBackStep}>Back</BackButton>
             )}
             {currentStep === steps.length - 1 ? (
-              <Button type='submit'>Submit</Button>
+              <Button type="submit">Submit</Button>
             ) : (
               <Button onClick={handleNextStep} tabIndex={3}>
                 Next

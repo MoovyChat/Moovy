@@ -35,7 +35,8 @@ const Button: React.FC<props> = ({
       bgColor={bgColor}
       textColor={textColor}
       onClick={onClick}
-      padding={padding}>
+      padding={padding}
+    >
       {Icon ? (
         <ButtonIcon>
           <Icon size={iconSize} />

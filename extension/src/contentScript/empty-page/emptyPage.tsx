@@ -1,3 +1,5 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
 import { useEffect, useRef } from 'react';
 
 import { CSSTransition } from 'react-transition-group';
@@ -20,14 +22,18 @@ const EmptyPage: React.FC<props> = ({ msg }) => {
   return (
     <CSSTransition
       in={mounted.current}
-      classNames='empty'
+      classNames="empty"
       timeout={500}
-      nodeRef={parentRef}>
+      nodeRef={parentRef}
+    >
       <EmptyParent>
-        <div className='logo'>
-          <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.png`} alt='Moovy' />
+        <div className="logo">
+          <img
+            src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`}
+            alt="Moovy"
+          />
         </div>
-        <div className='text'>{msg}</div>
+        <div className="text">{msg}</div>
       </EmptyParent>
     </CSSTransition>
   );

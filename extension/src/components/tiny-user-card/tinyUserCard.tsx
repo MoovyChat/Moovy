@@ -8,11 +8,11 @@ type props = {
 };
 const TinyUserCard: React.FC<props> = ({ name }) => {
   return (
-    <StyledTinyUserCard id='text-focus'>
-      <Profile profilePic={name?.photoUrl!} id='text-focus'></Profile>
-      <div className='tuc-details' id='text-focus'>
-        <div id='text-focus'>{name.fullname}</div>
-        <div id='text-focus'>@{name.name}</div>
+    <StyledTinyUserCard id="text-focus">
+      <Profile profilePic={name?.photoUrl} id="text-focus"></Profile>
+      <div className="tuc-details" id="text-focus">
+        <div id="text-focus">{name.fullname}</div>
+        <div id="text-focus">@{name.name}</div>
       </div>
     </StyledTinyUserCard>
   );

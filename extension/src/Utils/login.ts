@@ -2,9 +2,10 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 
 import { Users } from '../generated/graphql';
 import { app } from '../firebase';
+import { randomUserNameGenerator } from './utilities';
 
 const auth = getAuth(app);
-var provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
 
 export const googleSignIn = (): Promise<Users> => {
   return new Promise((resolve, reject) => {
@@ -22,7 +23,7 @@ export const googleSignIn = (): Promise<Users> => {
         const adjustToState: Users = {
           id: user.uid,
           name: user.displayName!,
-          nickname: user.displayName!,
+          nickname: randomUserNameGenerator(user.displayName!.split(' ')[0]),
           email: user.email!,
           photoUrl: user.photoURL!,
         };

@@ -1,29 +1,16 @@
-import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
-import { BiComment, BiEdit, BiPaint } from 'react-icons/bi';
+/* eslint-disable react/display-name */
 import {
   MdOutlineModeComment,
   MdOutlineRemoveRedEye,
   MdOutlineWbSunny,
-  MdRemoveRedEye,
   MdThumbUp,
   MdThumbUpOffAlt,
 } from 'react-icons/md';
-import React, {
-  Dispatch,
-  MouseEventHandler,
-  memo,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
 } from '../../redux/slices/settings/settingsSlice';
-import {
-  sliceSetFavCount,
-  sliceSetTotalCommentsOfTheMovie,
-} from '../../redux/slices/movie/movieSlice';
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
@@ -36,23 +23,21 @@ import {
   useUpdateUserMovieStatusMutation,
 } from '../../generated/graphql';
 
+import { BiPaint } from 'react-icons/bi';
 import { ChatStatContainer } from './chatStats.styles';
 import { IoMdMoon } from 'react-icons/io';
 import { MOOVY_URL } from '../../constants';
 import { batch } from 'react-redux';
 import { getFormattedNumber } from '../../Utils/utilities';
 import { iconsEnum } from '../../Utils/enums';
-import { sliceAddUserNickName } from '../../redux/slices/user/userSlice';
-import { sliceCheckEditBoxOpen } from '../../redux/slices/loading/loadingSlice';
 import { sliceSetTheme } from '../../redux/slices/misc/miscSlice';
+import { sliceSetTotalCommentsOfTheMovie } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
-type props = {};
-
 // Component: Displays the likes. comments count of the movie and provides the
 // edit nick name option and paint features.
-const ChatStats: React.FC<props> = memo(() => {
+const ChatStats = memo(() => {
   const [iconSize] = useState(20);
   const dispatch = useAppDispatch();
   const { id: userId, nickname: userNickname } = useAppSelector(
@@ -65,18 +50,16 @@ const ChatStats: React.FC<props> = memo(() => {
   } = useAppSelector((state) => state.movie);
   const { accentColor, theme } = useAppSelector((state) => state.misc);
   const [movieLikesSub] = useMovieStatusUpdateSubscription();
-  const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
-  const [likesQuery, _lq] = useGetMovieLikesQuery({
+  const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
+  const [likesQuery] = useGetMovieLikesQuery({
     variables: {
       mid: movieId,
     },
   });
   const [commentsUpdateStatus] = useMovieCommentsUpdateSubscription();
-  const [nickname, setNickName] = useState<string>(userNickname);
+  const [nickname] = useState<string>(userNickname);
   const [like, setLike] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const [repliesCount, setRepliesCount] = useState<number>(0);
-  const [themeToggled, setThemeToggled] = useState<number>(0);
 
   // Get Likes Data on Initial Load.
   useEffect(() => {
@@ -98,21 +81,18 @@ const ChatStats: React.FC<props> = memo(() => {
   useEffect(() => {
     if (!movieLikesSub.fetching && movieLikesSub.data) {
       const { userLikesCount } = movieLikesSub.data.movieStatusUpdate;
-      setLikesCount(userLikesCount!);
+      userLikesCount && setLikesCount(userLikesCount);
     }
   }, [movieLikesSub]);
 
   // TODO: Discuss with team about subscriptions.
   // GraphQL Subscription: Get real time comment count.
   useEffect(() => {
-    const { data, error, fetching } = commentsUpdateStatus;
-    if (error) {
-      console.log(error);
-    } else {
-      if (!fetching && data) {
-        if (data.movieCommentsUpdate)
-          dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
-      }
+    const { data, fetching } = commentsUpdateStatus;
+
+    if (!fetching && data) {
+      if (data.movieCommentsUpdate)
+        dispatch(sliceSetTotalCommentsOfTheMovie(data.movieCommentsUpdate));
     }
   }, [commentsUpdateStatus, dispatch]);
 
@@ -120,7 +100,7 @@ const ChatStats: React.FC<props> = memo(() => {
   const goToProfile = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      let url = `${MOOVY_URL}/profile/${userNickname}`;
+      const url = `${MOOVY_URL}/home/profile/${userNickname}`;
       chrome.runtime.sendMessage({
         type: 'OPEN_LINK',
         url: url,
@@ -144,7 +124,6 @@ const ChatStats: React.FC<props> = memo(() => {
   const toggleTheme = useCallback(() => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
 
-    setThemeToggled((prev) => prev + 1);
     batch(() => {
       dispatch(sliceSetTheme(newTheme));
       dispatch(sliceSetToastVisible(true));
@@ -175,26 +154,31 @@ const ChatStats: React.FC<props> = memo(() => {
     <ChatStatContainer
       like={like}
       themeToggled={theme}
-      accentColor={accentColor}>
-      <div className='capsule'>
-        <div className='likes' onClick={toggleLike}>
+      accentColor={accentColor}
+    >
+      <div className="capsule">
+        <div className="likes" onClick={toggleLike}>
           <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
-            <MdThumbUp className='icon' size={iconSize} />
+            <MdThumbUp className="icon" size={iconSize} />
           ) : (
             <MdThumbUpOffAlt size={iconSize} />
           )}
         </div>
-        <div className='div-cmt-count-style'>
-          <span>{getFormattedNumber(totalCommentsCountOfMovie!)}</span>
+        <div className="div-cmt-count-style">
+          <span>
+            {getFormattedNumber(
+              totalCommentsCountOfMovie ? totalCommentsCountOfMovie : 0
+            )}
+          </span>
           <MdOutlineModeComment size={iconSize} />
         </div>
-        <div className='div-cmt-count-style'>
-          <span>{getFormattedNumber(viewsCount!)}</span>
+        <div className="div-cmt-count-style">
+          <span>{getFormattedNumber(viewsCount ? viewsCount : 0)}</span>
           <MdOutlineRemoveRedEye size={iconSize} />
         </div>
-        <div className='theme-mode' onClick={toggleTheme}>
-          <div className='toggle-anim'>
+        <div className="theme-mode" onClick={toggleTheme}>
+          <div className="toggle-anim">
             <div>
               <MdOutlineWbSunny size={iconSize} />
             </div>
@@ -204,13 +188,15 @@ const ChatStats: React.FC<props> = memo(() => {
           </div>
         </div>
       </div>
-      <div className='user'>
-        <h4 onClick={goToProfile} className='nn'>
+      <div className="user">
+        <h4 onClick={goToProfile} className="nn">
           {nickname ? nickname : userNickname}
         </h4>
       </div>
-      <div className='user' onClick={goToVideoStyles}>
-        <BiPaint size={iconSize} className='ic' />
+      <div className="mvy-pt-ic" onClick={goToVideoStyles}>
+        <div id="paint-container">
+          <BiPaint className="icon" id="paint" size={iconSize} />
+        </div>
       </div>
     </ChatStatContainer>
   );

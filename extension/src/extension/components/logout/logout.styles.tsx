@@ -36,6 +36,108 @@ export const SetTop = styled.div`
   }
   .comment-checkbox {
     display: flex;
+    .tool-option {
+      display: flex;
+      width: 100%;
+      margin: 10px 0;
+      justify-content: space-evenly;
+      align-items: center;
+      .option-text {
+        font-size: 14px;
+        flex: 1 1 45%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: 20px;
+      }
+      .option-choice {
+        flex: 1 1 0%;
+        .accent {
+          margin: 0;
+        }
+      }
+      .checkBox {
+        display: flex;
+        padding: 0 5px;
+        flex: 1 1 0%;
+        input {
+          width: 0;
+          height: 0;
+          visibility: hidden;
+          :checked + label {
+            background: #242424;
+            ::after {
+              transform: translateX(100%);
+              background: linear-gradient(180deg, #777, #3a3a3a);
+            }
+          }
+        }
+        label {
+          width: 40px;
+          height: 20px;
+          position: relative;
+          display: block;
+          background: #c9c9c9;
+          border-radius: 200px;
+          box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          transition: all 0.5s;
+          overflow: hidden;
+          :active:after {
+            width: 23px;
+          }
+          :after {
+            content: '';
+            height: 20px;
+            width: 20px;
+            position: absolute;
+            top: 0;
+            left: 0px;
+            background: linear-gradient(180deg, #cbcbcb, #ededed);
+            border-radius: 180px;
+            box-shadow: inset 0px 5px 15px rgba(0, 0, 0, 0.4),
+              inset 0px -5px 15px rgba(255, 255, 255, 0.4);
+            transition: all 0.5s;
+          }
+        }
+      }
+      .select-container {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px;
+        width: 100px;
+        margin: 0 10px;
+        border-radius: 8px;
+        background-color: ${(p) => p.theme.chatText};
+        box-shadow: 0px 2px 4px rgb(0 0 0 / 10%);
+        transition: box-shadow 0.2s ease-in-out;
+        justify-content: center;
+
+        .select {
+          font-size: 12px;
+          font-weight: 500;
+          color: ${(p) => p.theme.chatBody};
+          border: none;
+          background-color: transparent;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          outline: none;
+          cursor: pointer;
+          text-align: center;
+
+          .option {
+            font-size: 14px;
+            font-weight: 500;
+            color: ${(p) => p.theme.chatBody};
+          }
+        }
+
+        .select:focus + .select-container {
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
   }
   .button-list {
     display: flex;

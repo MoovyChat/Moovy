@@ -5,16 +5,12 @@ import {
   videoFilterSettings,
 } from './interfaces';
 
-import _ from 'lodash';
-
 // Used to communicate data between popup and content script
 interface LocalStorage {
   user?: User;
   volume?: boolean;
   pause?: boolean;
   checked?: boolean;
-  isFilterOn?: boolean;
-  isBorderOn?: boolean;
   filters?: filterType[];
   filterText?: string;
   border?: borderType;
@@ -40,55 +36,6 @@ export function getStoredUserLoginDetails(): Promise<User> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (res) => {
       resolve(res.user ?? []);
-    });
-  });
-}
-
-// export function getStoredWatchedTitles(): Promise<string> {
-//   const keys: LocalStorageKeys[] = ['watched'];
-//   return new Promise((resolve) => {
-//     chrome.storage.local.get(keys, (res) => {
-//       resolve(res.watched ?? []);
-//     });
-//   });
-// }
-
-export function setStoredIsFilterOpen(isFilterOn: boolean): Promise<void> {
-  const vals: LocalStorage = {
-    isFilterOn,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
-
-export function getStoredIsFilterOpen(): Promise<boolean> {
-  const keys: LocalStorageKeys[] = ['isFilterOn'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.isFilterOn ?? false);
-    });
-  });
-}
-
-export function setStoredIsBorderOpen(isBorderOn: boolean): Promise<void> {
-  const vals: LocalStorage = {
-    isBorderOn,
-  };
-  return new Promise((resolve) => {
-    chrome.storage.local.set(vals, () => {
-      resolve();
-    });
-  });
-}
-
-export function getStoredIsBorderOpen(): Promise<boolean> {
-  const keys: LocalStorageKeys[] = ['isBorderOn'];
-  return new Promise((resolve) => {
-    chrome.storage.local.get(keys, (res) => {
-      resolve(res.isBorderOn ?? false);
     });
   });
 }
@@ -235,8 +182,8 @@ export function getStoredBorder(): Promise<borderType> {
 
 export async function setStoredCustomBorder(border: borderType): Promise<void> {
   const customBorders = await getStoredCustomBorders();
-  let newBorders = [border, ...customBorders];
-  let uniqBorders = [
+  const newBorders = [border, ...customBorders];
+  const uniqBorders = [
     ...new Map(newBorders.map((item) => [item['color'], item])).values(),
   ];
   if (uniqBorders.length > 10) {

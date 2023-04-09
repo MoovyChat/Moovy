@@ -8,7 +8,6 @@ import Home from '../home/home';
 import { User } from '../../../Utils/interfaces';
 import { constants } from '../../../constants';
 import { getStoredUserLoginDetails } from '../../../Utils/storage';
-import { useAppSelector } from '../../../redux/hooks';
 
 export type OTTType = {
   title: string;
@@ -16,12 +15,12 @@ export type OTTType = {
   color: string;
 };
 
-let OTT = {
+const OTT = {
   NETFLIX: {
     title: 'Netflix',
     imgUrl:
       'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI',
-    color: '#E50915',
+    color: '#c0141d',
   },
   DISNEY: {
     title: 'Disney',
@@ -53,7 +52,7 @@ let OTT = {
   },
 };
 const App: React.FC = () => {
-  let userIn: User = {
+  const userIn: User = {
     photoUrl: '',
     name: '',
     email: '',
@@ -100,14 +99,15 @@ const App: React.FC = () => {
   }, [user]);
 
   return (
-    <AppWindow className='app' id='app' color={OTTSite.color}>
-      <div className='floatRight'>
+    <AppWindow className="app" id="app" color={OTTSite.color}>
+      <div className="floatRight">
         <Header></Header>
         <Home
           user={user}
           setUser={setUser}
           userLoaded={userLoaded}
-          OTTSite={OTTSite}></Home>
+          OTTSite={OTTSite}
+        ></Home>
         <Footer>{constants.footer1}</Footer>
       </div>
     </AppWindow>

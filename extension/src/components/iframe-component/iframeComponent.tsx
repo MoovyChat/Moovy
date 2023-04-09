@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { MouseEventHandler, useEffect, useState } from 'react';
 import {
   useAdminNotificationsSubscription,
@@ -17,8 +18,7 @@ const IFrameComponent = () => {
   const [isTriggered, setIsTriggered] = useState<boolean>(false);
   const LOCAL_STORAGE_KEY = 'adminNotifications';
   useEffect(() => {
-    const { data, fetching, error } = adminQuery;
-    if (error) console.log(error);
+    const { data, fetching } = adminQuery;
     if (!fetching && data) {
       const _data = data.getLatestAdminNotification;
       const _latestId = _data.id;
@@ -35,13 +35,13 @@ const IFrameComponent = () => {
           } else {
             // Add the new notification to the local storage.
             const _id = _data.id;
-            let status = { id: _id, read: false };
+            const status = { id: _id, read: false };
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(status));
             setIsTriggered(() => true);
           }
         } else {
           const _id = _data.id;
-          let status = { id: _id, read: false };
+          const status = { id: _id, read: false };
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(status));
           setIsTriggered(() => true);
         }
@@ -50,12 +50,11 @@ const IFrameComponent = () => {
   }, [adminQuery]);
 
   useEffect(() => {
-    if (error) console.log(error);
     if (!fetching && data) {
       setIsTriggered(() => true);
       const _data = data.adminNotifications;
       const _id = _data.id;
-      let status = { id: _id, read: false };
+      const status = { id: _id, read: false };
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(status));
       setIsTriggered(() => true);
     }
@@ -66,7 +65,7 @@ const IFrameComponent = () => {
     localData.then((res) => {
       if (res) {
         const parsedData = JSON.parse(res);
-        let status = { id: parsedData.id, read: true };
+        const status = { id: parsedData.id, read: true };
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(status));
         setIsTriggered(() => false);
       } else {
@@ -78,12 +77,12 @@ const IFrameComponent = () => {
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   return (
     <StyledIFrameComponent isTriggered={isTriggered}>
-      <div className='heading'>
+      <div className="heading">
         <h3>
           <MdInfo fill={accentColor} size={20} />
           <span>Message from server</span>
         </h3>
-        <IoCloseCircle size={20} fill={accentColor} onClick={closeHandler} />
+        <IoCloseCircle size={20} fill={accentColor} onClick={closeHandler} className='close'/>
       </div>
       <iframe src={url} />
     </StyledIFrameComponent>

@@ -1,132 +1,143 @@
-import React, { useEffect, useRef, useState } from 'react';
+import {
+  GetCommentRepliesDocument,
+  Reply,
+  useGetCommentRepliesQuery,
+} from '../../generated/graphql';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ReplyParent,
   ReplyWindowParent,
   ShowReplyText,
 } from './replyWindow.styles';
-import {
-  sliceComment,
-  sliceSetCurrentPage,
-} from '../../redux/slices/comment/commentSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { COMMENT } from '../../redux/actionTypes';
 import { CommentInfo } from '../../Utils/interfaces';
+import Loading from '../../components/loading/loading';
 import ReplyCard from '../replyCard/replyCard';
 import { ViewportList } from 'react-viewport-list';
+import _ from 'lodash';
+import { useAppSelector } from '../../redux/hooks';
+import { useClient } from 'urql';
 
-type props = {
-  page: number;
-  lastPage: number;
-  repliesCount: number;
+interface props {
   parentComment: CommentInfo;
   responseFromReplyWindow: (e: any) => void;
-};
+}
 const ReplyWindow: React.FC<props> = ({
-  page,
-  lastPage,
   responseFromReplyWindow,
   parentComment,
-  repliesCount,
 }) => {
-  const allReplies = useAppSelector((state) => state.replies.replies);
-  const dispatch = useAppDispatch();
-  const [replies, setReplies] = useState<CommentInfo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [fetchingMore, setFetchingMore] = useState(false);
+  const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [count, setRepliesCount] = useState<number>(0);
+  const graphqlClient = useClient();
+  const [cursor, setCursor] = useState<string>('');
+  const [open, setOpen] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(false);
   const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
   const replyWindowScrollSessionKey = `replyWindowScrollPosition${parentComment.id}`;
-  const handleOnBeforeGetContent = () => {
-    return new Promise((resolve) => {
-      const filtered = allReplies.filter(
-        (reply) => reply.parentCommentId === parentComment.id
-      );
-      setReplies(filtered);
-      resolve(true);
-    });
-  };
+  const [res] = useGetCommentRepliesQuery({
+    variables: {
+      cid: parentComment.id,
+      first: 5,
+    },
+    pause: parentComment.repliesCount === 0 && !open,
+  });
 
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    handleOnBeforeGetContent().then(() => {
-      timeout = setTimeout(() => {
-        setLoading(false);
-        clearTimeout(timeout);
-      }, 300);
-    });
-    return () => clearTimeout(timeout);
-  }, [allReplies.length, loading]);
-
-  const loadMoreReplies: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    dispatch(sliceSetCurrentPage({ page: page + 1, id: parentComment.id }));
-  };
-
-  // Handle scroll position.
-  useEffect(() => {
-    if (replies && replies.length > 0) {
-      const scrollPos = sessionStorage.getItem(replyWindowScrollSessionKey);
-      if (scrollPos) {
-        if (parentRef && parentRef.current) {
-          parentRef.current.scrollTo(0, parseInt(scrollPos, 10));
-        }
-        sessionStorage.removeItem(replyWindowScrollSessionKey);
-      }
+  const fetchMore = useCallback(() => {
+    const { pageInfo } = res?.data?.getCommentReplies || {};
+    if (!res?.data || !pageInfo?.hasNextPage) {
+      return;
     }
-  }, [replies]);
-
-  const toggleReplyWindow: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    dispatch(
-      sliceComment({
-        payload: {
-          id: parentComment.id,
-          value: !parentComment.isReplyWindowOpen,
-        },
-        type: COMMENT.TOGGLE_REPLY_WINDOW,
+    setFetchingMore(() => true);
+    graphqlClient
+      .query(GetCommentRepliesDocument, {
+        first: 5,
+        after: cursor,
+        cid: parentComment.id,
       })
-    );
-  };
+      .toPromise()
+      .then((moreData) => {
+        const { data } = moreData;
+        const _data = data.getCommentReplies;
+        if (_data) {
+          const pageInfo = _data.pageInfo;
+          setCursor(() => pageInfo.endCursor as string);
+          const nodes = _data.nodes as Reply[];
+          setReplies((replies) =>
+            _.chain(replies).concat(nodes).uniqBy('id').value()
+          );
+          setHasMore(() => _data.pageInfo.hasNextPage);
+          setRepliesCount(() => _data.totalCount);
+          setFetchingMore(() => false);
+        }
+      });
+  }, [graphqlClient, res, fetchingMore, setFetchingMore]);
 
-  const replyText = `${
-    parentComment.isReplyWindowOpen ? 'Hide' : 'Show'
-  } ${repliesCount} replies`;
+  useEffect(() => {
+    const { data, fetching } = res;
+    if (!fetching && data) {
+      const _data = data.getCommentReplies;
+      const nodes = _data.nodes as Reply[];
+      setReplies(() => nodes);
+      setHasMore(() => _data.pageInfo.hasNextPage);
+      setRepliesCount(() => _data.totalCount);
+    }
+  }, [res]);
 
+  const replyText = `${open ? 'Hide' : 'Show'} ${count} replies`;
+  if (parentComment.type === 'reply') return <></>;
+  if (res?.fetching) return <Loading />;
   return (
     <ReplyWindowParent>
-      {repliesCount !== 0 && (
-        <ShowReplyText className='reply-status' onClick={toggleReplyWindow}>
+      {parentComment.repliesCount !== 0 && (
+        <ShowReplyText
+          className="reply-status"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((flag) => !flag);
+          }}
+        >
           {replyText}
         </ShowReplyText>
       )}
-      {!loading && (
-        <ReplyParent
-          replySection={parentComment.isReplyWindowOpen!}
-          ref={parentRef}
-          onScroll={() =>
-            sessionStorage.setItem(
-              replyWindowScrollSessionKey,
-              `${parentRef!.current!.scrollTop!}`
-            )
-          }>
-          <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
-            {(reply) => (
-              <ReplyCard
-                key={reply.id}
-                type='reply'
-                responseFromReplyWindow={responseFromReplyWindow}
-                className='reply-card'
-                reply={reply}
-              />
-            )}
-          </ViewportList>
-          {page !== lastPage && (
-            <div className='show-more-replies' onClick={loadMoreReplies}>
-              show more replies ({page}/{lastPage})
-            </div>
+
+      <ReplyParent
+        accentColor={accentColor}
+        replySection={open}
+        ref={parentRef}
+        onScroll={() =>
+          parentRef.current &&
+          sessionStorage.setItem(
+            replyWindowScrollSessionKey,
+            `${parentRef.current.scrollTop}`
+          )
+        }
+      >
+        <ViewportList ref={listRef} viewportRef={parentRef} items={replies}>
+          {(reply) => (
+            <ReplyCard
+              key={reply.id}
+              type="reply"
+              responseFromReplyWindow={responseFromReplyWindow}
+              className="reply-card"
+              reply={reply}
+            />
           )}
-        </ReplyParent>
-      )}
+        </ViewportList>
+        {hasMore && replies.length > 0 && (
+          <div
+            className="show-more-replies"
+            onClick={(e) => {
+              e.stopPropagation();
+              fetchMore();
+            }}
+          >
+            show more replies
+          </div>
+        )}
+      </ReplyParent>
     </ReplyWindowParent>
   );
 };

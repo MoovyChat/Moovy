@@ -15,7 +15,7 @@ const ToxicitySlider = ({ text, scores }: ToxicitySliderProps) => {
   return (
     <StyledToxicitySlider className='toxicity-slider'>
       {Object.entries(scores).map(([label, score]) => (
-        <>
+        <div className='toxicity-container' key={label}>
           <div className='toxicity-slider-label'>{text}</div>
           <div key={label} className='toxicity-slider-row'>
             <div className='toxicity-slider-value'>
@@ -29,7 +29,7 @@ const ToxicitySlider = ({ text, scores }: ToxicitySliderProps) => {
               }}
             />
           </div>
-        </>
+        </div>
       ))}
     </StyledToxicitySlider>
   );

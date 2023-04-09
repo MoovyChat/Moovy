@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { EXT_URL, isServerSide } from '../../constants';
 import { MdStar, MdStarOutline } from 'react-icons/md';
 import {
@@ -28,7 +29,7 @@ const ChatTitle = () => {
   const movieTitle = useAppSelector((state) => state.movie.name);
   const movieId = useAppSelector((state) => state.movie.id);
   const userId = useAppSelector((state) => state.user.id);
-  const [_a, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
+  const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const dispatch = useAppDispatch();
   const [tempTitle, setTempTitle] = useState<string>(movieTitle);
   // GraphQL: updateMovie and movieComments hooks.
@@ -44,12 +45,11 @@ const ChatTitle = () => {
     pause: isServerSide(),
   });
   useMemo(() => {
-    const { error, fetching, data } = movieStats;
-    if (error) console.log(error);
+    const { fetching, data } = movieStats;
     if (!fetching && data) {
       const _data = data.getOnlyUserMovieStats;
-      const _fav = _data?.favorite!;
-      setFav(() => _fav);
+      const _fav = _data?.favorite;
+      _fav && setFav(() => _fav);
     }
   }, [movieStats]);
   useEffect(() => {
@@ -63,8 +63,7 @@ const ChatTitle = () => {
       mid: movieId,
       options: {},
     }).then((response) => {
-      const { data, error } = response;
-      if (error) console.log(error);
+      const { data } = response;
       if (data && data.updateUserMovieStats) {
         const { favorite } = data.updateUserMovieStats;
         if (favorite !== null && favorite !== undefined) setFav(favorite);
@@ -75,7 +74,6 @@ const ChatTitle = () => {
   // Get Movie Fav count.
   useEffect(() => {
     if (error) {
-      console.log(error);
       return;
     }
     if (!fetching && data) {
@@ -87,13 +85,13 @@ const ChatTitle = () => {
   useMemo(() => {
     if (movieTitle) return;
     // Adding the Interval to grab the video title from DOM
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
       if (movieTitle) {
         setTempTitle(movieTitle);
         clearInterval(interval);
         return;
       }
-      let title = getVideoTitleFromNetflixWatch();
+      const title = getVideoTitleFromNetflixWatch();
       if (title) {
         setTempTitle(title);
         // Update movie name in the database only if the name is not available.
@@ -107,15 +105,20 @@ const ChatTitle = () => {
     };
   }, [movieId, movieTitle]);
   return (
-    <ChatTitleParent className='chat-title'>
-      <div className='logo'>
-        <img src={`${EXT_URL}/Moovy/moovyIcon.png`} alt='logo' />
+    <ChatTitleParent className="chat-title">
+      <div className="logo">
+        <img
+          src={`${EXT_URL}/Moovy/moovyIcon.webp`}
+          alt="logo"
+          width="25"
+          height="25"
+        />
       </div>
-      <div className='title'>
-        <div className='set'>{movieTitle ? movieTitle : tempTitle}</div>
+      <div className="title">
+        <div className="set">{movieTitle ? movieTitle : tempTitle}</div>
       </div>
       <div
-        className='icon'
+        className="icon"
         onClick={(e) => {
           e.stopPropagation();
           updateUserLikeFavorite({
@@ -125,14 +128,13 @@ const ChatTitle = () => {
               favorite: !fav,
             },
           }).then((response) => {
-            const { data, error } = response;
+            const { data } = response;
             let toastBody = {
               icon: '',
               message: '',
             };
-            if (error) console.log(error);
             if (data && data.updateUserMovieStats) {
-              const { favorite } = data?.updateUserMovieStats!;
+              const { favorite } = data.updateUserMovieStats;
               if (favorite !== null && favorite !== undefined) {
                 setFav(favorite);
                 if (!favorite) {
@@ -155,14 +157,15 @@ const ChatTitle = () => {
               }
             }
           });
-        }}>
-        <div className='fav-count'>
-          <div className='box'>{favCount}</div>
+        }}
+      >
+        <div className="fav-count">
+          <div className="box">{favCount}</div>
         </div>
         {!fav ? (
-          <MdStarOutline className='star' size={20} />
+          <MdStarOutline className="star" size={20} />
         ) : (
-          <MdStar className='star' size={20} color={accentColor} />
+          <MdStar className="star" size={20} color={accentColor} />
         )}
       </div>
     </ChatTitleParent>

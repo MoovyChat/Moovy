@@ -29,7 +29,7 @@ export const useFetchMovie = (movieId: string) => {
   useMemo(() => {
     if (!movieId) return;
     if (movie) return;
-    let { data, error, fetching } = getMovieInfo;
+    const { data, error, fetching } = getMovieInfo;
     if (error) {
       dispatch(sliceSetIsMovieExists(false));
       dispatch(sliceResetMovie());
@@ -41,11 +41,12 @@ export const useFetchMovie = (movieId: string) => {
         dispatch(sliceValidateMovieLoading(true));
         // Increase views count
         incrementMovieViewCount({ mid: _data.id }).then((res) => {
-          const { error, data } = res;
-          if (error) console.log(error);
-          if (data) {
-            const _data = data.updateMovieViewCount! + 1;
+          const { data } = res;
+          if (data && data.updateMovieViewCount) {
+            const _data = data.updateMovieViewCount + 1;
             dispatch(sliceUpdateViewsCount(_data as number));
+          } else {
+            dispatch(sliceUpdateViewsCount(1));
           }
         });
         setMovie(() => _data);

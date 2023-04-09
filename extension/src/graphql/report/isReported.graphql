@@ -1,0 +1,3 @@
+query IsReported($isComment: Boolean!, $uid: String!, $isReportedId: String!) {
+  isReported(isComment: $isComment, uid: $uid, id: $isReportedId)
+}

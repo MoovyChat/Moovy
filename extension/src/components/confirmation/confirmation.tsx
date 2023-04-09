@@ -12,27 +12,30 @@ const Confirmation: React.FC<props> = ({ reportCommentOrReply }) => {
     <StyledConfirmation
       onClick={(e) => {
         e.stopPropagation();
-      }}>
-      <div className='confirm-message'>
+      }}
+    >
+      <div className="confirm-message">
         Are you sure you want to report this message? This may result in the
         content being removed.
       </div>
-      <div className='confirm-options'>
+      <div className="confirm-options">
         <div
-          className='confirm report'
-          id='confirm-report'
+          className="confirm report"
+          id="confirm-report"
           onClick={(e) => {
             e.stopPropagation();
             reportCommentOrReply(true);
-          }}>
+          }}
+        >
           Report
         </div>
         <div
-          className='confirm cancel'
+          className="confirm cancel"
           onClick={(e) => {
             e.stopPropagation();
             dispatch(sliceSetIsReportActive(''));
-          }}>
+          }}
+        >
           Cancel
         </div>
       </div>
