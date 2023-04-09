@@ -9,6 +9,7 @@ import {
 } from '../../generated/graphql';
 
 import { StyledHeaderOptions } from './headerOptions.styles';
+import { sliceResetUser } from '../../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const HeaderOptions = () => {
@@ -23,7 +24,7 @@ const HeaderOptions = () => {
   });
   const profileClickHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
-    navigate(`/profile/${user.nickname}`);
+    navigate(`/home/profile/${user.nickname}`);
   };
   const logOutHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
@@ -33,11 +34,12 @@ const HeaderOptions = () => {
         console.log(error);
         return;
       }
-      const result = data?.logout;
-      if (result) {
+      if(data){
         navigate('/');
+        dispatch(sliceResetUser());
         return;
       }
+     
     });
   };
   return (
