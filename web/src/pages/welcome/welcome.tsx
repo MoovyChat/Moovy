@@ -9,7 +9,10 @@ import {
   TWITTER_LINK,
 } from "../../constants";
 import { StyledFlaps, WelcomeParent } from "./welcome.styles";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useMemo } from "react";
+import { Users, useMeQuery } from "../../generated/graphql";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Dark300 from "../../static/images/dark-chat-300x.webp";
 import Dark600 from "../../static/images/dark-chat-600x.webp";
@@ -23,6 +26,7 @@ import { LogoSet } from "../../components/logoset/logoset";
 import { RiArrowRightCircleFill } from "react-icons/ri";
 import Screenshots from "./screenshots/screenshots";
 import { lazyIconFa } from "../../lazyLoad";
+import { sliceSetUser } from "../../redux/slices/userSlice";
 
 const FaDiscord = lazyIconFa("FaDiscord");
 const FaTwitter = lazyIconFa("FaTwitter");
@@ -72,10 +76,36 @@ export const streamingServices = [
   },
 ];
 const Welcome = () => {
+  const [{ data, fetching, error }] = useMeQuery();
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isAuth = useAppSelector((state) => state.user);
   const handleReloadMessage = () => {
-    // reload the page
     window.location.reload();
   };
+
+
+
+  useMemo(() => {
+    if (isAuth && isAuth.id) return;
+    // Log any errors with fetching user data
+    if (error) {
+      console.log(error);
+    }
+    // If user data is successfully fetched and not in the process of fetching, proceed
+    if (!fetching && data) {
+      // Retrieve user object and current path
+      const user = data?.me as Users;
+      // If a user object exists
+      if (user) {
+        // Update Redux store with user data and save user data in localStorage
+        dispatch(sliceSetUser(user));
+        navigate(location.pathname);
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    }
+  }, [fetching, data, error]);
 
   useEffect(() => {
     // listen for a message to reload the page
