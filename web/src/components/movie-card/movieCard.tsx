@@ -35,8 +35,8 @@ const MovieCard: React.FC<props> = ({ movieId }) => {
 
   const cardClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    if (location.pathname !== `/movie/${movieId}`)
-      navigate(`/movie/${movieId}`);
+    if (location.pathname !== `/home/movie/${movieId}`)
+      navigate(`/home/movie/${movieId}`);
   };
 
   return (

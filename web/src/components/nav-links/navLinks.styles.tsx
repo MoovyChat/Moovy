@@ -1,40 +1,65 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const StyledNavLinks = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 0.5px solid;
   padding: 10px;
   font-weight: 600;
   transition: all 0.5s;
-  a {
-    flex: 1 1 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    letter-spacing: 1px;
-    line-height: 20px;
-    color: inherit;
+  .nav {
     text-decoration: none;
+    color: #929292;
+    margin: 0 10px;
+    padding: 10px;
+    font-size: 14px;
     cursor: pointer;
-    div {
-      padding: 4px 10px;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background-color: ${(p) => p.theme.nav};
+      transition: width 0.3s ease-out, left 0.3s ease-out;
     }
-    :hover {
-      cursor: pointer;
-      div {
-        border-radius: 15px;
-        box-shadow: 0 0 1px;
+
+    &:hover {
+      color: ${(p) => p.theme.nav};
+      &:before {
+        width: 100%;
+        left: 0;
       }
     }
-  }
-  .active {
-    div {
-      border-radius: 15px;
-      box-shadow: 0 0 5px;
+
+    &.active {
+      font-weight: bold;
+      color: ${(p) => p.theme.nav};
+
+      &:before {
+        width: 100%;
+        left: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      &:before {
+        transition-duration: 0.6s;
+        transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+        transition-delay: 0.05s;
+      }
+
+      &:hover:before,
+      &.active:before {
+        transition-duration: 0.3s;
+        transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+        transition-delay: 0s;
+      }
     }
   }
 `;

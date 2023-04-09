@@ -95,9 +95,9 @@ const TitleCard: React.FC<props> = ({
   const titleClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     if (title.type === 'movie') {
-      navigate(`/movie/${title.id}`);
+      navigate(`/home/movie/${title.id}`);
     } else if (title.type === 'show') {
-      navigate(`/show/${title.id}`);
+      navigate(`/home/show/${title.id}`);
     }
   };
 

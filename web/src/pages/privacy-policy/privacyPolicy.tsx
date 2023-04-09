@@ -7,6 +7,8 @@ import {
   PrivacyPolicyWrapper,
 } from './privacyPolicy.styles';
 
+import { CURRENT_DOMAIN } from '../../constants';
+import { Helmet } from 'react-helmet';
 import { useEffect } from 'react';
 
 const PrivacyPolicy = () => {
@@ -16,6 +18,11 @@ const PrivacyPolicy = () => {
   }, []);
   return (
     <PrivacyPolicyWrapper>
+      <Helmet>
+        <title>{`Privacy Policy`}</title>
+        <meta name='description' content={`Privacy Policy`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/privacy}`} />
+      </Helmet>
       <PrivacyPolicyContent>
         <PrivacyPolicyTitle>Privacy Policy</PrivacyPolicyTitle>
         <LastUpdated>Last updated: {lastUpdated}</LastUpdated>

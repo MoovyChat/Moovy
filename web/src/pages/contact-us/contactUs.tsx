@@ -4,15 +4,14 @@ import {
   PrivacyPolicyWrapper,
 } from '../privacy-policy/privacyPolicy.styles';
 
+import { CURRENT_DOMAIN } from '../../constants';
 import { Form } from './contactUs.styled';
+import { Helmet } from 'react-helmet';
 import { urqlClient } from '../../utils/urlClient';
 import { useCreateMessageMutation } from '../../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
 const ContactUs = () => {
-  useEffect(() => {
-    document.title = 'Contact us';
-  }, []);
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [message, setMessage] = useState<string>('');
@@ -41,6 +40,11 @@ const ContactUs = () => {
   };
   return (
     <PrivacyPolicyWrapper>
+      <Helmet>
+        <title>Contact Us</title>
+        <meta name='description' content='Contact us' />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/contact`} />
+      </Helmet>
       <PrivacyPolicyContent>
         <h1>Contact Us</h1>
         <p>

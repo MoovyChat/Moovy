@@ -1,9 +1,18 @@
-query GetRepliesOfReply($limit: Int!, $rid: String!, $page: Int) {
-  getRepliesOfReply(limit: $limit, rid: $rid, page: $page) {
-    lastPage
-    replies {
+query GetRepliesOfReply($first: Int!, $rid: String!, $after: String) {
+  getRepliesOfReply(first: $first, rid: $rid, after: $after) {
+    totalCount
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    nodes {
       ...FullReply
     }
-    repliesCount
+    edges {
+      cursor
+      node {
+        ...FullReply
+      }
+    }
   }
 }

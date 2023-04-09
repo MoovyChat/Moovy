@@ -1,3 +1,4 @@
+import { CURRENT_DOMAIN, isServer } from '../../constants';
 import {
   FollowNotifications,
   LikeNotifications,
@@ -17,13 +18,13 @@ import React, {
 import ChildHeader from '../../components/childHeader/childHeader';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import { HeaderText } from '../commentThread/commentThread.styles';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import NotFound from '../notFound/notFound';
 import NotificationCard from './notificationCard';
 import { NotificationParent } from './notification.styles';
 import ViewportList from 'react-viewport-list';
 import _ from 'lodash';
-import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
@@ -101,6 +102,11 @@ const NotificationsModule = () => {
   if (notificationQueryResult.error) return <NotFound />;
   return (
     <NotificationParent>
+      <Helmet>
+        <title>{`Moovy: Notifications`}</title>
+        <meta name='description' content={`Notifications`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/notifications}`} />
+      </Helmet>
       <ChildHeader className='header'>
         <HeaderText className='heading'>
           <div>

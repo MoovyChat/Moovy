@@ -17,9 +17,17 @@ export const HeaderParent = styled.div`
     justify-content: center;
     align-items: center;
     margin-left: 20px;
+    img {
+      width: 40px;
+      height: 40px;
+    }
     .beta {
       font-weight: 600;
-      font-size: 12px;
+      font-size: 10px;
+      align-self: center;
+      background-color: #343499;
+      padding: 4px 6px;
+      border-radius: 10px;
     }
   }
   .header-buttons {
@@ -46,13 +54,15 @@ export const HeaderParent = styled.div`
   }
 `;
 
-export const HeaderButton = styled.div`
-  padding: 10px 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
-  font-weight: 500;
-  border-radius: 10px;
+export const HeaderButton = styled.button`
   cursor: pointer;
+  font-size: 16px;
+  border: none;
+  background: none;
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+  padding: 10px;
+  border-radius: 18px;
+  font-weight: 600;
 `;

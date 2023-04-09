@@ -21,7 +21,7 @@ export const NotificationParent = styled.div`
         margin-left: 10px;
         padding: 2px 10px;
         font-size: 0.6em;
-        background-color: #0099ff;
+        background-color: ${(p) => p.theme.nav};
         color: white;
         font-weight: 700;
         border-radius: 18px;

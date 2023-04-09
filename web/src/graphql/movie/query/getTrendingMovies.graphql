@@ -1,7 +1,0 @@
-query GetTrendingMovies($limit: Int!) {
-  getTrendingMovies(limit: $limit) {
-    id
-    title
-    viewsCount
-  }
-}

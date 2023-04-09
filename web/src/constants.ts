@@ -1,10 +1,3 @@
-export const home = {
-  heading: 'Now stream movies with comments',
-  sub: 'Moovy provides you a new way to enjoy your streaming experience with a comment section and video filters.',
-  sub2: 'Why wait? Install our extension and step up the game with your streaming experience.',
-  supported: 'Supported Platforms:',
-};
-
 export const themes = {
   LIGHT: 'LIGHT',
   DARK: 'DARK',
@@ -39,7 +32,9 @@ export const Fonts = {
   Libra: 'Libre Franklin',
 };
 export const __prod__ = process.env.NODE_ENV === 'production';
-
+export const CURRENT_DOMAIN = __prod__
+  ? 'https://www.moovychat.com'
+  : 'http://localhost:3000';
 export const CUSTOM_DOMAIN = __prod__
   ? 'server.moovychat.com'
   : 'localhost:4000';
@@ -52,4 +47,10 @@ export const serverUrl = __prod__
 export const EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 export const EXT_URL = `chrome-extension://${EXT_ID}`;
 export const EXTENSION_URL =
-  'https://chrome.google.com/webstore/detail/moovy-chat/ilkpekdilkpahngoeanmpnkegideejip';
+  `https://chrome.google.com/webstore/detail/moovy-chat/${EXT_ID}`;
+export const DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
+export const TWITTER_LINK = 'https://twitter.com/MoovyChat';
+export const TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
+export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
+export const PATREON = 'https://www.patreon.com/MoovyChatLtd';
+export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';

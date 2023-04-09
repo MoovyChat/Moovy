@@ -1,9 +1,13 @@
-import { CommentThreadParent, StyledButton } from './commentThread.styles';
+import {
+  CURRENT_DOMAIN,
+  isServer,
+  popupStates,
+  textMapTypes,
+} from '../../constants';
 import {
   MdBlock,
   MdDelete,
   MdFavorite,
-  MdFavoriteBorder,
   MdFlag,
   MdOutlineFavoriteBorder,
   MdOutlineMoreHoriz,
@@ -14,12 +18,8 @@ import {
   Movie,
   Title,
   Users,
-  useGetCommentOrReplyQuery,
-  useGetCommentQuery,
   useGetMovieQuery,
-  useGetTitleInfoMutation,
-  useIsFollowingUserQuery,
-  useToggleFollowMutation,
+  useGetTitleInfoQuery,
 } from '../../generated/graphql';
 import {
   ParsedText,
@@ -35,7 +35,6 @@ import React, {
   useState,
 } from 'react';
 import { Reply, textMap } from '../../utils/interfaces';
-import { isServer, popupStates, textMapTypes } from '../../constants';
 import {
   sliceSetIsPopupOpened,
   sliceSetPopupData,
@@ -45,10 +44,12 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChildHeader from '../../components/childHeader/childHeader';
 import CommentButton from '../../components/comment-button/commentButton';
-import CommentCard from '../../components/comment-card/commentCard';
+import { CommentThreadParent } from './commentThread.styles';
 import EmptyPage from '../../components/empty-page/emptyPage';
 import FollowButton from '../../components/follow-button/followButton';
+import { Helmet } from 'react-helmet';
 import { Image } from '../../components/Image/image';
+import LogoLoading from '../logo-loading/logoLoading';
 import MiniCommentCard from '../../components/mini-comment-card/miniCommentCard';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import ProfilePic from '../../components/profilePic/profilePic';
@@ -65,10 +66,8 @@ type props = {
   comment: any;
   replies: any;
   userRef: MutableRefObject<Users | null>;
-  page?: number | 1;
-  lastPage?: number | 1;
-  setPage?: any;
   like: boolean;
+  fetchMore: any;
   likesCount: number;
   likedUsers?: Users[];
   updateLike: MouseEventHandler<HTMLSpanElement>;
@@ -79,16 +78,13 @@ const CommentTemplate: React.FC<props> = ({
   comment,
   replies,
   userRef,
-  page,
-  setPage,
-  lastPage,
   like,
+  fetchMore,
   likesCount,
   likedUsers,
   updateLike,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const popWindowOpen = useAppSelector((state) => state.popup.isPopupOpened);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [movieDetails] = useGetMovieQuery({
@@ -97,10 +93,11 @@ const CommentTemplate: React.FC<props> = ({
     },
     pause: isServer(),
   });
-  const movieRef = useRef<Movie | null>(null);
-  const titleRef = useRef<Title | null>(null);
+  const [movieRef, setMovieRef] = useState<Movie | null>(null);
+  const [titleRef, setTitleRef] = useState<Title | null>(null);
+  const [movieRefId, setMovieRefId] = useState<string>('');
   const messageRef = useRef<HTMLDivElement | null>(null);
-  const [, getTitleInfo] = useGetTitleInfoMutation();
+
   const loggedInUser = useAppSelector((state) => state.user);
   const [showEpisodeInfo, setShowEpisodeInfo] = useState<boolean>(false);
   const [showTitleInfo, setShowTitleInfo] = useState<boolean>(false);
@@ -109,12 +106,9 @@ const CommentTemplate: React.FC<props> = ({
   const [showMore, setShowMore] = useState<boolean>(false);
   const [cardHeight, setCardHeight] = useState<string>('');
   const [openOptionWindow, setOpenOptionWindow] = useState<boolean>(false);
-  const [deleteAction, setDeleteAction] = useState<boolean>(false);
-
-  const [amIFollowingThisUser] = useIsFollowingUserQuery({
+  const [getTitleInfo] = useGetTitleInfoQuery({
     variables: {
-      uid: loggedInUser.id,
-      fid: comment.commentedUserId,
+      getTitleInfoId: movieRefId as string,
     },
     pause: isServer(),
   });
@@ -129,25 +123,24 @@ const CommentTemplate: React.FC<props> = ({
     if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getMovie as Movie;
-      movieRef.current = _data;
-      getTitleInfo({ getTitleInfoId: _data.titleId }).then((titleInfo) => {
-        const { data, error } = titleInfo;
-        if (error) console.log(error);
-        if (data) {
-          const _data = data.getTitleInfo as Title;
-          titleRef.current = _data;
-        }
-      });
+      setMovieRef(() => _data);
+      setMovieRefId(() => _data.titleId);
     }
   }, [movieDetails]);
+
+  useEffect(() => {
+    const { data, fetching, error } = getTitleInfo;
+    if (!fetching && data) {
+      const _data = data.getTitleInfo as Title;
+      setTitleRef(() => _data);
+    }
+  }, [getTitleInfo]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
     const target = e.target as HTMLDivElement;
     if (target.scrollHeight - target.scrollTop - 2 <= target.clientHeight) {
-      if (page !== lastPage) {
-        setPage(() => page! + 1);
-      }
+      fetchMore();
     }
   };
 
@@ -183,7 +176,7 @@ const CommentTemplate: React.FC<props> = ({
 
   const deleteCommentHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    setDeleteAction(() => true);
+
     batch(() => {
       dispatch(sliceSetIsPopupOpened(true));
       dispatch(sliceSetPopupData(comment));
@@ -219,7 +212,7 @@ const CommentTemplate: React.FC<props> = ({
   };
 
   let formattedMsg = useFormatMessage(comment.message);
-
+  if (getTitleInfo.fetching) return <LogoLoading />;
   return (
     <CommentThreadParent
       cardHeight={cardHeight}
@@ -227,12 +220,23 @@ const CommentTemplate: React.FC<props> = ({
       showEpisodeInfo={showEpisodeInfo}
       showTitleInfo={showTitleInfo}
       isReply={isReply}
-      movieBg={movieRef.current?.stills as string}
-      titleBg={titleRef.current?.boxart as string}>
+      movieBg={movieRef?.stills as string}
+      titleBg={titleRef?.boxart as string}>
+      <Helmet>
+        <title>{titleRef?.title}</title>
+        <meta name='description' content={comment.message} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/${isReply ? 'reply' : 'comment'}/${
+            comment.id
+          }`}
+        />
+      </Helmet>
       <ChildHeader
         className='comment-header'
         text={type.charAt(0).toUpperCase() + type.slice(1)}
       />
+
       <div className='main-container' onScroll={handleScroll}>
         {isReply && (
           <MiniCommentCard
@@ -289,26 +293,32 @@ const CommentTemplate: React.FC<props> = ({
                           <div className='opo-text'>Delete</div>
                         </div>
                       )}
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdFlag size={20} />
                         </div>
-                        <div className='opo-text'>Flag this comment</div>
+                        <div className='opo-text'>Flag this comment (Beta)</div>
                       </div>
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdBlock size={20} />
                         </div>
                         <div className='opo-text'>
-                          Block @{userRef.current?.nickname}
+                          Block @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
-                      <div className='opo'>
+                      <div
+                        className='opo'
+                        style={{ pointerEvents: 'none', opacity: '0.5' }}>
                         <div className='opo-icon'>
                           <MdReport size={20} />
                         </div>
                         <div className='opo-text'>
-                          Report @{userRef.current?.nickname}
+                          Report @{userRef.current?.nickname} (Beta)
                         </div>
                       </div>
                     </div>
@@ -328,7 +338,7 @@ const CommentTemplate: React.FC<props> = ({
                         className={msg.type}
                         onClick={(e) => {
                           if (msg.type === 'user') {
-                            navigate(`/profile/${msg.message.slice(1)}`);
+                            navigate(`/home/profile/${msg.message.slice(1)}`);
                           }
                         }}>
                         {ParsedText(msg.message)}{' '}
@@ -352,7 +362,7 @@ const CommentTemplate: React.FC<props> = ({
               {getDateFormat(comment?.createdAt)}
             </div>
             <div className='movie-chips'>
-              {titleRef && titleRef.current?.type === 'show' && (
+              {titleRef && titleRef?.type === 'show' && (
                 <React.Fragment>
                   <div
                     className='name title'
@@ -360,9 +370,9 @@ const CommentTemplate: React.FC<props> = ({
                     onMouseLeave={onTitleLeave}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/show/${titleRef?.current?.id}`);
+                      navigate(`/home/show/${titleRef?.id}`);
                     }}>
-                    {titleRef.current?.title} {movieRef.current?.season}
+                    {titleRef?.title} {movieRef?.season}
                   </div>
                 </React.Fragment>
               )}
@@ -372,9 +382,9 @@ const CommentTemplate: React.FC<props> = ({
                 onMouseLeave={onEpisodeLeave}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/movie/${movieRef?.current?.id}`);
+                  navigate(`/home/movie/${movieRef?.id}`);
                 }}>
-                {movieRef.current?.name}
+                {movieRef?.name}
               </div>
             </div>
             <div className='show-details'>
@@ -382,13 +392,13 @@ const CommentTemplate: React.FC<props> = ({
                 {showEpisodeInfo ? (
                   <Image
                     key='episode'
-                    src={movieRef.current?.stills as string}
+                    src={movieRef?.stills as string}
                     alt='background-image'
                   />
                 ) : showTitleInfo ? (
                   <Image
                     key='title'
-                    src={titleRef.current?.artwork as string}
+                    src={titleRef?.artwork as string}
                     alt='background-image'
                   />
                 ) : (
@@ -399,9 +409,9 @@ const CommentTemplate: React.FC<props> = ({
                 )}
               </div>
               {showEpisodeInfo ? (
-                <MovieInfo movie={movieRef.current!} />
+                <MovieInfo movie={movieRef!} />
               ) : (
-                showTitleInfo && <MovieInfo title={titleRef.current!} />
+                showTitleInfo && <MovieInfo title={titleRef!} />
               )}
             </div>
             <div className='comment-usr-stats'>
@@ -431,7 +441,7 @@ const CommentTemplate: React.FC<props> = ({
                 replies?.map((reply: Reply) => (
                   <ReplyCard
                     comment={reply}
-                    key={`reply${reply.id!}`}
+                    key={`reply${reply?.id!}`}
                     isMain={true}
                   />
                 ))

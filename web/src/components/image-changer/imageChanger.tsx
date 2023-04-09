@@ -1,3 +1,6 @@
+import './imageChanger.css';
+
+import { Area, Point } from 'react-easy-crop';
 import {
   DisplayImage,
   DropzoneContainer,
@@ -8,7 +11,7 @@ import {
   ImageChangerParent,
 } from './imageChanger.styles';
 import { FileError, useDropzone } from 'react-dropzone';
-import { MdDone, MdOutlineError } from 'react-icons/md';
+import { MdClose, MdDone, MdOutlineError } from 'react-icons/md';
 import React, {
   MouseEventHandler,
   useCallback,
@@ -28,14 +31,13 @@ import {
   useUpdateUserBgMutation,
 } from '../../generated/graphql';
 
+import Cropper from 'react-easy-crop';
 import { ImageChangerTypes } from '../../utils/types';
-import ImageCrop from '../image-crop/imageCrop';
 import Loading from '../../pages/loading/loading';
-import { PixelCrop } from 'react-image-crop';
 import { StyledButton } from '../../pages/commentThread/commentThread.styles';
 import { batch } from 'react-redux';
 import { compressImage } from '../../utils/helpers';
-import { imgPreview } from '../image-crop/imagePreview';
+import { getCroppedImg } from './imageChanger.help';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { withUrqlClient } from 'next-urql';
@@ -55,11 +57,9 @@ type props = {
   type: string;
 };
 const ImageChanger: React.FC<props> = ({ type }) => {
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const storage = getStorage();
-  const imageRef = useRef<HTMLImageElement>(null);
+  const cropperRef = useRef<Cropper>(null);
   const [url, setUrl] = useState<string>('');
-  const [isURLValid, setURLValid] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<MsgObj>({
     msg: '',
     status: MsgObjType.INITIAL,
@@ -67,10 +67,17 @@ const ImageChanger: React.FC<props> = ({ type }) => {
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const [selectedOption, setSelectedOption] = useState<string>('');
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState<number>(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>({
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  });
+
   const [, saveProfilePhoto] = useSaveProfilePictureMutation();
   const [, saveBg] = useUpdateUserBgMutation();
-  const [errors, setErrors] = useState<FileError[]>([]);
   // Image saving states
   const [saved, setSaved] = useState<boolean>(false);
   const [saveClicked, setSaveClicked] = useState<boolean>(false);
@@ -141,8 +148,12 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       status: MsgObjType.LOADING,
     });
     if (selectedOption === 'fromLocal') {
+      const dimensions =
+        type === ImageChangerTypes.PFP
+          ? { width: 320, height: 320 }
+          : { width: 820, height: 312 };
+      const _blob = await getCroppedImg(url, croppedAreaPixels, dimensions);
       // Upload the updated blob to firebase storage and get the URL.
-      const _blob = await imgPreview(imageRef.current!, completedCrop!);
       if (!_blob) {
         console.log('Error creating blob');
         setLoadingStatus({
@@ -167,10 +178,6 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       if (type === ImageChangerTypes.PFP)
         result = await saveProfilePhoto({ url: urlSnapShot, uid: user.id });
       else result = await saveBg({ url: urlSnapShot, uid: user.id });
-    } else {
-      if (type === ImageChangerTypes.PFP)
-        result = await saveProfilePhoto({ url, uid: user.id });
-      else result = await saveBg({ url, uid: user.id });
     }
     // Saves the URL to the database.
     const { error, data } = result;
@@ -199,6 +206,13 @@ const ImageChanger: React.FC<props> = ({ type }) => {
       window.location.reload();
     }
   };
+
+  const handleCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -229,9 +243,13 @@ const ImageChanger: React.FC<props> = ({ type }) => {
     <ImageChangerParent url={url}>
       <div className='heading'>
         <span>Upload the photo</span>
-        <StyledButton className='close' color='#484242' onClick={closeHandler}>
-          Close
-        </StyledButton>
+        <div
+          role='button'
+          className='close'
+          color='#484242'
+          onClick={closeHandler}>
+          <MdClose />
+        </div>
       </div>
       <div className='save-close'>
         <StyledButton
@@ -246,23 +264,51 @@ const ImageChanger: React.FC<props> = ({ type }) => {
         <div className='display-container'>
           {!!url ? (
             selectedOption === 'fromLocal' ? (
-              type === ImageChangerTypes.PFP ? (
-                <ImageCrop
-                  url={url}
-                  setCompletedCrop={setCompletedCrop}
-                  imageRef={imageRef}
-                  aspect={1}
-                />
-              ) : (
-                <ImageCrop
-                  url={url}
-                  setCompletedCrop={setCompletedCrop}
-                  imageRef={imageRef}
-                  aspect={3.5}
-                />
-              )
+              <>
+                <div className='cropper-container'>
+                  {type === ImageChangerTypes.PFP ? (
+                    <Cropper
+                      aspect={1}
+                      crop={crop}
+                      zoom={zoom}
+                      image={url}
+                      onCropComplete={handleCropComplete}
+                      onCropChange={setCrop}
+                      onZoomChange={setZoom}
+                      ref={cropperRef}
+                    />
+                  ) : (
+                    <Cropper
+                      cropShape='rect'
+                      aspect={3.5}
+                      crop={crop}
+                      zoom={zoom}
+                      image={url}
+                      onCropComplete={handleCropComplete}
+                      onCropChange={setCrop}
+                      onZoomChange={setZoom}
+                      ref={cropperRef}
+                    />
+                  )}
+                </div>
+                <div className='controls'>
+                  <input
+                    type='range'
+                    id='image-slider'
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    aria-labelledby='Zoom'
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      setZoom(Number(e.target.value));
+                    }}
+                  />
+                </div>
+              </>
             ) : (
-              <img alt='image-crop' src={url} ref={imageRef} />
+              <img alt='image-crop' src={url} />
             )
           ) : (
             <DropzoneContainer

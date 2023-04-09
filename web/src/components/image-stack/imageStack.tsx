@@ -8,7 +8,6 @@ import {
 
 import { Image } from '../Image/image';
 import { ImageStackParent } from './imageStack.style';
-import { LOGIN } from '../tooltip/constants';
 import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import Tooltip from '../tooltip/tooltip';
 import { Users } from '../../generated/graphql';

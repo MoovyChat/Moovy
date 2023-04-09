@@ -1,22 +1,14 @@
-import {
-  MovieStats,
-  useGetFavTitlesQuery,
-  useGetUserQuery,
-} from '../../generated/graphql';
+import { CURRENT_DOMAIN, isServer } from '../../constants';
+import { MovieStats, useGetFavTitlesQuery } from '../../generated/graphql';
 import { useEffect, useState } from 'react';
 
+import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
-import { isServer } from '../../constants';
-import useIsAuth from '../../utils/isAuthUser';
 import { useParams } from 'react-router-dom';
 
 const FavTitles = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'Favorites - Moovy';
-  }, []);
-  useIsAuth();
   const [page, setPage] = useState<number>(1);
   const [movieStatsData, setMovieStats] = useState<MovieStats[]>([]);
   const [lastPage, setLastPage] = useState<number>(1);
@@ -39,13 +31,23 @@ const FavTitles = () => {
 
   if (favTItlesQuery.error) return <NotFound />;
   return (
-    <TitleListTemplate
-      page={page}
-      setPage={setPage}
-      fetching={favTItlesQuery.fetching}
-      lastPage={lastPage}
-      movieStatsData={movieStatsData}
-    />
+    <>
+      <Helmet>
+        <title>{`${id}: Favorites`}</title>
+        <meta name='description' content={`${id}: Favorites`} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/activity/${id}/favorites`}
+        />
+      </Helmet>
+      <TitleListTemplate
+        page={page}
+        setPage={setPage}
+        fetching={favTItlesQuery.fetching}
+        lastPage={lastPage}
+        movieStatsData={movieStatsData}
+      />
+    </>
   );
 };
 

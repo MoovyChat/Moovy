@@ -19,20 +19,6 @@ export const ShowThreadParent = styled.div`
       justify-content: center;
       align-items: center;
     }
-    .show-more {
-      font-size: 0.9em;
-      font-weight: 600;
-      margin: 10px 0;
-      padding: 10px 20px;
-      background-color: ${(p) => p.theme.hoverColor};
-      cursor: pointer;
-      border-radius: 20px;
-      transition: 0.3s;
-      :hover {
-        filter: contrast(200%);
-        box-shadow: 0 0 5px, inset 0 0 1px;
-      }
-    }
   }
 `;
 

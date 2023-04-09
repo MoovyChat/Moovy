@@ -1,0 +1,34 @@
+{
+  "ignore": {
+    "files": [
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/add-comment/addComment.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/comment-card/commentCard.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/messageBox/messageBox.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/image-changer/imageChanger.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/display-platforms/displayPlatforms.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/ads/ads.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/@types/types.d.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/messageBox/messageBox.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/tooltip/constants.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/components/tooltip/tooltip-components/login/login.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/constants.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/firebase.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/generated/graphql.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/indexedDB/db.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/pages/comments/comments.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/pages/comments/comments.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/pages/comments/replies.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/pages/privacy-policy/privacyPolicy.styles.tsx",
+      "/Users/kishore/Documents/Github/Moovy/web/src/redux/slices/miscSlice.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/redux/slices/settingsSlice.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/redux/slices/textAreaSlice.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/storage/storage.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/cacheExchanges.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/enums.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/helpers.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/interfaces.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/keyframes.ts",
+      "/Users/kishore/Documents/Github/Moovy/web/src/utils/resolvers.ts"
+    ]
+  }
+}

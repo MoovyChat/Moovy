@@ -8,8 +8,8 @@ export const HomeParent = styled.div`
   display: flex;
   position: relative;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 99.5vw;
+  height: 100dvh;
   flex-direction: column;
   .home-header {
     display: flex;
@@ -24,15 +24,17 @@ export const PanelsParent = styled.div<props>`
   justify-content: space-evenly;
   align-items: center;
   height: calc(100% - ${offset}px);
-  width: 100%;
+  width: 99.9%;
   .left {
     flex: 1 0 25%;
+    height: 100%;
   }
   .center {
     /* flex: 1 0 50%; */
   }
   .right {
     flex: 1 0 25%;
+    height: 100%;
   }
 
   @media (max-width: 800px) {

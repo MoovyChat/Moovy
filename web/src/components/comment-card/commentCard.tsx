@@ -31,7 +31,6 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
 
   useEffect(() => {
     const { error, data, fetching } = isUserLikedQuery;
-    if (error) console.log(error);
     if (!fetching && data) {
       const _data = data.getIsUserLikedComment!;
       const isLiked = _data.isLiked as boolean;
@@ -41,7 +40,7 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
 
   const goToComment: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    navigate(`/comment/${comment.id}`);
+    navigate(`/home/comment/${comment.id}`);
   };
 
   const updateLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
@@ -55,7 +54,6 @@ const CommentCard: React.FC<props> = ({ comment, isMain }) => {
       mid: movieId,
     });
     const { data, error } = res;
-    if (error) console.log(error);
     const _like = data?.setCommentLike?.likeStatus.like!;
     setLike(_like);
   };

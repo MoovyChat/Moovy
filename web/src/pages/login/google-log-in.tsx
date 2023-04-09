@@ -1,3 +1,5 @@
+/// <reference types="chrome"/>
+import { CURRENT_DOMAIN, EXT_ID } from '../../constants';
 import {
   GoogleAuthProvider,
   getAuth,
@@ -12,7 +14,7 @@ import {
   useMeQuery,
 } from '../../generated/graphql';
 
-import { EXT_ID } from '../../constants';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledGoogleLogin } from './google-log-in.styles';
@@ -59,7 +61,7 @@ const GoogleLogIn = () => {
         chrome.runtime.sendMessage(
           EXT_ID,
           { type: 'EXTENSION_LOG_IN', user: _user as Users },
-          (response) => {
+          (response: any) => {
             if (response.loggedIn) {
               setLoggedInSuccess(true);
             } else {
@@ -93,7 +95,7 @@ const GoogleLogIn = () => {
             chrome.runtime.sendMessage(
               EXT_ID,
               { type: 'EXTENSION_LOG_IN', user: _data as Users },
-              (response) => {
+              (response: any) => {
                 if (response.loggedIn) {
                   setLoggedInSuccess(true);
                 } else {
@@ -128,6 +130,11 @@ const GoogleLogIn = () => {
     </StyledGoogleLogin>;
   return (
     <StyledGoogleLogin>
+      <Helmet>
+        <title>{`Google Login`}</title>
+        <meta name='description' content={`Google Login`} />
+        <link rel='canonical' href={`${CURRENT_DOMAIN}/google-login`} />
+      </Helmet>
       <div className='bubble-container'>
         <div className='bubble'>
           <img src={iconSources[0]} alt='Netflix' />

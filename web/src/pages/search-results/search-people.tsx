@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Users, useSearchPeopleQuery } from '../../generated/graphql';
 
+import { CURRENT_DOMAIN } from '../../constants';
 import EmptyPage from '../../components/empty-page/emptyPage';
+import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import PeopleCard from '../../components/people-card/peopleCard';
 import { StyledSearchPeople } from './searchResults.styles';
@@ -34,6 +36,14 @@ const SearchPeople = () => {
     return <EmptyPage msg={`No users found matching "${search}"`} />;
   return (
     <StyledSearchPeople>
+      <Helmet>
+        <title>{`${search}: People`}</title>
+        <meta name='description' content={`${search}: People`} />
+        <link
+          rel='canonical'
+          href={`${CURRENT_DOMAIN}/search/${search}/people}`}
+        />
+      </Helmet>
       {people && people.map((user) => <PeopleCard user={user} />)}
     </StyledSearchPeople>
   );

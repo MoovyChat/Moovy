@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import HomeCard from '../../../components/home-card/homeCard';
-import Screenshot8 from '../../../static/images/screenshot8.png';
+import Screenshot8 from '../../../static/images/screenshot8.webp';
+import Screenshot8_1200 from '../../../static/images/screenshot8-1200x.webp';
+import Screenshot8_600 from '../../../static/images/screenshot8-600x.webp';
 import { StyledFeatures } from './features.styles';
-import accent from '../../../static/images/accent.png';
-import ambience from '../../../static/images/ambience.png';
-import autoSkip from '../../../static/images/skipIntro.png';
-import filter from '../../../static/images/filters.png';
-import spoiler from '../../../static/images/spoiler.png';
+import accent from '../../../static/images/accent.webp';
+import ambience from '../../../static/images/ambience.webp';
+import ambience_500 from '../../../static/images/ambience-500x.webp';
+import autoSkip from '../../../static/images/skipIntro.webp';
+import filter from '../../../static/images/filters.webp';
+import spoiler from '../../../static/images/spoiler.webp';
 import { useSpring } from '@react-spring/web';
 
 type props = {
@@ -46,6 +49,7 @@ const Features: React.FC<props> = ({ id }) => {
     ambience: {
       title: 'Ambience',
       src: ambience,
+      srcSet: `${ambience_500} 500w`,
       content:
         'Elevate the ambiance of your videos with our border feature, adding a stylish frame around your video element to enhance its visual appeal and draw attention to your content.',
     },
@@ -58,6 +62,7 @@ const Features: React.FC<props> = ({ id }) => {
     community: {
       title: 'Community',
       src: Screenshot8,
+      srcSet: `${Screenshot8_600} 600w, ${Screenshot8_1200} 1200w`,
       content:
         'Foster a sense of community around your videos with our built-in sign-up feature, encouraging your viewers to become members and engage with your content on a deeper level.',
     },

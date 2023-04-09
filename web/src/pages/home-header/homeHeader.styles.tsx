@@ -65,7 +65,14 @@ export const HomeHeaderParent = styled.div`
   }
 
   @media (max-width: 800px) {
+    .user {
+      margin: 0px 15px;
+    }
+    .search {
+      width: 100%;
+    }
     .logo {
+      margin: 0px 15px;
       .logo-image {
         display: none;
       }
