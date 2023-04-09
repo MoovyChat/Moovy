@@ -28,7 +28,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
   let [users, setUsers] = useState<Users[]>([]);
   let [isFollowerSection, setIsFollowerSection] = useState<boolean>(false);
   const redirectToUserProfile = (id: string) => {
-    navigate(`/profile/${id}`);
+    navigate(`/home/profile/${id}`);
   };
   useEffect(() => {
     if (followers) {
