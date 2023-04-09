@@ -1,41 +1,61 @@
 import AboutUs from '../pages/about-us/aboutUs';
+import Admin from '../pages/admin/admin';
 import App from '../pages/app/app';
-import BasicInfo from '../pages/profile/basicInfo';
-import Catalog from '../pages/catalog/catalog';
-import CommentThread from '../pages/commentThread/commentThread';
-import Comments from '../pages/comments/comments';
-import CommentsComponent from '../pages/comments/commentsComponent';
 import ContactUs from '../pages/contact-us/contactUs';
 import CookiePolicy from '../pages/cookie-policy/cookiePolicy';
-import DifferentProfile from '../pages/profile/differentProfile';
 import EmbedContent from '../pages/embed-content/embedContent';
-import EmptyPage from '../components/empty-page/emptyPage';
-import FavTitles from '../pages/favorites/favTitles';
-import Favorites from '../pages/favorites/favorites';
-import Feed from '../pages/feed/feed';
 import GoogleLogIn from '../pages/login/google-log-in';
-import Home from '../pages/home/home';
-import LikedTitles from '../pages/favorites/likedTitles';
-import MovieThread from '../pages/movieThread/movieThread';
-import MoviesCatalog from '../pages/catalog/moviesCatalog';
-import NotFound from '../pages/notFound/notFound';
-import NotificationsModule from '../pages/notifications/NotificationsModule';
 import Premium from '../pages/premium/premium';
 import PrivacyPolicy from '../pages/privacy-policy/privacyPolicy';
-import ProtectedRoutes from '../pages/protectedRoutes';
-import Replies from '../pages/comments/replies';
-import ReplyThread from '../pages/commentThread/replyThread';
-import SearchEpisodes from '../pages/search-results/search-episodes';
-import SearchMovies from '../pages/search-results/search-movies';
-import SearchPeople from '../pages/search-results/search-people';
-import SearchResults from '../pages/search-results/searchResults';
-import SearchShows from '../pages/search-results/search-shows';
-import ShowsCatalog from '../pages/catalog/showsCatalog';
-import ShowsThread from '../pages/shows-thread/showsThread';
-import ShowsThreadComponent from '../pages/shows-thread/showsThreadParent.component';
 import TermsAndConditions from '../pages/terms-and-conditions/termsAndConditions';
-import VisitedTitles from '../pages/favorites/visitedTitles';
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy } from 'react';
+
+const Feed = lazy(() => import('../pages/feed/feed'));
+const Home = lazy(() => import('../pages/home/home'));
+const BasicInfo = lazy(() => import('../pages/profile/basicInfo'));
+const Catalog = lazy(() => import('../pages/catalog/catalog'));
+const CommentThread = lazy(
+  () => import('../pages/commentThread/commentThread'),
+);
+const Comments = lazy(() => import('../pages/comments/comments'));
+const CommentsComponent = lazy(
+  () => import('../pages/comments/commentsComponent'),
+);
+const DifferentProfile = lazy(
+  () => import('../pages/profile/differentProfile'),
+);
+const EmptyPage = lazy(() => import('../components/empty-page/emptyPage'));
+const FavTitles = lazy(() => import('../pages/favorites/favTitles'));
+const Favorites = lazy(() => import('../pages/favorites/favorites'));
+const LikedTitles = lazy(() => import('../pages/favorites/likedTitles'));
+const MovieThread = lazy(() => import('../pages/movieThread/movieThread'));
+const MoviesCatalog = lazy(() => import('../pages/catalog/moviesCatalog'));
+const NotFound = lazy(() => import('../pages/notFound/notFound'));
+const NotificationsModule = lazy(
+  () => import('../pages/notifications/NotificationsModule'),
+);
+const Replies = lazy(() => import('../pages/comments/replies'));
+const ReplyThread = lazy(() => import('../pages/commentThread/replyThread'));
+const SearchEpisodes = lazy(
+  () => import('../pages/search-results/search-episodes'),
+);
+const SearchMovies = lazy(
+  () => import('../pages/search-results/search-movies'),
+);
+const SearchPeople = lazy(
+  () => import('../pages/search-results/search-people'),
+);
+const SearchResults = lazy(
+  () => import('../pages/search-results/searchResults'),
+);
+const SearchShows = lazy(() => import('../pages/search-results/search-shows'));
+const ShowsCatalog = lazy(() => import('../pages/catalog/showsCatalog'));
+const ShowsThread = lazy(() => import('../pages/shows-thread/showsThread'));
+const ShowsThreadComponent = lazy(
+  () => import('../pages/shows-thread/showsThreadParent.component'),
+);
+const VisitedTitles = lazy(() => import('../pages/favorites/visitedTitles'));
 
 export const router = createBrowserRouter([
   {
@@ -152,6 +172,11 @@ export const router = createBrowserRouter([
             errorElement: <NotFound />,
           },
         ],
+      },
+      {
+        path: 'admin',
+        element: <Admin />,
+        errorElement: <NotFound />,
       },
     ],
   },

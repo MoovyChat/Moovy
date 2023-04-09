@@ -14,10 +14,10 @@ export const NotFoundParent = styled.div`
     height: 100%;
     z-index: -2;
     opacity: 0.1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    .bg-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .bg-img {
       width: 60vw;
     }
   }

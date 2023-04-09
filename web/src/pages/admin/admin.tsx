@@ -28,6 +28,8 @@ import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
+import { urqlClient } from '../../utils/urlClient';
+import { withUrqlClient } from 'next-urql';
 
 interface AdminProps {}
 
@@ -249,4 +251,4 @@ const Admin: React.FC<AdminProps> = () => {
   );
 };
 
-export default Admin;
+export default withUrqlClient(urqlClient)(Admin);
