@@ -1,6 +1,6 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
-import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
+import { Profile, Users, useGetUserProfileQuery, useMeQuery } from '../../generated/graphql';
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
@@ -16,19 +16,20 @@ import { Helmet } from 'react-helmet';
 import HomeHeader from '../home-header/homeHeader';
 import LeftPanel from '../panels/left-panel/leftPanel';
 import LogoLoading from '../logo-loading/logoLoading';
+import Popup from '../../components/popup/popup';
 import RightPanel from '../panels/right-panel/rightPanel';
 import SetProfile from '../set-profile/setProfile';
 import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
+import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
-const Popup = lazy(() => import('../../components/popup/popup'));
-
 const Home = () => {
   const navigate = useNavigate();
+  const [{ data, fetching, error }] = useMeQuery();
   const theme = useAppSelector((state) => state.settings.theme);
   const isPopupOpen = useAppSelector((state) => state.popup.isPopupOpened);
   const isNavBarOpen = useAppSelector((state) => state.misc.isNavBarOpen);
@@ -54,6 +55,25 @@ const Home = () => {
     }
   };
 
+
+  useMemo(() => {
+    // Log any errors with fetching user data
+    if (error) {
+      console.log(error);
+    }
+    // If user data is successfully fetched and not in the process of fetching, proceed
+    if (!fetching && data) {
+      // Retrieve user object and current path
+      const user = data?.me as Users;
+      // If a user object exists
+      if (user) {
+        // Update Redux store with user data and save user data in localStorage
+        dispatch(sliceSetUser(user));
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    }
+  }, [fetching, data, error]);
+
   const [profile] = useGetUserProfileQuery({
     variables: { uid: user?.id },
     pause: isServer(),
@@ -70,7 +90,6 @@ const Home = () => {
 
   useEffect(() => {
     const { data, fetching } = profile;
-    console.log({profile, user})
     if (!fetching && data) {
       const _data = data.getUserProfile;
   
@@ -113,9 +132,7 @@ const Home = () => {
             <CenterPanel className='center' id='center'></CenterPanel>
             <RightPanel className='right'></RightPanel>
           </PanelsParent>
-          <Suspense fallback={<LogoLoading />}>
             <Popup />
-          </Suspense>
         </HomeParent>
       ) : (
         <SetProfile profile={prof} />

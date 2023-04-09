@@ -1,5 +1,16 @@
 import { LeftParent, StyledLinks } from './leftPanel.styles';
-import React, { MouseEventHandler, Suspense, useEffect, useRef } from 'react';
+import {
+  MdDynamicFeed,
+  MdFavorite,
+  MdModeComment,
+  MdNightlight,
+  MdNotificationsActive,
+  MdOutlineReply,
+  MdOutlineWbSunny,
+  MdPerson,
+  MdStorage
+} from 'react-icons/md';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import {
   sliceSetIsPopupOpened,
@@ -14,16 +25,6 @@ import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
 import { themes } from '../../../constants';
 import { useAppSelector } from '../../../redux/hooks';
-
-const MdDynamicFeed = lazyIconMd('MdDynamicFeed');
-const MdFavorite = lazyIconMd('MdFavorite');
-const MdModeComment = lazyIconMd('MdModeComment');
-const MdNightlight = lazyIconMd('MdNightlight');
-const MdNotificationsActive = lazyIconMd('MdNotificationsActive');
-const MdOutlineReply = lazyIconMd('MdOutlineReply');
-const MdOutlineWbSunny = lazyIconMd('MdOutlineWbSunny');
-const MdPerson = lazyIconMd('MdPerson');
-const MdStorage = lazyIconMd('MdStorage');
 
 type props = {
   className: string;

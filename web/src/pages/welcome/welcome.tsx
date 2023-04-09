@@ -90,7 +90,6 @@ const Welcome = () => {
 
 
   useMemo(() => {
-    console.log(location);
     if (isAuth && isAuth.id) return;
     // Log any errors with fetching user data
     if (error) {

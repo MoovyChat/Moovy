@@ -6,26 +6,21 @@ import {
   TIKTOK_LINK,
   TWITTER_LINK,
 } from '../../../constants';
-import React, { MouseEventHandler, Suspense, useEffect, useState } from 'react';
+import { FaDiscord, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import {
   TrendingObject,
   useCreateChargeMutation,
   useGetTrendingTitlesQuery,
 } from '../../../generated/graphql';
-import { lazyIconFa, lazyIconMd } from '../../../lazyLoad';
 
 import Loading from '../../loading/loading';
+import { MdLocalFireDepartment } from 'react-icons/md';
 import PatreonWord from '../../../static/images/patreon-word.webp';
 import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
-
-const FaDiscord = lazyIconFa('FaDiscord');
-const FaTwitter = lazyIconFa('FaTwitter');
-const FaTiktok = lazyIconFa('FaTiktok');
-const FaInstagram = lazyIconFa('FaInstagram');
-const MdLocalFireDepartment = lazyIconMd('MdLocalFireDepartment');
 
 type props = {
   className: string;
@@ -130,7 +125,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
       </div>
 
       <div className='socials'>
-        <Suspense>
+
           <div className='socials-block'>
             <div className='item-heading'>Socials</div>
             <div className='item-options'>
@@ -223,7 +218,7 @@ const RightPanel: React.FC<props> = ({ className }) => {
               </div>
             </div>
           </div>
-        </Suspense>
+
       </div>
     </RightParent>
   );
