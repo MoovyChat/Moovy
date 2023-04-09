@@ -14,7 +14,7 @@ import {
   toggleFollowChanges,
   updateMovieLikesChanges,
 } from './cacheExchanges';
-import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+import { fetchExchange, subscriptionExchange } from 'urql';
 import {
   getPaginatedMovieStatsResolver,
   getPaginatedSearchEpisodes,
@@ -31,6 +31,17 @@ import { createClient as createWSClient } from 'graphql-ws';
 import { devtoolsExchange } from '@urql/devtools';
 import { relayPagination } from '@urql/exchange-graphcache/extras';
 import { retryExchange } from '@urql/exchange-retry';
+
+interface SubscribePayload {
+  query: string;
+  // other properties
+}
+
+const subscribePayload: SubscribePayload = {
+  query: "", // set default value here
+  // other properties
+};
+
 
 const wsClient = createWSClient({
   url: wsUrl,
@@ -136,12 +147,11 @@ export const urqlClient: any = (ssrExchange: any) => ({
   },
   exchanges: [
     devtoolsExchange,
-    dedupExchange,
     cacheExchange(cache),
     subscriptionExchange({
       forwardSubscription: (operation) => ({
         subscribe: (sink) => ({
-          unsubscribe: wsClient.subscribe(operation, sink),
+          unsubscribe: wsClient.subscribe(operation as SubscribePayload, sink),
         }),
       }),
     }),

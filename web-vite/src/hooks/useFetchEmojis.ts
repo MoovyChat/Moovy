@@ -2,16 +2,16 @@ import { Emoji, fetchFromCDN } from 'emojibase';
 import { FrequentEmoji, RecentEmoji, db } from '../indexedDB/db';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { refinedG } from '../components/emojiPicker/emojiPicker';
+import { RefinedG } from '../components/emojiPicker/emojiPicker';
 
 const useFetchEmojis = () => {
-  const [refinedGroups, setRefinedGroups] = useState<refinedG>({});
+  const [refinedGroups, setRefinedGroups] = useState<RefinedG>({});
 
   const fetchEmojis = useCallback(async () => {
-    let rg: refinedG = {};
+    let rg: RefinedG = {};
     const data: Emoji[] = await fetchFromCDN('en/data.json');
     // Refining data to the object with keys and subKeys.
-    data.map((em) => {
+    data.forEach((em) => {
       let key = em.group!;
       let subKey = em.subgroup!;
       if (rg[key] === undefined) {
@@ -70,7 +70,7 @@ const useFetchEmojis = () => {
           console.log(`Successfully initialized emojiDB`);
         } else {
           const refGroups = await db.emojis.get(1);
-          setRefinedGroups(refGroups?.emojis as refinedG);
+          setRefinedGroups(refGroups?.emojis as RefinedG);
         }
       } catch (error) {
         console.log(`Failed to add emojiDB ${error}`);
