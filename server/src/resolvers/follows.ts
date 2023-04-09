@@ -72,6 +72,8 @@ export class FollowResolver {
             userId: uid,
             followingId: followingId,
             follows: follow,
+            blocked: false,
+            reported: false,
             updatedAt: new Date(),
           },
         ],

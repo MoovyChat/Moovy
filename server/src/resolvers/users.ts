@@ -19,6 +19,13 @@ import { Movie } from '../entities/Movie';
 import { Reply } from '../entities/Reply';
 import { COOKIE_NAME } from '../constants';
 import { Follow } from '../entities/Follow';
+import { FeedItem } from '../objectTypes';
+import { FeedEdge, PageInfo } from '../pagination';
+import {
+  FeedConnection,
+  ReplyConnection,
+  UserCommentsConnection,
+} from '../connections';
 
 @InputType()
 class UserInput {
@@ -120,52 +127,6 @@ class NicKNameFormat {
   photoUrl: string;
 }
 
-@ObjectType()
-class PaginatedUserComments {
-  @Field(() => Int, { defaultValue: 0 })
-  totalCommentCount: number;
-  @Field(() => Int, { defaultValue: 0 })
-  pastCount: number;
-  @Field(() => Users)
-  user: Users;
-  @Field(() => [Comment])
-  comments: Comment[];
-  @Field(() => Boolean)
-  hasMoreComments: boolean;
-  @Field(() => Int)
-  lastPage: number;
-}
-
-@ObjectType()
-class MiniCommentFormat {
-  @Field()
-  id: string;
-  @Field()
-  type: string;
-  @Field()
-  commentedUserId: string;
-  @Field()
-  createdAt: string;
-  @Field()
-  updatedAt: string;
-}
-
-@ObjectType()
-class PaginatedUserReplies {
-  @Field(() => Int, { defaultValue: 0 })
-  totalCommentCount: number;
-  @Field(() => Int, { defaultValue: 0 })
-  pastCount: number;
-  @Field(() => Users)
-  user: Users;
-  @Field(() => [Reply])
-  comments: Reply[];
-  @Field(() => Boolean)
-  hasMoreComments: boolean;
-  @Field(() => Int)
-  lastPage: number;
-}
-
 @Resolver()
 export class UserResolver {
   @Query(() => [Users])
@@ -188,69 +149,76 @@ export class UserResolver {
     return Users.findOne({ where: { nickname } });
   }
 
-  @Query(() => [MiniCommentFormat], { nullable: true })
+  @Query(() => FeedConnection)
   async getFeed(
     @Arg('uid') uid: string,
-    @Arg('limit') limit: number,
-    @Arg('page') page: number
-  ): Promise<MiniCommentFormat[] | null> {
-    let result: MiniCommentFormat[] = [];
+    @Arg('first', () => Int) first: number,
+    @Arg('after') after: string
+  ): Promise<FeedConnection> {
+    let result: FeedItem[] = [];
     const tenDaysAgo = new Date();
     tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
     const queryRunner = conn.createQueryRunner();
+    let intendedCount = first;
+    let totalCount = 0;
     // establish real database connection using our new query runner
     await queryRunner.connect();
     try {
       // lets now open a new transaction:
       await queryRunner.startTransaction();
-      const followRepo = conn.getRepository(Follow);
-      const commentRepo = conn.getRepository(Comment);
-      const replyRepo = conn.getRepository(Reply);
-      const ids = await followRepo
+      const ids = await conn
+        .getRepository(Follow)
         .createQueryBuilder('f')
-        .select('f.userId', 'id')
-        .where('f.followingId = :uid', { uid })
+        .select('f.followingId', 'id')
+        .where('f.userId = :uid', { uid })
         .andWhere('f.follows = :f', { f: true })
-        .execute();
+        .getRawMany();
       const updatedIds = [...ids, { id: uid }];
-      await Promise.all(
-        updatedIds.map(async (idObject) => {
-          let neededUserId = idObject.id;
-          // Get comments of that user and also retrieve that user info.
-          const _comments: MiniCommentFormat[] = await commentRepo
-            .createQueryBuilder('c')
-            .select('c.id', 'id')
-            .addSelect('c.commentedUserId', 'commentedUserId')
-            .addSelect('c.createdAt', 'createdAt')
-            .addSelect('c.updatedAt', 'updatedAt')
-            .addSelect('c.type', 'type')
-            .where('c.commentedUserId = :id', { id: neededUserId })
-            .andWhere('c.updatedAt >= :date', { date: tenDaysAgo })
-            .orderBy('c.updatedAt', 'DESC')
-            .offset((page - 1) * limit)
-            .limit(limit)
-            .execute();
-          const _replies: MiniCommentFormat[] = await replyRepo
-            .createQueryBuilder('r')
-            .select('r.id', 'id')
-            .addSelect('r.commentedUserId', 'commentedUserId')
-            .addSelect('r.type', 'type')
-            .addSelect('r.createdAt', 'createdAt')
-            .addSelect('r.updatedAt', 'updatedAt')
-            .where('r.commentedUserId = :id', { id: neededUserId })
-            .andWhere('r.updatedAt >= :date', { date: tenDaysAgo })
-            .orderBy('r.updatedAt', 'DESC')
-            .offset((page - 1) * limit)
-            .limit(limit)
-            .execute();
-          result = _.chain(result)
-            .concat(_comments)
-            .concat(_replies)
-            .uniqBy('id')
-            .orderBy('updatedAt', 'desc')
-            .value();
-        })
-      );
+      const query = `
+WITH comment_or_reply AS (
+  SELECT
+    id,
+    "commentedUserId",
+    "createdAt",
+    "updatedAt",
+    type,
+    CONCAT("id", ':', "commentedUserId", ':', "updatedAt") AS "compositeKey"
+  FROM (
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM comment
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+    UNION ALL
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM reply
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+  ) AS combined
+)
+SELECT *
+FROM comment_or_reply
+${after ? `WHERE "compositeKey" < '${after}'` : ''}
+ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
+LIMIT ${first};
+
+`;
+
+      result = await queryRunner.manager.query(query);
+      totalCount = result.length;
       await queryRunner.commitTransaction();
     } catch (err) {
       // since we have errors let's rollback changes we made
@@ -259,7 +227,120 @@ export class UserResolver {
       // you need to release query runner which is manually created:
       await queryRunner.release();
     }
-    return result;
+    const edges: FeedEdge[] = result.map((node) => {
+      return {
+        node,
+        cursor: node.compositeKey,
+      } as FeedEdge;
+    });
+    const pageInfo: PageInfo = {
+      hasNextPage: totalCount < intendedCount ? false : true,
+      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+    };
+    let finalRes: FeedConnection = {
+      totalCount,
+      nodes: result,
+      edges,
+      pageInfo,
+    };
+    return finalRes;
+  }
+
+  @Query(() => FeedConnection)
+  async getFeedWithLikes(
+    @Arg('uid') uid: string,
+    @Arg('first', () => Int) first: number,
+    @Arg('after') after: string
+  ): Promise<FeedConnection> {
+    let result: FeedItem[] = [];
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+    const queryRunner = conn.createQueryRunner();
+    let intendedCount = first;
+    let totalCount = 0;
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    try {
+      // lets now open a new transaction:
+      await queryRunner.startTransaction();
+      const ids = await conn
+        .getRepository(Follow)
+        .createQueryBuilder('f')
+        .select('f.followingId', 'id')
+        .where('f.userId = :uid', { uid })
+        .andWhere('f.follows = :f', { f: true })
+        .getRawMany();
+      const updatedIds = [...ids, { id: uid }];
+      const query = `
+WITH comment_or_reply AS (
+  SELECT
+    id,
+    "commentedUserId",
+    "createdAt",
+    "updatedAt",
+    type,
+    CONCAT("id", ':', "commentedUserId", ':', "updatedAt") AS "compositeKey"
+  FROM (
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM comment
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+    UNION ALL
+    SELECT
+      id,
+      "commentedUserId",
+      "createdAt",
+      "updatedAt",
+      type
+    FROM reply
+    WHERE "commentedUserId" IN (${updatedIds
+      .map(({ id }) => `'${id}'`)
+      .join(',')})
+      AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
+  ) AS combined
+)
+SELECT *
+FROM comment_or_reply
+${after ? `WHERE "compositeKey" < '${after}'` : ''}
+ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
+LIMIT ${first};
+
+`;
+
+      result = await queryRunner.manager.query(query);
+      totalCount = result.length;
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+    const edges: FeedEdge[] = result.map((node) => {
+      return {
+        node,
+        cursor: node.compositeKey,
+      } as FeedEdge;
+    });
+    const pageInfo: PageInfo = {
+      hasNextPage: totalCount < intendedCount ? false : true,
+      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+    };
+    let finalRes: FeedConnection = {
+      totalCount,
+      nodes: result,
+      edges,
+      pageInfo,
+    };
+    return finalRes;
   }
 
   @Query(() => FullUserObject, { nullable: true })
@@ -398,19 +479,15 @@ export class UserResolver {
     return new Promise(() => {});
   }
 
-  @Query(() => PaginatedUserComments, { nullable: true })
+  @Query(() => UserCommentsConnection)
   async getCommentsOfTheUser(
     @Arg('uid') uid: string,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
-    ASC: boolean
-  ): Promise<PaginatedUserComments | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<UserCommentsConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
-    if (!user) throw new Error('User not found');
     const query = conn
       .getRepository(Comment)
       .createQueryBuilder('c')
@@ -419,44 +496,52 @@ export class UserResolver {
         'user',
         'user.id = c.commentedUserId'
       )
-      .where('c.commentedUserId = :uid', { uid: user.id });
-    let totalCommentCount = await query.getCount();
-    if (time && time !== '') {
-      query.andWhere('c.createdAt < :time', {
-        time: new Date(parseInt(time)),
-      });
+      .where('c.commentedUserId = :uid', { uid: user?.id });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('c.updatedAt < :cursor', { cursor: new Date(after) });
     }
-    const pastCount = await query.getCount();
+
+    // Get `first` number of replies, plus 1 to check for next page
     const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('c.createdAt', ASC ? 'ASC' : 'DESC')
+      .orderBy('c.updatedAt', 'DESC')
+      .take(first + 1)
       .getMany();
+
+    const nodes = comments.slice(0, first);
+    const hasNextPage = comments.length > first;
+    const endCursor =
+      comments.length === 0
+        ? String(totalCount)
+        : String(comments[comments.length - 1].updatedAt);
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.updatedAt),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      user,
-      comments,
-      totalCommentCount,
-      pastCount,
-      hasMoreComments: comments.length === totalCommentCount + 1,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 
-  @Query(() => PaginatedUserReplies, { nullable: true })
+  @Query(() => ReplyConnection)
   async getRepliesOfTheUser(
     @Arg('uid') uid: string,
-    @Arg('time', () => String, { nullable: true }) time: string | null,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1,
-    @Arg('ASC', () => Boolean, { defaultValue: true, nullable: true })
-    ASC: boolean
-  ): Promise<PaginatedUserReplies | null> {
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<ReplyConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
-    console.log(user);
-    if (!user) throw new Error('User not found');
     const query = conn
       .getRepository(Reply)
       .createQueryBuilder('r')
@@ -465,27 +550,40 @@ export class UserResolver {
         'user',
         'user.id = r.commentedUserId'
       )
-      .where('r.commentedUserId = :uid', { uid: user.id });
-    let totalCommentCount = await query.getCount();
-    if (time && time !== '') {
-      query.andWhere('r.createdAt < :time', {
-        time: new Date(parseInt(time)),
-      });
+      .where('r.commentedUserId = :uid', { uid: user?.id });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('r.updatedAt < :cursor', { cursor: new Date(after) });
     }
-    const pastCount = await query.getCount();
-    const comments = await query
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy('r.createdAt', ASC ? 'ASC' : 'DESC')
+
+    // Get `first` number of replies, plus 1 to check for next page
+    const replies = await query
+      .orderBy('r.updatedAt', 'DESC')
+      .take(first + 1)
       .getMany();
+
+    const nodes = replies.slice(0, first);
+    const hasNextPage = replies.length > first;
+    const endCursor =
+      replies.length === 0
+        ? String(totalCount)
+        : String(replies[replies.length - 1].updatedAt);
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.updatedAt),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
     return {
-      user,
-      comments,
-      totalCommentCount,
-      pastCount,
-      hasMoreComments: comments.length === totalCommentCount + 1,
-      lastPage:
-        totalCommentCount === 0 ? 1 : Math.ceil(totalCommentCount / limit),
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
     };
   }
 
@@ -504,6 +602,8 @@ export class UserResolver {
 
   @Mutation(() => Users, { nullable: true })
   async createUser(@Arg('options') options: UserInput) {
+    let existingUser = await Users.findOne({ where: { id: options.id } });
+    if (existingUser) return existingUser;
     let user;
     try {
       const result = await conn

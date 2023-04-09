@@ -7,7 +7,9 @@ import Redis, { RedisOptions } from 'ioredis';
 import { ApolloServer } from 'apollo-server-express';
 import { MyContext } from './types';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import bodyParser from 'body-parser';
 import { buildSchema } from 'type-graphql';
+import compression from 'compression';
 import { conn } from './dataSource';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
@@ -46,15 +48,23 @@ const main = async () => {
   await conn.initialize();
   await conn.runMigrations();
   const app = express();
-  // Load the SSL certificate and private key
-  // const certsPath = '/home/dokku/api/letsencrypt/certs/current/certificates';
-  // const serverOptions: ServerOptions<
-  //   typeof IncomingMessage,
-  //   typeof ServerResponse
-  // > = {
-  //   key: fs.readFileSync(`${certsPath}/api.moovychat.com.key`),
-  //   cert: fs.readFileSync(`${certsPath}/api.moovychat.com.crt`),
-  // };
+
+  // Enable gzip compression for all resources
+  app.use(compression());
+
+  // Serve your app's static resources
+  app.use(express.static('public', { maxAge: '1d' }));
+
+  // Set cache headers for /graphql
+  app.use('/graphql', (_req, res, next) => {
+    res.set('Cache-Control', 'public, max-age=86400'); // 1 day
+    next();
+  });
+
+  // Increase the maximum request size limit to 50MB
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
   const server = createServer(app);
   const schema = await buildSchema({
     resolvers: resolvers as any,
@@ -66,14 +76,12 @@ const main = async () => {
   const corsOptions = {
     origin: [
       process.env.CORS_ORIGIN as string,
-      'https://studio.apollographql.com',
       'https://server.moovychat.com/graphql',
       'https://www.moovychat.com',
       'ws://server.moovychat.com/graphql',
       'wss://server.moovychat.com/graphql',
-      'ws://localhost:4000/graphql',
       'https://www.netflix.com',
-      'chrome-extension://dmipflcbflebldjbgfnkcjnobneebmpo',
+      'chrome-extension://ilkpekdilkpahngoeanmpnkegideejip',
       process.env.REDIS_URL as string,
     ],
     credentials: true,
@@ -110,6 +118,7 @@ const main = async () => {
     schema,
     context: ({ req, res }): MyContext => ({ req, res }),
     persistedQueries: false,
+    introspection: __prod__ ? false : true,
     plugins: [
       {
         async serverWillStart() {
