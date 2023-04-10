@@ -11,9 +11,11 @@ import {
 import { FooterLink, SocialButton, StyledFooter } from './footer.styles';
 import React, { Suspense } from 'react';
 
-import Moovy from '../../../svgs/moovy-text-logo-white.png';
+import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
+import MoovyWhite from '../../../svgs/moovy-text-logo-white.png';
 import PatreonWord from '../../../static/images/patreon-word.webp';
 import { lazyIconFa } from '../../../lazyLoad';
+import { useTheme } from 'styled-components';
 
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
@@ -24,10 +26,15 @@ type props = {
   id: string;
 };
 const Footer: React.FC<props> = ({ id }) => {
+  const theme = useTheme();
   return (
     <StyledFooter id={id}>
       <div className="image-container">
-        <img src={Moovy} alt="moovy" width="200px" />
+        <img
+          src={(theme as any).themeType === 'light' ? MoovyBlack : MoovyWhite}
+          alt="moovy"
+          width="200px"
+        />
       </div>
       <div className="links-block">
         <div className="block">
@@ -48,7 +55,11 @@ const Footer: React.FC<props> = ({ id }) => {
         <div className="block">
           <div className="title">Contact</div>
           <div className="links">
-            <FooterLink className="special" href="mailto:support@moovychat.com" target="_blank">
+            <FooterLink
+              className="special"
+              href="mailto:support@moovychat.com"
+              target="_blank"
+            >
               support@moovychat.com
             </FooterLink>
             <FooterLink href="/about-us" target="_blank">

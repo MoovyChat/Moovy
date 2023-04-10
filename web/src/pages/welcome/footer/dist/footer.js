@@ -4,18 +4,21 @@ require("./footer.css");
 var constants_1 = require("../../../constants");
 var footer_styles_1 = require("./footer.styles");
 var react_1 = require("react");
+var moovy_text_logo_black_png_1 = require("../../../svgs/moovy-text-logo-black.png");
 var moovy_text_logo_white_png_1 = require("../../../svgs/moovy-text-logo-white.png");
 var patreon_word_webp_1 = require("../../../static/images/patreon-word.webp");
 var lazyLoad_1 = require("../../../lazyLoad");
+var styled_components_1 = require("styled-components");
 var FaDiscord = lazyLoad_1.lazyIconFa('FaDiscord');
 var FaTwitter = lazyLoad_1.lazyIconFa('FaTwitter');
 var FaTiktok = lazyLoad_1.lazyIconFa('FaTiktok');
 var FaInstagram = lazyLoad_1.lazyIconFa('FaInstagram');
 var Footer = function (_a) {
     var id = _a.id;
+    var theme = styled_components_1.useTheme();
     return (react_1["default"].createElement(footer_styles_1.StyledFooter, { id: id },
         react_1["default"].createElement("div", { className: "image-container" },
-            react_1["default"].createElement("img", { src: moovy_text_logo_white_png_1["default"], alt: "moovy", width: "200px" })),
+            react_1["default"].createElement("img", { src: theme.themeType === 'light' ? moovy_text_logo_black_png_1["default"] : moovy_text_logo_white_png_1["default"], alt: "moovy", width: "200px" })),
         react_1["default"].createElement("div", { className: "links-block" },
             react_1["default"].createElement("div", { className: "block" },
                 react_1["default"].createElement("div", { className: "title" }, "Legal"),

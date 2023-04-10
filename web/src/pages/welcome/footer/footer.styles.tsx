@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const StyledFooter = styled.div`
   min-height: 150px;
   width: 99.5vw;
-  color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,7 +65,7 @@ export const SocialButton = styled.button`
 `;
 
 export const FooterLink = styled.a`
-  color: #fff;
+  color: ${p => p.theme.text};
   font-size: 12px;
   text-decoration: none;
   transition: color 0.2s ease-in-out;

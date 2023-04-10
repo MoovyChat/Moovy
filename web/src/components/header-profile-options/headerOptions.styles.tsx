@@ -7,13 +7,14 @@ export const StyledHeaderOptions = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  background: ${({ theme }) => theme.body};
+  background: ${({ theme }) => theme.popup};
   box-shadow: 0 0 3px;
   border-radius: 5px;
   margin-bottom: 10px;
   .us {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     padding: 4px;
     gap: 5px;
     font-weight: 600;
