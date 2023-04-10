@@ -46,9 +46,9 @@ exports.serverUrl = exports.__prod__
 exports.EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 exports.EXT_URL = "chrome-extension://" + exports.EXT_ID;
 exports.EXTENSION_URL = "https://chrome.google.com/webstore/detail/moovy-chat/" + exports.EXT_ID;
-exports.DISCORD_INVITE_LINK = 'https://discord.gg/gJP3NQq9gB';
+exports.DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
 exports.TWITTER_LINK = 'https://twitter.com/MoovyChat';
 exports.TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
 exports.INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
-exports.PATREON = 'https://www.patreon.com/MoovyChat';
+exports.PATREON = 'https://www.patreon.com/MoovyChatLtd';
 exports.BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
