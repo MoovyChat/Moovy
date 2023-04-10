@@ -38,6 +38,11 @@ export const StyledFooter = styled.div`
         justify-content: center;
         align-items: center;
         gap: 5px;
+        .link {
+          display: flex;
+          width: 100px;
+          gap: 20px;
+        }
         .special {
           font-weight: 600;
           color: #4385ff;
@@ -59,9 +64,6 @@ export const SocialButton = styled.button`
   text-align: inherit;
   text-decoration: none;
   vertical-align: baseline;
-  display: flex;
-  width: 100px;
-  gap: 20px;
 `;
 
 export const FooterLink = styled.a`
