@@ -40,25 +40,25 @@ var Footer = function (_a) {
                 react_1["default"].createElement("div", { className: "title" }, "Socials"),
                 react_1["default"].createElement("div", { className: "links" },
                     react_1["default"].createElement(react_1.Suspense, null,
-                        react_1["default"].createElement(footer_styles_1.SocialButton, { onClick: function (e) {
+                        react_1["default"].createElement(footer_styles_1.SocialButton, { className: "link", onClick: function (e) {
                                 e.stopPropagation();
                                 window.open(constants_1.DISCORD_INVITE_LINK, '_blank');
                             } },
                             react_1["default"].createElement(FaDiscord, { color: "cornflowerblue", size: 20, style: { pointerEvents: 'none' } }),
                             react_1["default"].createElement(footer_styles_1.FooterLink, null, "Discord")),
-                        react_1["default"].createElement(footer_styles_1.SocialButton, { onClick: function (e) {
+                        react_1["default"].createElement(footer_styles_1.SocialButton, { className: "link", onClick: function (e) {
                                 e.stopPropagation();
                                 window.open(constants_1.TWITTER_LINK, '_blank');
                             } },
                             react_1["default"].createElement(FaTwitter, { color: "deepskyblue", size: 20, style: { pointerEvents: 'none' } }),
                             react_1["default"].createElement(footer_styles_1.FooterLink, null, "Twitter")),
-                        react_1["default"].createElement(footer_styles_1.SocialButton, { onClick: function (e) {
+                        react_1["default"].createElement(footer_styles_1.SocialButton, { className: "link", onClick: function (e) {
                                 e.stopPropagation();
                                 window.open(constants_1.TIKTOK_LINK, '_blank');
                             } },
                             react_1["default"].createElement(FaTiktok, { className: "icon", size: 20, style: { pointerEvents: 'none' } }),
                             react_1["default"].createElement(footer_styles_1.FooterLink, null, "Tiktok")),
-                        react_1["default"].createElement(footer_styles_1.SocialButton, { onClick: function (e) {
+                        react_1["default"].createElement(footer_styles_1.SocialButton, { className: "link", onClick: function (e) {
                                 e.stopPropagation();
                                 window.open(constants_1.INSTAGRAM_LINK, '_blank');
                             } },
@@ -67,13 +67,13 @@ var Footer = function (_a) {
             react_1["default"].createElement("div", { className: "block" },
                 react_1["default"].createElement("div", { className: "title" }, "Donate & Support"),
                 react_1["default"].createElement("div", { className: "links" },
-                    react_1["default"].createElement("div", { className: "patreon", tabIndex: 0, onClick: function (e) {
+                    react_1["default"].createElement(footer_styles_1.SocialButton, { className: "patreon", onClick: function (e) {
                             e.stopPropagation();
                             window.open(constants_1.PATREON, '_blank');
                         } },
                         react_1["default"].createElement("div", { className: "logo", id: "text-focus" },
                             react_1["default"].createElement("img", { src: patreon_word_webp_1["default"], alt: "patreon", id: "text-focus", width: 120 }))),
-                    react_1["default"].createElement("div", { className: "bmc", tabIndex: 0, onClick: function (e) {
+                    react_1["default"].createElement(footer_styles_1.SocialButton, { className: "bmc", onClick: function (e) {
                             e.stopPropagation();
                             window.open(constants_1.BUY_ME_A_COFFEE, '_blank');
                         } },
