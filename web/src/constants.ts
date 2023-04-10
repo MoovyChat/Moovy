@@ -51,5 +51,5 @@ export const DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
 export const TWITTER_LINK = 'https://twitter.com/MoovyChat';
 export const TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
 export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
-export const PATREON = 'https://www.patreon.com/MoovyChatLtd';
+export const PATREON = 'https://www.patreon.com/MoovyChat';
 export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
