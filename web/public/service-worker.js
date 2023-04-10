@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 self.addEventListener('beforeinstallprompt', event => {
   event.preventDefault();
   const promptEvent = event;
