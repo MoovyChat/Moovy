@@ -4,9 +4,9 @@ import { NotFoundParent } from './notFound.styles';
 import { useRouteError } from 'react-router-dom';
 
 interface ErrorProps {
-  statusText: string;
-  message: string;
-  status: any;
+  statusText?: string;
+  message?: string;
+  status?: any;
 }
 const NotFound = () => {
   const error = useRouteError() as ErrorProps;
@@ -19,8 +19,10 @@ const NotFound = () => {
       <div className="bg">
         <Moovy className="bg-img" />
       </div>
-      <div className="code">{error.status || 404}</div>
-      <div className="text">{error.statusText || error.message}</div>
+      <div className="code">{error && error.status ? error.status : 404}</div>
+      <div className="text">
+        {error && (error?.statusText || error?.message)}
+      </div>
     </NotFoundParent>
   );
 };
