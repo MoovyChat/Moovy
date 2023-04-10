@@ -77,6 +77,7 @@ const Footer: React.FC<props> = ({ id }) => {
           <div className="links">
             <Suspense>
               <SocialButton
+                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(DISCORD_INVITE_LINK, '_blank');
@@ -90,6 +91,7 @@ const Footer: React.FC<props> = ({ id }) => {
                 <FooterLink>Discord</FooterLink>
               </SocialButton>
               <SocialButton
+                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TWITTER_LINK, '_blank');
@@ -103,6 +105,7 @@ const Footer: React.FC<props> = ({ id }) => {
                 <FooterLink>Twitter</FooterLink>
               </SocialButton>
               <SocialButton
+                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TIKTOK_LINK, '_blank');
@@ -116,6 +119,7 @@ const Footer: React.FC<props> = ({ id }) => {
                 <FooterLink>Tiktok</FooterLink>
               </SocialButton>
               <SocialButton
+                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(INSTAGRAM_LINK, '_blank');
@@ -135,9 +139,8 @@ const Footer: React.FC<props> = ({ id }) => {
         <div className="block">
           <div className="title">Donate & Support</div>
           <div className="links">
-            <div
+            <SocialButton
               className="patreon"
-              tabIndex={0}
               onClick={e => {
                 e.stopPropagation();
                 window.open(PATREON, '_blank');
@@ -151,10 +154,9 @@ const Footer: React.FC<props> = ({ id }) => {
                   width={120}
                 />
               </div>
-            </div>
-            <div
+            </SocialButton>
+            <SocialButton
               className="bmc"
-              tabIndex={0}
               onClick={e => {
                 e.stopPropagation();
                 window.open(BUY_ME_A_COFFEE, '_blank');
@@ -168,7 +170,7 @@ const Footer: React.FC<props> = ({ id }) => {
                   width={120}
                 />
               </div>
-            </div>
+            </SocialButton>
           </div>
         </div>
       </div>
