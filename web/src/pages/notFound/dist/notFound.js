@@ -13,6 +13,6 @@ var NotFound = function () {
         React.createElement("div", { className: "bg" },
             React.createElement(moovy_white_svg_1.ReactComponent, { className: "bg-img" })),
         React.createElement("div", { className: "code" }, error && error.status ? error.status : 404),
-        React.createElement("div", { className: "text" }, error && ((error === null || error === void 0 ? void 0 : error.statusText) || error.message))));
+        React.createElement("div", { className: "text" }, error && ((error === null || error === void 0 ? void 0 : error.statusText) || (error === null || error === void 0 ? void 0 : error.message)))));
 };
 exports["default"] = NotFound;
