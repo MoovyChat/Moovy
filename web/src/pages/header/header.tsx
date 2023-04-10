@@ -11,15 +11,17 @@ import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { EXTENSION_URL } from '../../constants';
-import MoovyLogo from '../../svgs/moovy-white.svg';
+import MoovyLogoBlack from '../../svgs/moovy-black.svg';
+import MoovyLogoWhite from '../../svgs/moovy-white.svg';
 import { googleSignIn } from '../login/login';
-import { sliceSetTheme } from '../../redux/slices/settingsSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from 'styled-components';
 import { withUrqlClient } from 'next-urql';
 
 const Header = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [_userResult, createUser] = useCreateUserMutation();
@@ -97,7 +99,11 @@ const Header = () => {
         <div className="logo-image">
           <img
             className="image"
-            src={MoovyLogo}
+            src={
+              (theme as any).themeType === 'light'
+                ? MoovyLogoBlack
+                : MoovyLogoWhite
+            }
             alt="QuietChat"
             id="blur-escape"
             loading="lazy"

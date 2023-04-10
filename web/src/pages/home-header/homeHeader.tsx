@@ -48,6 +48,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
               fontSize: '10px',
               alignSelf: 'flex-end',
               backgroundColor: '#993434',
+              color: '#fff',
               padding: '4px 6px',
               borderRadius: '10px',
             }}
