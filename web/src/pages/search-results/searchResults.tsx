@@ -6,11 +6,12 @@ import { Helmet } from 'react-helmet';
 import NavLinks from '../../components/nav-links/navLinks';
 import React from 'react';
 import { StyledSearchResults } from './searchResults.styles';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 
 const SearchResults = () => {
   const { search } = useParams();
-
+  usePageView();
   return (
     <StyledSearchResults>
       <Helmet>

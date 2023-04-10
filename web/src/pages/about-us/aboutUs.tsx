@@ -1,4 +1,5 @@
 import './aboutUs.css';
+
 import {
   PrivacyPolicyContent,
   PrivacyPolicyWrapper,
@@ -7,8 +8,10 @@ import {
 import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
 import { useEffect } from 'react';
+import usePageView from '../../hooks/usePageView';
 
 const AboutUs = () => {
+  usePageView();
   return (
     <PrivacyPolicyWrapper>
       <Helmet>

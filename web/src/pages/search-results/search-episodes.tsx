@@ -10,6 +10,7 @@ import Loading from '../loading/loading';
 import { MovieCardParent } from '../../components/movie-card/movieCard.styles';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import { SearchTitles } from './searchResults.styles';
+import usePageView from '../../hooks/usePageView';
 
 const SearchEpisodes = () => {
   const { search } = useParams();
@@ -26,6 +27,8 @@ const SearchEpisodes = () => {
       limit: 10,
     },
   });
+
+  usePageView();
   useMemo(() => {
     if (error) console.log(error);
     if (data && !fetching) {

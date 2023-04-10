@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { Users, useSearchPeopleQuery } from '../../generated/graphql';
+import { useEffect, useState } from 'react';
 
 import { CURRENT_DOMAIN } from '../../constants';
 import EmptyPage from '../../components/empty-page/emptyPage';
@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import PeopleCard from '../../components/people-card/peopleCard';
 import { StyledSearchPeople } from './searchResults.styles';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 
 const SearchPeople = () => {
@@ -21,6 +22,8 @@ const SearchPeople = () => {
       limit: 10,
     },
   });
+
+  usePageView();
   useEffect(() => {
     if (error) console.log(error);
     if (data && !fetching) {

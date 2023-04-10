@@ -9,13 +9,11 @@ import {
 
 import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
-import { useEffect } from 'react';
+import usePageView from '../../hooks/usePageView';
 
 const PrivacyPolicy = () => {
   const lastUpdated = 'February 19, 2023';
-  useEffect(() => {
-    document.title = 'Privacy Policy';
-  }, []);
+  usePageView();
   return (
     <PrivacyPolicyWrapper>
       <Helmet>

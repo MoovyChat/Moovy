@@ -15,6 +15,7 @@ import MovieCard from '../../components/movie-card/movieCard';
 import { ViewportList } from 'react-viewport-list';
 import WatchVideo from '../../components/watch-video/watchVideo';
 import { useFetchMoreMovies } from '../../hooks/useFetchMoreMovies';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 
 const ShowsThread = () => {
@@ -31,6 +32,8 @@ const ShowsThread = () => {
     variables: { tid: id!, first: 10, after: '' },
     pause: isServer(),
   });
+
+  usePageView();
 
   useMemo(() => {
     const { data, error, fetching } = titleInfo;

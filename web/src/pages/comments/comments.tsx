@@ -10,6 +10,7 @@ import Loading from '../loading/loading';
 import { ViewportList } from 'react-viewport-list';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserComments } from '../../hooks/useFetchUserComments';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
@@ -17,11 +18,9 @@ const Comments = () => {
   const { id } = useParams();
   const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
-  const [cursor, setCursor] = useState<string>('');
   const [comments, setComments] = useState<Comment[]>([]);
-  useEffect(() => {
-    document.title = 'Comments - Moovy';
-  }, []);
+
+  usePageView();
 
   const [userComments] = useGetCommentsOfTheUserQuery({
     variables: { uid: id!, first: 10, after: '' },
@@ -49,23 +48,6 @@ const Comments = () => {
 
   const { fetchMore } = useFetchUserComments(id!, setComments, userComments);
 
-  // //Scroll handler: Fallback - Find the scrollable parent element.
-  // useEffect(() => {
-  //   const scrollComments = () => {
-  //     if (!profileParent) return null;
-  //     if (
-  //       profileParent.scrollHeight - profileParent.scrollTop - 2 <=
-  //       profileParent.clientHeight
-  //     ) {
-  //       if (page !== lastPage) {
-  //         setPage((page) => page + 1);
-  //       }
-  //     }
-  //   };
-  //   var profileParent = document.getElementById('profile-parent');
-  //   profileParent?.addEventListener('scroll', scrollComments);
-  //   return () => profileParent?.removeEventListener('scroll', scrollComments);
-  // }, [page, lastPage]);
 
   if (comments.length <= 0) {
     return <EmptyPage msg="No Comments!" />;

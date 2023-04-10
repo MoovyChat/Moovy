@@ -1,6 +1,5 @@
 import { Title, useSearchTitlesQuery } from '../../generated/graphql';
 import { UIEventHandler, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 import { CURRENT_DOMAIN } from '../../constants';
 import { CatalogParent } from '../catalog/catalog.styles';
@@ -8,11 +7,12 @@ import EmptyPage from '../../components/empty-page/emptyPage';
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import TitleCard from '../catalog/titleCard';
+import usePageView from '../../hooks/usePageView';
+import { useParams } from 'react-router-dom';
 
 const SearchShows = () => {
   const { search } = useParams();
   let parentRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
   const [titles, setTitles] = useState<Title[]>([]);
@@ -23,6 +23,7 @@ const SearchShows = () => {
       limit: 10,
     },
   });
+  usePageView();
   useMemo(() => {
     if (error) console.log(error);
     if (data && !fetching) {

@@ -11,14 +11,12 @@ import ReplyCard from '../../components/comment-card/replyCard';
 import { ViewportList } from 'react-viewport-list';
 import { urqlClient } from '../../utils/urlClient';
 import { useFetchUserReplies } from '../../hooks/useFetchUserReplies';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const Replies = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'Replies - Moovy';
-  }, []);
   const listRef = useRef<any>(null);
   const [replies, setReplies] = useState<Reply[]>([]);
   const parentRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +24,7 @@ const Replies = () => {
     variables: { uid: id!, first: 10 },
     pause: isServer() && !id,
   });
-
+  usePageView();
   useEffect(() => {
     const { data, fetching } = userReplies;
     if (!fetching && data) {

@@ -24,6 +24,7 @@ import { RiArrowRightCircleFill } from 'react-icons/ri';
 import Screenshots from './screenshots/screenshots';
 import { lazyIconFa } from '../../lazyLoad';
 import { urqlClient } from '../../utils/urlClient';
+import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 
 const FaDiscord = lazyIconFa('FaDiscord');
@@ -74,10 +75,11 @@ export const streamingServices = [
   },
 ];
 const Welcome = () => {
-  const handleReloadMessage = () => {
+  const handleReloadMessage:any = () => {
     window.location.reload();
   };
 
+  usePageView();
   useEffect(() => {
     // listen for a message to reload the page
     const reloadTabsChannel = new BroadcastChannel('reloadTabsChannel');

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 
 const FavTitles = () => {
@@ -16,7 +17,7 @@ const FavTitles = () => {
     variables: { page, uid: id!, limit: 6 },
     pause: isServer(),
   });
-
+  usePageView();
   useEffect(() => {
     const { data, error, fetching } = favTItlesQuery;
     if (error) console.log(error);

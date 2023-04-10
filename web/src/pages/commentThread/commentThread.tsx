@@ -18,14 +18,12 @@ import { isServer } from '../../constants';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useFetchMoreRepliesOfComment } from '../../hooks/useFetchMoreCommentReplies';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const CommentThread = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'Comment - Moovy';
-  }, []);
   const userRef = useRef<Users | null>(null);
   const loggedInUser = useAppSelector(state => state.user);
   const [like, setLike] = useState<boolean>(false);
@@ -41,6 +39,8 @@ const CommentThread = () => {
     variables: { cid: id! },
     pause: isServer(),
   });
+
+  usePageView();
   const [comment, setComment] = useState<Comment>();
   const [, setCommentLike] = useSetCommentLikeMutation();
 

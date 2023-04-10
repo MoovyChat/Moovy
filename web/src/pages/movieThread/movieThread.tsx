@@ -17,25 +17,19 @@ import Loading from '../loading/loading';
 import MovieCard from '../../components/movie-card/movieCard';
 import NotFound from '../notFound/notFound';
 import WatchVideo from '../../components/watch-video/watchVideo';
-import _ from 'lodash';
 import { isNumber } from '../../utils/helpers';
 import { urqlClient } from '../../utils/urlClient';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
 
 const MovieThread = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'Movie - Moovy';
-  }, []);
-  const limit = 10;
   const ref = useRef<HTMLDivElement | null>(null);
   const [valid, setValid] = useState<boolean>(false);
   const [movieInfo, setMovieInfo] = useState<Movie>();
   const [page, setPage] = useState<number>(1);
-  const [pageCount, setPageCount] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(false);
-  const [lastPage, setLastPage] = useState<number>(1);
   const [scrollValue, setScrollValue] = useState<number>(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [{ data, error, fetching }] = useGetCommentsOfTheMovieQuery({
@@ -45,6 +39,8 @@ const MovieThread = () => {
     },
     pause: isServer(),
   });
+
+  usePageView();
 
   // Check if the movie Id is valid.
   useEffect(() => {
@@ -78,8 +74,6 @@ const MovieThread = () => {
 
     if (!fetching && data) {
       const _data = data.getCommentsOfTheMovie!;
-      const _lastPage = _data.lastPage;
-      setLastPage(() => _lastPage!);
       setHasMore(() => _data.hasMoreComments);
       setComments(() => _data.comments);
     }
@@ -132,7 +126,6 @@ const MovieThread = () => {
                     onClick={e => {
                       e.stopPropagation();
                       setPage(page + 1);
-                      setPageCount(() => page + 1);
                     }}
                   >
                     Show more comments

@@ -26,6 +26,7 @@ import _ from 'lodash';
 import { urqlClient } from '../../utils/urlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
+import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 
 const NotificationsModule = () => {
@@ -41,9 +42,8 @@ const NotificationsModule = () => {
     pause: isServer(),
   });
   const [, readNotification] = useReadNotificationMutation();
-  useEffect(() => {
-    document.title = 'Notifications - Moovy';
-  }, []);
+
+  usePageView();
 
   // Scroll handler.
   const handleScroll: UIEventHandler<HTMLDivElement> = e => {

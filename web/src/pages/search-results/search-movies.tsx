@@ -10,10 +10,10 @@ import Loading from '../loading/loading';
 import { MovieCardParent } from '../../components/movie-card/movieCard.styles';
 import MovieInfo from '../../components/comment-card/movieInfo';
 import { SearchTitles } from './searchResults.styles';
+import usePageView from '../../hooks/usePageView';
 
 const SearchMovies = () => {
   const { search } = useParams();
-  const listRef = useRef<any>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
@@ -26,6 +26,8 @@ const SearchMovies = () => {
       limit: 8,
     },
   });
+
+  usePageView();
   useMemo(() => {
     if (error) console.log(error);
     if (data && !fetching) {
@@ -62,7 +64,7 @@ const SearchMovies = () => {
         />
       </Helmet>
       {titles.map(movie => (
-        <MovieCardParent
+        <MovieCardParent key={movie?.id}
           bg={movie?.artwork as string}
           onClick={e => {
             e.stopPropagation();
@@ -75,7 +77,7 @@ const SearchMovies = () => {
               <Image src={movie?.boxart as string} alt="movie" />
             </div>
             <div className="info">
-              <MovieInfo title={movie!} />
+              <MovieInfo title={movie} />
             </div>
           </div>
         </MovieCardParent>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import NotFound from '../notFound/notFound';
 import TitleListTemplate from './titleListTemplate';
+import usePageView from '../../hooks/usePageView';
 import { useParams } from 'react-router-dom';
 
 const VisitedTitles = () => {
@@ -19,6 +20,7 @@ const VisitedTitles = () => {
     pause: isServer(),
   });
 
+  usePageView();
   useEffect(() => {
     const { data, error, fetching } = visitedQuery;
     if (error) console.log(error);

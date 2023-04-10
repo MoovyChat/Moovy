@@ -9,6 +9,7 @@ import { Form } from './contactUs.styled';
 import { Helmet } from 'react-helmet';
 import { urqlClient } from '../../utils/urlClient';
 import { useCreateMessageMutation } from '../../generated/graphql';
+import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 
 const ContactUs = () => {
@@ -17,7 +18,7 @@ const ContactUs = () => {
   const [message, setMessage] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
   const [{ fetching, error }, createMessage] = useCreateMessageMutation();
-
+  usePageView();
   const postMessage: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     createMessage({ name, email, subject, message })

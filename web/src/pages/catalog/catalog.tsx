@@ -4,10 +4,11 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import { NavLink } from 'react-router-dom';
 import NavLinks from '../../components/nav-links/navLinks';
 import { Outlet } from 'react-router-dom';
-import { useEffect } from 'react';
+import usePageView from '../../hooks/usePageView';
 
 // Define functional component named "Catalog"
 const Catalog = () => {
+  usePageView();
   // Return JSX for the component
   return (
     <CatalogContainer>

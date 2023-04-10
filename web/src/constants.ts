@@ -53,3 +53,4 @@ export const TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
 export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
 export const PATREON = 'https://www.patreon.com/MoovyChat';
 export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
+export const G_TRACKING_ID = 'G-R7B18C6XQ2';

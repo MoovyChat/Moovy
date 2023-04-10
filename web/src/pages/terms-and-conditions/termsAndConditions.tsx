@@ -6,8 +6,10 @@ import {
 import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
 import { useEffect } from 'react';
+import usePageView from '../../hooks/usePageView';
 
 const TermsAndConditions = () => {
+  usePageView();
   return (
     <PrivacyPolicyWrapper>
       <Helmet>

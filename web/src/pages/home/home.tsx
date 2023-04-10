@@ -1,12 +1,7 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
-import {
-  Profile,
-  Users,
-  useGetUserProfileQuery,
-  useMeQuery,
-} from '../../generated/graphql';
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
+import { useEffect, useMemo, useState } from 'react';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
   sliceSetIsPopupOpened,
@@ -27,10 +22,10 @@ import SetProfile from '../set-profile/setProfile';
 import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
-import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
+import usePageView from '../../hooks/usePageView';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -42,6 +37,8 @@ const Home = () => {
   const [prof, setProfile] = useState<Profile | null>(null);
   const [customLoading, setCustomLoading] = useState<boolean>(true);
   const isProfileExists = useAppSelector(state => state.misc.isProfileExists);
+
+  usePageView();
   const handleEscapeKey: (this: Document, ev: KeyboardEvent) => any = event => {
     if (event.key.toLowerCase() === 'escape') {
       // code to close modal or perform other action

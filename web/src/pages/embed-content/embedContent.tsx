@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyledEmbedContent } from './embedContent.styles';
+import usePageView from '../../hooks/usePageView';
 
 const EmbedContent = () => {
+  usePageView();
   return (
     <StyledEmbedContent>
       <div>

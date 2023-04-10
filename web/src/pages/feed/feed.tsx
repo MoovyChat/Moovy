@@ -13,6 +13,7 @@ import NotFound from '../notFound/notFound';
 import { ViewportList } from 'react-viewport-list';
 import { useAppSelector } from '../../redux/hooks';
 import { useFetchMoreFeed } from '../../hooks/useFetchMoreFeed';
+import usePageView from '../../hooks/usePageView';
 
 const Feed = () => {
   const user = useAppSelector(state => state.user);
@@ -36,6 +37,8 @@ const Feed = () => {
     cursor,
     setCursor,
   );
+
+  usePageView();
 
   // Scroll handler.
   const handleScroll: UIEventHandler<HTMLDivElement> = e => {

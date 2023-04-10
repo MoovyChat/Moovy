@@ -6,8 +6,10 @@ import React, { useEffect } from 'react';
 
 import { CURRENT_DOMAIN } from '../../constants';
 import { Helmet } from 'react-helmet';
+import usePageView from '../../hooks/usePageView';
 
 const CookiePolicy: React.FC = () => {
+  usePageView();
   return (
     <PrivacyPolicyWrapper>
       <Helmet>

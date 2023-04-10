@@ -28,6 +28,7 @@ import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 import { sliceSetUserNickName } from '../../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom';
+import usePageView from '../../hooks/usePageView';
 
 type FormDataType = {
   value: string;
@@ -118,6 +119,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     config: { duration: 500 },
   });
 
+  usePageView();
   useEffect(() => {
     const timeOut = setTimeout(() => {
       setCurrentIndex(index);

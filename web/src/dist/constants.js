@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.BUY_ME_A_COFFEE = exports.PATREON = exports.INSTAGRAM_LINK = exports.TIKTOK_LINK = exports.TWITTER_LINK = exports.DISCORD_INVITE_LINK = exports.EXTENSION_URL = exports.EXT_URL = exports.EXT_ID = exports.serverUrl = exports.wsUrl = exports.CUSTOM_DOMAIN = exports.CURRENT_DOMAIN = exports.__prod__ = exports.Fonts = exports.popupStates = exports.textMapTypes = exports.isServer = exports.themes = void 0;
+exports.G_TRACKING_ID = exports.BUY_ME_A_COFFEE = exports.PATREON = exports.INSTAGRAM_LINK = exports.TIKTOK_LINK = exports.TWITTER_LINK = exports.DISCORD_INVITE_LINK = exports.EXTENSION_URL = exports.EXT_URL = exports.EXT_ID = exports.serverUrl = exports.wsUrl = exports.CUSTOM_DOMAIN = exports.CURRENT_DOMAIN = exports.__prod__ = exports.Fonts = exports.popupStates = exports.textMapTypes = exports.isServer = exports.themes = void 0;
 exports.themes = {
     LIGHT: 'LIGHT',
     DARK: 'DARK'
@@ -46,9 +46,10 @@ exports.serverUrl = exports.__prod__
 exports.EXT_ID = 'ilkpekdilkpahngoeanmpnkegideejip';
 exports.EXT_URL = "chrome-extension://" + exports.EXT_ID;
 exports.EXTENSION_URL = "https://chrome.google.com/webstore/detail/moovy-chat/" + exports.EXT_ID;
-exports.DISCORD_INVITE_LINK = 'https://discord.gg/fndxsG7VcB';
+exports.DISCORD_INVITE_LINK = 'https://discord.gg/gJP3NQq9gB';
 exports.TWITTER_LINK = 'https://twitter.com/MoovyChat';
 exports.TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
 exports.INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
-exports.PATREON = 'https://www.patreon.com/MoovyChatLtd';
+exports.PATREON = 'https://www.patreon.com/MoovyChat';
 exports.BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
+exports.G_TRACKING_ID = 'G-R7B18C6XQ2';

@@ -7,6 +7,7 @@ import EmptyPage from '../../components/empty-page/emptyPage';
 import { Helmet } from 'react-helmet';
 import TitleCard from './titleCard';
 import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
+import usePageView from '../../hooks/usePageView';
 
 const ShowsCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,7 @@ const ShowsCatalog = () => {
     pause: isServer(),
   });
 
+  usePageView();
   useMemo(() => {
     const { data, error, fetching } = paginatedTitles;
     if (error) console.log(error);

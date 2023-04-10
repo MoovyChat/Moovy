@@ -10,6 +10,7 @@ import Loading from '../loading/loading';
 import TitleCard from './titleCard';
 import _ from 'lodash';
 import { useFetchMoreTitles } from '../../hooks/useFetchMoreTitles';
+import usePageView from '../../hooks/usePageView';
 
 const MoviesCatalog = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -19,7 +20,7 @@ const MoviesCatalog = () => {
     variables: { type: 'movie', first: 15, after: '' },
     pause: isServer(),
   });
-
+  usePageView();
   useMemo(() => {
     const { data, error, fetching } = paginatedTitles;
     if (error) console.log(error);
