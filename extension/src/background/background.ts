@@ -161,9 +161,17 @@ chrome.runtime.onMessageExternal.addListener(
       _sendResponse({ loggedIn: true });
     }
 
+      // Check if the received message is the one we expect ('checkExtension')
+    if (message.message === 'checkExtension') {
+      // Send a response back to the sender indicating that the extension is installed and enabled
+      _sendResponse({ message: 'extensionInstalled' });
+    }
+
+    // Return true to keep the message channel open for asynchronous responses (if needed)
     return true;
   }
 );
+
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_DOMAIN') {
@@ -289,6 +297,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 });
+
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo) => {
   // Check if the URL of the tab has changed
