@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 
-const algorithm = 'aes-256-cbc';
+const algorithm = 'aes-256-gcm';
 const key = crypto.randomBytes(32);
-const iv = crypto.randomBytes(16);
+const iv = Buffer.alloc(16);;
 
 export const encrypt = (
   text: string

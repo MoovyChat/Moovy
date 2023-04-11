@@ -75,14 +75,14 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const corsOptions = {
     origin: [
-      process.env.CORS_ORIGIN as string,
+      process.env.CORS_ORIGIN,
       'https://server.moovychat.com/graphql',
       'https://www.moovychat.com',
       'ws://server.moovychat.com/graphql',
       'wss://server.moovychat.com/graphql',
       'https://www.netflix.com',
       'chrome-extension://ilkpekdilkpahngoeanmpnkegideejip',
-      process.env.REDIS_URL as string,
+      process.env.REDIS_URL,
     ],
     credentials: true,
   };
@@ -103,7 +103,7 @@ const main = async () => {
         secure: __prod__, // cookie only works in https.
         domain: __prod__ ? '.moovychat.com' : undefined,
       },
-      secret: process.env.SESSION_SECRET as string,
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
     })

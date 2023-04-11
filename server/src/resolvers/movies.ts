@@ -20,7 +20,7 @@ import { Users } from '../entities/Users';
 import { MoreThan } from 'typeorm';
 import { LIKES_AND_COMMENT } from '../constants';
 import { MovieStats } from '../entities/MovieStats';
-import { MovieConnection } from '../connections';
+import { MovieCommentsConnection, MovieConnection } from '../connections';
 import { PageInfo } from '../pagination';
 import { Title } from '../entities/Title';
 
@@ -193,7 +193,6 @@ export class MovieResolver {
     time: string,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
-    // const totalCommentCount = await Comment.count({ where: { movieId: mid } });
     const query = conn
       .getRepository(Comment)
       .createQueryBuilder('comment')
@@ -227,13 +226,64 @@ export class MovieResolver {
     };
   }
 
+  @Query(() => MovieCommentsConnection)
+  async getCommentsOfTheMovieConnection(
+    @Arg('mid') mid: string,
+    @Arg('first', () => Int) first: number,
+    @Arg('after', () => String, { nullable: true }) after: string
+  ): Promise<MovieCommentsConnection> {
+    const query = conn
+      .getRepository(Comment)
+      .createQueryBuilder('c')
+      .innerJoinAndSelect(
+        'c.movie',
+        'movie',
+        'movie.id = c.movieId'
+      )
+      .where('c.movieId = :mid', { mid });
+    const totalCount = await query.getCount();
+    // If `after` cursor is provided, filter replies by cursor
+    if (after) {
+      query.andWhere('c.updatedAt < :cursor', { cursor: new Date(after) });
+    }
+
+    // Get `first` number of replies, plus 1 to check for next page
+    const comments = await query
+      .orderBy('c.updatedAt', 'DESC')
+      .take(first + 1)
+      .getMany();
+
+    const nodes = comments.slice(0, first);
+    const hasNextPage = comments.length > first;
+    const endCursor =
+      comments.length === 0
+        ? String(totalCount)
+        : String(comments[comments.length - 1].updatedAt);
+    const edges = nodes.map((node) => ({
+      node,
+      cursor: String(node.updatedAt),
+    }));
+
+    const pageInfo: PageInfo = {
+      endCursor,
+      hasNextPage,
+    };
+
+    return {
+      totalCount,
+      pageInfo,
+      edges,
+      nodes,
+    };
+  }
+
   @Query(() => MovieCommentObject)
   async getMovieComments(
     @Arg('id') id: string,
     @Arg('limit', () => Int) limit: number,
     @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<MovieCommentObject> {
-    const query = await conn
+    const query = conn
       .getRepository(Comment)
       .createQueryBuilder('comment')
       .where('comment.movieId = :id', { id });

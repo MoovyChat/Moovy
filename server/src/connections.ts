@@ -85,3 +85,15 @@ export class MovieConnection {
   @Field(() => [MovieEdge])
   edges: MovieEdge[];
 }
+
+@ObjectType()
+export class MovieCommentsConnection {
+  @Field(() => Int)
+  totalCount: number;
+  @Field(() => PageInfo)
+  pageInfo: PageInfo;
+  @Field(() => [Comment])
+  nodes: Comment[];
+  @Field(() => [CommentEdge])
+  edges: CommentEdge[];
+}
