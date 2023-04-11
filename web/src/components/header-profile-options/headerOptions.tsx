@@ -1,13 +1,13 @@
 /// <reference types="chrome"/>
 import { EXT_ID, isServer } from '../../constants';
 import { MdOutlineExitToApp, MdPerson, MdSync } from 'react-icons/md';
-import React, { MouseEventHandler } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   useGetUserFullNameQuery,
   useLogoutMutation,
 } from '../../generated/graphql';
 
+import { MouseEventHandler } from 'react';
 import { StyledHeaderOptions } from './headerOptions.styles';
 import { sliceResetUser } from '../../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom';

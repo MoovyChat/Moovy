@@ -12,14 +12,12 @@ import { useParams } from 'react-router-dom';
 
 const SearchPeople = () => {
   const { search } = useParams();
-  const [page, setPage] = useState<number>(1);
-  const [lastPage, setLastPage] = useState<number>(1);
   const [people, setPeople] = useState<Users[]>([]);
   const [{ data, fetching, error }] = useSearchPeopleQuery({
     variables: {
       search: search!,
-      page: page,
-      limit: 10,
+      page: 1,
+      limit: 20,
     },
   });
 
@@ -28,8 +26,6 @@ const SearchPeople = () => {
     if (error) console.log(error);
     if (data && !fetching) {
       const _data = data.searchPeople;
-      const _lastPage = _data?.lastPage!;
-      setLastPage(() => _lastPage);
       const _people = _data?.people!;
       setPeople(() => _people);
     }
@@ -47,7 +43,7 @@ const SearchPeople = () => {
           href={`${CURRENT_DOMAIN}/search/${search}/people}`}
         />
       </Helmet>
-      {people && people.map(user => <PeopleCard user={user} />)}
+      {people && people.map(user => user && <PeopleCard key={user.id} user={user} />)}
     </StyledSearchPeople>
   );
 };

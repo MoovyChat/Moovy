@@ -1,24 +1,16 @@
 /// <reference types="chrome"/>
 import { CURRENT_DOMAIN, EXT_ID } from '../../constants';
-import {
-  GoogleAuthProvider,
-  getAuth,
-  getRedirectResult,
-  signInWithRedirect,
-} from 'firebase/auth';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import {
   Users,
   useCreateUserMutation,
   useLoginMutation,
-  useMeQuery,
 } from '../../generated/graphql';
 
 import { Helmet } from 'react-helmet';
 import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { StyledGoogleLogin } from './google-log-in.styles';
-import { app } from '../../firebase';
 import { googleSignIn } from './login';
 import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';

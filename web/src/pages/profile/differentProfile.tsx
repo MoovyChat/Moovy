@@ -57,7 +57,7 @@ const DifferentProfile = () => {
     }
   }, [fetching, data, error, id]);
 
-  if (fetching) <Loading />;
+  if (fetching) return <Loading />;
   if (error) {
     return <NotFound />;
   }

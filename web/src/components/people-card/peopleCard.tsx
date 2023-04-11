@@ -20,7 +20,7 @@ const PeopleCard: React.FC<props> = ({ user }) => {
           className="name"
           onClick={e => {
             e.stopPropagation();
-            navigate(`/profile/${user.nickname}`);
+            navigate(`/home/profile/${user.nickname}`);
           }}
         >
           {user.name}

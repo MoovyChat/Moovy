@@ -162,7 +162,7 @@ const BasicInfo = () => {
                 className="sm"
                 onClick={e => {
                   e.stopPropagation();
-                  navigate(`/activity/${user?.nickname}/history`);
+                  navigate(`/home/activity/${user?.nickname}/history`);
                 }}
               >
                 Show more
@@ -189,7 +189,7 @@ const BasicInfo = () => {
                 className="sm"
                 onClick={e => {
                   e.stopPropagation();
-                  navigate(`/activity/${user?.nickname}/favorites`);
+                  navigate(`/home/activity/${user?.nickname}/favorites`);
                 }}
               >
                 Show more
@@ -216,7 +216,7 @@ const BasicInfo = () => {
                 className="sm"
                 onClick={e => {
                   e.stopPropagation();
-                  navigate(`/activity/${user?.nickname}/liked`);
+                  navigate(`/home/activity/${user?.nickname}/liked`);
                 }}
               >
                 Show more

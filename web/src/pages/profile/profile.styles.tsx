@@ -8,7 +8,8 @@ export const ProfileParent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
   .top {
     position: relative;
     width: 100%;

@@ -18,12 +18,10 @@ import { useAppSelector } from '../../redux/hooks';
 import { useFetchRepliesOfReply } from '../../hooks/useFetchRepliesOfReply';
 import { useParams } from 'react-router-dom';
 import { withUrqlClient } from 'next-urql';
+import usePageView from '../../hooks/usePageView';
 
 const ReplyThread = () => {
   const { id } = useParams();
-  useEffect(() => {
-    document.title = 'Reply - Moovy';
-  }, []);
   const userRef = useRef<Users | null>(null);
   const loggedInUser = useAppSelector(state => state.user);
   const [page, setPage] = useState<number>(1);
@@ -40,6 +38,8 @@ const ReplyThread = () => {
     },
     pause: isServer(),
   });
+
+  usePageView();
 
   const [, setReplyLike] = useSetReplyLikeMutation();
 
