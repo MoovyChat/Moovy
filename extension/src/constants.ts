@@ -16,7 +16,7 @@ export const MOOVY_URL = __prod__
   ? 'https://www.moovychat.com'
   : 'http://localhost:3000';
 export const EXT_URL = `chrome-extension://${EXT_ID}`;
-export const DISCORD_INVITE_LINK = 'https://discord.gg/gJP3NQq9gB';
+export const DISCORD_INVITE_LINK = 'https://discord.gg/apfEFdd3hH';
 export const TWITTER_LINK = 'https://twitter.com/MoovyChat';
 export const TIKTOK_LINK = 'https://www.tiktok.com/@moovychat?lang=en';
 export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
