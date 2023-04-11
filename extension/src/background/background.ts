@@ -4,8 +4,7 @@ import {
   type SeasonInfo,
 } from '../generated/graphql';
 import {
-  getDomain,
-  getIdFromNetflixURL,
+  getDomain
 } from '../contentScript/contentScript.utils';
 import {
   getStoredUserLoginDetails,
@@ -152,6 +151,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   return true;
 });
 
+// https://developer.chrome.com/docs/extensions/mv3/messaging/#external-webpage
 // Communication with the external websites.
 chrome.runtime.onMessageExternal.addListener(
   (message, _sender, _sendResponse) => {
@@ -214,29 +214,6 @@ chrome.tabs.onCreated.addListener(() => {
 });
 // Listeners
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'NEED_ID') {
-    chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      async (tabs) => {
-        const tab = tabs[0];
-        const { url } = tab;
-        if (url) {
-          const id = await getIdFromNetflixURL(url);
-          if (!id) {
-            return;
-          }
-          setTimeout(() => {
-            sendResponse({ id });
-          }, 1);
-        }
-      }
-    );
-    return true;
-  }
-
   if (request.type === 'REQUEST_MOVIE_INFO') {
     if (sender.tab) {
       const tabId = sender.tab?.id;
@@ -303,12 +280,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // From content script
   if (sender.tab) {
     switch (request.type) {
-      case 'GET_USER':
-        getStoredUserLoginDetails().then((res) => {
-          sendResponse(res);
-        });
-        break;
       case requestTypes.REFETCH_USER:
+      case 'GET_USER':
         getStoredUserLoginDetails().then((res) => {
           sendResponse(res);
         });
