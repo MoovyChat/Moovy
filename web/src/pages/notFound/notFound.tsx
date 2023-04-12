@@ -1,3 +1,4 @@
+import ChildHeader from '../../components/childHeader/childHeader';
 import { Helmet } from 'react-helmet';
 import { ReactComponent as Moovy } from '../../svgs/moovy-white.svg';
 import { NotFoundParent } from './notFound.styles';
@@ -16,6 +17,7 @@ const NotFound = () => {
         <title>{`404: Not Found`}</title>
         <meta name="description" content={`404: Not Found`} />
       </Helmet>
+      <ChildHeader className='error' text='Not Found'/>
       <div className="bg">
         <Moovy className="bg-img" />
       </div>

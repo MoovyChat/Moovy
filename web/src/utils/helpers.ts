@@ -1,10 +1,5 @@
-// Importing DOMPurify and HtmlParser to clean and parse HTML text
-// Importing lazy from React to use lazy loading for components
-// Importing textMap and textMapTypes from interfaces and constants files
-
 import DOMPurify from 'dompurify';
 import HtmlParser from 'react-html-parser';
-import { lazy } from 'react';
 import { textMap } from './interfaces';
 import { textMapTypes } from '../constants';
 
@@ -174,3 +169,5 @@ export const randomUserNameGenerator = (nickname: string) => {
   const padding = Array(paddingLength).fill('0').join('');
   return `${truncatedNickname}${padding}${randomNumber}`;
 };
+
+

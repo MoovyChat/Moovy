@@ -21,7 +21,7 @@ const ChildHeader: React.FC<props> = ({ text, className, children }) => {
   // Define a click handler for the back button.
   const backButtonHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
-    navigate(-1); // Navigate back to the previous page.
+    if(history.state !== null ) navigate(-1); // Navigate back to the previous page.
   };
 
   // Render the ChildHeader component.

@@ -301,7 +301,9 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
               dispatch(sliceSetProfile(upsertData as Profile));
               dispatch(sliceSetUserNickName(formData.userName.value));
             });
-            navigate('/home');
+            window.location.replace('/home');
+            // navigate('/home');
+            
           }
         }
         

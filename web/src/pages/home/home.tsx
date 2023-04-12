@@ -1,5 +1,6 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
+import { Path, useNavigate } from 'react-router-dom';
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
@@ -23,7 +24,6 @@ import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { urqlClient } from '../../utils/urlClient';
-import { useNavigate } from 'react-router-dom';
 import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 
@@ -39,6 +39,7 @@ const Home = () => {
   const isProfileExists = useAppSelector(state => state.misc.isProfileExists);
 
   usePageView();
+
   const handleEscapeKey: (this: Document, ev: KeyboardEvent) => any = event => {
     if (event.key.toLowerCase() === 'escape') {
       // code to close modal or perform other action

@@ -23,11 +23,11 @@ const App = () => {
   const navigate = useNavigate();
   const theme = useAppSelector(state => state.settings.theme);
   const isAuth = useAppSelector(state => state.user);
+    const [showLoading, setShowLoading] = useState(true);
 
   usePageView();
 
-  useMemo(() => {
-    if (isAuth && isAuth.id) return;
+  useEffect(() => {
     // Log any errors with fetching user data
     if (error) {
       console.log(error);
@@ -44,10 +44,14 @@ const App = () => {
         else navigate(location.pathname);
         localStorage.setItem('user', JSON.stringify(user));
       }
+      // Set the showLoading state to false after 300ms
+      setTimeout(() => {
+        setShowLoading(false);
+      }, 300);
     }
   }, [fetching, data, error]);
 
-  if (fetching) return <LogoLoading />;
+  if (showLoading) return <LogoLoading />;
 
   return (
     <ThemeProvider theme={theme === themes.DARK ? darkTheme : lightTheme}>

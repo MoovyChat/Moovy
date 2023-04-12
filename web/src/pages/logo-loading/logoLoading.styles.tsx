@@ -8,12 +8,12 @@ export const StyledLogoLoading = styled.div`
   align-items: center;
   flex-direction: column;
   .logo {
-    height: 200px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
     img {
-      height: 100%;
+      height: 100px;
     }
   }
 `;

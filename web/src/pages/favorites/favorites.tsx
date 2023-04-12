@@ -5,6 +5,7 @@ import ChildHeader from '../../components/childHeader/childHeader';
 import { FavoriteStyles } from './favorites.styles';
 import { Helmet } from 'react-helmet';
 import NavLinks from '../../components/nav-links/navLinks';
+import { useEffect } from 'react';
 import usePageView from '../../hooks/usePageView';
 
 const Favorites = () => {
