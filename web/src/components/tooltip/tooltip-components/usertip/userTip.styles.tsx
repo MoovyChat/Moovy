@@ -16,6 +16,7 @@ export const UserTipParent = styled.div<props>`
   background-image: url(${p => p.bg});
   background-size: cover;
   background-repeat: no-repeat;
+  background-size: 100% 100%;
   .container {
     display: flex;
     flex-direction: column;
@@ -24,7 +25,8 @@ export const UserTipParent = styled.div<props>`
     position: relative;
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(5px) grayscale(30%) brightness(60%);
+    backdrop-filter: blur(5px) brightness(100%) contrast(0.4);
+    color: white;
     .first {
       display: flex;
       justify-content: space-evenly;

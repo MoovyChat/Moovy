@@ -24,7 +24,7 @@ root &&
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistedStore}>
           <React.Fragment>
-            <RouterProvider router={router} fallbackElement={<LogoLoading />}/>
+            <RouterProvider router={router} />
           </React.Fragment>
         </PersistGate>
       </Provider>
