@@ -38,6 +38,9 @@ export const UserTipParent = styled.div<props>`
         border: 1px solid black;
         border-radius: 50%;
         box-shadow: 0 0 10px black;
+        :hover {
+          cursor: pointer;
+        }
       }
       .text {
         position: flex;
@@ -47,6 +50,10 @@ export const UserTipParent = styled.div<props>`
         .username {
           font-weight: 600;
           font-size: 1rem;
+          :hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
         }
         .joined {
           position: flex;

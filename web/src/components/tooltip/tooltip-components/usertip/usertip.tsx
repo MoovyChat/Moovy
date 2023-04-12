@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { MouseEventHandler, useMemo, useState } from 'react';
 import { Users, useGetUserQuery } from '../../../../generated/graphql';
 
 import FollowButton from '../../../follow-button/followButton';
@@ -7,12 +7,14 @@ import ProfilePic from '../../../profilePic/profilePic';
 import { UserTipParent } from './userTip.styles';
 import { getShortDateFormat } from '../../../../utils/helpers';
 import { isServer } from '../../../../constants';
+import { useNavigate } from 'react-router-dom';
 
 type props = {
   userId: string;
 };
 const UserTip: React.FC<props> = ({ userId }) => {
   const [user, setUser] = useState<Users | null>(null);
+  const navigate = useNavigate();
   const [getUser] = useGetUserQuery({
     variables: { uid: userId! },
     pause: isServer(),
@@ -25,17 +27,24 @@ const UserTip: React.FC<props> = ({ userId }) => {
       setUser(() => _data);
     }
   }, [getUser]);
+
+  const navigateUser:MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    navigate(`/home/profile/${user?.nickname}`);
+  }
   if (getUser.fetching) return <Loading />;
   if (getUser.error) return <>Error</>;
   return (
     <UserTipParent bg={user?.bg!}>
       <div className="container">
         <div className="first">
-          <div className="pic">
+          <div className="pic" onClick={navigateUser}>
             <ProfilePic src={user?.photoUrl!} tooltip={true} />
           </div>
           <div className="text">
-            <div className="username">@{user?.nickname!}</div>
+            <div className="username" onClick={navigateUser}>
+              @{user?.nickname!}
+            </div>
             <div className="joined">{getShortDateFormat(user?.joinedAt!)}</div>
           </div>
         </div>

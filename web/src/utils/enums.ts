@@ -11,6 +11,7 @@ export enum DIRECTION {
 
 export enum TOOLTIP {
   USER = 'USER',
+  MESSAGE = 'MESSAGE'
 }
 export enum FOCUS_WINDOW {
   EMOJI = 'EMOJI',

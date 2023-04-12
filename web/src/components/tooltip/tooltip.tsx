@@ -1,6 +1,7 @@
 import { DIRECTION, TOOLTIP } from '../../utils/enums';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import NormalText from './tooltip-components/normalText/normalText';
 import { ToolTipParent } from './tooltip.styles';
 import UserTip from './tooltip-components/usertip/usertip';
 
@@ -34,6 +35,8 @@ const Tooltip: React.FC<props> = ({
     switch (message) {
       case TOOLTIP.USER:
         return <UserTip userId={data as string} />;
+      case TOOLTIP.MESSAGE:
+        return <NormalText data={data as string}/>;
       default:
         return <div></div>;
     }

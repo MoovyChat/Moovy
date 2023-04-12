@@ -81,7 +81,15 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt="profile" />
+            <Tooltip
+              height="50px"
+              message={TOOLTIP.MESSAGE}
+              width="100px"
+              data="Empty Slot"
+              dir={DIRECTION.BOTTOM}
+            >
+              <Image src={MoovyIcon} alt="profile" />
+            </Tooltip>
           )}
         </div>
         <div className="two profile-box">
@@ -103,7 +111,15 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt="profile" />
+            <Tooltip
+              height="50px"
+              message={TOOLTIP.MESSAGE}
+              width="100px"
+              data="Empty Slot"
+              dir={DIRECTION.BOTTOM}
+            >
+              <Image src={MoovyIcon} alt="profile" />
+            </Tooltip>
           )}
         </div>
         <div className="three profile-box">
@@ -125,7 +141,15 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               />
             </Tooltip>
           ) : (
-            <Image src={MoovyIcon} alt="profile" />
+            <Tooltip
+              height="50px"
+              message={TOOLTIP.MESSAGE}
+              width="100px"
+              data="Empty Slot"
+              dir={DIRECTION.BOTTOM}
+            >
+              <Image src={MoovyIcon} alt="profile" />
+            </Tooltip>
           )}
         </div>
       </div>
