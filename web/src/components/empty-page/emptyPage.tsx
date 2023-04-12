@@ -1,13 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { CSSTransition } from 'react-transition-group';
 import { EmptyParent } from './emptyPage.styles';
 import Moovy from '../../svgs/moovy-text.png';
+import MoovyBlack from '../../svgs/moovy-black-text.png';
+import { useTheme } from 'styled-components';
 
 type props = {
   msg: string;
 };
 const EmptyPage: React.FC<props> = ({ msg }) => {
+  const theme = useTheme();
+  const [src, setSrc] = useState<string>(Moovy);
   const mounted = useRef<boolean>(false);
   const parentRef = useRef<HTMLDivElement | null>(null);
   // Check if the component is mounted or not for animation purposes.
@@ -17,6 +21,15 @@ const EmptyPage: React.FC<props> = ({ msg }) => {
       mounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (theme) {
+      const themeType = (theme as any).themeType;
+      if (themeType === 'dark') setSrc(() => Moovy);
+      else setSrc(() => MoovyBlack);
+    }
+  }, [theme]);
+    
   return (
     <CSSTransition
       in={mounted.current}
@@ -26,7 +39,7 @@ const EmptyPage: React.FC<props> = ({ msg }) => {
     >
       <EmptyParent>
         <div className="logo">
-          <img src={Moovy} alt="Moovy" />
+          <img src={src} alt="Moovy" />
         </div>
         <div className="text">{msg}</div>
       </EmptyParent>
