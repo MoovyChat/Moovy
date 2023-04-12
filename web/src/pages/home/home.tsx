@@ -1,6 +1,5 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
-import { Path, useNavigate } from 'react-router-dom';
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
@@ -24,6 +23,7 @@ import { ThemeProvider } from 'styled-components';
 import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { urqlClient } from '../../utils/urlClient';
+import { useNavigate } from 'react-router-dom';
 import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 

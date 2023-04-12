@@ -1,10 +1,11 @@
 import './registerServiceWorker.ts';
 
+import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
 import { persistedStore, store } from './redux/store';
 
-import GoogleAnalytics from './components/google-analytics/googleAnalytics';
+import LogoLoading from './pages/logo-loading/logoLoading.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
@@ -16,14 +17,14 @@ const rootElement = document.getElementById('root');
 
 const root = rootElement && ReactDOMClient.createRoot(rootElement);
 
+
 root &&
   root.render(
     <React.StrictMode>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistedStore}>
           <React.Fragment>
-            <GoogleAnalytics />
-            <RouterProvider router={router} />
+            <RouterProvider router={router} fallbackElement={<LogoLoading />}/>
           </React.Fragment>
         </PersistGate>
       </Provider>
