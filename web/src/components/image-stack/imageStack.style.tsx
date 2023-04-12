@@ -29,8 +29,8 @@ export const ImageStackParent = styled.div`
       border-radius: 50%;
       border: 2px solid;
       img {
-        width: 100%;
-        height: 100%;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
       }
     }
