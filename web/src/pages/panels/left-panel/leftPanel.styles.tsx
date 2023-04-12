@@ -37,10 +37,10 @@ export const LeftParent = styled.div`
   }
   .options {
     width: 100%;
-    height: 60%;
+    min-height: 60%;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    gap: 10px;
     align-items: center;
     .option {
       display: flex;

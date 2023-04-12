@@ -160,7 +160,6 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-
       <StyledLinks>
         <div
           onClick={e => {

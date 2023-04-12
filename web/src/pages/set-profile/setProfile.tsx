@@ -286,28 +286,25 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
           bio: formData.bio.value,
         },
       }).then(res => {
-        const error = res.error;
-        const _data = res.data;
+        const {error, data} = res;
         if (error) {
           setSuccess(() => false);
           setError(() => true);
         }
-        const profile = _data?.upsertProfile;
-
-        if (profile) {
-          setSuccess(() => true);
-          setError(() => false);
-          batch(() => {
-            dispatch(sliceSetIsProfileExists(true));
-            dispatch(sliceSetProfile(profile));
-            dispatch(sliceSetUserNickName(formData.userName.value));
-          });
-          navigate('/home');
-        } else {
-          setSuccess(() => false);
-          setError(() => true);
-          dispatch(sliceSetIsProfileExists(false));
+        if (data) {
+          const upsertData = data.upsertProfile;
+          if (upsertData) {
+            setSuccess(() => true);
+            setError(() => false);
+            batch(() => {
+              dispatch(sliceSetIsProfileExists(true));
+              dispatch(sliceSetProfile(upsertData as Profile));
+              dispatch(sliceSetUserNickName(formData.userName.value));
+            });
+            navigate('/home');
+          }
         }
+        
       });
     }
   };

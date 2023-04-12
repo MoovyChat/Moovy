@@ -1,7 +1,6 @@
 import { CURRENT_DOMAIN, isServer, themes } from '../../constants';
 import { HomeParent, PanelsParent } from './home.styles';
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
-import { useEffect, useMemo, useState } from 'react';
 import { darkThemeForHome, lightThemeForHome } from '../../utils/themes/theme';
 import {
   sliceSetIsPopupOpened,
@@ -9,6 +8,7 @@ import {
   sliceSetSelectedElement,
 } from '../../redux/slices/popupSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useEffect, useMemo, useState } from 'react';
 
 import CenterPanel from '../panels/center-panel/centerPanel';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
@@ -24,8 +24,8 @@ import { batch } from 'react-redux';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
-import { withUrqlClient } from 'next-urql';
 import usePageView from '../../hooks/usePageView';
+import { withUrqlClient } from 'next-urql';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -72,18 +72,18 @@ const Home = () => {
     const { data, fetching } = profile;
     if (!fetching && data) {
       const _data = data.getUserProfile;
-
-      setProfile(_data as Profile);
-
-      if (!_data) dispatch(sliceSetIsProfileExists(false));
-      else if (
-        _data.userId !== '' &&
-        _data.fullname !== '' &&
-        _data.userId !== null &&
-        _data.fullname != null
-      ) {
-        dispatch(sliceSetIsProfileExists(true));
-      } else dispatch(sliceSetIsProfileExists(false));
+      if(_data){
+        setProfile(_data as Profile);
+        if (
+          _data.userId !== '' &&
+          _data.fullname !== '' &&
+          _data.userId !== null &&
+          _data.fullname != null
+        ) {
+          dispatch(sliceSetIsProfileExists(true));
+        }
+      }
+     
     }
   }, [profile, user]);
 
