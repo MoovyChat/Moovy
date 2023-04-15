@@ -24,6 +24,7 @@ import Moovy from '../../svgs/moovy-text-logo-black.png';
 import ProfilePic from '../../components/profilePic/profilePic';
 import { RegistrationSteps } from './steps-help';
 import { batch } from 'react-redux';
+import { debounce } from 'lodash';
 import { sliceSetIsProfileExists } from '../../redux/slices/miscSlice';
 import { sliceSetProfile } from '../../redux/slices/userProfileSlice';
 import { sliceSetUserNickName } from '../../redux/slices/userSlice';
@@ -129,6 +130,23 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     };
   }, [index]);
 
+  const debouncedIsUserNameExists = debounce(
+    (value: string) => {
+      return isUserNameExists({ text: value })
+        .then(res => {
+          const _data = res.data;
+          const isExists = _data?.isUserNameExists;
+          if (isExists) return `${value} already exists`;
+          return '';
+        })
+        .catch(error => {
+          console.error(error);
+          return '';
+        });
+    },
+    500 // Adjust the delay time as needed
+  );
+
   const validateField = (name: string, value: string, regex: RegExp) => {
     switch (name) {
       case 'userName':
@@ -138,17 +156,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
         } else if (match1[2]) {
           return Promise.resolve(`Invalid ${name}: '${match1[2]}' not allowed`);
         } else {
-          return isUserNameExists({ text: value })
-            .then(res => {
-              const _data = res.data;
-              const isExists = _data?.isUserNameExists;
-              if (isExists) return `${value} already exists`;
-              return '';
-            })
-            .catch(error => {
-              console.error(error);
-              return '';
-            });
+          return debouncedIsUserNameExists(value);
         }
       case 'fullName':
       case 'gender':
@@ -201,7 +209,6 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       | HTMLInputElement
       | HTMLTextAreaElement
       | HTMLSelectElement
-      | HTMLInputElement
     >,
   ) => {
     const { name, value } = event.target;
@@ -216,6 +223,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
       },
     }));
   };
+
   const handleSubmit = () => {
     const dobErrors = formData.dob.error;
     const genderErrors = formData.gender.error;
@@ -302,7 +310,6 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
               dispatch(sliceSetUserNickName(formData.userName.value));
             });
             window.location.replace('/home');
-            // navigate('/home');
             
           }
         }
