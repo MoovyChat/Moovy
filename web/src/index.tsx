@@ -1,17 +1,14 @@
 import './registerServiceWorker.ts';
 
-import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
 import { persistedStore, store } from './redux/store';
 
-import LogoLoading from './pages/logo-loading/logoLoading.js';
+import Main from './main';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import { router } from './utils/router';
 
 const rootElement = document.getElementById('root');
 
@@ -24,7 +21,7 @@ root &&
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistedStore}>
           <React.Fragment>
-            <RouterProvider router={router} />
+            <Main />
           </React.Fragment>
         </PersistGate>
       </Provider>
