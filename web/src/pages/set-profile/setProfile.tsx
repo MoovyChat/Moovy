@@ -108,7 +108,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     bio: {
       value: profile?.bio || '',
       error: '',
-      regex: /^.{0,150}$/,
+      regex: /^.{0,150}$/gm,
     },
   });
   const [currentIndex, setCurrentIndex] = useState<number>(index);
@@ -130,34 +130,8 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
     };
   }, [index]);
 
-  const debouncedIsUserNameExists = debounce(
-    (value: string) => {
-      return isUserNameExists({ text: value })
-        .then(res => {
-          const _data = res.data;
-          const isExists = _data?.isUserNameExists;
-          if (isExists) return `${value} already exists`;
-          return '';
-        })
-        .catch(error => {
-          console.error(error);
-          return '';
-        });
-    },
-    500 // Adjust the delay time as needed
-  );
-
-  const validateField = (name: string, value: string, regex: RegExp) => {
-    switch (name) {
-      case 'userName':
-        const match1 = regex.exec(value);
-        if (match1 === null) {
-          return Promise.resolve(`Invalid ${name}`);
-        } else if (match1[2]) {
-          return Promise.resolve(`Invalid ${name}: '${match1[2]}' not allowed`);
-        } else {
-          return debouncedIsUserNameExists(value);
-        }
+  const validateField = async  (name: string, value: string, regex: RegExp) => {
+    switch (name) {       
       case 'fullName':
       case 'gender':
       case 'bio':
@@ -203,6 +177,66 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
         return '';
     }
   };
+
+const validateUserName = async (name: string, value: string, regex: RegExp) => {
+  try {
+    const match1 = regex.exec(value);
+    if (match1 === null) {
+      return `Invalid ${name}`;
+    } else if (match1[2]) {
+      return `Invalid ${name}: '${match1[2]}' not allowed`;
+    } else {
+      const res = await isUserNameExists({ text: value });
+      const _data = res.data;
+      const isExists = _data?.isUserNameExists;
+      if (isExists) {
+         setFormData(prevFormData => ({
+           ...prevFormData,
+           userName: {
+             ...prevFormData.userName,
+             error: `${value} already exists`,
+           },
+         })); 
+      }else{
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          userName: {
+            ...prevFormData.userName,
+            error: '',
+          },
+        })); 
+      }
+      
+    }
+  } catch (error) {
+    console.log(error)
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      userName: {
+        ...prevFormData.userName,
+        error: '',
+      },
+    })); 
+    return '';
+  }
+};
+
+  const debouncedValidateUserName = debounce(validateUserName, 500);
+
+  const handleUserNameInput =  async (event: React.ChangeEvent<HTMLInputElement>) => {
+       const { name, value } = event.target;
+       let regex = (defaultFormData as Record<string, FormDataType>)[name]
+         .regex;
+        const error = await debouncedValidateUserName(name, value, regex);
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          [name]: {
+            value,
+            error,
+            regex: regex,
+          },
+        })); 
+  }
 
   const handleInputChange = async (
     event: React.ChangeEvent<
@@ -409,7 +443,7 @@ const SetProfile: React.FC<ProfieProps> = ({ profile }) => {
                   id="userName"
                   name="userName"
                   value={formData.userName.value}
-                  onChange={handleInputChange}
+                  onChange={handleUserNameInput}
                 />
               ) : currentIndex === 2 ? (
                 <StyledSelect
