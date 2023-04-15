@@ -29,8 +29,8 @@ export class Profile extends BaseEntity {
   @Column()
   dob: string;
 
-  @Field(() => String, { nullable: true })
-  @Column()
+  @Field(() => String, { nullable: true, defaultValue: '' })
+  @Column({ nullable: true, default: '' })
   bio: string;
 
   @Field(() => String, { nullable: true })

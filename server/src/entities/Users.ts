@@ -50,7 +50,7 @@ export class Users extends BaseEntity {
   @Column({
     nullable: true,
     default:
-      'https://firebasestorage.googleapis.com/v0/b/netflix-comments-357200.appspot.com/o/moovy-text-logo-white.png?alt=media&token=116dbe60-973c-4302-8402-ce1f3d0aab4a',
+      'https://firebasestorage.googleapis.com/v0/b/moovychat.appspot.com/o/moovy-text-logo-white%20(1).jpg?alt=media&token=42f9aaee-8ae3-4996-851c-090da4c10c77',
   })
   bg: string;
 
