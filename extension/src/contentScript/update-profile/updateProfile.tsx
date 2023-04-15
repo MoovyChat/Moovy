@@ -144,7 +144,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
     bio: {
       value: profile && profile.bio ? profile.bio : '',
       error: '',
-      regex: /^.{0,150}$/,
+      regex: /^.{0,150}$/gm,
     },
   });
 
