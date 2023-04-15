@@ -2,7 +2,7 @@
   "short_name": "MoovyChat",
   "name": "Moovy Chat",
   "description": "Enjoy the Streaming now with the Comments. Available for Netflix.",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "manifest_version": 3,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkytqfusvzuhsXy53QIiGy1CrMg2GksVqFRjtIJeU/NvyVc2/B6Ly8pdjUbQ1sHJyxqm0ueAjN5aug9NyEdWBgmXHMIlkxsnD2VYwyZ3CWGfksLeYl8WCRl3eUbWgshnz7AZbRFOb8KLzIGuYU3CRMDfs6EsoPENXIRIH44RfaWlA2U1m/SD7TNE8tYBePBLf7bNzPBWiZ3J6g5bG8gJBc/DUsshA66OXbbu1ypwxPIMPf0ZjIotppAZ7y+kTlt4sqV1lKoiREABwIoZX2P64nxHTgMxCGjbgYqnPYGtgUKDL6kfmg411QwWiGm16KwHgCsusMVXjCRPPmtybiINEQIDAQAB",
   "permissions": ["identity", "storage", "tabs", "scripting", "system.display"],
@@ -21,14 +21,14 @@
     {
       "resources": [
         "netflix.js",
-        "Moovy/moovy-black-text.svg",
-        "Moovy/moovy-black.svg",
-        "Moovy/moovyIcon.webp",
-        "Moovy/moovy.webp",
-        "Moovy/moovy-logo-black.webp",
-        "Moovy/moovy-logo-white.webp",
-        "Moovy/moovy-text-logo-white.webp",
-        "Moovy/moovy-text-logo-black.webp",
+        "moovy/moovy-black-text.svg",
+        "moovy/moovy-black.svg",
+        "moovy/moovyIcon.webp",
+        "moovy/moovy.webp",
+        "moovy/moovy-logo-black.webp",
+        "moovy/moovy-logo-white.webp",
+        "moovy/moovy-text-logo-white.webp",
+        "moovy/moovy-text-logo-black.webp",
         "patreon-word.webp"
       ],
       "matches": [
@@ -52,17 +52,17 @@
     "*://localhost/*"
   ],
   "icons": {
-    "16": "Moovy/moovyIcon_16.png",
-    "48": "Moovy/moovyIcon_48.png",
-    "128": "Moovy/moovyIcon_128.png"
+    "16": "moovy/moovyIcon_16.png",
+    "48": "Mmoovy/moovyIcon_48.png",
+    "128": "moovy/moovyIcon_128.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Quiet Chat",
     "default_icons": {
-      "16": "Moovy/moovyIcon_16.png",
-      "48": "Moovy/moovyIcon_48.png",
-      "128": "Moovy/moovyIcon_128.png"
+      "16": "moovy/moovyIcon_16.png",
+      "48": "moovy/moovyIcon_48.png",
+      "128": "moovy/moovyIcon_128.png"
     }
   },
   "oauth2": {

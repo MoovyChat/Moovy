@@ -127,7 +127,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
         /^([a-zA-Z0-9_-]{4,20})$|^.*?([\s+=!@#$%^&*(){}[\]:;"'<>,.?/\\|`~]).*?$/,
     },
     fullName: {
-      value: profile?.fullname as string,
+      value: profile && profile.fullname ? profile.fullname : '',
       error: '',
       regex: /^[a-zA-Z ]{2,30}$/,
     },
@@ -142,7 +142,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
       regex: /^\d{4}-\d{2}-\d{2}$/,
     },
     bio: {
-      value: profile?.bio as string,
+      value: profile && profile.bio ? profile.bio : '',
       error: '',
       regex: /^.{0,150}$/,
     },
@@ -394,10 +394,8 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
   const handleTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     e
   ) => {
-    console.log(e.key);
-    if (e.key === 'Enter' && e.shiftKey) {
-      e.stopPropagation();
-    } else if (
+    if (
+      (e.key === 'Enter' && e.shiftKey) ||
       (e.key >= 'a' && e.key <= 'z') ||
       (e.key >= 'A' && e.key <= 'Z')
     ) {
@@ -459,7 +457,7 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
         <FormContainer onSubmit={handleSubmit}>
           {steps.map((step, index) => (
             <StepContainer
-              key={index}
+              key={`${index}${accentColor}`}
               visible={index === currentStep}
               accentColor={accentColor}
             >
