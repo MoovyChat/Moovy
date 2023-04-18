@@ -11,9 +11,11 @@ export const StyledMiniCommentCard = styled.div<props>`
   max-height: ${p => (p.showMore ? p.cardHeight : '100px')};
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 2px 1px;
   transition: max-height 0.3s;
   cursor: pointer;
+  backdrop-filter: contrast(0.8);
+  border-radius: 8px;
+  overflow: hidden;
   .photo {
     align-self: flex-start;
     margin: 15px 5px 15px 15px;

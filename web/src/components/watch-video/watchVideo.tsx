@@ -1,6 +1,6 @@
-import { MdLocalMovies, MdOutlineLocalMovies } from 'react-icons/md';
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 
+import { MdOutlineLocalMovies } from 'react-icons/md';
 import { WatchVideoContainer } from './watchVideo.styles';
 
 type props = {
@@ -27,7 +27,10 @@ const WatchVideo: React.FC<props> = ({
     }
   };
   return (
-    <WatchVideoContainer onClick={onClickHandler} className={className}>
+    <WatchVideoContainer
+      onClick={onClickHandler}
+      className={className}
+    >
       <span>
         <MdOutlineLocalMovies size={20} />
       </span>

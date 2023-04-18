@@ -239,18 +239,6 @@ const CommentTemplate: React.FC<props> = ({
       />
 
       <div className="main-container" onScroll={handleScroll}>
-        {isReply && (
-          <MiniCommentCard
-            className="cc"
-            id={comment?.parentReplyId! as string}
-            type={
-              comment?.parentCommentId === comment?.parentReplyId
-                ? 'comment'
-                : 'reply'
-            }
-            extendData={true}
-          />
-        )}
         <div className="comment-container" ref={ref}>
           <div className="inner">
             <div className="comment-usr-detail">
@@ -332,6 +320,18 @@ const CommentTemplate: React.FC<props> = ({
                 </div>
               </div>
             </div>
+            {isReply && (
+              <MiniCommentCard
+                className="cc"
+                id={comment?.parentReplyId! as string}
+                type={
+                  comment?.parentCommentId === comment?.parentReplyId
+                    ? 'comment'
+                    : 'reply'
+                }
+                extendData={true}
+              />
+            )}
             <div className="comment-usr-msg">
               <div className="cm-us-xt" ref={messageRef}>
                 {formattedMsg.map((msg: textMap, index) =>

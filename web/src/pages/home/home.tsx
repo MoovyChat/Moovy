@@ -100,12 +100,6 @@ const Home = () => {
       theme={theme === themes.DARK ? darkThemeForHome : lightThemeForHome}
     >
       <GlobalStyles />
-      <Helmet>
-        <title>Moovy</title>
-        <meta name="description" content="Home" />
-        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
-      </Helmet>
-
       {isProfileExists ? (
         <HomeParent>
           <HomeHeader className="home-header" />
