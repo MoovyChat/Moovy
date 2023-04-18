@@ -29,7 +29,7 @@ const EmptyPage: React.FC<props> = ({ msg }) => {
       <EmptyParent>
         <div className="logo">
           <img
-            src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`}
+            src={`${EXT_URL}/moovy/moovy-text-logo-white.webp`}
             alt="Moovy"
           />
         </div>

@@ -24,7 +24,7 @@ const LogoLoading = () => {
   return (
     <StyledSplashScreen>
       <div className="logo">
-        <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`} alt="logo" />
+        <img src={`${EXT_URL}/moovy/moovy-text-logo-white.webp`} alt="logo" />
       </div>
       <div className="loading">
         <Loading />

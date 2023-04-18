@@ -108,7 +108,7 @@ const ChatTitle = () => {
     <ChatTitleParent className="chat-title">
       <div className="logo">
         <img
-          src={`${EXT_URL}/Moovy/moovyIcon.webp`}
+          src={`${EXT_URL}/moovy/moovyIcon.webp`}
           alt="logo"
           width="25"
           height="25"

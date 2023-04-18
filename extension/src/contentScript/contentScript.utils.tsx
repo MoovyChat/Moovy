@@ -25,7 +25,7 @@ export function getElementByDataUIA(
 
 export const getVideoTitleFromNetflixWatch = () => {
   let video_title = '';
-  let completeText: string[] = [];
+  const completeText: string[] = [];
   let mergedText = '';
   // Check if the data-uia is loaded.
   const videoTitleElement = getElementByDataUIA('video-title');
@@ -58,7 +58,7 @@ export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
       });
     }
     try {
-      let netflixId = parseInt(matchedGroup);
+      const netflixId = parseInt(matchedGroup);
       if (!isNaN(netflixId)) resolve(netflixId);
     } catch (e) {
       resolve(null);
@@ -68,7 +68,7 @@ export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
 };
 
 export const getDomain = (url: string) => {
-  let _url = new URL(url);
+  const _url = new URL(url);
   return _url.hostname;
 };
 

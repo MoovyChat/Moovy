@@ -53,7 +53,7 @@
   ],
   "icons": {
     "16": "moovy/moovyIcon_16.png",
-    "48": "Mmoovy/moovyIcon_48.png",
+    "48": "moovy/moovyIcon_48.png",
     "128": "moovy/moovyIcon_128.png"
   },
   "action": {

@@ -20,27 +20,30 @@ import { urqlClient } from '../../Utils/urqlClient';
 import { useAppSelector } from '../../redux/hooks';
 import { withUrqlClient } from 'next-urql';
 
-interface favTitles {
+type ImageType = string | null | undefined;
+type NumberType = number | null | undefined;
+
+interface FavTitles {
   __typename?: 'Movie' | undefined;
   id: string;
   name: string;
-  stills?: string | null | undefined;
-  thumbs?: string | null | undefined;
-  season?: string | null | undefined;
-  year?: number | null | undefined;
-  runtime?: number | null | undefined;
+  stills?: ImageType;
+  thumbs?: ImageType;
+  season?: ImageType;
+  year?: NumberType;
+  runtime?: NumberType;
   platformId: number;
   titleId: string;
-  parentTitleName?: string | null | undefined;
+  parentTitleName?: ImageType;
 }
 
 const ProfileWindow = () => {
   const userId = useAppSelector((state) => state.settings.popSlideUserId);
   const [userBasicInfo, setUserBasic] = useState<Users | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [favMovies, setFavMovies] = useState<favTitles[]>([]);
-  const [likedMovies, setLikedMovies] = useState<favTitles[]>([]);
-  const [visitedMovies, setVisitedMovies] = useState<favTitles[]>([]);
+  const [favMovies, setFavMovies] = useState<FavTitles[]>([]);
+  const [likedMovies, setLikedMovies] = useState<FavTitles[]>([]);
+  const [visitedMovies, setVisitedMovies] = useState<FavTitles[]>([]);
   const [dobInTime, setDOBInTime] = useState<string>('');
 
   const [userData] = useGetUserQuery({
@@ -114,7 +117,7 @@ const ProfileWindow = () => {
           />
 
           <div className="profile-pic">
-            <img src={userBasicInfo?.photoUrl as string} alt="dp" />
+            <img src={userBasicInfo?.photoUrl} alt="dp" />
           </div>
           <div className="name" onClick={goToProfile}>
             <div className="fullName p">{`${profile?.fullname}`}</div>

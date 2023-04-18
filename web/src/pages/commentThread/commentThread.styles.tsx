@@ -28,14 +28,16 @@ export const CommentThreadParent = styled.div<props>`
     justify-content: flex-start;
     align-items: center;
     .cc {
-      width: 90%;
-      margin: 10px 20px;
+      width: 98%;
+      margin: 5px 0px;
+      transform: scale(0.9);
+      float: right;
+      padding: 5px;
     }
     .comment-container {
       position: relative;
-      /* top: ${p => (p.isReply ? '27%' : '8%')}; */
       display: flex;
-      width: 90%;
+      width: 100%;
       flex-direction: column;
       .inner {
         position: relative;
@@ -44,18 +46,19 @@ export const CommentThreadParent = styled.div<props>`
         .comment-usr-detail {
           display: flex;
           align-items: center;
+          margin: 10px 0;
           .user-container {
             display: flex;
             width: 50%;
-            height: 100px;
+            height: 80px;
             align-items: center;
             padding-left: 20px;
             .user {
-              width: 55px;
-              height: 55px;
+              width: 50px;
+              height: 50px;
             }
             .name {
-              padding: 10px;
+              padding-left: 10px;
               font-size: 1.1em;
               font-weight: 550;
             }
@@ -63,7 +66,7 @@ export const CommentThreadParent = styled.div<props>`
           .options-container {
             display: flex;
             width: 50%;
-            height: 100px;
+            height: 80px;
             align-items: center;
             justify-content: flex-end;
 

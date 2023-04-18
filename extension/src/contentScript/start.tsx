@@ -1,3 +1,4 @@
+import { BOTTOMS_CONTROL, SKIP_BUTTON, isServerSide } from '../constants';
 import React, { useCallback, useEffect, useState } from 'react';
 import { User, filterType } from '../Utils/interfaces';
 import { addBorder, applyFilter } from './videoStyles/videoStyles.help';
@@ -23,7 +24,6 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import CommentButton from './commentButton/commentButton';
 import { StyledStart } from './start.styles';
 import { getVideoElement } from './contentScript.utils';
-import { isServerSide } from '../constants';
 import { sliceAddMovieId } from '../redux/slices/movie/movieSlice';
 import { sliceAddUser } from '../redux/slices/user/userSlice';
 import { urqlClient } from '../Utils/urqlClient';
@@ -31,11 +31,11 @@ import { useFetchMovie } from './hooks/useFetchMovie';
 import { useGetUserQuery } from '../generated/graphql';
 import { withUrqlClient } from 'next-urql';
 
-interface props {
+interface Props {
   userDetails?: User;
 }
 
-const Start: React.FC<props> = () => {
+const Start: React.FC<Props> = () => {
   const [u, setU] = useState<User | null>(null);
   const dispatch = useAppDispatch();
   const [videoElem, setVideoElem] = useState<HTMLVideoElement>();
@@ -48,7 +48,6 @@ const Start: React.FC<props> = () => {
   const [movieId, setMovieId] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any>();
   const [selectedFilters, setSelectedFilters] = useState<filterType[]>([]);
-  // const nodes = useAppSelector((state) => state.audioNodes);
   const [isBottomControlsVisible, setIsBottomControlsVisible] =
     useState<boolean>(false);
   const oldIntervalIds = useAppSelector((state) => state.misc.intervalIds);
@@ -94,11 +93,9 @@ const Start: React.FC<props> = () => {
           mutation.type === 'attributes' &&
           mutation.attributeName === 'style'
         ) {
-          const bottomControls = document.querySelector(
-            '.watch-video--bottom-controls-container'
-          ) as HTMLElement | null;
+          const bottomControls = document.querySelector(BOTTOMS_CONTROL);
           const skipButton = document.querySelector(
-            '.watch-video--skip-content-button'
+            SKIP_BUTTON
           ) as HTMLElement | null;
           if (skipButton && autoSkipValue) {
             skipButton.click();

@@ -81,6 +81,8 @@ const main = async () => {
       'ws://server.moovychat.com/graphql',
       'wss://server.moovychat.com/graphql',
       'https://www.netflix.com',
+      'http://localhost:4000',
+      'http://localhost:4000/graphql',
       'chrome-extension://ilkpekdilkpahngoeanmpnkegideejip',
       process.env.REDIS_URL,
     ],
