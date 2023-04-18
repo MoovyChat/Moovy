@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <Perimeter>
       <LogoBlock>
-        <img src={`${EXT_URL}/Moovy/moovyIcon.webp`} alt="logo" />
+        <img src={`${EXT_URL}/moovy/moovyIcon.webp`} alt="logo" />
       </LogoBlock>
       <HeaderBlock className="heading">{constants.title}</HeaderBlock>
     </Perimeter>

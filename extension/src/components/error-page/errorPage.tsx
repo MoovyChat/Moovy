@@ -40,7 +40,7 @@ const ErrorPage: React.FC<props> = ({ text }) => {
   return (
     <StyledErrorPage>
       <div className="logo">
-        <img src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`} alt="Moovy" />
+        <img src={`${EXT_URL}/moovy/moovy-text-logo-white.webp`} alt="Moovy" />
       </div>
       <div className="text">{text}</div>
       <div className="refetch" onClick={refetchUser}>

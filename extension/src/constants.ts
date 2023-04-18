@@ -53,3 +53,6 @@ export const fonts = {
   'Source Sans Pro': "'Source Sans Pro', sans-serif",
   Ubuntu: "'Ubuntu', sans-serif",
 };
+
+export const BOTTOMS_CONTROL = '.watch-video--bottom-controls-container';
+export const SKIP_BUTTON = '.watch-video--skip-content-button';

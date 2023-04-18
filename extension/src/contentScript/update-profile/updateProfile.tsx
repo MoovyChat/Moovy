@@ -442,12 +442,12 @@ const UpdateProfile: React.FC<props> = ({ profile }) => {
       <div className="logo">
         {themeContext.theme === 'dark' ? (
           <img
-            src={`${EXT_URL}/Moovy/moovy-text-logo-white.webp`}
+            src={`${EXT_URL}/moovy/moovy-text-logo-white.webp`}
             alt="Moovy"
           />
         ) : (
           <img
-            src={`${EXT_URL}/Moovy/moovy-text-logo-black.webp`}
+            src={`${EXT_URL}/moovy/moovy-text-logo-black.webp`}
             alt="Moovy"
           />
         )}
