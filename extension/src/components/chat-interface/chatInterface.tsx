@@ -14,6 +14,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import {
+  sliceResetPopUp,
+  sliceSetChatWindowSize,
+} from '../../redux/slices/settings/settingsSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
@@ -26,10 +30,10 @@ import MessageBox from '../../contentScript/messageBox/messageBox';
 import PopSlide from '../pop-slide/popSlide';
 import { Profile } from '../../generated/graphql';
 import Toast from '../toast/toast';
+import Tooltip from '../tooltip/tooltip';
 import ToxicityMessage from '../toxicity-message/toxicityMessage';
 import UpdateProfile from '../../contentScript/update-profile/updateProfile';
 import { getPlayerViewElement } from '../../contentScript/contentScript.utils';
-import { sliceSetChatWindowSize } from '../../redux/slices/settings/settingsSlice';
 import { sliceSetIsProfileNeedsToBeUpdated } from '../../redux/slices/misc/miscSlice';
 import { sliceSetLoadingText } from '../../redux/slices/loading/loadingSlice';
 import { urqlClient } from '../../Utils/urqlClient';
@@ -56,6 +60,7 @@ const ChatInterface: React.FC<props> = ({
   profileFetching,
 }) => {
   const commentIcon = document.getElementById('comment-header');
+  const [pos, setPosition] = useState({ x: 0, y: 0 });
   const { movie, loading, misc, settings } = useAppSelector((state) => state);
   const font = misc.font;
   const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
@@ -117,7 +122,7 @@ const ChatInterface: React.FC<props> = ({
       `;
     } else {
       commentIcon.style.cssText = `
-        right: 0%;
+        right: 5px;
         transition: all 1s ${windowTransition};
       `;
       divRef.current.style.cssText = `
@@ -200,7 +205,14 @@ const ChatInterface: React.FC<props> = ({
     }
   }, [position.x, position.y]);
 
-  // Animation detection
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    if (divRef.current !== null) {
+      const rect = divRef.current.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      setPosition({ x, y });
+    }
+  };
 
   useEffect(() => {
     setDisplay(() => {
@@ -218,6 +230,24 @@ const ChatInterface: React.FC<props> = ({
     dispatch(sliceSetLoadingText(loadingText));
   }, [isMovieLoaded]);
 
+  const handleOutsideClick = (event: MouseEvent) => {
+    const popSlide = document.querySelector('.pop-slide');
+    if (popSlide && !popSlide.contains(event.target as Node)) {
+      dispatch(sliceResetPopUp());
+    }
+  };
+
+  useEffect(() => {
+    divRef &&
+      divRef.current &&
+      divRef.current.addEventListener('click', handleOutsideClick);
+    return () => {
+      divRef &&
+        divRef.current &&
+        divRef.current.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <Perimeter
       className="chat-perimeter"
@@ -225,6 +255,7 @@ const ChatInterface: React.FC<props> = ({
       font={font}
       enableBackground={enableBackground.toString()}
       ref={divRef}
+      onMouseMove={handleMouseMove}
     >
       <DragBar className="drag-bar" ref={dragRef}></DragBar>
       {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
@@ -278,6 +309,7 @@ const ChatInterface: React.FC<props> = ({
             </div>
           </CSSTransition>
           <Toast />
+          <Tooltip left={pos.x} top={pos.y} />
         </ChatWindowParent>
       )}
     </Perimeter>

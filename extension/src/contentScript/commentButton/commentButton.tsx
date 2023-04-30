@@ -146,16 +146,7 @@ const CommentButton: React.FC<props> = ({ visible }) => {
         chatWindowSize={smoothWidth + ''}
         openChatWindow={openChatWindow}
       >
-        {openChatWindow ? (
-          <div className="logo">
-            <img
-              src={`${EXT_URL}/moovy/moovyIcon.webp`}
-              alt="logo"
-              width="25"
-              height="25"
-            />
-          </div>
-        ) : (
+        {!openChatWindow && (
           <GoCommentDiscussion size={40} fill={accentColor} />
         )}
       </CommentHeader>

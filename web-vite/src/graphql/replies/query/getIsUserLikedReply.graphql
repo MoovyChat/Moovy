@@ -1,6 +1,0 @@
-query GetIsUserLikedReply($uid: String!, $rid: String!) {
-  getIsUserLikedReply(uid: $uid, rid: $rid) {
-    id
-    isLiked
-  }
-}

@@ -7,6 +7,7 @@ import {
   MdThumbUpOffAlt,
 } from 'react-icons/md';
 import React, { memo, useCallback, useEffect, useState } from 'react';
+import { handleMouseEnter, handleMouseLeave } from '../../extension/utils';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -157,7 +158,12 @@ const ChatStats = memo(() => {
       accentColor={accentColor}
     >
       <div className="capsule">
-        <div className="likes" onClick={toggleLike}>
+        <div
+          className="likes"
+          onClick={toggleLike}
+          onMouseEnter={handleMouseEnter('Like')}
+          onMouseLeave={handleMouseLeave('Like')}
+        >
           <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
             <MdThumbUp className="icon" size={iconSize} />
@@ -165,7 +171,11 @@ const ChatStats = memo(() => {
             <MdThumbUpOffAlt size={iconSize} />
           )}
         </div>
-        <div className="div-cmt-count-style">
+        <div
+          className="div-cmt-count-style"
+          onMouseEnter={handleMouseEnter('Total Comments')}
+          onMouseLeave={handleMouseLeave('')}
+        >
           <span>
             {getFormattedNumber(
               totalCommentsCountOfMovie ? totalCommentsCountOfMovie : 0
@@ -173,11 +183,20 @@ const ChatStats = memo(() => {
           </span>
           <MdOutlineModeComment size={iconSize} />
         </div>
-        <div className="div-cmt-count-style">
+        <div
+          className="div-cmt-count-style"
+          onMouseEnter={handleMouseEnter('Total Views')}
+          onMouseLeave={handleMouseLeave('')}
+        >
           <span>{getFormattedNumber(viewsCount ? viewsCount : 0)}</span>
           <MdOutlineRemoveRedEye size={iconSize} />
         </div>
-        <div className="theme-mode" onClick={toggleTheme}>
+        <div
+          className="theme-mode"
+          onClick={toggleTheme}
+          onMouseEnter={handleMouseEnter('Theme')}
+          onMouseLeave={handleMouseLeave('')}
+        >
           <div className="toggle-anim">
             <div>
               <MdOutlineWbSunny size={iconSize} />
@@ -188,12 +207,21 @@ const ChatStats = memo(() => {
           </div>
         </div>
       </div>
-      <div className="user">
+      <div
+        className="user"
+        onMouseEnter={handleMouseEnter('Go to Profile')}
+        onMouseLeave={handleMouseLeave('')}
+      >
         <h4 onClick={goToProfile} className="nn">
           {nickname ? nickname : userNickname}
         </h4>
       </div>
-      <div className="mvy-pt-ic" onClick={goToVideoStyles}>
+      <div
+        className="mvy-pt-ic"
+        onClick={goToVideoStyles}
+        onMouseEnter={handleMouseEnter('Paint')}
+        onMouseLeave={handleMouseLeave('')}
+      >
         <div id="paint-container">
           <BiPaint className="icon" id="paint" size={iconSize} />
         </div>

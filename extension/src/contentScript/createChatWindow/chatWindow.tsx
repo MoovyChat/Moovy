@@ -1,11 +1,12 @@
 import { Profile, useGetUserProfileQuery } from '../../generated/graphql';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { darkTheme, lightTheme } from '../../theme/theme';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import ChatInterface from '../../components/chat-interface/chatInterface';
 import { GlobalStyles } from '../../theme/globalStyles';
 import { ThemeProvider } from 'styled-components';
+import { sliceResetPopUp } from '../../redux/slices/settings/settingsSlice';
 import { sliceSetNewlyLoadedTimeStamp } from '../../redux/slices/movie/movieSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import useFetchEmojis from '../hooks/useFetchEmojis';

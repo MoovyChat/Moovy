@@ -31,6 +31,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { handleMouseEnter, handleMouseLeave } from '../../extension/utils';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -41,6 +42,10 @@ import {
   sliceSetToastBody,
   sliceSetToastVisible,
 } from '../../redux/slices/toast/toastSlice';
+import {
+  sliceSetToolTipMessage,
+  sliceSetTooltipVisible,
+} from '../../redux/slices/tooltip/tooltipSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { CSSTransition } from 'react-transition-group';
@@ -98,7 +103,7 @@ const CommentInterface: React.FC<props> = ({
   const [hovered, setHovered] = useState<boolean>(false);
   const [del, setDelete] = useState<boolean>(true);
   const isComment = useMemo(
-    () => commentOrReply.__typename === 'Comment',
+    () => commentOrReply.type === 'comment',
     [commentOrReply]
   );
   const [isReported] = useIsReportedQuery({
@@ -116,8 +121,6 @@ const CommentInterface: React.FC<props> = ({
       setReportFlag(() => _data);
     }
   }, [isReported]);
-  // Check if the passed component is comment or reply.
-  if (!commentOrReply) return <div>Invalid comment</div>;
 
   const commentRef = useRef<HTMLDivElement>(null);
 
@@ -302,6 +305,9 @@ const CommentInterface: React.FC<props> = ({
     [commentOrReply, type]
   );
 
+  // Check if the passed component is comment or reply.
+  if (!commentOrReply) return <div>Invalid comment</div>;
+
   return (
     <CSSTransition
       in={mounted.current && del}
@@ -324,6 +330,8 @@ const CommentInterface: React.FC<props> = ({
                   e.stopPropagation();
                   deleteCommentOrReply();
                 }}
+                onMouseEnter={handleMouseEnter('Delete')}
+                onMouseLeave={handleMouseLeave('')}
               >
                 <MdDeleteForever size={20} />
               </Delete>
@@ -448,8 +456,16 @@ const CommentInterface: React.FC<props> = ({
               <Like
                 accentColor={accentcolor}
                 className="like"
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
+                onMouseEnter={() => {
+                  setHovered(true);
+                  dispatch(sliceSetTooltipVisible(true));
+                  dispatch(sliceSetToolTipMessage('Like'));
+                }}
+                onMouseLeave={() => {
+                  setHovered(false);
+                  dispatch(sliceSetTooltipVisible(false));
+                  dispatch(sliceSetToolTipMessage(''));
+                }}
                 onClick={(e) => {
                   subjectLike(e);
                 }}

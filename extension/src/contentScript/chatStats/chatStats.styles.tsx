@@ -50,6 +50,9 @@ export const ChatStatContainer = styled.div<props>`
       cursor: pointer;
       color: inherit;
       flex: 1;
+      :hover {
+        box-shadow: inset -2px 1px 5px 1px;
+      }
       .toggle-anim {
         display: flex;
         flex-direction: column;

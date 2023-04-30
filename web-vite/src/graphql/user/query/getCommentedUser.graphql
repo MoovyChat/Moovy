@@ -1,5 +1,0 @@
-query getCommentedUser($cid: String!) {
-  getCommentedUser(cid: $cid) {
-    ...FullUser
-  }
-}

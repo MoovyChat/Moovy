@@ -1,5 +1,0 @@
-query GetUserProfile($uid: String!) {
-  getUserProfile(uid: $uid) {
-    ...FullProfile
-  }
-}

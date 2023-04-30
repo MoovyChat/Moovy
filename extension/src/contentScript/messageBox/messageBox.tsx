@@ -19,6 +19,7 @@ import {
   useInsertCommentMutation,
   useInsertReplyMutation,
 } from '../../generated/graphql';
+import { handleMouseEnter, handleMouseLeave } from '../../extension/utils';
 import {
   slicePopSlideContentType,
   sliceSetPopSlide,
@@ -234,7 +235,12 @@ const MessageBox: React.FC<props> = ({
           <React.Fragment></React.Fragment>
         )}
       </MessageBoxParent>
-      <div className="smiley" onClick={smileyHandler}>
+      <div
+        className="smiley"
+        onClick={smileyHandler}
+        onMouseEnter={handleMouseEnter('Smileys')}
+        onMouseLeave={handleMouseLeave('')}
+      >
         <MdTagFaces className="icon" size={25} />
       </div>
       <TextAreaPost>
@@ -250,6 +256,8 @@ const MessageBox: React.FC<props> = ({
               setReplyClickResponse
             );
           }}
+          onMouseEnter={handleMouseEnter('Send')}
+          onMouseLeave={handleMouseLeave('')}
         >
           <IoArrowForwardCircle fill={accentColor} size={25} />
         </div>

@@ -56,6 +56,19 @@ BEGIN
 END $$;
 
 ```
+- Delete all the tables in the database
+```
+DO $$ 
+DECLARE
+   tbl_name text;
+BEGIN
+   FOR tbl_name IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public')
+   LOOP
+      EXECUTE 'DROP TABLE IF EXISTS public.' || tbl_name || ' CASCADE';
+   END LOOP;
+END $$;
+
+```
 
 - List all tables `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
 

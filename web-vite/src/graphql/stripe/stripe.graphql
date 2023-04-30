@@ -1,3 +1,0 @@
-mutation createCharge($userId: String!) {
-  createCharge(userId: $userId)
-}

@@ -76,6 +76,7 @@ const main = async () => {
   const corsOptions = {
     origin: [
       process.env.CORS_ORIGIN,
+      'https://studio.apollographql.com',
       'https://server.moovychat.com/graphql',
       'https://www.moovychat.com',
       'ws://server.moovychat.com/graphql',

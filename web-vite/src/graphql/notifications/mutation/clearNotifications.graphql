@@ -1,3 +1,0 @@
-mutation ClearNotifications($uid: String!) {
-  clearNotifications(uid: $uid)
-}

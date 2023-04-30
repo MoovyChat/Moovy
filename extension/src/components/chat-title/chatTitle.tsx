@@ -1,6 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { EXT_URL, isServerSide } from '../../constants';
-import { MdStar, MdStarOutline } from 'react-icons/md';
+import { MdOutlineExitToApp, MdStar, MdStarOutline } from 'react-icons/md';
+import { handleMouseEnter, handleMouseLeave } from '../../extension/utils';
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
@@ -19,6 +20,7 @@ import { batch } from 'react-redux';
 import { getVideoTitleFromNetflixWatch } from '../../contentScript/contentScript.utils';
 import { iconsEnum } from '../../Utils/enums';
 import { sliceAddMovieName } from '../../redux/slices/movie/movieSlice';
+import { sliceSetIsOpenChatWindow } from '../../redux/slices/settings/settingsSlice';
 import { urqlClient } from '../../Utils/urqlClient';
 import { withUrqlClient } from 'next-urql';
 
@@ -106,19 +108,31 @@ const ChatTitle = () => {
   }, [movieId, movieTitle]);
   return (
     <ChatTitleParent className="chat-title">
+      <div
+        className="exit common"
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch(sliceSetIsOpenChatWindow(false));
+        }}
+        onMouseEnter={handleMouseEnter('Close Chat')}
+        onMouseLeave={handleMouseLeave('')}
+      >
+        <MdOutlineExitToApp className="star" size={20} />
+      </div>
       <div className="logo">
         <img
           src={`${EXT_URL}/moovy/moovyIcon.webp`}
           alt="logo"
-          width="25"
-          height="25"
+          width="20"
+          height="20"
         />
       </div>
+
       <div className="title">
         <div className="set">{movieTitle ? movieTitle : tempTitle}</div>
       </div>
       <div
-        className="icon"
+        className="icon common"
         onClick={(e) => {
           e.stopPropagation();
           updateUserLikeFavorite({
@@ -158,6 +172,8 @@ const ChatTitle = () => {
             }
           });
         }}
+        onMouseEnter={handleMouseEnter('Favorite')}
+        onMouseLeave={handleMouseLeave('')}
       >
         <div className="fav-count">
           <div className="box">{favCount}</div>

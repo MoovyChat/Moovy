@@ -17,7 +17,7 @@ export const CommentHeader = styled.div<props>`
     stroke-width: 0.2;
   }
   position: fixed;
-  right: ${(p) => p.chatWindowSize}%;
+  right: 5px;
   top: 180px;
   cursor: pointer;
   display: ${(p) => (p.isVisible ? 'flex' : 'none')};
@@ -49,27 +49,15 @@ export const CommentHeader = styled.div<props>`
     }
 
     100% {
-      height: 25px;
-      width: 25px;
-      border-left: 1px solid white;
-      padding: 5px;
-      border-radius: 0%;
     }
   }
 
   @keyframes resetIcon {
     0% {
-      height: 25px;
-      width: 25px;
-      padding: 5px;
-      border-radius: 0%;
     }
 
     100% {
-      height: 58px;
-      width: 58px;
       background-color: none;
-      padding: 0px;
       border-radius: none;
     }
   }

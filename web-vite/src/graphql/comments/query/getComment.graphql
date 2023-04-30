@@ -1,5 +1,0 @@
-query getComment($cid: String!) {
-  getComment(cid: $cid) {
-    ...FullComment
-  }
-}

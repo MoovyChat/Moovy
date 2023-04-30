@@ -1,5 +1,0 @@
-mutation updateProfile($options: InputArgs!) {
-  upsertProfile(options: $options) {
-    ...FullProfile
-  }
-}
