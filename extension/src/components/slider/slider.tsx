@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { handleMouseEnter, handleMouseLeave } from '../../extension/utils';
 
 import { BiReset } from 'react-icons/bi';
 import { SliderParent } from './slider.styles';
@@ -42,7 +43,11 @@ const Slider: React.FC<props> = ({ filter, onChange, reset, rangeValue }) => {
           reset(filter);
         }}
       >
-        <div className="val-icon">
+        <div
+          className="val-icon"
+          onMouseEnter={handleMouseEnter('Reset')}
+          onMouseLeave={handleMouseLeave('')}
+        >
           <BiReset size={15} />
         </div>
       </div>

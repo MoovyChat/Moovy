@@ -1,3 +1,0 @@
-query getUserFullName($uid: String!) {
-  getUserFullName(uid: $uid)
-}

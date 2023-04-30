@@ -22,7 +22,7 @@ import { Users } from './Users';
 @ObjectType()
 @Entity()
 export class Comment extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;
 

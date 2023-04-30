@@ -12,7 +12,52 @@ export const VideoParent = styled.div`
 type filterProps = {
   filter?: string;
   selected?: boolean;
+  accentColor?: string;
+  selectedPreset?: boolean | null;
 };
+
+export const PresetFilter = styled.div<filterProps>`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 3px;
+  :hover {
+    .photo {
+      filter: brightness(0.5);
+    }
+  }
+  .photo,
+  .show-val {
+    display: flex;
+    flex: 1 1 20%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    img {
+      filter: ${(p) => p.filter};
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: ${(p) =>
+        p.selectedPreset && `0 0 0 2px black, 0 0 0 4px ${p.accentColor}`};
+    }
+    .layover {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border: 1px solid black;
+      color: #ff005d;
+      background-color: rgba(186, 178, 178, 0.824);
+      border-radius: 50%;
+    }
+  }
+`;
 
 export const FilterView = styled.div<filterProps>`
   display: flex;
@@ -122,11 +167,12 @@ export const CustomBorder = styled.div`
 type props = {
   expandGroup: boolean;
   isNodesValid?: boolean;
+  color?: string;
 };
 export const OptionGroup = styled.div<props>`
   display: flex;
   flex-direction: column;
-  border: 1px solid;
+  backdrop-filter: contrast(0.9);
   padding: 10px 0;
   border-radius: 4px;
   max-height: ${(p) => (p.expandGroup ? '600px' : '40px')};
@@ -174,7 +220,7 @@ export const OptionGroup = styled.div<props>`
           height: 0;
           visibility: hidden;
           :checked + label {
-            background: #242424;
+            background: ${(p) => `${p.color}8f`};
             ::after {
               transform: translateX(100%);
               background: linear-gradient(180deg, #777, #3a3a3a);
@@ -226,7 +272,8 @@ export const OptionGroup = styled.div<props>`
     align-items: center;
     height: auto;
     overflow: auto;
-    gap: 10px;
+    gap: 15px;
+    padding: 5px;
   }
 
   .options {
@@ -261,7 +308,7 @@ export const OptionGroup = styled.div<props>`
           height: 0;
           visibility: hidden;
           :checked + label {
-            background: #242424;
+            background: ${(p) => `${p.color}8f`};
             ::after {
               transform: translateX(100%);
               background: linear-gradient(180deg, #777, #3a3a3a);

@@ -1,3 +1,7 @@
+import { sliceSetToolTipMessage, sliceSetTooltipVisible } from "../redux/slices/tooltip/tooltipSlice";
+
+import { store } from "../redux/store";
+
 export function getSupportedMimeTypes(
   media: string,
   types: string[],
@@ -24,3 +28,16 @@ export const randomUserNameGenerator = (nickname: string) => {
   const padding = Array(paddingLength).fill('0').join('');
   return `${truncatedNickname}${padding}${randomNumber}`;
 };
+
+
+export const handleMouseEnter: any =
+  (label: string) => () => {
+    store.dispatch(sliceSetTooltipVisible(true));
+    store.dispatch(sliceSetToolTipMessage(label));
+  };
+  
+export const handleMouseLeave: any =
+  (label: string) => () => {
+    store.dispatch(sliceSetTooltipVisible(false));
+    store.dispatch(sliceSetToolTipMessage(label));
+  };

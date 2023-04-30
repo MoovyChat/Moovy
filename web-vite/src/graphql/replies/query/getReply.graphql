@@ -1,5 +1,0 @@
-query getReply($rid: String!) {
-  getReply(rid: $rid) {
-    ...FullReply
-  }
-}

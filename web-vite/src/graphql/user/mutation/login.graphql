@@ -1,8 +1,0 @@
-mutation login($uid: String!) {
-  login(uid: $uid) {
-    user {
-      ...FullUser
-    }
-    error
-  }
-}

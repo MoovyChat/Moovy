@@ -1,5 +1,0 @@
-query getUser($uid: String!) {
-  getUser(uid: $uid) {
-    ...FullUser
-  }
-}

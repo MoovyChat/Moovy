@@ -1,9 +1,0 @@
-query SearchPeople($page: Float!, $limit: Float!, $search: String!) {
-  searchPeople(page: $page, limit: $limit, search: $search) {
-    people {
-      ...FullUser
-    }
-    page
-    lastPage
-  }
-}
