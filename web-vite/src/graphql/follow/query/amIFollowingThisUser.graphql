@@ -1,0 +1,3 @@
+mutation amIFollowingThisUser($fid: String!, $uid: String!) {
+  amIFollowingThisUser(fid: $fid, uid: $uid)
+}

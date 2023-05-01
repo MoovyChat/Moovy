@@ -1,0 +1,8 @@
+subscription commentLikes($cid: String!) {
+  commentLikesUpdate(cid: $cid) {
+    likes {
+      ...FullUser
+    }
+    likesCount
+  }
+}

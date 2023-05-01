@@ -1,0 +1,3 @@
+mutation updateMovieTitle($name: String!, $mid: String!) {
+  updateMovieTitle(name: $name, mid: $mid)
+}

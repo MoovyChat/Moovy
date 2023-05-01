@@ -1,0 +1,21 @@
+mutation SetReplyLike(
+  $like: Boolean!
+  $mid: String!
+  $rid: String!
+  $uid: String!
+) {
+  setReplyLike(like: $like, mid: $mid, rid: $rid, uid: $uid) {
+    user {
+      ...FullUser
+    }
+    likeStatus {
+      id
+      movieId
+      replyId
+      like
+      updatedAt
+      userId
+      createdAt
+    }
+  }
+}

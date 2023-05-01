@@ -1,0 +1,10 @@
+mutation ReportComment($report: Boolean!, $uid: String!, $cid: String!) {
+  reportComment(report: $report, uid: $uid, cid: $cid) {
+    usersId
+    commentId
+    report
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}
