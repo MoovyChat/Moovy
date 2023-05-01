@@ -41,8 +41,6 @@ const ChatArea: React.FC<props> = ({
   replyWindowResponse,
   setReplyClickResponse,
 }) => {
-  const searchAPI =
-    "https://corsanywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?output=toolbar&hl=en&q=";
   const user = useAppSelector((state) => state.user);
 
   const text = useAppSelector((state) => state.textArea.text);
@@ -71,7 +69,7 @@ const ChatArea: React.FC<props> = ({
     };
   }, [text]);
 
-  usePredictiveText(searchAPI, debouncedText);
+  usePredictiveText(debouncedText);
 
   useDetoxify(debouncedText);
 

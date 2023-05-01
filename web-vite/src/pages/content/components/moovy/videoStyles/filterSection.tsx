@@ -1,28 +1,51 @@
-import React, { ChangeEventHandler, useEffect, useState } from "react";
-import { applyFilter, filters, presetFilters } from "./videoStyles.help";
-import { FilterView, OptionGroup, PresetFilter } from "./videoStyles.styles";
+import React, {
+  ChangeEventHandler,
+  FocusEventHandler,
+  useEffect,
+  useState,
+} from "react";
+import {
+  addBorder,
+  applyFilter,
+  borders,
+  filters,
+  presetFilters,
+} from "./videoStyles.help";
+import {
+  BoxShadows,
+  CustomBorder,
+  FilterView,
+  OptionGroup,
+  PresetFilter,
+} from "./videoStyles.styles";
 
-import { MdFilterAlt } from "react-icons/md";
+import _ from "lodash";
+import { MdAdd, MdFilterAlt, MdOutlineWbIridescent } from "react-icons/md";
 import Slider from "../../../../../components/slider/slider";
 import { defaultVideoValues } from "../../../../../helpers/defaultValues";
 import {
+  borderType,
   filterType,
   videoFilterSettings,
 } from "../../../../../helpers/interfaces";
 import {
+  getStoredCustomBorders,
   getStoredFilterValues,
+  getStoredResizeValue,
   getStoredVideoFilters,
+  setStoredCustomBorder,
   setStoredFilterValues,
   setStoredResizeValue,
   setStoredVideoFilters,
 } from "../../../../../helpers/storage";
+import { getPositiveHueValue } from "../../../../../helpers/utilities";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import {
+  sliceSetOpenBorderSection,
   sliceSetOpenFilterSection,
   sliceSetPresetFilter,
 } from "../../../../redux/slices/misc/miscSlice";
 import { sliceSetVideoSize } from "../../../../redux/slices/settings/settingsSlice";
-import { getPositiveHueValue } from "../../../../../helpers/utilities";
 
 interface Props {
   videoElem: HTMLVideoElement | undefined;
@@ -39,6 +62,10 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
   const presetFromRedux = useAppSelector((state) => state.misc.presetFilter);
   const [screenSize, setScreenSize] = useState<string>("100");
   const thumbs = useAppSelector((state) => state.movie.thumbs);
+  const openBorderSection = useAppSelector(
+    (state) => state.misc.openBorderSection
+  );
+  const [customBorders, setCustomBorders] = useState<borderType[]>([]);
   const [filterValues, setFilterValues] = useState<videoFilterSettings>({
     blur: "0",
     contrast: "1",
@@ -56,10 +83,19 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
       if (filters) setSelectedFilters(filters);
     });
 
+    // Get stored resize value.
+    getStoredResizeValue().then((res) => {
+      setScreenSize(res);
+      dispatch(sliceSetVideoSize(res));
+    });
+
     // Set filter values from storage
     getStoredFilterValues().then((filterVal: videoFilterSettings) => {
       if (filterVal) setFilterValues(filterVal);
     });
+
+    // Get Custom borders.
+    getStoredCustomBorders().then((cb) => setCustomBorders(cb));
   }, []);
   // Custom resize filter.
   const resizeFilter: filterType = {
@@ -203,6 +239,20 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
     changedFilterValues && applyFilter(changedFilterValues, videoElem);
   };
 
+  const onColorBlurHandler: FocusEventHandler<HTMLInputElement> = (e) => {
+    const border: borderType = {
+      color: e.target.value,
+      title: e.target.value,
+    };
+    setStoredCustomBorder(border);
+    setCustomBorders((current) => {
+      const newBorders = [border, ...current];
+      const uniqBorders = _.uniqBy(newBorders, "color");
+      if (uniqBorders.length > 10) uniqBorders.pop();
+      return uniqBorders;
+    });
+  };
+
   return (
     <React.Fragment>
       <OptionGroup expandGroup={openFilterSection} color={accentColor}>
@@ -308,6 +358,93 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
             ))}
           </div>
         )}
+      </OptionGroup>
+      <OptionGroup expandGroup={openBorderSection} color={accentColor}>
+        <div className="title">
+          <div className="name">
+            <div className="name-icon">
+              <MdOutlineWbIridescent />
+            </div>
+            <label>Ambience</label>
+          </div>
+          <div className="edge">
+            <span className="checkBox">
+              <input
+                type="checkbox"
+                id="bd"
+                defaultChecked={openBorderSection}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  dispatch(sliceSetOpenBorderSection(e.target.checked));
+                  if (!e.target.checked) {
+                    addBorder(canvas, screenSize, borders[0]);
+                  }
+                }}
+              />
+              <label htmlFor="bd"></label>
+            </span>
+          </div>
+        </div>
+        <div className="options">
+          <div className="ready">
+            <label>Available</label>
+            <div className="border-list">
+              {borders.map((border) => {
+                return (
+                  border.title !== "default" && (
+                    <BoxShadows
+                      className="option"
+                      color={border.color}
+                      key={border.title}
+                      onClick={() => {
+                        addBorder(canvas, screenSize, border);
+                      }}
+                    />
+                  )
+                );
+              })}
+            </div>
+          </div>
+          <div className="ready">
+            <label>Custom</label>
+            <div className="border-list">
+              <div className="custom-option">
+                <CustomBorder>
+                  <input
+                    type="color"
+                    id="color-picker"
+                    name="color-picker"
+                    onBlur={onColorBlurHandler}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      const border: borderType = {
+                        title: "custom",
+                        color: e.target.value,
+                      };
+                      addBorder(canvas, screenSize, border);
+                    }}
+                  />
+                  <MdAdd size={20} className="icon" />
+                </CustomBorder>
+              </div>
+              {customBorders.map((border) => {
+                return (
+                  border.title !== "default" && (
+                    <div className="custom-option">
+                      <BoxShadows
+                        color={border.color}
+                        key={border.title}
+                        onClick={() => {
+                          addBorder(canvas, screenSize, border);
+                        }}
+                      />
+                    </div>
+                  )
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </OptionGroup>
     </React.Fragment>
   );

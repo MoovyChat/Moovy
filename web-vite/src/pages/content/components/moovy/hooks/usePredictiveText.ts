@@ -19,10 +19,7 @@ interface NameObject {
   name: string;
 }
 
-const usePredictiveText = (
-  searchAPI: string,
-  fullText: string
-): PredictiveTextHook => {
+const usePredictiveText = (fullText: string): PredictiveTextHook => {
   const getLastWord = (input: string): string => {
     const words = input.trim().split(/\s+/);
     return words[words.length - 1];
@@ -54,42 +51,14 @@ const usePredictiveText = (
             dispatch(sliceSetWordSuggestions([]));
           }
         } else {
-          const searchURL = `${searchAPI}${lastWord}`;
-          const response = await fetch(searchURL, {
-            mode: "cors",
-            headers: {
-              "Access-Control-Allow-Origin": "*",
-            },
-          });
+          const searchURL = `https://api.datamuse.com/sug?s=${lastWord}&max=3`;
+          const response = await fetch(searchURL);
 
-          const str = await response.text();
-          const data = new window.DOMParser().parseFromString(str, "text/xml");
-          const el = data.getElementsByTagName("suggestion");
-          const firstWordSuggestions: string[] = [];
-          const secondWordSuggestions: string[] = [];
-
-          for (const item in el) {
-            const _element = el[item];
-            if (_element) {
-              const node = _element.attributes && _element.attributes[0];
-              const value = node && node.nodeValue && node.nodeValue.split(" ");
-              if (value && !firstWordSuggestions.includes(value[0])) {
-                firstWordSuggestions.push(value[0]);
-              }
-              if (value && !secondWordSuggestions.includes(value[1])) {
-                secondWordSuggestions.push(value[1]);
-              }
-            }
-          }
-
-          const combinedSuggestions = _.concat(
-            firstWordSuggestions,
-            secondWordSuggestions
-          );
-          const filteredSuggestions = combinedSuggestions.filter(Boolean);
+          const data = await response.json();
+          const suggestions = data.map((item) => item.word);
 
           dispatch(sliceSetNameSuggestions([]));
-          dispatch(sliceSetWordSuggestions(filteredSuggestions));
+          dispatch(sliceSetWordSuggestions(suggestions));
         }
       } catch (err) {
         setError(err);
@@ -105,7 +74,7 @@ const usePredictiveText = (
       dispatch(sliceSetNameSuggestions([]));
       dispatch(sliceSetWordSuggestions([]));
     }
-  }, [searchAPI, fullText]);
+  }, [fullText]);
 
   return { suggestions, loading, error };
 };
