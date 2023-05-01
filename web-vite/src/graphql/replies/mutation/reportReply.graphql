@@ -1,0 +1,10 @@
+mutation ReportReply($report: Boolean!, $uid: String!, $rid: String!) {
+  reportReply(report: $report, uid: $uid, rid: $rid) {
+    usersId
+    replyId
+    report
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

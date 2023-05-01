@@ -1,0 +1,5 @@
+mutation fetchNewComments($time: String!, $mid: String!) {
+  fetchNewComments(time: $time, mid: $mid) {
+    ...FullComment
+  }
+}

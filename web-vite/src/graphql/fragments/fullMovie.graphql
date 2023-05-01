@@ -1,0 +1,20 @@
+fragment FullMovie on Movie {
+  __typename
+  id
+  name
+  runtime
+  platformId
+  createdAt
+  updatedAt
+  thumbs
+  season
+  likesCount
+  commentCount
+  viewsCount
+  favCount
+  titleId
+  parentTitleName
+  stills
+  synopsis
+  year
+}

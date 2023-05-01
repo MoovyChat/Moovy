@@ -1,0 +1,5 @@
+mutation getUserByNickName($nickname: String!) {
+  getUserByNickName(nickname: $nickname) {
+    ...FullUser
+  }
+}

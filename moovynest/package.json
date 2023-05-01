@@ -1,0 +1,12 @@
+{
+  "name": "moovynest",
+  "version": "1.0.0",
+  "description": "Watch movies and shows together using MoovyNest",
+  "main": "index.js",
+  "author": "Chandra Kishore Danduri",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "socket.io": "^4.6.1"
+  }
+}

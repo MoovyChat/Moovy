@@ -1,0 +1,3 @@
+mutation UpdateMovieViewCount($mid: String!) {
+  updateMovieViewCount(mid: $mid)
+}

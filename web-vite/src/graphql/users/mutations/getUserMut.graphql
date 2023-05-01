@@ -1,0 +1,5 @@
+mutation getUserMut($uid: String!) {
+  getUserMut(uid: $uid) {
+    ...FullUser
+  }
+}

@@ -1,0 +1,24 @@
+mutation setCommentLike(
+  $like: Boolean!
+  $mid: String!
+  $cid: String!
+  $uid: String!
+) {
+  setCommentLike(like: $like, mid: $mid, cid: $cid, uid: $uid) {
+    user {
+      id
+      name
+      nickname
+      followerCount
+      followingCount
+      photoUrl
+    }
+    likeStatus {
+      id
+      like
+      movieId
+      commentId
+      userId
+    }
+  }
+}

@@ -1,0 +1,82 @@
+query getUserMiniProfile($uid: String!) {
+  getFullUserProfile(uid: $uid) {
+    id
+    followers {
+      followerCount
+      followers {
+        ...FullUser
+      }
+      id
+    }
+    following {
+      followingCount
+      following {
+        ...FullUser
+      }
+      id
+    }
+    history {
+      history {
+        history
+        deletedAt
+        createdAt
+        movieId
+        updatedAt
+        userId
+        visitCount
+      }
+      historyCount
+      recentMovies {
+        id
+        name
+        stills
+        thumbs
+        season
+        year
+        runtime
+        platformId
+        titleId
+        parentTitleName
+      }
+      id
+    }
+    profile {
+      bio
+      dob
+      fullname
+      gender
+    }
+    likes {
+      likesCount
+      likes {
+        id
+        name
+        stills
+        thumbs
+        season
+        year
+        runtime
+        platformId
+        titleId
+        parentTitleName
+      }
+      id
+    }
+    favorites {
+      favCount
+      favorites {
+        id
+        name
+        stills
+        thumbs
+        season
+        year
+        runtime
+        platformId
+        titleId
+        parentTitleName
+      }
+      id
+    }
+  }
+}

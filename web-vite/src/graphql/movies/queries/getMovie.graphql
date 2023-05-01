@@ -1,0 +1,5 @@
+query getMovie($mid: String!) {
+  getMovie(mid: $mid) {
+    ...FullMovie
+  }
+}
