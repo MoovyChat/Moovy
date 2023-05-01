@@ -9,7 +9,7 @@ export const constants = {
   main_color: "#990100",
   record_options: "Record options",
 };
-export const __prod__ = process.env.NODE_ENV === "production";
+export const __prod__ = process.env.NODE_ENV !== "production";
 
 const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
 export const MOOVY_URL = __prod__

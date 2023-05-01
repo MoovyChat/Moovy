@@ -36,7 +36,7 @@ type props = {
 const miscState: props = {
   theme: "light",
   enableBackground: true,
-  accentColor: "#ff005d",
+  accentColor: "#00bfff",
   subTitleColor: "#ffffff",
   autoSkip: false,
   autoNextEpisode: false,

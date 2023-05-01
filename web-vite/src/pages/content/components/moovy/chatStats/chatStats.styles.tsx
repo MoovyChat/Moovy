@@ -23,6 +23,7 @@ export const ChatStatContainer = styled.div<props>`
     align-items: center;
     .likes {
       padding: 5px;
+      cursor: pointer;
       background: ${(p) => p.like && p.accentColor};
       box-shadow: ${(p) => p.like && `inset -2px 1px 5px 1px ${p.theme.text}`};
       transition: all 0.5s;
@@ -40,6 +41,7 @@ export const ChatStatContainer = styled.div<props>`
     }
     .div-cmt-count-style {
       padding: 5px;
+      cursor: default;
     }
 
     .theme-mode {
@@ -86,7 +88,6 @@ export const ChatStatContainer = styled.div<props>`
       -webkit-box-align: center;
       -ms-flex-align: center;
       align-items: center;
-      cursor: pointer;
       color: inherit;
       flex: 1;
       span {
