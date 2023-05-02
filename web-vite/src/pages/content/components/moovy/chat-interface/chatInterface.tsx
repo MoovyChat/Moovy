@@ -267,7 +267,7 @@ const ChatInterface: React.FC<props> = ({
       opacity: 1,
       transform: "translate3d(0, 0, 0)",
       width: "100%",
-      display: "block",
+      display: chatMode === "global" ? "flex" : "block",
       overflow: "hidden",
     },
     leave: {
@@ -355,7 +355,6 @@ const ChatInterface: React.FC<props> = ({
               <PopSlide />
             </div>
           </CSSTransition>
-          <Toast />
           <Tooltip left={pos.x} top={pos.y} />
         </ChatWindowParent>
       )}
