@@ -42,6 +42,41 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("message", data);
   });
 
+  socket.on("leaveRoom", () => {
+    if (socket.roomId && socket.user) {
+      // Remove the user from the list of users in the room
+      rooms[socket.roomId] = rooms[socket.roomId].filter(
+        (roomUser) => roomUser.id !== socket.id
+      );
+
+      // Emit the updated list of users to the clients in the room
+      io.to(socket.roomId).emit("roomUsers", rooms[socket.roomId]);
+
+      // Notify other users in the room that the user has left
+      io.to(socket.roomId).emit("message", {
+        type: "leave",
+        user: socket.user,
+        message: `${socket.id} left room ${socket.roomId}`,
+      });
+
+      // Remove the user's room and user information from the socket
+      delete socket.roomId;
+      delete socket.user;
+    }
+  });
+
+  socket.on("closeConnections", () => {
+    if (socket.roomId && rooms[socket.roomId]) {
+      // Iterate through the list of users in the room and disconnect their sockets
+      rooms[socket.roomId].forEach((roomUser) => {
+        io.sockets.sockets.get(roomUser.id).disconnect();
+      });
+
+      // Remove the room from the list of rooms
+      delete rooms[socket.roomId];
+    }
+  });
+
   // Handle disconnections
   socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
