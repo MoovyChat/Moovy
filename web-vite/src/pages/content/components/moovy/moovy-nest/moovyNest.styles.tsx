@@ -9,3 +9,10 @@ export const StyledMoovyNest = styled.div`
   gap: 10px;
   overflow: hidden;
 `;
+
+export const TypingStatus = styled.div`
+  font-size: 10px;
+  color: #00fff2;
+  font-style: italic;
+  margin-left: 10px;
+`;

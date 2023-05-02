@@ -229,13 +229,25 @@ const MessageBox: React.FC<props> = ({
     }
   };
 
+  const handleInputChange: React.ChangeEventHandler<
+    HTMLTextAreaElement
+  > = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const text = e.target.value;
+    dispatch(sliceSetTextAreaMessage(text));
+  };
+
   return (
     <ChatTextBox className="chat-text-box" isReply={isReply}>
       <TextAreaIcon className="text-area-icon">
         <Profile profilePic={userFromRedux?.photoUrl}></Profile>
       </TextAreaIcon>
       <MessageBoxParent>
-        <ChatArea handleKeyDown={handleKeyDown} />
+        <ChatArea
+          handleKeyDown={handleKeyDown}
+          handleInputChange={handleInputChange}
+        />
         {isReply ? (
           <ReplyTo>
             <p>Replying to {repliedUser}</p>

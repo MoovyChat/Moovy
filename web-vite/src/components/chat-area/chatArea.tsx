@@ -1,20 +1,11 @@
 import { ChatAreaParent, Parent } from "./chatArea.styles";
 
-import React, {
-  Dispatch,
-  FocusEventHandler,
-  KeyboardEventHandler,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { FocusEventHandler, useEffect, useRef, useState } from "react";
 
-import { AnyAction } from "redux";
 import _ from "lodash";
 
 import { withUrqlClient } from "next-urql";
-import { User, CommentInfo, textMap } from "../../helpers/interfaces";
+import { textMap } from "../../helpers/interfaces";
 import { urqlClient } from "../../helpers/urql/urqlClient";
 import { getFormattedWordsArray } from "../../helpers/utilities";
 import useDetoxify from "../../pages/content/components/moovy/hooks/useDetoxify";
@@ -23,15 +14,14 @@ import { useAppSelector, useAppDispatch } from "../../pages/redux/hooks";
 import {
   sliceSetIsTextAreaFocused,
   sliceSetIsTextAreaClicked,
-  sliceSetTextAreaMessage,
 } from "../../pages/redux/slices/textArea/textAreaSlice";
 
 interface props {
   handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement>;
+  handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
-const ChatArea: React.FC<props> = ({ handleKeyDown }) => {
+const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
   const user = useAppSelector((state) => state.user);
-
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
@@ -144,15 +134,6 @@ const ChatArea: React.FC<props> = ({ handleKeyDown }) => {
     setFormattedTextMap(res);
   }, [text]);
 
-  const handleInputText: React.ChangeEventHandler<HTMLTextAreaElement> = async (
-    e
-  ) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const text = e.target.value;
-    dispatch(sliceSetTextAreaMessage(text));
-  };
-
   return (
     <Parent textAreaHeight={textAreaHeight}>
       <ChatAreaParent
@@ -171,7 +152,7 @@ const ChatArea: React.FC<props> = ({ handleKeyDown }) => {
         placeholder={placeholder}
         value={text}
         onKeyPress={handleKeyDown}
-        onChange={handleInputText}
+        onChange={handleInputChange}
       />
       <div id="text-area-background" className="text-area-background" ref={ref}>
         {formattedTextMap.map((value, index) => (

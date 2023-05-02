@@ -1,10 +1,9 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const TextAreaContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15px;
 `;
 
 type perimeterProps = {
@@ -30,7 +29,7 @@ export const Perimeter = styled.div<perimeterProps>`
   background-position: center center;
   background-size: cover;
   ::after {
-    content: '';
+    content: "";
     position: absolute;
     height: 100%;
     width: 100%;
@@ -57,7 +56,7 @@ type chatWindowProps = {
 export const ChatWindowParent = styled.div<chatWindowProps>`
   height: 100%;
   width: 100%;
-  display: ${(p) => (p.windowOpened ? 'flex' : 'none')};
+  display: ${(p) => (p.windowOpened ? "flex" : "none")};
   position: relative;
   flex-direction: column;
   box-shadow: rgb(0 0 0 / 60%) -5px 0px 10px;
