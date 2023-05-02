@@ -113,6 +113,10 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     }
   };
 
+  const leaveButtonHandler = () => {
+    socket.emit("leaveRoom");
+  };
+
   return (
     <StyledMoovyNest ref={ref}>
       <div
@@ -150,7 +154,9 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
           </TextAreaPost>
         </ChatTextBox>
       </TextAreaContainer>
-      {isConnected && <NestStatus users={roomUsers} />}
+      {isConnected && (
+        <NestStatus users={roomUsers} leaveButtonHandler={leaveButtonHandler} />
+      )}
     </StyledMoovyNest>
   );
 };

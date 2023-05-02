@@ -5,8 +5,9 @@ import { Users } from "../../../../../../generated/graphql";
 
 interface Props {
   users: Users[];
+  leaveButtonHandler: () => void;
 }
-const NestStatus: React.FC<Props> = ({ users }) => {
+const NestStatus: React.FC<Props> = ({ users, leaveButtonHandler }) => {
   return (
     <StyledNestStatus>
       <div className="nest-status">
@@ -17,7 +18,9 @@ const NestStatus: React.FC<Props> = ({ users }) => {
         <div className="peopleCount">{users ? users.length : 0}</div>
         <MdPeopleOutline size={20} />
       </div>
-      <div className="nest-button">Leave Room</div>
+      <div className="nest-button" onClick={() => leaveButtonHandler()}>
+        Leave Room
+      </div>
     </StyledNestStatus>
   );
 };
