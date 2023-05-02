@@ -198,8 +198,7 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
       if (filterName === "sepia" || filterName === "saturate") {
         filterValue = `${parseFloat(match[2])}`;
       } else if (filterName === "hue") {
-        const hueValue = parseFloat(match[2]);
-        filterValue = `${getPositiveHueValue(hueValue)}deg`;
+        filterValue = match[2];
       } else filterValue = `${parseFloat(match[2]) / 100}`;
       return { ...acc, [filterName]: filterValue };
     }, {});
@@ -338,8 +337,9 @@ const FilterSection: React.FC<Props> = ({ videoElem, canvas }) => {
             {presetFilters.map((filter, index) => (
               <PresetFilter
                 selectedPreset={
-                  selectedPresetFilter === filter.title ||
-                  filter.title === presetFromRedux.title
+                  (selectedPresetFilter &&
+                    selectedPresetFilter === filter?.title) ||
+                  filter?.title === presetFromRedux?.title
                 }
                 accentColor={accentColor}
                 onClick={(e) => {

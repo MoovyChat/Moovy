@@ -42,6 +42,9 @@ export const Parent = styled.div<props>`
   width: 100%;
   height: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
+
   .text-area-background {
     position: absolute;
     top: 0;

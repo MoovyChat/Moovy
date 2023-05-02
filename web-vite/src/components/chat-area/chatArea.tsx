@@ -27,20 +27,9 @@ import {
 } from "../../pages/redux/slices/textArea/textAreaSlice";
 
 interface props {
-  postComment: (
-    user: User | undefined,
-    dispatch: Dispatch<AnyAction>,
-    replyWindowResponse: CommentInfo | undefined,
-    setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>
-  ) => Promise<void>;
-  replyWindowResponse: CommentInfo | undefined;
-  setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>;
+  handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement>;
 }
-const ChatArea: React.FC<props> = ({
-  postComment,
-  replyWindowResponse,
-  setReplyClickResponse,
-}) => {
+const ChatArea: React.FC<props> = ({ handleKeyDown }) => {
   const user = useAppSelector((state) => state.user);
 
   const text = useAppSelector((state) => state.textArea.text);
@@ -130,21 +119,6 @@ const ChatArea: React.FC<props> = ({
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetIsTextAreaFocused(true));
-  };
-
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.stopPropagation();
-      e.isPropagationStopped();
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      postComment(user, dispatch, replyWindowResponse, setReplyClickResponse);
-    } else if (
-      (e.key >= "a" && e.key <= "z") ||
-      (e.key >= "A" && e.key <= "Z")
-    ) {
-      e.stopPropagation();
-    }
   };
 
   const textAreaScrollListener: React.UIEventHandler<

@@ -1,48 +1,44 @@
 import "./fonts.scss";
 
-import {
-  ChatWindowParent,
-  DragBar,
-  Perimeter,
-  TextAreaContainer,
-} from "./chatInterface.styles";
+import { ChatWindowParent, DragBar, Perimeter } from "./chatInterface.styles";
 
 import React, {
   useCallback,
   useEffect,
   useMemo,
   useRef,
+  useLayoutEffect,
   useState,
 } from "react";
 
 import { CSSTransition } from "react-transition-group";
 
-import ChatTitle from "../chat-title/chatTitle";
-import ErrorPage from "../error-page/errorPage";
-import LogoLoading from "../logo-loading/logoLoading";
+import ChatTitle from "../../../../../components/chat-title/chatTitle";
+import ErrorPage from "../../../../../components/error-page/errorPage";
+import LogoLoading from "../../../../../components/logo-loading/logoLoading";
 
-import { Profile } from "../../generated/graphql";
-import PopSlide from "../pop-slide/popSlide";
-import Toast from "../toast/toast";
-import Tooltip from "../tooltip/tooltip";
-import ToxicityMessage from "../toxicity-message/toxicityMessage";
+import PopSlide from "../../../../../components/pop-slide/popSlide";
+import Toast from "../../../../../components/toast/toast";
+import Tooltip from "../../../../../components/tooltip/tooltip";
+import { Profile } from "../../../../../generated/graphql";
 
 import { withUrqlClient } from "next-urql";
-import { CommentInfo, User } from "../../helpers/interfaces";
-import { urqlClient } from "../../helpers/urql/urqlClient";
-import ChatBox from "../../pages/content/components/moovy/chatBox/chatBox";
-import ChatStats from "../../pages/content/components/moovy/chatStats/chatStats";
-import { getPlayerViewElement } from "../../pages/content/components/moovy/contentScript.utils";
-import { useMousePosition } from "../../pages/content/components/moovy/hooks/useMouseMove";
-import MessageBox from "../../pages/content/components/moovy/messageBox/messageBox";
-import UpdateProfile from "../../pages/content/components/moovy/update-profile/updateProfile";
-import { useAppDispatch, useAppSelector } from "../../pages/redux/hooks";
-import { sliceSetLoadingText } from "../../pages/redux/slices/loading/loadingSlice";
-import { sliceSetIsProfileNeedsToBeUpdated } from "../../pages/redux/slices/misc/miscSlice";
+import { CommentInfo, User } from "../../../../../helpers/interfaces";
+import { urqlClient } from "../../../../../helpers/urql/urqlClient";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { sliceSetLoadingText } from "../../../../redux/slices/loading/loadingSlice";
+import { sliceSetIsProfileNeedsToBeUpdated } from "../../../../redux/slices/misc/miscSlice";
 import {
   sliceResetPopUp,
   sliceSetChatWindowSize,
-} from "../../pages/redux/slices/settings/settingsSlice";
+} from "../../../../redux/slices/settings/settingsSlice";
+import ChatStats from "../chatStats/chatStats";
+import { getPlayerViewElement } from "../contentScript.utils";
+import GlobalChat from "../global-chat/globalChat";
+import { useMousePosition } from "../hooks/useMouseMove";
+import MoovyNest from "../moovy-nest/moovyNest";
+import UpdateProfile from "../update-profile/updateProfile";
+import { useTransition, animated } from "@react-spring/web";
 
 type props = {
   user: User;
@@ -80,11 +76,14 @@ const ChatInterface: React.FC<props> = ({
   const windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   const dispatch = useAppDispatch();
   const position = useMousePosition();
-
+  const chatMode = useAppSelector((state) => state.settings.chatMode);
   // React:useState hooks.
   const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
   const [customLoading, setCustomLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<boolean>(true);
+  const globalChatRef = useRef(null);
+  const moovyNestRef = useRef(null);
+
   useEffect(() => {
     setCustomLoading(() => true);
     const timeout = setTimeout(() => {
@@ -252,6 +251,49 @@ const ChatInterface: React.FC<props> = ({
     };
   }, []);
 
+  const transitions = useTransition(chatMode, {
+    key: chatMode,
+    unique: true,
+    from: {
+      opacity: 0,
+      transform:
+        chatMode === "global"
+          ? "translate3d(-100%, 0, 0)"
+          : "translate3d(100%, 0, 0)",
+      width: "0%",
+      display: "none",
+    },
+    enter: {
+      opacity: 1,
+      transform: "translate3d(0, 0, 0)",
+      width: "100%",
+      display: "block",
+      overflow: "hidden",
+    },
+    leave: {
+      opacity: 0,
+      transform:
+        chatMode === "global"
+          ? "translate3d(100%, 0, 0)"
+          : "translate3d(-100%, 0, 0)",
+      width: "0%",
+      display: "none",
+    },
+  });
+
+  const AnimatedGlobalChat = animated(GlobalChat);
+  const AnimatedMoovyNest = animated(MoovyNest);
+
+  useLayoutEffect(() => {
+    if (chatMode === "global") {
+      if (moovyNestRef && moovyNestRef.current)
+        moovyNestRef.current.style.display = "none";
+    } else {
+      if (globalChatRef && globalChatRef.current)
+        globalChatRef.current.style.display = "none";
+    }
+  }, [chatMode, globalChatRef, moovyNestRef]);
+
   return (
     <Perimeter
       className="chat-perimeter"
@@ -281,20 +323,21 @@ const ChatInterface: React.FC<props> = ({
           <React.Fragment>
             <ChatTitle />
             <ChatStats />
-            <TextAreaContainer
-              className="text-area-container"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageBox
-                replyWindowResponse={replyWindowResponse}
-                setReplyClickResponse={setReplyClickResponse}
-              />
-            </TextAreaContainer>
-            <ToxicityMessage />
-            <ChatBox
-              responseFromReplyWindow={responseFromReplyWindow}
-              type="comment"
-            />
+            {transitions((style, item) => (
+              <animated.div style={{ ...style, width: "100%", height: "100%" }}>
+                {item === "global" ? (
+                  <AnimatedGlobalChat
+                    replyWindowResponse={replyWindowResponse}
+                    responseFromReplyWindow={responseFromReplyWindow}
+                    setReplyClickResponse={setReplyClickResponse}
+                    ref={globalChatRef}
+                    style={style}
+                  />
+                ) : (
+                  <AnimatedMoovyNest ref={moovyNestRef} style={style} />
+                )}
+              </animated.div>
+            ))}
           </React.Fragment>
           <CSSTransition
             in={isPopSlideOpen}

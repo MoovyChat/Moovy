@@ -9,35 +9,34 @@ import { getVideoElement } from "./contentScript.utils";
 import { useFetchMovie } from "./hooks/useFetchMovie";
 
 import { withUrqlClient } from "next-urql";
-import { User, filterType } from "../../../../helpers/interfaces";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useGetUserQuery } from "../../../../generated/graphql";
 import {
   BOTTOMS_CONTROL,
   SKIP_BUTTON,
   isServerSide,
 } from "../../../../helpers/constants";
-import {
-  sliceResetSettings,
-  sliceSetSmoothWidth,
-  sliceSetVideoSize,
-} from "../../../redux/slices/settings/settingsSlice";
-import {
-  sliceSetNetworkError,
-  sliceValidateMovieLoading,
-} from "../../../redux/slices/loading/loadingSlice";
+import { User } from "../../../../helpers/interfaces";
 import {
   getStoredBorder,
   getStoredCheckedStatus,
   getStoredFilterValues,
   getStoredResizeValue,
   getStoredUserLoginDetails,
-  getStoredVideoFilters,
 } from "../../../../helpers/storage";
-import { sliceAddUser } from "../../../redux/slices/user/userSlice";
-import { sliceAddMovieId } from "../../../redux/slices/movie/movieSlice";
-import { StyledStart } from "./start.styles";
 import { urqlClient } from "../../../../helpers/urql/urqlClient";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import {
+  sliceSetNetworkError,
+  sliceValidateMovieLoading,
+} from "../../../redux/slices/loading/loadingSlice";
+import { sliceAddMovieId } from "../../../redux/slices/movie/movieSlice";
+import {
+  sliceResetSettings,
+  sliceSetSmoothWidth,
+  sliceSetVideoSize,
+} from "../../../redux/slices/settings/settingsSlice";
+import { sliceAddUser } from "../../../redux/slices/user/userSlice";
+import { StyledStart } from "./start.styles";
 
 interface Props {
   userDetails?: User;

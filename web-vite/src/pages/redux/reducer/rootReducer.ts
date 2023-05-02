@@ -9,6 +9,7 @@ import textAreaReducer from "../slices/textArea/textAreaSlice";
 import toastReducer from "../slices/toast/toastSlice";
 import toolTipReducer from "../slices/tooltip/tooltipSlice";
 import userReducer from "../slices/user/userSlice";
+import socketReducer from "../slices/socket/socketSlice";
 
 const persistConfig = {
   key: "root",
@@ -27,6 +28,7 @@ const rootReducer = {
   tooltip: toolTipReducer,
   misc: persistedSettingsReducer,
   manipulation: manipulationReducer,
+  socket: socketReducer,
 };
 
 export default rootReducer;

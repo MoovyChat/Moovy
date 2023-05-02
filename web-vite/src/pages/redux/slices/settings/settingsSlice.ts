@@ -11,7 +11,15 @@ const settingsState: SettingsInterface = {
   popSlideContentType: "",
   popSlideUserId: "",
   popSlideData: { data: null },
+  chatMode: "global",
 };
+
+type ChatMode = "global" | "nest";
+
+interface SetChatModeAction {
+  type: string;
+  payload: ChatMode;
+}
 
 const SettingsSlice = createSlice({
   name: "settings",
@@ -19,6 +27,9 @@ const SettingsSlice = createSlice({
   reducers: {
     sliceSetChatWindowSize: (state, action) => {
       return { ...state, chatWindowSize: action.payload + "" };
+    },
+    sliceSetChatMode: (state, action: SetChatModeAction) => {
+      return { ...state, chatMode: action.payload };
     },
     sliceSetVideoSize: (state, action) => {
       return { ...state, videoSize: action.payload };
@@ -61,6 +72,7 @@ const SettingsSlice = createSlice({
 
 export const {
   sliceSetChatWindowSize,
+  sliceSetChatMode,
   sliceSetVideoSize,
   sliceSetIsOpenChatWindow,
   sliceSetSmoothWidth,

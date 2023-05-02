@@ -89,3 +89,21 @@ export const scrollingText = keyframes`
   from {transform: translateX(100%); }
   to {transform: translateX(-140%); }
 `;
+
+export const wiggle = keyframes`
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(0);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+`;

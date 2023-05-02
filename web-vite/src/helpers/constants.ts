@@ -38,6 +38,14 @@ export const textMapTypes = {
   SPOILER: "spoiler",
 };
 
+export const SOCKET_MESSAGE_TYPES = {
+  JOIN: "join",
+  LEAVE: "leave",
+  MESSAGE: "message",
+  TYPING: "typing",
+};
+export const SOCKET_URL = "http://localhost:3000/";
+
 export const isServerSide = () => typeof window === "undefined";
 
 export const fonts = {
@@ -59,5 +67,7 @@ export const SKIP_BUTTON = ".watch-video--skip-content-button";
 
 export const LOGO_128 =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/mc-128.png";
+export const RED_LOGO_128 =
+  "https://moovychatbucket.s3.us-west-1.amazonaws.com/mcRed-128.png";
 export const FULL_LOGO_TRANSPARENT =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/MoovyChat_DarkTheme/fulllogo_transparent_nobuffer.png";

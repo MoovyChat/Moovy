@@ -115,6 +115,7 @@ export interface SettingsInterface {
   isPopSlideOpen: boolean;
   popSlideContentType: string;
   popSlideUserId: string;
+  chatMode: "global" | "nest";
   popSlideData: { data: any };
 }
 

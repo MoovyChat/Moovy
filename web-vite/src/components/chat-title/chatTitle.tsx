@@ -2,7 +2,7 @@
 
 import { MdOutlineExitToApp, MdStar, MdStarOutline } from "react-icons/md";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   useGetMovieFavCountQuery,
   useGetOnlyUserMovieStatsQuery,
@@ -12,22 +12,32 @@ import {
 
 import { withUrqlClient } from "next-urql";
 import { batch } from "react-redux";
-import { LOGO_128, isServerSide } from "../../helpers/constants";
+import { LOGO_128, RED_LOGO_128, isServerSide } from "../../helpers/constants";
 import { iconsEnum } from "../../helpers/enums";
 import { urqlClient } from "../../helpers/urql/urqlClient";
 import { getVideoTitleFromNetflixWatch } from "../../pages/content/components/moovy/contentScript.utils";
 import { handleMouseEnter, handleMouseLeave } from "../../pages/popup/utils";
 import { useAppDispatch, useAppSelector } from "../../pages/redux/hooks";
 import { sliceAddMovieName } from "../../pages/redux/slices/movie/movieSlice";
-import { sliceSetIsOpenChatWindow } from "../../pages/redux/slices/settings/settingsSlice";
+import {
+  sliceSetChatMode,
+  sliceSetIsOpenChatWindow,
+} from "../../pages/redux/slices/settings/settingsSlice";
 import {
   sliceSetToastBody,
   sliceSetToastVisible,
 } from "../../pages/redux/slices/toast/toastSlice";
 import { ChatTitleParent } from "./chatTitle.styles";
+import {
+  sliceSetToolTipMessage,
+  sliceSetTooltipVisible,
+} from "../../pages/redux/slices/tooltip/tooltipSlice";
 
 const ChatTitle = () => {
   const [fav, setFav] = useState<boolean>(false);
+  const [toggleMode, setToggleMode] = useState<boolean>(false);
+  const [src, setSrc] = useState(LOGO_128);
+  const logoDiv = useRef(null);
   const [favCount, SetFavCount] = useState<number>(0);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const movieTitle = useAppSelector((state) => state.movie.name);
@@ -35,9 +45,14 @@ const ChatTitle = () => {
   const userId = useAppSelector((state) => state.user.id);
   const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const dispatch = useAppDispatch();
+  const chatMode = useAppSelector((st) => st.settings.chatMode);
   const [tempTitle, setTempTitle] = useState<string>(movieTitle);
   // GraphQL: updateMovie and movieComments hooks.
   const [, updateMovieTitle] = useUpdateMovieTitleMutation();
+  const [hoverText, setHoverText] = useState(
+    toggleMode ? "Switch to Nest" : "Switch to Global Chat"
+  );
+
   const [{ error, fetching, data }, _query] = useGetMovieFavCountQuery({
     variables: {
       mid: movieId,
@@ -108,6 +123,37 @@ const ChatTitle = () => {
       clearInterval(interval);
     };
   }, [movieId, movieTitle]);
+
+  useEffect(() => {
+    if (logoDiv.current) {
+      logoDiv.current.classList.add("wiggle");
+      const timer = setTimeout(() => {
+        logoDiv.current.classList.remove("wiggle");
+      }, 500); // 500ms matches the animation duration in the CSS file
+      return () => clearTimeout(timer);
+    }
+  }, [src]);
+
+  const handleToggle = () => {
+    setToggleMode(() => !toggleMode);
+    dispatch(sliceSetChatMode(toggleMode ? "global" : "nest"));
+    setHoverText(toggleMode ? "Switch to Nest" : "Switch to Global Chat");
+  };
+
+  const handleMouseEnterForLogo = () => {
+    setHoverText(() =>
+      toggleMode ? "Switch to Nest" : "Switch to Global Chat"
+    );
+    dispatch(sliceSetTooltipVisible(true));
+    dispatch(sliceSetToolTipMessage(hoverText));
+  };
+
+  const handleMouseLeaveForLogo = () => {
+    setHoverText(toggleMode ? "Switch to Global Chat" : "Switch to Nest");
+    dispatch(sliceSetTooltipVisible(false));
+    dispatch(sliceSetToolTipMessage(""));
+  };
+
   return (
     <ChatTitleParent className="chat-title">
       <div
@@ -121,8 +167,18 @@ const ChatTitle = () => {
       >
         <MdOutlineExitToApp className="star" size={20} />
       </div>
-      <div className="logo">
-        <img src={LOGO_128} alt="logo" width="20" height="20" />
+      <div
+        className="logo"
+        onClick={handleToggle}
+        onMouseEnter={handleMouseEnterForLogo}
+        onMouseLeave={handleMouseLeaveForLogo}
+      >
+        <img
+          src={toggleMode ? RED_LOGO_128 : LOGO_128}
+          alt="logo"
+          width="25"
+          height="25"
+        />
       </div>
 
       <div className="title">

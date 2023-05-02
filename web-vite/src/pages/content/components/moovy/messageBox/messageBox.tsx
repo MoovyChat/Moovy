@@ -207,17 +207,35 @@ const MessageBox: React.FC<props> = ({
     }
   }, [replyWindowResponse]);
 
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.stopPropagation();
+      e.isPropagationStopped();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      postComment(
+        userFromRedux,
+        dispatch,
+        replyWindowResponse,
+        setReplyClickResponse
+      );
+    } else if (
+      (e.key >= "a" && e.key <= "z") ||
+      (e.key >= "A" && e.key <= "Z")
+    ) {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <ChatTextBox className="chat-text-box" isReply={isReply}>
       <TextAreaIcon className="text-area-icon">
         <Profile profilePic={userFromRedux?.photoUrl}></Profile>
       </TextAreaIcon>
       <MessageBoxParent>
-        <ChatArea
-          postComment={postComment}
-          replyWindowResponse={replyWindowResponse}
-          setReplyClickResponse={setReplyClickResponse}
-        />
+        <ChatArea handleKeyDown={handleKeyDown} />
         {isReply ? (
           <ReplyTo>
             <p>Replying to {repliedUser}</p>

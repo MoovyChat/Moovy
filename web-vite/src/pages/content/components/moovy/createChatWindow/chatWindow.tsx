@@ -4,7 +4,7 @@ import { ThemeProvider } from "styled-components";
 
 import useFetchEmojis from "../hooks/useFetchEmojis";
 import { withUrqlClient } from "next-urql";
-import ChatInterface from "../../../../../components/chat-interface/chatInterface";
+import ChatInterface from "../chat-interface/chatInterface";
 import {
   Profile,
   useGetUserProfileQuery,

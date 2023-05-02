@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { rotate } from "../../pages/content/styles/keyframes";
+import { rotate, wiggle } from "../../pages/content/styles/keyframes";
 
 export const ChatTitleParent = styled.div`
   opacity: 1;
@@ -7,7 +7,6 @@ export const ChatTitleParent = styled.div`
   font-size: 1.3em;
   word-wrap: break-word;
   font-weight: bold;
-  /* font-family: 'Convergence', sans-serif; */
   font-family: inherit;
   padding: 20px 10px;
   width: 100%;
@@ -50,6 +49,10 @@ export const ChatTitleParent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+  }
+  .wiggle {
+    animation: ${wiggle} 0.5s linear;
   }
   .title {
     grid-area: 1 / 3 / 2 / 9;
