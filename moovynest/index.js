@@ -35,6 +35,10 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("startVideoCommunication", (roomId) => {
+    socket.broadcast.to(roomId).emit("startVideoCommunication");
+  });
+
   // Handle incoming messages from the client
   socket.on("message", ({ roomId, data }) => {
     console.log("Received message:", data);
@@ -63,6 +67,12 @@ io.on("connection", (socket) => {
       delete socket.roomId;
       delete socket.user;
     }
+  });
+
+  // Handle WebRTC signaling
+  socket.on("signal", (data) => {
+    const { type, roomId, message } = data;
+    socket.to(roomId).emit("signal", { type, from: socket.id, message });
   });
 
   socket.on("closeConnections", () => {
