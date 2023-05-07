@@ -1,31 +1,31 @@
-import 'reflect-metadata';
-import 'dotenv-safe/config';
+import "reflect-metadata";
+import "dotenv-safe/config";
 
-import { COOKIE_NAME, __prod__ } from './constants';
-import Redis, { RedisOptions } from 'ioredis';
+import { COOKIE_NAME, __prod__ } from "./constants";
+import Redis, { RedisOptions } from "ioredis";
 
-import { ApolloServer } from 'apollo-server-express';
-import { MyContext } from './types';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import bodyParser from 'body-parser';
-import { buildSchema } from 'type-graphql';
-import compression from 'compression';
-import { conn } from './dataSource';
-import connectRedis from 'connect-redis';
-import cors from 'cors';
-import { createClient } from 'redis';
-import { createServer } from 'http';
-import express from 'express';
-import { resolvers } from './resolvers';
-import session from 'express-session';
-import { useServer } from 'graphql-ws/lib/use/ws';
-import ws from 'ws';
+import { ApolloServer } from "apollo-server-express";
+import { MyContext } from "./types";
+import { RedisPubSub } from "graphql-redis-subscriptions";
+import bodyParser from "body-parser";
+import { buildSchema } from "type-graphql";
+import compression from "compression";
+import { conn } from "./dataSource";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import { createClient } from "redis";
+import { createServer } from "http";
+import express from "express";
+import { resolvers } from "./resolvers";
+import session from "express-session";
+import { useServer } from "graphql-ws/lib/use/ws";
+import ws from "ws";
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const regex = /^redis:\/\/(?::(.*)@)?(.*):(\d+)$/;
 const matchResult = redisUrl.match(regex);
 if (!matchResult) {
-  throw new Error('Invalid Redis connection string');
+  throw new Error("Invalid Redis connection string");
 }
 
 const [_, password, host, portStr] = matchResult;
@@ -33,7 +33,7 @@ const port = parseInt(portStr, 10);
 const options: RedisOptions = {
   host,
   port,
-  password: password ?? '',
+  password: password ?? "",
 };
 const redisClient = createClient({
   url: redisUrl,
@@ -46,24 +46,24 @@ const getConfiguredRedisPubSub = new RedisPubSub({
 
 const main = async () => {
   await conn.initialize();
-  await conn.runMigrations();
+  // await conn.runMigrations();
   const app = express();
 
   // Enable gzip compression for all resources
   app.use(compression());
 
   // Serve your app's static resources
-  app.use(express.static('public', { maxAge: '1d' }));
+  app.use(express.static("public", { maxAge: "1d" }));
 
   // Set cache headers for /graphql
-  app.use('/graphql', (_req, res, next) => {
-    res.set('Cache-Control', 'public, max-age=86400'); // 1 day
+  app.use("/graphql", (_req, res, next) => {
+    res.set("Cache-Control", "public, max-age=86400"); // 1 day
     next();
   });
 
   // Increase the maximum request size limit to 50MB
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  app.use(bodyParser.json({ limit: "50mb" }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
   const server = createServer(app);
   const schema = await buildSchema({
@@ -76,20 +76,20 @@ const main = async () => {
   const corsOptions = {
     origin: [
       process.env.CORS_ORIGIN,
-      'https://studio.apollographql.com',
-      'https://server.moovychat.com/graphql',
-      'https://www.moovychat.com',
-      'ws://server.moovychat.com/graphql',
-      'wss://server.moovychat.com/graphql',
-      'https://www.netflix.com',
-      'http://localhost:4000',
-      'http://localhost:4000/graphql',
-      'chrome-extension://ilkpekdilkpahngoeanmpnkegideejip',
+      "https://studio.apollographql.com",
+      "https://server.moovychat.com/graphql",
+      "https://www.moovychat.com",
+      "ws://server.moovychat.com/graphql",
+      "wss://server.moovychat.com/graphql",
+      "https://www.netflix.com",
+      "http://localhost:4000",
+      "http://localhost:4000/graphql",
+      "chrome-extension://ilkpekdilkpahngoeanmpnkegideejip",
       process.env.REDIS_URL,
     ],
     credentials: true,
   };
-  app.set('trust proxy', 1);
+  app.set("trust proxy", 1);
   app.use(cors(corsOptions));
 
   app.use(
@@ -102,9 +102,9 @@ const main = async () => {
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years.
         httpOnly: true,
-        sameSite: 'lax', //csrf
+        sameSite: "lax", //csrf
         secure: __prod__, // cookie only works in https.
-        domain: __prod__ ? '.moovychat.com' : undefined,
+        domain: __prod__ ? ".moovychat.com" : undefined,
       },
       secret: process.env.SESSION_SECRET,
       resave: false,
@@ -114,7 +114,7 @@ const main = async () => {
 
   const wsServer = new ws.Server({
     server,
-    path: '/graphql',
+    path: "/graphql",
   });
 
   const apolloServer = new ApolloServer({
@@ -151,7 +151,7 @@ const main = async () => {
     app,
     cors: false,
   });
-  const port = process.env.PORT || '5000';
+  const port = process.env.PORT || "5000";
   server.listen(parseInt(port as string), () => {
     console.log(`server started on localhost:${port}`);
     useServer({ schema }, wsServer);
