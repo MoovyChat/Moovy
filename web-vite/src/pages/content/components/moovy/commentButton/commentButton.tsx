@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 
 import ChatWindow from "../createChatWindow/chatWindow";
 import { CommentHeader } from "./commentButton.styles";
-import { GoCommentDiscussion } from "react-icons/go";
 import { Provider as ReduxProvider } from "react-redux";
 import { createRoot } from "react-dom/client";
 import { useInsertMovie } from "../hooks/useInsertMovie";
@@ -21,6 +20,7 @@ import { sliceSetIntervalIds } from "../../../../redux/slices/misc/miscSlice";
 import { sliceSetIsOpenChatWindow } from "../../../../redux/slices/settings/settingsSlice";
 import { store } from "../../../../redux/store";
 import { LOGO_128 } from "../../../../../helpers/constants";
+import { SocketProvider } from "../context/socketContextFile";
 
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
@@ -29,7 +29,9 @@ const Loader = (chatElement: HTMLDivElement) => {
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <ReduxProvider store={store}>
-        <ChatWindow />
+        <SocketProvider>
+          <ChatWindow />
+        </SocketProvider>
       </ReduxProvider>
     );
   }

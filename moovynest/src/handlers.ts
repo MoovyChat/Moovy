@@ -27,37 +27,54 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
         message: `${socket.id} joined room ${roomId}`,
       });
     }
-    io.to(roomId).emit("roomUsers", getUsersInRoom(roomId));
+    const usersInRoom = getUsersInRoom(roomId);
+    io.to(roomId).emit("roomUsers", usersInRoom);
+    const usersWithCameraOn = usersInRoom.filter((roomUser) => {
+      return roomUser.isConnectedToCall === true;
+    });
+    io.to(roomId).emit("usersWithCamera", usersWithCameraOn);
   };
 }
 
-function handleJoinCall(
-  socket: CustomSocket,
-  users: { [key: string]: string[] },
-  socketToRoom: { [key: string]: string }
-) {
+function handleJoinCall(socket: CustomSocket, io: Server) {
   return (roomID: string) => {
-    console.log("handleJoinCall");
-    // Users[roomId] stores the socket Id
-    if (users[roomID]) {
-      const length = users[roomID].length;
-      if (length === 4) {
-        socket.emit("room full");
-        return;
-      }
-      users[roomID].push(socket.id);
-    } else {
-      users[roomID] = [socket.id];
+    console.log("handleJoinCall", roomID);
+
+    if (!rooms[roomID]) {
+      rooms[roomID] = [];
     }
-    socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
-    socket.emit("all users", usersInThisRoom);
+
+    const usersInRoom = rooms[roomID];
+
+    if (usersInRoom.length === 4) {
+      socket.emit("room full");
+      return;
+    }
+
+    const currentUser = usersInRoom.find(
+      (roomUser) => roomUser.id === socket.id
+    );
+
+    if (currentUser) {
+      currentUser.isConnectedToCall = true;
+    } else {
+      usersInRoom.push({
+        id: socket.id,
+        user: socket.user,
+        socket: socket,
+        isConnectedToCall: true,
+      });
+    }
+
+    const usersWithCameraOn = usersInRoom.filter((roomUser) => {
+      return roomUser.isConnectedToCall === true;
+    });
+    io.to(roomID).emit("usersWithCamera", usersWithCameraOn);
   };
 }
 
 function handleSendingSignal(socket: CustomSocket, io: Server) {
   return (payload: any) => {
-    console.log("handleSendingSignal");
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
       callerID: payload.callerID,
@@ -82,6 +99,18 @@ function handleMessage(socket: Socket, io: Server) {
   };
 }
 
+function handleCurrentCallUsers(socket: CustomSocket, io: Server) {
+  return () => {
+    console.log("handleCurrentCallUsers");
+    const roomId = socket.roomId;
+    const usersInThisRoom = getUsersInRoom(roomId);
+    const usersWithCameraOn = usersInThisRoom.filter((roomUser) => {
+      return roomUser.isConnectedToCall === true;
+    });
+    io.to(roomId).emit("usersWithCamera", usersWithCameraOn);
+  };
+}
+
 function handleLeaveRoom(socket: CustomSocket, io: Server) {
   return () => {
     console.log("handleLeaveRoom");
@@ -98,11 +127,11 @@ function handleLeaveRoom(socket: CustomSocket, io: Server) {
   };
 }
 
-function handleSignal(socket: Socket) {
+function handleSignal(socket: Socket, io: Server) {
   return (data: any) => {
-    console.log("handleSignal");
+    console.log("handleSignal", data);
     const { type, roomId, message } = data;
-    socket.to(roomId).emit("signal", { type, from: socket.id, message });
+    io.to(roomId).emit("signal", { type, from: socket.id, message });
   };
 }
 
@@ -110,7 +139,7 @@ function handleCloseConnections(socket: CustomSocket, io: Server) {
   return () => {
     console.log("handleCloseConnections");
     if (socket.roomId && getUsersInRoom(socket.roomId).length > 1) {
-      getUsersInRoom(socket.roomId).forEach((roomUser) => {
+      getUsersInRoom(socket.roomId).forEach((roomUser: any) => {
         io.sockets.sockets.get(roomUser.id)?.disconnect();
       });
 
@@ -144,4 +173,5 @@ export {
   handleJoinCall,
   handleReturningSignal,
   handleSendingSignal,
+  handleCurrentCallUsers,
 };

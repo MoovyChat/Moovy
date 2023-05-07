@@ -39,7 +39,7 @@ const NestChatBox = () => {
                 />
               </div>
               <div className="nest-msg">
-                {data.user.nickname} <span className="moovy-join">joined</span>{" "}
+                {data.user?.nickname} <span className="moovy-join">joined</span>{" "}
                 the room
               </div>
             </StyledJoinLeaveMessage>
@@ -48,22 +48,22 @@ const NestChatBox = () => {
           return (
             <StyledJoinLeaveMessage>
               <div className="profile-pic">
-                <img src={data.user.photoUrl} alt="profile-picture" />
+                <img src={data.user?.photoUrl} alt="profile-picture" />
               </div>
               <div className="nest-msg">
-                {data.user.nickname} <span className="moovy-left">left</span>{" "}
+                {data.user?.nickname} <span className="moovy-left">left</span>{" "}
                 the room
               </div>
             </StyledJoinLeaveMessage>
           );
         } else if (data.type === SOCKET_MESSAGE_TYPES.MESSAGE) {
           const containerClassName =
-            user.nickname === data.user.nickname
+            data && data.user && user.nickname === data.user.nickname
               ? "container sender"
               : "container receiver";
           return (
-            <StyledUserMessage isUser={user.nickname === data.user.nickname}>
-              {user.nickname !== data.user.nickname ? (
+            <StyledUserMessage isUser={user.nickname === data.user?.nickname}>
+              {data && data.user && user.nickname !== data.user.nickname ? (
                 <React.Fragment>
                   <div className="profile-pic">
                     <img src={data.user.photoUrl} alt="profile-picture" />

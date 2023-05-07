@@ -1,6 +1,7 @@
 import MiscReducer from "../slices/misc/miscSlice";
 import loadingReducer from "../slices/loading/loadingSlice";
 import manipulationReducer from "../slices/videoManipulation";
+import nestReducer from "../slices/nestSlice";
 import movieReducer from "../slices/movie/movieSlice";
 import { persistReducer } from "redux-persist";
 import settingsReducer from "../slices/settings/settingsSlice";
@@ -29,6 +30,7 @@ const rootReducer = {
   misc: persistedSettingsReducer,
   manipulation: manipulationReducer,
   socket: socketReducer,
+  nest: nestReducer,
 };
 
 export default rootReducer;

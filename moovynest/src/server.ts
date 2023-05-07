@@ -12,6 +12,7 @@ import {
   handleJoinCall,
   handleSendingSignal,
   handleReturningSignal,
+  handleCurrentCallUsers,
 } from "./handlers";
 import { CustomSocket } from "./customSocket";
 
@@ -28,27 +29,25 @@ const io = new socketIO.Server(server, {
   },
 });
 
-const users: { [key: string]: string[] } = {};
-const socketToRoom: { [key: string]: string } = {};
-
 io.on("connection", (socket) => {
   console.log("New client connected:", socket.id);
 
   socket.on("joinRoom", handleJoinRoom(socket as CustomSocket, io));
 
-  socket.on(
-    "joinCall",
-    handleJoinCall(socket as CustomSocket, users, socketToRoom)
-  );
+  socket.on("joinCall", handleJoinCall(socket as CustomSocket, io));
   socket.on("sending signal", handleSendingSignal(socket as CustomSocket, io));
   socket.on(
     "returning signal",
     handleReturningSignal(socket as CustomSocket, io)
   );
 
+  socket.on(
+    "currentCallUsers",
+    handleCurrentCallUsers(socket as CustomSocket, io)
+  );
   socket.on("message", handleMessage(socket, io));
   socket.on("leaveRoom", handleLeaveRoom(socket as CustomSocket, io));
-  socket.on("signal", handleSignal(socket));
+  socket.on("signal", handleSignal(socket, io));
   socket.on(
     "closeConnections",
     handleCloseConnections(socket as CustomSocket, io)

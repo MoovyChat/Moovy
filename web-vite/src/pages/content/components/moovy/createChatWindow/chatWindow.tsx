@@ -27,6 +27,7 @@ const ChatWindow = () => {
   const videoWidthRef = useRef<number>(100);
   const widthRef = useRef<number>(0);
   const profileRef = useRef<Profile | null | undefined>(null);
+  const accessCamera = useAppSelector((state) => state.socket.accessCamera);
   const [profile] = useGetUserProfileQuery({
     variables: {
       uid: user?.id,

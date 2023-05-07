@@ -12,6 +12,7 @@ interface SocketStateInterface {
   joinedUsers: Users[];
   incomingMessages: incomingMessageInterface[];
   userTyping: string;
+  accessCamera: boolean;
 }
 
 const socketState: SocketStateInterface = {
@@ -19,6 +20,7 @@ const socketState: SocketStateInterface = {
   joinedUsers: [],
   incomingMessages: [],
   userTyping: "",
+  accessCamera: false,
 };
 
 const socketSlice = createSlice({
@@ -34,6 +36,9 @@ const socketSlice = createSlice({
     sliceSetUserTyping: (state, action) => {
       return { ...state, userTyping: action.payload };
     },
+    sliceSetAccessCamera: (state, action) => {
+      return { ...state, accessCamera: action.payload };
+    },
     sliceSetIncomingMessages: (state, action) => {
       return {
         ...state,
@@ -45,6 +50,7 @@ const socketSlice = createSlice({
 
 export const {
   sliceSetRoomId,
+  sliceSetAccessCamera,
   sliceSetJoinedUsers,
   sliceSetIncomingMessages,
   sliceSetUserTyping,

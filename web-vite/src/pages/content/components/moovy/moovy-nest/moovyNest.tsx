@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
 import { TextAreaContainer } from "../chat-interface/chatInterface.styles";
 import ChatArea from "../../../../../components/chat-area/chatArea";
@@ -11,17 +11,13 @@ import { Profile } from "../commentInterface/commentInterface.styles";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { IoArrowForwardCircle } from "react-icons/io5";
 import NestChatBox from "./nest-chat-box/nestChatBox";
-import { io, Socket } from "socket.io-client";
-import {
-  SOCKET_MESSAGE_TYPES,
-  SOCKET_URL,
-} from "../../../../../helpers/constants";
-import {
-  sliceSetIncomingMessages,
-  sliceSetUserTyping,
-} from "../../../../redux/slices/socket/socketSlice";
+
+import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
+import { sliceSetIncomingMessages } from "../../../../redux/slices/socket/socketSlice";
 import { sliceSetTextAreaMessage } from "../../../../redux/slices/textArea/textAreaSlice";
 import NestStatus from "./nest-status/nestStatus";
+import { SocketContext } from "../context/socketContextFile";
+import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
 
 interface Props {
   ref: any;
@@ -29,66 +25,71 @@ interface Props {
 }
 const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const user = useAppSelector((state) => state.user);
+  const socket = useContext(SocketContext);
   const [roomUsers, setRoomUsers] = useState([]);
   const [usersTyping, setUsersTyping] = useState([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
   const dispatch = useAppDispatch();
   const [isConnected, setIsConnected] = useState(false);
+  const accessCamera = useAppSelector((state) => state.socket.accessCamera);
 
   useEffect(() => {
-    const newSocket = io(SOCKET_URL); // Replace with your server URL
-    setSocket(newSocket);
+    if (socket) {
+      socket.on("connect", () => {
+        console.log("Connected:", socket.connected); // true when connected
+        setIsConnected(() => true);
+      });
 
-    newSocket.on("connect", () => {
-      console.log("Connected:", newSocket.connected); // true when connected
-      setIsConnected(() => true);
-    });
+      socket.on("disconnect", () => {
+        console.log("Connected:", socket.connected); // false when disconnected
+        setIsConnected(() => false);
+      });
 
-    newSocket.on("disconnect", () => {
-      console.log("Connected:", newSocket.connected); // false when disconnected
-      setIsConnected(() => false);
-    });
+      socket.emit("joinRoom", "test", user);
 
-    newSocket.emit("joinRoom", "test", user); // Replace 'your-room-id' with a unique room identifier
+      socket.on("roomUsers", (users) => {
+        setRoomUsers(() => users);
+      });
 
-    newSocket.on("roomUsers", (users) => {
-      setRoomUsers(() => users);
-    });
-
-    newSocket.on("message", (incomingMessage) => {
-      console.log("Received message from socket: ", incomingMessage);
-      const { type } = incomingMessage;
-      if (type !== SOCKET_MESSAGE_TYPES.TYPING) {
-        dispatch(sliceSetIncomingMessages(incomingMessage));
-      } else {
-        // Check if the incoming typing message is from the current user
-        if (incomingMessage.user.id !== user.id) {
-          setUsersTyping((prevUsersTyping) => {
-            const existingUserIndex = prevUsersTyping.findIndex(
-              (u) => u.id === incomingMessage.user.id
-            );
-
-            if (incomingMessage.message === "" && existingUserIndex > -1) {
-              return prevUsersTyping.filter(
-                (u) => u.id !== incomingMessage.user.id
+      socket.on("message", (incomingMessage) => {
+        const { type } = incomingMessage;
+        if (type !== SOCKET_MESSAGE_TYPES.TYPING) {
+          dispatch(sliceSetIncomingMessages(incomingMessage));
+        } else {
+          // Check if the incoming typing message is from the current user
+          if (incomingMessage.user.id !== user.id) {
+            setUsersTyping((prevUsersTyping) => {
+              const existingUserIndex = prevUsersTyping.findIndex(
+                (u) => u.id === incomingMessage.user.id
               );
-            } else if (
-              incomingMessage.message !== "" &&
-              existingUserIndex === -1
-            ) {
-              return [...prevUsersTyping, incomingMessage.user];
-            }
 
-            return prevUsersTyping;
-          });
+              if (incomingMessage.message === "" && existingUserIndex > -1) {
+                return prevUsersTyping.filter(
+                  (u) => u.id !== incomingMessage.user.id
+                );
+              } else if (
+                incomingMessage.message !== "" &&
+                existingUserIndex === -1
+              ) {
+                return [...prevUsersTyping, incomingMessage.user];
+              }
+
+              return prevUsersTyping;
+            });
+          }
         }
-      }
-    });
+      });
 
-    return () => {
-      newSocket.close();
-    };
-  }, []);
+      return () => {
+        if (socket) {
+          // socket.close(); This will permanently close the socket. User will have to create a new socket connection.
+          socket.off("connect");
+          socket.off("disconnect");
+          socket.off("roomUsers");
+          socket.off("message");
+        }
+      };
+    }
+  }, [socket]);
 
   const handleInputChange: React.ChangeEventHandler<
     HTMLTextAreaElement
@@ -98,14 +99,15 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     const text = e.target.value;
     dispatch(sliceSetTextAreaMessage(text));
     if (text) {
-      socket.emit("message", {
-        roomId: "test",
-        data: {
-          user,
-          type: "typing",
-          message: `${user.nickname} is typing...`,
-        },
-      });
+      socket &&
+        socket.emit("message", {
+          roomId: "test",
+          data: {
+            user,
+            type: "typing",
+            message: `${user.nickname} is typing...`,
+          },
+        });
     } else {
       socket.emit("message", {
         roomId: "test",
@@ -172,6 +174,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
       >
         Welcome to MoovyNest!
       </div>
+      <Room />
       <NestChatBox />
       <TypingStatus>
         {usersTyping.length === 1 && (
@@ -208,9 +211,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
           </TextAreaPost>
         </ChatTextBox>
       </TextAreaContainer>
-      {isConnected && (
-        <NestStatus users={roomUsers} leaveButtonHandler={leaveButtonHandler} />
-      )}
+      <NestStatus users={roomUsers} leaveButtonHandler={leaveButtonHandler} />
     </StyledMoovyNest>
   );
 };

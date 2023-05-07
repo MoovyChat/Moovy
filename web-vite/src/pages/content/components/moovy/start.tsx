@@ -146,29 +146,29 @@ const Start: React.FC<Props> = () => {
     };
   }, []);
 
-  // Set the pre-saved video styles.
+  //Set the pre-saved video styles.
   useEffect(() => {
     async function applyVideoStyles() {
       const playerView = document.querySelector('[data-uia="player"]');
       const canvas = playerView as HTMLElement;
       // Get selected filters from the local storage.
-      getStoredFilterValues().then((filters) => setFilterValues(filters));
+      // getStoredFilterValues().then((filters) => setFilterValues(filters));
       // Get stored resize value.
-      getStoredResizeValue().then((res) => {
-        dispatch(sliceSetVideoSize(res));
-        if (canvas && res !== "100") {
-          getStoredBorder().then((border) => {
-            addBorder(canvas, res, border);
-          });
-        }
-      });
+      // getStoredResizeValue().then((res) => {
+      //   dispatch(sliceSetVideoSize(res));
+      //   if (canvas && res !== "100") {
+      //     getStoredBorder().then((border) => {
+      //       addBorder(canvas, res, border);
+      //     });
+      //   }
+      // });
       getVideoElement().then((res) => {
         setVideoElem(res[0]);
       });
     }
     const interval = setInterval(() => {
       applyVideoStyles().then(() => {
-        videoElem && filterValues && applyFilter(filterValues, videoElem);
+        // videoElem && filterValues && applyFilter(filterValues, videoElem);
       });
       if (videoElem) clearInterval(interval);
     }, 500);

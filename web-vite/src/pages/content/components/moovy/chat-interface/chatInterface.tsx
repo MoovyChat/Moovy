@@ -36,9 +36,10 @@ import ChatStats from "../chatStats/chatStats";
 import { getPlayerViewElement } from "../contentScript.utils";
 import GlobalChat from "../global-chat/globalChat";
 import { useMousePosition } from "../hooks/useMouseMove";
-import MoovyNest from "../moovy-nest/moovyNest";
 import UpdateProfile from "../update-profile/updateProfile";
 import { useTransition, animated } from "@react-spring/web";
+import MoovyNest from "../moovy-nest/moovyNest";
+import NestLogin from "../moovy-nest/nest-login/nestLogin";
 
 type props = {
   user: User;
@@ -282,7 +283,7 @@ const ChatInterface: React.FC<props> = ({
   });
 
   const AnimatedGlobalChat = animated(GlobalChat);
-  const AnimatedMoovyNest = animated(MoovyNest);
+  const AnimatedMoovyNest = animated(NestLogin);
 
   useLayoutEffect(() => {
     if (chatMode === "global") {

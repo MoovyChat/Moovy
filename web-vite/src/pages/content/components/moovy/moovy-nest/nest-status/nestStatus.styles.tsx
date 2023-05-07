@@ -25,6 +25,10 @@ export const StyledNestStatus = styled.div`
     border-radius: 18px;
     box-shadow: 0px 0px 4px;
     padding: 5px 10px;
+    cursor: pointer;
+    :active {
+      box-shadow: 0px 0px 3px;
+    }
     .peopleCount {
       font-weight: 600;
       font-size: 14px;

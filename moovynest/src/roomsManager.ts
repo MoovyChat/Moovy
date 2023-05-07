@@ -5,11 +5,7 @@ interface RoomUser {
   id: string;
   user: any;
   socket?: Socket;
-}
-
-export interface SimplifiedRoomUser {
-  id: string;
-  user: any;
+  isConnectedToCall?: boolean;
 }
 
 const rooms: { [key: string]: RoomUser[] } = {};
@@ -44,7 +40,11 @@ function removeUserFromRoom(socket: any) {
 function getUsersInRoom(roomId: string): RoomUser[] {
   console.log("getUsersInRoom");
   const users = rooms[roomId] || [];
-  return users.map(({ id, user }) => ({ id, user }));
+  return users.map(({ id, user, isConnectedToCall }) => ({
+    id,
+    user,
+    isConnectedToCall,
+  }));
 }
 
 export { addUserToRoom, removeUserFromRoom, getUsersInRoom, rooms };
