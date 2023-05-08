@@ -11,7 +11,7 @@ export const constants = {
 };
 export const __prod__ = process.env.NODE_ENV !== "production";
 
-const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
+export const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
 export const MOOVY_URL = __prod__
   ? "https://www.moovychat.com"
   : "http://localhost:3000";
@@ -44,7 +44,7 @@ export const SOCKET_MESSAGE_TYPES = {
   MESSAGE: "message",
   TYPING: "typing",
 };
-export const SOCKET_URL = "http://localhost:3000/";
+export const SOCKET_URL = "http://localhost:3001/";
 
 export const isServerSide = () => typeof window === "undefined";
 

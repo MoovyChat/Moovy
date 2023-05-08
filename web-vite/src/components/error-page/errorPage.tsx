@@ -1,13 +1,20 @@
-import React, { MouseEventHandler, useState } from "react";
+/// <reference types="chrome"/>
 
-import { StyledErrorPage } from "./errorPage.styles";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 
+import { StyledErrorPage, StyledIFrameButton } from "./errorPage.styles";
+
+import { MdOutlineExitToApp } from "react-icons/md";
 import { useGetUserMutMutation } from "../../generated/graphql";
+import { FULL_LOGO_TRANSPARENT, MOOVY_URL } from "../../helpers/constants";
 import { requestTypes } from "../../helpers/enums";
 import { User } from "../../helpers/interfaces";
+import { handleMouseEnter, handleMouseLeave } from "../../pages/popup/utils";
 import { useAppDispatch } from "../../pages/redux/hooks";
+import { sliceSetIsOpenChatWindow } from "../../pages/redux/slices/settings/settingsSlice";
 import { sliceAddUser } from "../../pages/redux/slices/user/userSlice";
-import { FULL_LOGO_TRANSPARENT } from "../../helpers/constants";
+import { withUrqlClient } from "next-urql";
+import { urqlClient } from "../../helpers/urql/urqlClient";
 
 type props = {
   text: string;
@@ -16,8 +23,8 @@ const ErrorPage: React.FC<props> = ({ text }) => {
   const dispatch = useAppDispatch();
   const [err, setErr] = useState<string>("");
   const [, getUser] = useGetUserMutMutation();
-  const refetchUser: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
+
+  const refetchToChrome = () => {
     chrome.runtime.sendMessage(
       { type: requestTypes.REFETCH_USER },
       function (response) {
@@ -38,10 +45,56 @@ const ErrorPage: React.FC<props> = ({ text }) => {
       }
     );
   };
+
+  const refetchUser: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    refetchToChrome();
+  };
+  const url = `${MOOVY_URL}/embed-login`;
+
+  useEffect(() => {
+    const handleIframeMessage = (event) => {
+      // Make sure the message is from the expected origin (e.g., your domain)
+      // if (event.origin !== 'http://your-domain.com') return;
+
+      if (event.data === "LoginCompleted") {
+        // Handle button click here
+        // Refetch the login details.
+        refetchToChrome();
+      }
+    };
+
+    window.addEventListener("message", handleIframeMessage, false);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("message", handleIframeMessage, false);
+    };
+  }, []);
   return (
     <StyledErrorPage>
+      <div
+        className="exit common"
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch(sliceSetIsOpenChatWindow(false));
+        }}
+        onMouseEnter={handleMouseEnter("Close Chat")}
+        onMouseLeave={handleMouseLeave("")}
+      >
+        <MdOutlineExitToApp className="star" size={20} />
+      </div>
+
       <div className="logo">
         <img src={FULL_LOGO_TRANSPARENT} alt="Moovy" />
+      </div>
+      <div className="iframe-container">
+        <StyledIFrameButton src={url} />
+      </div>
+      <div className="divider">
+        <div className="line" />
+        <span className="text">or</span>
+        <div className="line" />
       </div>
       <div className="text">{text}</div>
       <div className="refetch" onClick={refetchUser}>
@@ -52,4 +105,4 @@ const ErrorPage: React.FC<props> = ({ text }) => {
   );
 };
 
-export default ErrorPage;
+export default withUrqlClient(urqlClient)(ErrorPage);

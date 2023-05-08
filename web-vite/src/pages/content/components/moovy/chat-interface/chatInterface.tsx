@@ -40,6 +40,7 @@ import UpdateProfile from "../update-profile/updateProfile";
 import { useTransition, animated } from "@react-spring/web";
 import MoovyNest from "../moovy-nest/moovyNest";
 import NestLogin from "../moovy-nest/nest-login/nestLogin";
+import SnackBar from "../moovy-nest/nest-popup/snack-bar/snackBar";
 
 type props = {
   user: User;
@@ -357,6 +358,7 @@ const ChatInterface: React.FC<props> = ({
             </div>
           </CSSTransition>
           <Tooltip left={pos.x} top={pos.y} />
+          <SnackBar />
         </ChatWindowParent>
       )}
     </Perimeter>

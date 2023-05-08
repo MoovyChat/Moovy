@@ -9,6 +9,15 @@ export const StyledNestPopUp = styled.div`
   width: 100%;
   backdrop-filter: blur(10px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  .logo {
+    position: absolute;
+    top: 40px;
+    img {
+      width: 140px;
+      object-fit: contain;
+    }
+  }
 `;

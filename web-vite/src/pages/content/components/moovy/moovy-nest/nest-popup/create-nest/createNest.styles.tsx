@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Input from "@mui/base/Input";
 import { switchClasses } from "@mui/base/Switch";
 
 const blue = {
@@ -23,9 +22,8 @@ const grey = {
   900: "#24292f",
 };
 
-export const StyledInputElement = styled(Input)(
+export const StyledInputElement = styled.input(
   ({ theme }) => `
-  input{
     width: 200px;
   font-size: 14px;
   font-weight: 400;
@@ -50,7 +48,6 @@ export const StyledInputElement = styled(Input)(
   &:focus-visible {
     outline: 0;
   }
-  }
 `
 );
 
@@ -62,6 +59,7 @@ export const StyledCreateNest = styled.div`
   padding: 25px;
   border-radius: 16px;
   box-shadow: 0 0 3px 2px;
+  gap: 15px;
   .container {
     display: flex;
     gap: 10px;
@@ -75,6 +73,7 @@ export const CustomSwitch = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 14px;
+  gap: 10px;
 `;
 
 export const Root = styled("span")(

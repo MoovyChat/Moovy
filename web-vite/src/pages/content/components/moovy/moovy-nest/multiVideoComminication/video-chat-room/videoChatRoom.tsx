@@ -47,7 +47,7 @@ const Room = () => {
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const peersRef = useRef([]);
-  const roomID = "test";
+  const roomID = useAppSelector((state) => state.socket.roomId);
   const socketRef = useContext(SocketContext);
 
   useEffect(() => {

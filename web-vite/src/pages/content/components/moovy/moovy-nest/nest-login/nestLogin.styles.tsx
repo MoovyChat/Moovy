@@ -17,8 +17,22 @@ export const StyledNestLogin = styled.div`
   }
 
   .public-nests {
-    box-shadow: 0 0 1px;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .public-nests-heading {
+      display: flex;
+      font-size: 15px;
+      justify-content: flex-start;
+      font-weight: 600;
+    }
+    .public-nests-list {
+      box-shadow: 0 0 1px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
   }
 `;
 
@@ -59,4 +73,15 @@ export const StyledNestButton = styled(Button)<Props>`
     opacity: 0.5;
     cursor: not-allowed;
   }
+`;
+
+export const AvailableNest = styled.div`
+  display: flex;
+  gap: 10px;
+  -webkit-box-pack: center;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  align-items: center;
+  padding: 10px;
+  font-size: 14px;
 `;

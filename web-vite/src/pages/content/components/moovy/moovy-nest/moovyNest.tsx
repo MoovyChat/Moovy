@@ -1,5 +1,5 @@
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
-import { StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
+import { NestHeading, StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
 import { TextAreaContainer } from "../chat-interface/chatInterface.styles";
 import ChatArea from "../../../../../components/chat-area/chatArea";
 import {
@@ -13,24 +13,34 @@ import { IoArrowForwardCircle } from "react-icons/io5";
 import NestChatBox from "./nest-chat-box/nestChatBox";
 
 import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
-import { sliceSetIncomingMessages } from "../../../../redux/slices/socket/socketSlice";
+import {
+  sliceSetIncomingMessages,
+  sliceSetIsRoomPublic,
+  sliceSetJoinedRoom,
+  sliceSetRoomId,
+  sliceSetRoomName,
+} from "../../../../redux/slices/socket/socketSlice";
 import { sliceSetTextAreaMessage } from "../../../../redux/slices/textArea/textAreaSlice";
 import NestStatus from "./nest-status/nestStatus";
 import { SocketContext } from "../context/socketContextFile";
 import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
+import { batch } from "react-redux";
+import { nanoid } from "nanoid";
+import CopyToClipboard from "./copy-to-clipboard/copyToClipboard";
 
 interface Props {
-  ref: any;
+  ref?: any;
   style?: any;
 }
 const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const user = useAppSelector((state) => state.user);
   const socket = useContext(SocketContext);
-  const [roomUsers, setRoomUsers] = useState([]);
+  const roomId = useAppSelector((state) => state.socket.roomId);
+  const roomName = useAppSelector((state) => state.socket.roomName);
+  const isPublic = useAppSelector((state) => state.socket.isPublic);
   const [usersTyping, setUsersTyping] = useState([]);
   const dispatch = useAppDispatch();
   const [isConnected, setIsConnected] = useState(false);
-  const accessCamera = useAppSelector((state) => state.socket.accessCamera);
 
   useEffect(() => {
     if (socket) {
@@ -44,10 +54,14 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
         setIsConnected(() => false);
       });
 
-      socket.emit("joinRoom", "test", user);
-
-      socket.on("roomUsers", (users) => {
-        setRoomUsers(() => users);
+      socket.emit("joinRoom", roomId, roomName, user);
+      socket.on("userLeft", () => {
+        batch(() => {
+          dispatch(sliceSetRoomId(""));
+          dispatch(sliceSetRoomName(""));
+          dispatch(sliceSetIsRoomPublic(isPublic));
+          dispatch(sliceSetJoinedRoom(false));
+        });
       });
 
       socket.on("message", (incomingMessage) => {
@@ -101,7 +115,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     if (text) {
       socket &&
         socket.emit("message", {
-          roomId: "test",
+          roomId: roomId,
           data: {
             user,
             type: "typing",
@@ -110,7 +124,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
         });
     } else {
       socket.emit("message", {
-        roomId: "test",
+        roomId: roomId,
         data: {
           user,
           type: "typing",
@@ -130,16 +144,18 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
       e.preventDefault();
       let value = (e.target as HTMLTextAreaElement).value;
       if (value) {
+        let id = nanoid(10);
         socket.emit("message", {
-          roomId: "test",
+          roomId: roomId,
           data: {
+            id,
             user,
             type: "message",
             message: value,
           },
         });
         socket.emit("message", {
-          roomId: "test",
+          roomId: roomId,
           data: {
             user,
             type: "typing",
@@ -156,24 +172,12 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     }
   };
 
-  const leaveButtonHandler = () => {
-    socket.emit("leaveRoom");
-  };
-
   return (
     <StyledMoovyNest ref={ref}>
-      <div
-        style={{
-          width: "100%",
-          textAlign: "center",
-          padding: "10px",
-          fontSize: "12px",
-          fontWeight: "600",
-          opacity: "0.8",
-        }}
-      >
-        Welcome to MoovyNest!
-      </div>
+      <NestHeading>
+        <div>Nest: {roomName}</div>
+        <CopyToClipboard text={roomId} />
+      </NestHeading>
       <Room />
       <NestChatBox />
       <TypingStatus>
@@ -211,7 +215,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
           </TextAreaPost>
         </ChatTextBox>
       </TextAreaContainer>
-      <NestStatus users={roomUsers} leaveButtonHandler={leaveButtonHandler} />
+      <NestStatus connected={isConnected} />
     </StyledMoovyNest>
   );
 };

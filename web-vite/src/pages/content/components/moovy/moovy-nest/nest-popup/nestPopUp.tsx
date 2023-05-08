@@ -1,8 +1,11 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { StyledNestPopUp } from "./nestPopup.styles";
-import { useAppSelector } from "../../../../../redux/hooks";
-import CreateNest from "./createNest/createNest";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
+import CreateNest from "./create-nest/createNest";
 import { NEST_TYPE } from "../../../../../../helpers/enums";
+import EmptyPage from "../../empty-page/emptyPage";
+import { FULL_LOGO_TRANSPARENT } from "../../../../../../helpers/constants";
+import JoinNest from "./join-nest/joinNest";
 
 const NestPopUp = () => {
   const nestType = useAppSelector((state) => state.nest.type);
@@ -11,7 +14,7 @@ const NestPopUp = () => {
       case NEST_TYPE.CREATE:
         return <CreateNest />;
       case NEST_TYPE.JOIN:
-        return <div></div>;
+        return <JoinNest />;
       default:
         return (
           <div>
@@ -21,8 +24,12 @@ const NestPopUp = () => {
         );
     }
   }, [nestType]);
+
   return (
     <StyledNestPopUp>
+      <div className="logo">
+        <img src={FULL_LOGO_TRANSPARENT} alt="Moovy" />
+      </div>
       <SelectedElement />
     </StyledNestPopUp>
   );
