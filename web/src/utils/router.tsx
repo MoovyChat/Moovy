@@ -10,6 +10,7 @@ import PrivacyPolicy from '../pages/privacy-policy/privacyPolicy';
 import TermsAndConditions from '../pages/terms-and-conditions/termsAndConditions';
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy } from 'react';
+import GoogleLoginForExtension from '../pages/login/google-log-in-for-extension';
 
 const Feed = lazy(() => import('../pages/feed/feed'));
 const Home = lazy(() => import('../pages/home/home'));
@@ -211,5 +212,9 @@ export const router = createBrowserRouter([
   {
     path: 'google-login',
     element: <GoogleLogIn />,
+  },
+  {
+    path: 'embed-login',
+    element: <GoogleLoginForExtension />,
   },
 ]);

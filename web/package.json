@@ -15,6 +15,7 @@
   "dependencies": {
     "@graphql-codegen/typescript-operations": "^3.0.3",
     "@graphql-codegen/typescript-urql": "^3.7.3",
+    "@mui/base": "^5.0.0-alpha.128",
     "@react-spring/web": "^9.7.2",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/chrome": "^0.0.228",
