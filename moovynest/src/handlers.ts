@@ -4,11 +4,37 @@ import {
   addUserToRoom,
   removeUserFromRoom,
   getUsersInRoom,
+  RoomInfo,
 } from "./roomsManager";
 import { CustomSocket } from "./customSocket";
 
+function handleCreateRoom(socket: CustomSocket, io: Server) {
+  return (roomId: string, roomName: string, user: any) => {
+    console.log("handleCreateRoom");
+    socket.join(roomId);
+    socket.roomId = roomId;
+    socket.user = user;
+    addUserToRoom(roomId, socket, user, roomName);
+
+    io.to(roomId).emit("message", {
+      type: "join",
+      user,
+      message: `${user.name} created room ${roomId}`,
+    });
+    io.to(roomId).emit("roomUsers", getUsersInRoom(roomId));
+
+    const roomsList = rooms.map((room) => ({
+      roomName: room.roomName,
+      roomId: room.roomId,
+    }));
+    io.emit("nestsList", roomsList);
+
+    console.log(`User ${user.id} created room ${roomId}`);
+  };
+}
+
 function handleJoinRoom(socket: CustomSocket, io: Server) {
-  return (roomId: string, user: any) => {
+  return (roomId: string, roomName: string, user: any) => {
     console.log("handleJoinRoom");
     const existingUser = getUsersInRoom(roomId).find(
       (roomUser) => roomUser.user.id === user.id
@@ -20,15 +46,15 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
       socket.roomId = roomId;
       socket.user = user;
     } else {
-      addUserToRoom(roomId, socket, user);
-      io.to(roomId).emit("message", {
-        type: "join",
-        user,
-        message: `${socket.id} joined room ${roomId}`,
-      });
+      addUserToRoom(roomId, socket, user, roomName);
     }
     const usersInRoom = getUsersInRoom(roomId);
     io.to(roomId).emit("roomUsers", usersInRoom);
+    io.to(roomId).emit("message", {
+      type: "join",
+      user,
+      message: `${socket.id} joined room ${roomId}`,
+    });
     const usersWithCameraOn = usersInRoom.filter((roomUser) => {
       return roomUser.isConnectedToCall === true;
     });
@@ -37,19 +63,16 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
 }
 
 function handleJoinCall(socket: CustomSocket, io: Server) {
-  return (roomID: string) => {
-    console.log("handleJoinCall", roomID);
+  return (roomId: string) => {
+    console.log("handleJoinCall", roomId);
 
-    if (!rooms[roomID]) {
-      rooms[roomID] = [];
-    }
+    const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
 
-    const usersInRoom = rooms[roomID];
-
-    if (usersInRoom.length === 4) {
-      socket.emit("room full");
+    if (!room) {
       return;
     }
+
+    const usersInRoom = room.users;
 
     const currentUser = usersInRoom.find(
       (roomUser) => roomUser.id === socket.id
@@ -69,7 +92,7 @@ function handleJoinCall(socket: CustomSocket, io: Server) {
     const usersWithCameraOn = usersInRoom.filter((roomUser) => {
       return roomUser.isConnectedToCall === true;
     });
-    io.to(roomID).emit("usersWithCamera", usersWithCameraOn);
+    io.to(roomId).emit("usersWithCamera", usersWithCameraOn);
   };
 }
 
@@ -111,6 +134,17 @@ function handleCurrentCallUsers(socket: CustomSocket, io: Server) {
   };
 }
 
+function handleGetNests(socket: CustomSocket, io: Server) {
+  return () => {
+    console.log("handleGetNests");
+    const roomsList = rooms.map((room) => ({
+      roomName: room.roomName,
+      roomId: room.roomId,
+    }));
+    io.emit("nestsList", roomsList);
+  };
+}
+
 function handleLeaveRoom(socket: CustomSocket, io: Server) {
   return () => {
     console.log("handleLeaveRoom");
@@ -121,7 +155,7 @@ function handleLeaveRoom(socket: CustomSocket, io: Server) {
         user: socket.user,
         message: `${socket.user.name} left room ${socket.roomId}`,
       });
-
+      io.to(socket.roomId).emit("userLeft");
       socket.leave(socket.roomId);
     }
   };
@@ -143,7 +177,12 @@ function handleCloseConnections(socket: CustomSocket, io: Server) {
         io.sockets.sockets.get(roomUser.id)?.disconnect();
       });
 
-      delete rooms[socket.roomId];
+      const roomIndex = rooms.findIndex(
+        (room: RoomInfo) => room.roomId === socket.roomId
+      );
+      if (roomIndex !== -1) {
+        rooms.splice(roomIndex, 1);
+      }
     }
   };
 }
@@ -167,9 +206,11 @@ export {
   handleJoinRoom,
   handleMessage,
   handleLeaveRoom,
+  handleCreateRoom,
   handleSignal,
   handleCloseConnections,
   handleDisconnect,
+  handleGetNests,
   handleJoinCall,
   handleReturningSignal,
   handleSendingSignal,

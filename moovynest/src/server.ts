@@ -13,6 +13,8 @@ import {
   handleSendingSignal,
   handleReturningSignal,
   handleCurrentCallUsers,
+  handleCreateRoom,
+  handleGetNests,
 } from "./handlers";
 import { CustomSocket } from "./customSocket";
 
@@ -41,10 +43,13 @@ io.on("connection", (socket) => {
     handleReturningSignal(socket as CustomSocket, io)
   );
 
+  socket.on("getNests", handleGetNests(socket as CustomSocket, io));
+
   socket.on(
     "currentCallUsers",
     handleCurrentCallUsers(socket as CustomSocket, io)
   );
+  socket.on("createRoom", handleCreateRoom(socket as CustomSocket, io));
   socket.on("message", handleMessage(socket, io));
   socket.on("leaveRoom", handleLeaveRoom(socket as CustomSocket, io));
   socket.on("signal", handleSignal(socket, io));
@@ -55,6 +60,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", handleDisconnect(socket as CustomSocket, io));
 });
 
-server.listen(3000, () => {
-  console.log("Server listening on port 3000");
+server.listen(3001, () => {
+  console.log("Server listening on port 3001");
 });
