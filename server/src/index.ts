@@ -20,6 +20,7 @@ import { resolvers } from "./resolvers";
 import session from "express-session";
 import { useServer } from "graphql-ws/lib/use/ws";
 import ws from "ws";
+import scrapePage from "./scrape";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const regex = /^redis:\/\/(?::(.*)@)?(.*):(\d+)$/;
@@ -46,7 +47,7 @@ const getConfiguredRedisPubSub = new RedisPubSub({
 
 const main = async () => {
   await conn.initialize();
-  // await conn.runMigrations();
+  await conn.runMigrations();
   const app = express();
 
   // Enable gzip compression for all resources
@@ -79,6 +80,7 @@ const main = async () => {
       "https://studio.apollographql.com",
       "https://server.moovychat.com/graphql",
       "https://www.moovychat.com",
+      "https://www.aha.video",
       "ws://server.moovychat.com/graphql",
       "wss://server.moovychat.com/graphql",
       "https://www.netflix.com",
@@ -152,6 +154,34 @@ const main = async () => {
     cors: false,
   });
   const port = process.env.PORT || "5000";
+
+  app.post("/scrape", (req, res) => {
+    (async () => {
+      console.log(req.body);
+
+      const url = req.body.url;
+
+      if (!url) {
+        res.status(400).send("Missing url in request body");
+        return;
+      }
+
+      try {
+        const data = await scrapePage(url);
+        console.log(data); // log scraped data
+
+        // Send scraped data as the response
+        res.json(data);
+      } catch (error) {
+        console.error(`Failed to scrape page: ${error}`);
+        res.status(500).send("Failed to scrape page");
+      }
+    })().catch((err) => {
+      console.error(`Error in /scrape: ${err}`);
+      res.status(500).send("Internal server error");
+    });
+  });
+
   server.listen(parseInt(port as string), () => {
     console.log(`server started on localhost:${port}`);
     useServer({ schema }, wsServer);
