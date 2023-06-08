@@ -1,8 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { AvailableRoom } from "../../../helpers/interfaces";
 
-const nestState = {
+interface NestStateInterface {
+  type: string;
+  visible: boolean;
+  nests: AvailableRoom[];
+}
+
+const nestState: NestStateInterface = {
   type: "",
   visible: false,
+  nests: [],
 };
 
 const nestSlice = createSlice({
@@ -12,11 +20,15 @@ const nestSlice = createSlice({
     sliceSetNestType: (state, action) => {
       return { ...state, type: action.payload };
     },
+    sliceSetNests: (state, action) => {
+      return { ...state, nests: action.payload };
+    },
     sliceSetNestVisibility: (state, action) => {
       return { ...state, visible: action.payload };
     },
   },
 });
 
-export const { sliceSetNestType, sliceSetNestVisibility } = nestSlice.actions;
+export const { sliceSetNestType, sliceSetNestVisibility, sliceSetNests } =
+  nestSlice.actions;
 export default nestSlice.reducer;

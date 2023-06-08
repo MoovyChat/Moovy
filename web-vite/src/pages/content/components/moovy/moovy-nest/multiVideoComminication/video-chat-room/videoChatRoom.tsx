@@ -1,39 +1,36 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
-import Peer from "simple-peer";
-import styled from "styled-components";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { SocketContext } from "../../../context/socketContextFile";
 import { useAppSelector } from "../../../../../../redux/hooks";
+import { Container, StyledVideo } from "./videoChatRoom.styles";
+import Draggable from "react-draggable";
+import { addPeer, createPeer } from "./webRTC";
+import { openSnackBar } from "../../nest-popup/snack-bar/snackBar";
 
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-  height: 50vh;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  margin: auto;
-  flex-wrap: wrap;
-  overflow: auto;
-`;
+type Props = {
+  index: number;
+  peer: any;
+};
 
-const StyledVideo = styled.video`
-  height: 100px;
-  width: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-`;
-
-const Video = (props) => {
+const Video: React.FC<Props> = ({ index, peer }) => {
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    props.peer.on("stream", (stream) => {
+    peer.on("stream", (stream) => {
       ref.current.srcObject = stream;
     });
   }, []);
 
-  return <StyledVideo playsInline autoPlay ref={ref} />;
+  return (
+    <Draggable>
+      <StyledVideo
+        id="video-container"
+        playsInline
+        autoPlay
+        ref={ref}
+        index={index + 1}
+      />
+    </Draggable>
+  );
 };
 
 const videoConstraints = {
@@ -48,118 +45,92 @@ const Room = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const peersRef = useRef([]);
   const roomID = useAppSelector((state) => state.socket.roomId);
-  const socketRef = useContext(SocketContext);
+  const socket = useContext(SocketContext);
+  const accessCamera = useAppSelector((state) => state.socket.accessCamera);
+
+  useMemo(() => {
+    if (accessCamera && socket) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: videoConstraints,
+          audio: true,
+        })
+        .then((stream) => {
+          userVideo.current.srcObject = stream;
+          streamRef.current = stream;
+          socket.emit("user started sharing", user.id); // Emit the event to the server
+        });
+    }
+  }, [accessCamera, socket]);
 
   useEffect(() => {
-    socketRef.on("usersWithCamera", async (users) => {
-      const peers = [];
-      console.log("users with camera", users);
-      if (!users || users.length === 0) return;
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: true,
-      });
-      const isUserExist = users.some((roomUser) => {
-        console.log("roomUser");
-        return (
-          roomUser.user &&
-          roomUser.user.id === user.id &&
-          roomUser.isConnectedToCall
-        );
-      });
-      if (isUserExist) {
-        userVideo.current.srcObject = stream;
-        streamRef.current = stream;
-      }
-      users.forEach((userData) => {
-        const { id, isConnectedToCall } = userData;
-        console.log({ userData });
-        // Check if the peer already exists
-        const existingPeer = peersRef.current.find((p) => p.peerID === id);
-        if (existingPeer || !isConnectedToCall) {
-          return; // Skip adding the peer if it already exists
+    if (socket && user)
+      socket.on("user started sharing", (userSocket) => {
+        if (userSocket.user.id === user.id) {
+          return;
         }
-
-        const peer = createPeer(id, socketRef.id, stream);
+        const existingPeer = peersRef.current.find(
+          (p) => p.peerID === userSocket.id
+        );
+        if (existingPeer) {
+          // If a peer connection to this user already exists, we don't need to do anything
+          return;
+        }
+        openSnackBar(`${userSocket.user.nickname} started sharing camera`);
+        console.log({ userSocket });
+        const peer = createPeer(
+          userSocket.id,
+          socket.id,
+          streamRef.current,
+          socket
+        );
         peersRef.current.push({
-          peerID: id,
+          peerID: userSocket.id,
           peer,
         });
-        peers.push(peer);
+        setPeers((peers) => [...peers, peer]);
       });
-      setPeers(() => peers);
-    });
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
-    socketRef.on("user joined", (payload) => {
-      console.log("user joined");
-      // Check if the peer already exists
-      const existingPeer = peersRef.current.find(
-        (p) => p.peerID === payload.callerID
-      );
-      if (existingPeer) {
-        return; // Skip adding the peer if it already exists
+    if (socket) {
+      function handleUserJoined({ signal, callerID }) {
+        console.log("handleUserJoined");
+        const existingPeer = peersRef.current.find(
+          (p) => p.peerID === callerID
+        );
+        if (existingPeer) {
+          // If a peer connection to this user already exists, we don't need to do anything
+          return;
+        }
+        // (TODO) HERE streamRef.current should be received from server
+        const peer = addPeer(signal, callerID, streamRef.current, socket);
+        peersRef.current.push({
+          peerID: callerID,
+          peer,
+        });
+
+        setPeers((peers) => [...peers, peer]);
       }
-      const peer = addPeer(payload.signal, payload.callerID, streamRef.current);
-      peersRef.current.push({
-        peerID: payload.callerID,
-        peer,
-      });
-      console.log("user joined", [...peers, peer]);
-      setPeers((users) => [...users, peer]);
-    });
 
-    socketRef.on("receiving returned signal", (payload) => {
-      console.log("receiving returned signal");
-      const item = peersRef.current.find((p) => p.peerID === payload.id);
-      item.peer.signal(payload.signal);
-    });
-  }, [streamRef.current]);
-
-  function createPeer(userToSignal, callerID, stream) {
-    console.log("Create Peer");
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log("emit sending signa");
-      socketRef.emit("sending signal", {
-        userToSignal,
-        callerID,
-        signal,
-      });
-    });
-
-    return peer;
-  }
-
-  function addPeer(incomingSignal, callerID, stream) {
-    console.log("Add Peer");
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log("Emit returning signal");
-      socketRef.emit("returning signal", { signal, callerID });
-    });
-
-    peer.signal(incomingSignal);
-
-    return peer;
-  }
+      socket && socket.on("user joined", handleUserJoined);
+    }
+  }, [socket]);
 
   return (
     <Container>
-      <StyledVideo muted ref={userVideo} autoPlay playsInline />
+      <Draggable>
+        <StyledVideo
+          id="video-container"
+          muted
+          ref={userVideo}
+          autoPlay
+          playsInline
+          index={0}
+        />
+      </Draggable>
       {peers.map((peer, index) => {
-        return <Video key={index} peer={peer} />;
+        return <Video key={index} peer={peer} index={index} />;
       })}
     </Container>
   );

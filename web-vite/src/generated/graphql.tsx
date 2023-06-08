@@ -128,7 +128,7 @@ export type Contact = {
 };
 
 export type EpisodeInfo = {
-  id?: InputMaybe<Scalars["Int"]>;
+  id: Scalars["String"];
   runtime?: InputMaybe<Scalars["Int"]>;
   stills?: InputMaybe<Scalars["String"]>;
   synopsis?: InputMaybe<Scalars["String"]>;
@@ -364,6 +364,14 @@ export type MovieCommentObject = {
   hasMoreComments: Scalars["Boolean"];
   lastPage: Scalars["Int"];
   totalCommentCount: Scalars["Int"];
+};
+
+export type MovieCommentsConnection = {
+  __typename?: "MovieCommentsConnection";
+  edges: Array<CommentEdge>;
+  nodes: Array<Comment>;
+  pageInfo: PageInfo;
+  totalCount: Scalars["Int"];
 };
 
 export type MovieConnection = {
@@ -763,6 +771,7 @@ export type Query = {
   getCommentReplies: ReplyConnection;
   getCommentedUser?: Maybe<Users>;
   getCommentsOfTheMovie?: Maybe<PaginatedMovieComments>;
+  getCommentsOfTheMovieConnection: MovieCommentsConnection;
   getCommentsOfTheUser: UserCommentsConnection;
   getFavTitles?: Maybe<PaginatedMovieStats>;
   getFeed: FeedConnection;
@@ -854,6 +863,12 @@ export type QueryGetCommentsOfTheMovieArgs = {
   mid: Scalars["String"];
   page?: InputMaybe<Scalars["Int"]>;
   time?: InputMaybe<Scalars["String"]>;
+};
+
+export type QueryGetCommentsOfTheMovieConnectionArgs = {
+  after?: InputMaybe<Scalars["String"]>;
+  first: Scalars["Int"];
+  mid: Scalars["String"];
 };
 
 export type QueryGetCommentsOfTheUserArgs = {
@@ -1568,29 +1583,6 @@ export type ToggleFollowMutation = {
     userId: string;
     followingId: string;
     follows?: boolean | null;
-  } | null;
-};
-
-export type AmIFollowingThisUserMutationVariables = Exact<{
-  fid: Scalars["String"];
-  uid: Scalars["String"];
-}>;
-
-export type AmIFollowingThisUserMutation = {
-  __typename?: "Mutation";
-  amIFollowingThisUser?: boolean | null;
-};
-
-export type GetUserFollowStatsMutationVariables = Exact<{
-  uid: Scalars["String"];
-}>;
-
-export type GetUserFollowStatsMutation = {
-  __typename?: "Mutation";
-  getUserFollowStats?: {
-    __typename?: "UserFollowStats";
-    followerCount?: number | null;
-    followingCount?: number | null;
   } | null;
 };
 
@@ -2998,33 +2990,6 @@ export function useToggleFollowMutation() {
   return Urql.useMutation<ToggleFollowMutation, ToggleFollowMutationVariables>(
     ToggleFollowDocument
   );
-}
-export const AmIFollowingThisUserDocument = gql`
-  mutation amIFollowingThisUser($fid: String!, $uid: String!) {
-    amIFollowingThisUser(fid: $fid, uid: $uid)
-  }
-`;
-
-export function useAmIFollowingThisUserMutation() {
-  return Urql.useMutation<
-    AmIFollowingThisUserMutation,
-    AmIFollowingThisUserMutationVariables
-  >(AmIFollowingThisUserDocument);
-}
-export const GetUserFollowStatsDocument = gql`
-  mutation getUserFollowStats($uid: String!) {
-    getUserFollowStats(uid: $uid) {
-      followerCount
-      followingCount
-    }
-  }
-`;
-
-export function useGetUserFollowStatsMutation() {
-  return Urql.useMutation<
-    GetUserFollowStatsMutation,
-    GetUserFollowStatsMutationVariables
-  >(GetUserFollowStatsDocument);
 }
 export const InsertMovieInfoDocument = gql`
   mutation insertMovieInfo($options: TitleOptions!) {

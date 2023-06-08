@@ -1,3 +1,6 @@
+import { sliceSetPlatform } from "../../../redux/slices/movie/movieSlice";
+import { store } from "../../../redux/store";
+
 type NotPresentStrategy = "error" | "ignore";
 
 export function getElementByDataUIA(tag: string): HTMLElement;
@@ -36,7 +39,14 @@ export const getVideoTitleFromNetflixWatch = () => {
   return video_title;
 };
 
-export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
+/**
+ * This function extracts the Netflix ID from a given Netflix URL.
+ * @param {string} url - The `url` parameter is a string representing a Netflix URL that the function
+ * will extract the ID from.
+ * @returns A Promise that resolves to either a number (the Netflix ID extracted from the input URL) or
+ * null if no ID is found.
+ */
+export const getIdFromNetflixURL = (url: string): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     const regex = /((http|https):\/\/)(www.netflix.com\/watch\/)(\d*)/gm;
     let m;
@@ -56,7 +66,7 @@ export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
     }
     try {
       const netflixId = parseInt(matchedGroup);
-      if (!isNaN(netflixId)) resolve(netflixId);
+      if (!isNaN(netflixId)) resolve(String(netflixId));
     } catch (e) {
       resolve(null);
     }
@@ -64,9 +74,75 @@ export const getIdFromNetflixURL = (url: string): Promise<number | null> => {
   });
 };
 
+/**
+ * This function extracts the type and ID from a given Aha video URL.
+ * @param {string} url - The `url` parameter is a string representing the URL of a video on the Aha
+ * video platform.
+ * @returns A Promise that resolves to an object with properties `type` and `id`, both of type string,
+ * or null if no match is found.
+ */
+export const getInfoFromAhaURL = (
+  url: string
+): Promise<{ type: string; id: string } | null> => {
+  return new Promise((resolve, reject) => {
+    const regex =
+      /((http|https):\/\/)(www.aha.video\/player\/)([^\/]+)\/(.*)/gm;
+    let m;
+    let matchedType = "";
+    let matchedId = "";
+    while ((m = regex.exec(url)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+
+      // The result can be accessed through the `m`-variable.
+      m.forEach((match, groupIndex) => {
+        if (groupIndex === 4) {
+          matchedType = match;
+        }
+        if (groupIndex === 5) {
+          matchedId = match;
+        }
+      });
+    }
+
+    if (matchedType && matchedId) {
+      resolve({ type: matchedType, id: matchedId });
+    } else {
+      resolve(null);
+    }
+  });
+};
+
 export const getDomain = (url: string) => {
   const _url = new URL(url);
   return _url.hostname;
+};
+
+export const getVideoPlatform = (url: string): "netflix" | "aha" | null => {
+  if (url.includes("netflix.com")) {
+    return "netflix";
+  }
+  if (url.includes("aha.video")) {
+    return "aha";
+  }
+  return null;
+};
+
+export const getMovieIdFromURL = async (
+  url: string
+): Promise<string | null> => {
+  const platform = getVideoPlatform(url);
+  if (platform === "netflix") {
+    return getIdFromNetflixURL(url);
+  }
+  if (platform === "aha") {
+    const info = await getInfoFromAhaURL(url);
+    // convert info.id from string to number before returning
+    return info ? info.id : null;
+  }
+  return null;
 };
 
 export const getVideoElement = (): Promise<
@@ -109,10 +185,21 @@ export const getVideoElement = (): Promise<
 //   });
 // };
 
-export const getPlayerViewElement = () => {
-  const videoParents = document.getElementsByClassName(
-    "watch-video--player-view"
-  ) as HTMLCollection;
-  if (videoParents[0]) return videoParents[0] as HTMLElement;
+export const getPlayerViewElement = (): HTMLElement | null => {
+  const url = window.location.href;
+  const platform = getVideoPlatform(url);
+
+  if (platform === "netflix") {
+    const videoParents = document.getElementsByClassName(
+      "watch-video--player-view"
+    ) as HTMLCollection;
+    if (videoParents[0]) return videoParents[0] as HTMLElement;
+  } else if (platform === "aha") {
+    const appPlayerElem = document.querySelector("app-player");
+    if (appPlayerElem && appPlayerElem.firstElementChild) {
+      return appPlayerElem.firstElementChild as HTMLElement;
+    }
+  }
+
   return null;
 };

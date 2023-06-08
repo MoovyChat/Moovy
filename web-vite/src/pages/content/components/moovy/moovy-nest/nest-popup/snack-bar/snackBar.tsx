@@ -30,7 +30,7 @@ const SnackBar: React.FC<SnackBarProps> = () => {
   return (
     <StyledSnackbar
       open={snackBarOpen}
-      autoHideDuration={5000}
+      autoHideDuration={2000}
       onClose={handleClose}
     >
       {snackBarText}

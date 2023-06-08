@@ -21,7 +21,31 @@ import {
   setStoredFilterValues,
   setStoredUserLoginDetails,
 } from "../../helpers/storage";
-import { getDomain } from "../content/components/moovy/contentScript.utils";
+import {
+  getDomain,
+  getIdFromNetflixURL,
+} from "../content/components/moovy/contentScript.utils";
+
+/**
+ * This function sends a message to a specific tab in a Chrome browser and returns a promise that
+ * resolves with the response from the tab or rejects with an error message.
+ * @param tabId - The ID of the tab to which the message will be sent.
+ * @param message - The message parameter is the data that you want to send to the content script
+ * running in the specified tab. It can be any JavaScript object or primitive value that can be
+ * serialized. The content script can then use this data to perform some action or update its state.
+ * @returns The `sendMessage` function is returning a Promise object.
+ */
+function sendMessage(tabId, message) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.sendMessage(tabId, message, (response) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError.message);
+      } else {
+        resolve(response);
+      }
+    });
+  });
+}
 
 const newTabUrl = __prod__
   ? "https://moovychat.com/google-login"
@@ -52,89 +76,179 @@ chrome.runtime.onInstalled.addListener(async () => {
   };
   await setStoredUserLoginDetails(user);
   await setStoredFilterValues(videoFilters);
-  chrome.tabs.create({ url: "https://www.moovychat.com" });
+  // chrome.tabs.create({ url: "https://www.moovychat.com" });
 });
 
-const getMovieInfo = (movieId: number) => {
-  const netflixApi = (window as any).netflix;
-  // Let videoState = netflixApi.appContext?.getPlayerApp().getState();
-  const api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
-  const videoMetaData = api?.getVideoMetadataByVideoId(movieId);
-  const videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
-  const _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
-  const _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
-  const metaData = videoMetaData?._metadata?.video;
-  const mainYear = metaData?.year;
-  const mainRunTime = metaData?.runtime;
-  const mainTitleType: string = metaData?.type;
-  const mainTitle: string = metaData?.title;
-  const artwork: string = metaData?.artwork[0]?.url;
-  const boxart: string = metaData?.boxart[0]?.url;
-  const storyart: string = metaData?.storyart[0]?.url;
-  const rating: string = metaData?.rating;
-  const synopsis: string = metaData?.synopsis;
-  const _seasons: any[] = videoMetaData?._seasons;
-  let _finalSeasonValue: SeasonInfo[] = [];
-  if (_seasons) {
-    _finalSeasonValue = _seasons.map((s) => {
-      const _seasonInfo = s?._season;
-      const title = _seasonInfo?.title;
-      const year = _seasonInfo?.year;
-      const { _episodes } = s;
-      const episodeReturnvalue = _episodes.map((e: any) => {
-        const episodeInfo: EpisodeInfo = {
-          id: e?._video?.id,
-          title: e?._video?.title,
-          thumbs: e?._video?.thumbs[0]?.url,
-          stills: e?._video?.stills[0]?.url,
-          runtime: e?._video?.runtime,
-          synopsis: e?._video?.synopsis,
-        };
-        return episodeInfo;
-      });
-      const seasonInfo: SeasonInfo = {
-        year,
-        title,
-        episodes: episodeReturnvalue,
-      };
-      return seasonInfo;
-    });
-  }
-
-  const finalResult: MovieFullInformation = {
-    type: mainTitleType,
-    title: mainTitle,
-    synopsis,
-    storyart,
-    rating,
-    boxart,
-    artwork,
-    year: mainYear,
-    runtime: mainRunTime,
-    advisories: _advisories,
-    seasons: _finalSeasonValue,
+/**
+ * The function `getMovieInfo` retrieves information about a movie or TV show from various streaming
+ * platforms such as Netflix and Aha.
+ * @param {string} currentUrl - The `currentUrl` parameter is a string representing the URL of a
+ * webpage that contains information about a movie or TV show. The function `getMovieInfo` uses this
+ * URL to determine which website the information is from and how to retrieve it.
+ * @returns The function `getMovieInfo` returns a `Promise` that resolves to an object of type
+ * `MovieFullInformation` which contains information about a movie or TV show, including its type,
+ * title, synopsis, artwork, rating, year, runtime, advisories, and seasons. However, if the domain of
+ * the URL is not recognized, the function returns `undefined`.
+ */
+const getMovieInfo = async (currentUrl: string) => {
+  const parsedUrl = new URL(currentUrl);
+  const domain = parsedUrl.hostname;
+  const domains = {
+    MOOVYCHAT: "www.moovychat.com",
+    NETFLIX: "www.netflix.com",
+    LOCALHOST: "localhost",
+    DISNEY: "www.disneyplus.com",
+    AMAZON: "www.amazon.com",
+    AHA: "www.aha.video",
   };
-  return finalResult;
-};
+  /**
+   * The function retrieves information about a Netflix movie based on its ID.
+   * @param {number} movieId - The ID of the Netflix movie for which we want to retrieve information.
+   * @returns The function `getNetflixMovieInfo` returns an object of type `MovieFullInformation` which
+   * contains information about a Netflix movie or TV show, including its type, title, synopsis, artwork,
+   * rating, year, runtime, advisories, and seasons.
+   */
+  const getNetflixMovieInfo = (movieId: number) => {
+    const netflixApi = (window as any).netflix;
+    // Let videoState = netflixApi.appContext?.getPlayerApp().getState();
+    const api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
+    const videoMetaData = api?.getVideoMetadataByVideoId(movieId);
+    const videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
+    const _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
+    const _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
+    const metaData = videoMetaData?._metadata?.video;
 
-const timeSkipForNetflix = (time: string) => {
-  // Conversion of time to milliseconds
-  if (time !== "") {
-    const timeArray = time.split(":");
-    let hours = 0;
-    let minutes = 0;
-    let seconds = 0;
-    if (timeArray.length === 3) {
-      hours = parseInt(timeArray[0]);
-      minutes = parseInt(timeArray[1]);
-      seconds = parseInt(timeArray[2]);
-    } else if (timeArray.length === 2) {
-      minutes = parseInt(timeArray[0]);
-      seconds = parseInt(timeArray[1]);
+    const mainYear = metaData?.year;
+    const mainRunTime = metaData?.runtime;
+    const mainTitleType: string = metaData?.type;
+    const mainTitle: string = metaData?.title;
+    const artwork: string = metaData?.artwork[0]?.url;
+    const boxart: string = metaData?.boxart[0]?.url;
+    const storyart: string = metaData?.storyart[0]?.url;
+    const rating: string = metaData?.rating;
+    const synopsis: string = metaData?.synopsis;
+    const _seasons: any[] = videoMetaData?._seasons;
+    let _finalSeasonValue: SeasonInfo[] = [];
+    if (_seasons) {
+      _finalSeasonValue = _seasons.map((s) => {
+        const _seasonInfo = s?._season;
+        const title = _seasonInfo?.title;
+        const year = _seasonInfo?.year;
+        const { _episodes } = s;
+        const episodeReturnvalue = _episodes.map((e: any) => {
+          const episodeInfo: EpisodeInfo = {
+            id: String(e?._video?.id),
+            title: e?._video?.title,
+            thumbs: e?._video?.thumbs[0]?.url,
+            stills: e?._video?.stills[0]?.url,
+            runtime: e?._video?.runtime,
+            synopsis: e?._video?.synopsis,
+          };
+          return episodeInfo;
+        });
+        const seasonInfo: SeasonInfo = {
+          year,
+          title,
+          episodes: episodeReturnvalue,
+        };
+        return seasonInfo;
+      });
     }
 
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    const timeInMS = totalSeconds * 1000;
+    const finalResult: MovieFullInformation = {
+      type: mainTitleType,
+      title: mainTitle,
+      synopsis,
+      storyart,
+      rating,
+      boxart,
+      artwork,
+      year: mainYear,
+      runtime: mainRunTime,
+      advisories: _advisories,
+      seasons: _finalSeasonValue,
+    };
+    return finalResult;
+  };
+
+  /**
+   * The function fetches movie information from Aha's website by sending a cleaned URL to a local server
+   * and returns the data as a JSON object.
+   * @param {string} url - The URL of the Aha video player page that you want to scrape information from.
+   */
+  const getAhaInfo = async (url: string): Promise<MovieFullInformation> => {
+    const cleanedUrl = url.replace("/player", ""); // remove 'player' from the URL
+    try {
+      const response = await fetch("http://localhost:4000/scrape", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: cleanedUrl }), // send the cleaned URL to your server
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: MovieFullInformation = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Failed to get data from Aha: ${error}`);
+      return null;
+    }
+  };
+
+  switch (domain) {
+    case domains.NETFLIX:
+      const idMatch = currentUrl.match(/\/(watch|title)\/(\d+)/);
+      const id = idMatch ? idMatch[2] : null;
+      if (id) {
+        const netflixInfo = getNetflixMovieInfo(parseInt(id));
+        return netflixInfo;
+      } else break;
+    case domains.AHA:
+      const ahaInfo = await getAhaInfo(currentUrl);
+      console.log({ ahaInfo });
+      return ahaInfo;
+    default:
+      break;
+  }
+};
+
+/**
+ * This function seeks to a specific time in a Netflix video player or HTML5 video element based on the
+ * input time in milliseconds or formatted as "hh:mm:ss".
+ * @param {string} time - The `time` parameter is a string representing the time to which the video
+ * player should be seeked. It can be in the format of either "hh:mm:ss" or a decimal number
+ * representing the number of seconds.
+ * @returns Nothing is being returned explicitly in the code. The function ends with a series of
+ * conditional statements and actions that may or may not be executed depending on the input and the
+ * availability of certain objects and elements.
+ */
+const timeSkipForPlatform = (time: string) => {
+  // Conversion of time to milliseconds
+  let timeInMS = 0;
+  if (time !== "") {
+    if (time.includes(":")) {
+      const timeArray = time.split(":");
+      let hours = 0;
+      let minutes = 0;
+      let seconds = 0;
+      if (timeArray.length === 3) {
+        hours = parseInt(timeArray[0]);
+        minutes = parseInt(timeArray[1]);
+        seconds = parseInt(timeArray[2]);
+      } else if (timeArray.length === 2) {
+        minutes = parseInt(timeArray[0]);
+        seconds = parseInt(timeArray[1]);
+      }
+
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+      timeInMS = totalSeconds * 1000;
+    } else {
+      timeInMS = parseFloat(time) * 1000;
+    }
 
     const netflixApi = (window as any).netflix;
     const videoPlayer =
@@ -145,11 +259,20 @@ const timeSkipForNetflix = (time: string) => {
       );
       if (player) {
         player.seek(timeInMS);
+        return;
       } else {
-        console.log("ERR: Unable to seek video player");
+        console.log("ERR: Unable to seek Netflix video player");
       }
     } else {
-      console.log("ERR: Unable to get video player");
+      console.log("ERR: Unable to get Netflix video player");
+    }
+
+    // Fallback to seek using HTML5 video element if Netflix player doesn't exist
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      videoElement.currentTime = timeInMS / 1000; // HTML5 video currentTime is in seconds
+    } else {
+      console.log("ERR: Unable to find video element on page");
     }
   }
 };
@@ -160,7 +283,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (tabId)
       chrome.scripting.executeScript({
         target: { tabId, allFrames: true },
-        func: timeSkipForNetflix,
+        func: timeSkipForPlatform,
         args: [msg.time],
         world: "MAIN",
       });
@@ -168,7 +291,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } else if (msg.type === "OPEN_LINK") {
     chrome.tabs.create({ url: msg.url });
   }
-
   return true;
 });
 
@@ -194,15 +316,15 @@ chrome.runtime.onMessageExternal.addListener(
 );
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const domains = {
+    MOOVYCHAT: "www.moovychat.com",
+    NETFLIX: "www.netflix.com",
+    LOCALHOST: "localhost",
+    DISNEY: "www.disneyplus.com",
+    AMAZON: "www.amazon.com",
+    AHA: "www.aha.video",
+  };
   if (message.type === "GET_DOMAIN") {
-    const domains = {
-      MOOVYCHAT: "www.moovychat.com",
-      NETFLIX: "www.netflix.com",
-      LOCALHOST: "localhost",
-      DISNEY: "www.disneyplus.com",
-      AMAZON: "www.amazon.com",
-      AHA: "www.aha.video",
-    };
     // Do something with the message here
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const { url } = tabs[0];
@@ -254,7 +376,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           {
             target: { tabId, allFrames: true },
             func: getMovieInfo,
-            args: [parseInt(request.movieId)],
+            args: [request.currentUrl],
             world: "MAIN",
           },
           (e) => {
@@ -268,13 +390,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.type === "CHANGE_MOVIE_ID") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const activeTab = tabs[0];
       if (activeTab && activeTab.id) {
-        chrome.tabs.sendMessage(activeTab.id, {
-          type: "SET_MOVIE_ID",
-          movieId: request.movieId,
-        });
+        try {
+          const response = await sendMessage(activeTab.id, {
+            type: "SET_MOVIE_ID",
+            movieId: request.movieId,
+          });
+          console.log(response);
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   } else if (request.type === "GOOGLE_LOGIN_IN_BCK") {

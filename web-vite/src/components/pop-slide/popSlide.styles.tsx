@@ -44,11 +44,11 @@ export const PopSlideParent = styled.div<props>`
       justify-content: space-evenly;
       .title {
         font-weight: 800;
-        font-size: 1.6em;
+        font-size: 16px;
       }
       .sub {
         font-weight: 500;
-        font-size: 1.1em;
+        font-size: 13px;
       }
     }
 

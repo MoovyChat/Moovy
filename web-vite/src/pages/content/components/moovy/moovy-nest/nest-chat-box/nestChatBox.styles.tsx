@@ -26,7 +26,8 @@ export const StyledJoinLeaveMessage = styled.div`
     font-weight: bold;
     color: #8e8e8e;
     .moovy-join,
-    .moovy-left {
+    .moovy-left,
+    .moovy-create {
       display: flex;
       align-items: center;
       border-radius: 18px;
@@ -38,6 +39,9 @@ export const StyledJoinLeaveMessage = styled.div`
     }
     .moovy-join {
       background-color: #116600;
+    }
+    .moovy-create {
+      background-color: #b78600;
     }
   }
 `;
@@ -84,6 +88,7 @@ export const StyledUserMessage = styled.div<Props>`
   .sender {
     align-self: flex-end;
     background-color: #007bff;
+    align-items: flex-end;
     border-radius: 16px 16px 0 16px;
     color: white;
     margin-bottom: 8px;
@@ -91,17 +96,44 @@ export const StyledUserMessage = styled.div<Props>`
     padding: 8px 16px;
     position: relative;
   }
+  .one-emoji {
+    background-color: transparent;
+    padding: 0px;
+    margin-bottom: 0px;
+    .nest-msg {
+      font-size: 50px !important;
+      line-height: 1 !important;
+    }
+  }
+  .gif-container {
+    background: none;
+    padding: 0px;
+    border-radius: 0px;
+    .nest-gif {
+      font-size: 12px;
+      background-color: none;
+      .gif-msg {
+        width: 200px;
+        border-radius: 18px;
+      }
+    }
+  }
   .container {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    .nest-msg {
-      font-size: 12px;
-    }
+
     .username {
       font-size: 12px;
       font-weight: bold;
       color: ${(p) => (p.isUser ? "#fff" : "rgb(0 146 255)")};
+    }
+    .nest-msg {
+      font-size: 14px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      line-height: 1.6;
     }
   }
 `;

@@ -4,25 +4,29 @@ import { ChatWindowParent, DragBar, Perimeter } from "./chatInterface.styles";
 
 import React, {
   useCallback,
+  useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
-  useLayoutEffect,
   useState,
 } from "react";
 
+import { Provider as ReduxProvider } from "react-redux";
 import { CSSTransition } from "react-transition-group";
+import { PersistGate } from "redux-persist/integration/react";
 
 import ChatTitle from "../../../../../components/chat-title/chatTitle";
 import ErrorPage from "../../../../../components/error-page/errorPage";
 import LogoLoading from "../../../../../components/logo-loading/logoLoading";
 
 import PopSlide from "../../../../../components/pop-slide/popSlide";
-import Toast from "../../../../../components/toast/toast";
 import Tooltip from "../../../../../components/tooltip/tooltip";
 import { Profile } from "../../../../../generated/graphql";
 
+import { animated, useTransition } from "@react-spring/web";
 import { withUrqlClient } from "next-urql";
+import { createRoot } from "react-dom/client";
 import { CommentInfo, User } from "../../../../../helpers/interfaces";
 import { urqlClient } from "../../../../../helpers/urql/urqlClient";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
@@ -32,15 +36,17 @@ import {
   sliceResetPopUp,
   sliceSetChatWindowSize,
 } from "../../../../redux/slices/settings/settingsSlice";
+import { persistor, store } from "../../../../redux/store";
 import ChatStats from "../chatStats/chatStats";
-import { getPlayerViewElement } from "../contentScript.utils";
+import { getPlayerViewElement, getVideoElement } from "../contentScript.utils";
+import { SocketContext } from "../context/socketContextFile";
 import GlobalChat from "../global-chat/globalChat";
 import { useMousePosition } from "../hooks/useMouseMove";
-import UpdateProfile from "../update-profile/updateProfile";
-import { useTransition, animated } from "@react-spring/web";
-import MoovyNest from "../moovy-nest/moovyNest";
+import AnimateMessages from "../moovy-nest/animateMessages/animateMessages";
 import NestLogin from "../moovy-nest/nest-login/nestLogin";
 import SnackBar from "../moovy-nest/nest-popup/snack-bar/snackBar";
+import UpdateProfile from "../update-profile/updateProfile";
+import Intro from "../intro/intro";
 
 type props = {
   user: User;
@@ -85,6 +91,12 @@ const ChatInterface: React.FC<props> = ({
   const [display, setDisplay] = useState<boolean>(true);
   const globalChatRef = useRef(null);
   const moovyNestRef = useRef(null);
+  const socket = useContext(SocketContext);
+  const roomId = useAppSelector((state) => state.socket.roomId);
+  const platform = movie?.platform;
+  const [hasShownIntro, setHasShownIntro] = useState(
+    localStorage.getItem("hasShownIntro") === "true"
+  );
 
   useEffect(() => {
     setCustomLoading(() => true);
@@ -110,35 +122,104 @@ const ChatInterface: React.FC<props> = ({
     setReplyClickResponse(comment);
   }, []);
 
+  useEffect(() => {
+    let videoPlayer;
+    let seekingInProgress = false;
+
+    const getVideoPlayer = async () => {
+      const videoElements = await getVideoElement();
+      if (videoElements) {
+        videoPlayer = videoElements[0];
+        videoPlayer.addEventListener("seeking", handleSeeking);
+        videoPlayer.addEventListener("seeked", handleSeeked);
+        videoPlayer.addEventListener("play", handlePlay);
+        videoPlayer.addEventListener("pause", handlePause);
+      }
+    };
+
+    const handleSeeking = () => {
+      seekingInProgress = true;
+    };
+
+    const handleSeeked = () => {
+      if (roomId) {
+        socket.emit("seektime", videoPlayer.currentTime, roomId, user);
+      }
+      seekingInProgress = false;
+    };
+
+    const handlePlay = () => {
+      if (!seekingInProgress && videoPlayer.paused === false) {
+        if (roomId) socket.emit("play", roomId, user);
+      }
+    };
+
+    const handlePause = () => {
+      if (!seekingInProgress && videoPlayer.paused === true) {
+        if (roomId) socket.emit("pause", roomId, user);
+      }
+    };
+
+    if (socket) {
+      getVideoPlayer();
+      let url = window.location.href;
+      socket.emit("show-change", url, roomId, movie);
+    }
+
+    return () => {
+      if (videoPlayer) {
+        videoPlayer.removeEventListener("seeking", handleSeeking);
+        videoPlayer.removeEventListener("seeked", handleSeeked);
+        videoPlayer.removeEventListener("play", handlePlay);
+        videoPlayer.removeEventListener("pause", handlePause);
+      }
+    };
+  }, [socket, roomId, movie.id]);
+
   // Animations on initial button click.
   useEffect(() => {
     if (!divRef.current || !commentIcon || !videoElem) return;
+
+    const commonTransition = `transition: all 1s ${windowTransition};`;
+    let videoElemMaxWidth = `max-width: ${
+      openChatWindow ? 100 - parseInt(chatWindowSize) || 70 : 100
+    }% !important;`;
+
+    const zIndexForAha = platform === "aha" ? "z-index: 10;" : "";
+
+    if (platform === "aha") {
+      videoElemMaxWidth += `
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    `;
+    }
+
     if (openChatWindow) {
       commentIcon.style.cssText = `
-        right: ${chatWindowSize}%;
-        transition: all 1s ${windowTransition};
-      `;
+      right: ${chatWindowSize}%;
+      ${commonTransition}
+    `;
       divRef.current.style.cssText = `
-        max-width: ${chatWindowSize || 30}%;
-      `;
-      videoElem.style.cssText = `
-        max-width: ${100 - parseInt(chatWindowSize) || 70}% !important;
-        transition: max-width 1s ${windowTransition};
-      `;
+      max-width: ${chatWindowSize || 30}%;
+      ${zIndexForAha}
+    `;
     } else {
       commentIcon.style.cssText = `
-        right: 5px;
-        transition: all 1s ${windowTransition};
-      `;
+      right: 5px;
+      ${commonTransition}
+    `;
       divRef.current.style.cssText = `
-        max-width: 0%;
-      `;
-      videoElem.style.cssText = `
-        max-width: 100% !important;
-        transition: max-width 1s ${windowTransition};
-      `;
+      max-width: 0%;
+      ${zIndexForAha}
+    `;
     }
-  }, [openChatWindow, divRef?.current, commentIcon, videoElem]);
+
+    videoElem.style.cssText = `
+    ${videoElemMaxWidth}
+    transition: max-width 1s ${windowTransition};
+  `;
+  }, [openChatWindow, divRef?.current, commentIcon, videoElem, platform]);
 
   // Drag the chat window
   useMemo(() => {
@@ -229,10 +310,8 @@ const ChatInterface: React.FC<props> = ({
   useEffect(() => {
     let loadingText = "";
     if (!isMovieLoaded)
-      loadingText = movie.name
-        ? `Loading Title "${movie.name}"`
-        : "Unable to fetch Title.";
-    dispatch(sliceSetLoadingText(loadingText));
+      loadingText = movie.name && `Loading Title "${movie.name}"`;
+    loadingText && dispatch(sliceSetLoadingText(loadingText));
   }, [isMovieLoaded]);
 
   const handleOutsideClick = (event: MouseEvent) => {
@@ -296,6 +375,26 @@ const ChatInterface: React.FC<props> = ({
     }
   }, [chatMode, globalChatRef, moovyNestRef]);
 
+  function renderAnimateMessages(videoElement: HTMLVideoElement) {
+    const animateMessagesDiv = document.createElement("div");
+    videoElement.parentElement.appendChild(animateMessagesDiv);
+    const boot = createRoot(animateMessagesDiv);
+    boot.render(
+      <ReduxProvider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AnimateMessages />
+        </PersistGate>
+      </ReduxProvider>
+    );
+  }
+
+  useEffect(() => {
+    const video = document.querySelector("video");
+    if (video) {
+      renderAnimateMessages(video as HTMLVideoElement);
+    }
+  }, []);
+
   return (
     <Perimeter
       className="chat-perimeter"
@@ -323,6 +422,7 @@ const ChatInterface: React.FC<props> = ({
           windowOpened={display}
         >
           <React.Fragment>
+            {!hasShownIntro && <Intro />}
             <ChatTitle />
             <ChatStats />
             {transitions((style, item) => (

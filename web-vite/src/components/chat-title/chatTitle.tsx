@@ -32,6 +32,7 @@ import {
   sliceSetToolTipMessage,
   sliceSetTooltipVisible,
 } from "../../pages/redux/slices/tooltip/tooltipSlice";
+import SimplePopper from "../../pages/content/components/moovy/popper/popper";
 
 const ChatTitle = () => {
   const [fav, setFav] = useState<boolean>(false);
@@ -45,13 +46,9 @@ const ChatTitle = () => {
   const userId = useAppSelector((state) => state.user.id);
   const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
   const dispatch = useAppDispatch();
-  const chatMode = useAppSelector((st) => st.settings.chatMode);
   const [tempTitle, setTempTitle] = useState<string>(movieTitle);
   // GraphQL: updateMovie and movieComments hooks.
   const [, updateMovieTitle] = useUpdateMovieTitleMutation();
-  const [hoverText, setHoverText] = useState(
-    toggleMode ? "Switch to Nest" : "Switch to Global Chat"
-  );
 
   const [{ error, fetching, data }, _query] = useGetMovieFavCountQuery({
     variables: {
@@ -134,52 +131,35 @@ const ChatTitle = () => {
     }
   }, [src]);
 
-  const handleToggle = () => {
-    setToggleMode(() => !toggleMode);
-    dispatch(sliceSetChatMode(toggleMode ? "global" : "nest"));
-    setHoverText(toggleMode ? "Switch to Nest" : "Switch to Global Chat");
-  };
-
-  const handleMouseEnterForLogo = () => {
-    setHoverText(() =>
-      toggleMode ? "Switch to Nest" : "Switch to Global Chat"
-    );
-    dispatch(sliceSetTooltipVisible(true));
-    dispatch(sliceSetToolTipMessage(hoverText));
-  };
-
-  const handleMouseLeaveForLogo = () => {
-    setHoverText(toggleMode ? "Switch to Global Chat" : "Switch to Nest");
-    dispatch(sliceSetTooltipVisible(false));
-    dispatch(sliceSetToolTipMessage(""));
-  };
-
   return (
     <ChatTitleParent className="chat-title">
-      <div
+      <SimplePopper
         className="exit common"
-        onClick={(e) => {
+        tooltip="Close"
+        onClick={(e: any) => {
           e.stopPropagation();
           dispatch(sliceSetIsOpenChatWindow(false));
         }}
-        onMouseEnter={handleMouseEnter("Close Chat")}
-        onMouseLeave={handleMouseLeave("")}
       >
         <MdOutlineExitToApp className="star" size={20} />
-      </div>
-      <div
+      </SimplePopper>
+
+      <SimplePopper
         className="logo"
-        onClick={handleToggle}
-        onMouseEnter={handleMouseEnterForLogo}
-        onMouseLeave={handleMouseLeaveForLogo}
+        tooltip={toggleMode ? "Switch to Global Chat" : "Switch to MoovyNest"}
       >
         <img
+          onClick={(e) => {
+            e.stopPropagation();
+            setToggleMode(() => !toggleMode);
+            dispatch(sliceSetChatMode(toggleMode ? "global" : "nest"));
+          }}
           src={toggleMode ? RED_LOGO_128 : LOGO_128}
           alt="logo"
           width="25"
           height="25"
         />
-      </div>
+      </SimplePopper>
 
       <div className="title">
         <div className="set">{movieTitle ? movieTitle : tempTitle}</div>
@@ -229,7 +209,7 @@ const ChatTitle = () => {
         onMouseLeave={handleMouseLeave("")}
       >
         <div className="fav-count">
-          <div className="box">{favCount}</div>
+          <div className="fav-box">{favCount}</div>
         </div>
         {!fav ? (
           <MdStarOutline className="star" size={20} />

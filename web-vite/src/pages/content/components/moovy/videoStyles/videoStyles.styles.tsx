@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const VideoParent = styled.div`
   display: flex;
@@ -102,9 +102,9 @@ export const FilterView = styled.div<filterProps>`
     font-weight: 600;
     font-size: 1rem;
     padding: 5px;
-    color: ${(p) => p.selected && 'white'};
+    color: ${(p) => p.selected && "white"};
     border-radius: 10px;
-    background-color: ${(p) => (p.selected ? '#2672c3' : '')};
+    background-color: ${(p) => (p.selected ? "#2672c3" : "")};
   }
 `;
 
@@ -175,11 +175,11 @@ export const OptionGroup = styled.div<props>`
   backdrop-filter: contrast(0.9);
   padding: 10px 0;
   border-radius: 4px;
-  max-height: ${(p) => (p.expandGroup ? '600px' : '40px')};
+  max-height: ${(p) => (p.expandGroup ? "600px" : "40px")};
   margin: 10px;
   transition: max-height 0.5s linear;
   .title {
-    font-size: 1.8em;
+    font-size: 18px;
     margin: 10px;
     height: 40px;
     display: flex;
@@ -204,10 +204,10 @@ export const OptionGroup = styled.div<props>`
         margin: 0px 4px;
         background-color: ${(p) =>
           p.isNodesValid === true
-            ? 'green'
+            ? "green"
             : p.isNodesValid === false
-            ? 'red'
-            : ''};
+            ? "red"
+            : ""};
       }
     }
     .edge {
@@ -242,7 +242,7 @@ export const OptionGroup = styled.div<props>`
             width: 23px;
           }
           :after {
-            content: '';
+            content: "";
             height: 20px;
             width: 20px;
             position: absolute;
@@ -330,7 +330,7 @@ export const OptionGroup = styled.div<props>`
             width: 23px;
           }
           :after {
-            content: '';
+            content: "";
             height: 20px;
             width: 20px;
             position: absolute;

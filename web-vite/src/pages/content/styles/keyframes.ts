@@ -107,3 +107,12 @@ export const wiggle = keyframes`
     transform: rotate(0);
   }
 `;
+
+export const countdownAnimation = keyframes`
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+`;

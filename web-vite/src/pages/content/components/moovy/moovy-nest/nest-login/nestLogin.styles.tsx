@@ -7,6 +7,12 @@ export const StyledNestLogin = styled.div`
   gap: 15px;
   justify-content: flex-start;
   padding-top: 15px;
+  overflow: scroll;
+  height: 100%;
+
+  .nest-gif-logo {
+    height: 50%;
+  }
 
   .button-container {
     display: flex;
@@ -31,7 +37,10 @@ export const StyledNestLogin = styled.div`
       box-shadow: 0 0 1px;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 10px;
+      min-height: 60px;
     }
   }
 `;
@@ -41,6 +50,7 @@ interface Props {
   nestHover: string;
   nestActive: string;
   size: number;
+  height: number;
 }
 export const StyledNestButton = styled(Button)<Props>`
   font-weight: bold;
@@ -51,9 +61,12 @@ export const StyledNestButton = styled(Button)<Props>`
   transition: all 150ms ease;
   cursor: pointer;
   border: none;
-  display: flex;
   gap: 5px;
   font-size: ${(p) => `${p.size}px`};
+  height: ${(p) => `${p.height}px`};
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     background-color: ${(p) => p.nestHover};
@@ -73,15 +86,4 @@ export const StyledNestButton = styled(Button)<Props>`
     opacity: 0.5;
     cursor: not-allowed;
   }
-`;
-
-export const AvailableNest = styled.div`
-  display: flex;
-  gap: 10px;
-  -webkit-box-pack: center;
-  justify-content: space-between;
-  -webkit-box-align: center;
-  align-items: center;
-  padding: 10px;
-  font-size: 14px;
 `;

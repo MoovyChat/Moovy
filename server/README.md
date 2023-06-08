@@ -56,9 +56,11 @@ BEGIN
 END $$;
 
 ```
+
 - Delete all the tables in the database
+
 ```
-DO $$ 
+DO $$
 DECLARE
    tbl_name text;
 BEGIN
@@ -174,7 +176,7 @@ USER node
 ### Pre-requisites inside the vps before using the docker.
 
 - SSH to the server. `ssh root@<IPv4_Address_of_the_droplet>`
-- Create an app inside dokku `create app:create <$APP_NAME>`
+- Create an app inside dokku `dokku apps:create <$APP_NAME>`
 - Install the plugins for postgres and redis.
 
 ```

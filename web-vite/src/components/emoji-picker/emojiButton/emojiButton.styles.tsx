@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const EmojiButtonParent = styled.div`
-  height: 50px;
-  width: 50px;
+  height: 45px;
+  width: 45px;
   display: flex;
   position: relative;
   justify-content: center;
@@ -12,7 +12,7 @@ export const EmojiButtonParent = styled.div`
     height: 100%;
     width: 100%;
     display: flex;
-    font-size: 3rem;
+    font-size: 25px;
     overflow: hidden;
     position: relative;
     justify-content: center;

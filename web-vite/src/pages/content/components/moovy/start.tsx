@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { addBorder, applyFilter } from "./videoStyles/videoStyles.help";
-
 import CommentButton from "./commentButton/commentButton";
 
-import { getVideoElement } from "./contentScript.utils";
+import {
+  getMovieIdFromURL,
+  getVideoElement,
+  getVideoPlatform,
+} from "./contentScript.utils";
 
 import { useFetchMovie } from "./hooks/useFetchMovie";
 
@@ -17,10 +19,7 @@ import {
 } from "../../../../helpers/constants";
 import { User } from "../../../../helpers/interfaces";
 import {
-  getStoredBorder,
   getStoredCheckedStatus,
-  getStoredFilterValues,
-  getStoredResizeValue,
   getStoredUserLoginDetails,
 } from "../../../../helpers/storage";
 import { urqlClient } from "../../../../helpers/urql/urqlClient";
@@ -33,7 +32,6 @@ import { sliceAddMovieId } from "../../../redux/slices/movie/movieSlice";
 import {
   sliceResetSettings,
   sliceSetSmoothWidth,
-  sliceSetVideoSize,
 } from "../../../redux/slices/settings/settingsSlice";
 import { sliceAddUser } from "../../../redux/slices/user/userSlice";
 import { StyledStart } from "./start.styles";
@@ -63,6 +61,15 @@ const Start: React.FC<Props> = () => {
     },
     [dispatch]
   );
+
+  useEffect(() => {
+    const fetchUrl = async () => {
+      const url = window.location.href;
+      const id = await getMovieIdFromURL(url);
+      setMovieId(() => id);
+    };
+    fetchUrl();
+  }, [movieId]);
 
   useEffect(() => {
     oldIntervalIds.forEach((interval) => clearInterval(interval));
@@ -95,7 +102,13 @@ const Start: React.FC<Props> = () => {
 
     const handleMutation = (mutationsList: MutationRecord[]) => {
       for (const mutation of mutationsList) {
+        const targetElement = mutation.target as HTMLElement;
+        const currentUrl = window.location.href;
+        let platform = getVideoPlatform(currentUrl);
+
+        // For Netflix
         if (
+          platform === "netflix" &&
           mutation.type === "attributes" &&
           mutation.attributeName === "style"
         ) {
@@ -107,6 +120,21 @@ const Start: React.FC<Props> = () => {
             skipButton.click();
           }
           if (bottomControls) {
+            setIsBottomControlsVisible(() => true);
+          } else {
+            setIsBottomControlsVisible(() => false);
+          }
+        }
+        // For Aha
+        else if (
+          platform === "aha" &&
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class" &&
+          typeof targetElement.className === "string" &&
+          targetElement.className.includes("player-container__controls")
+        ) {
+          let className = targetElement.className as string;
+          if (className.includes("player-container__show")) {
             setIsBottomControlsVisible(() => true);
           } else {
             setIsBottomControlsVisible(() => false);
@@ -130,8 +158,8 @@ const Start: React.FC<Props> = () => {
       }
       startObserver();
     };
-
     startObserver();
+    // You might need to add dependencies here depending on your React component
 
     // Listen for a refresh message from the pop-up
     chrome.runtime.onMessage.addListener((message) => {
@@ -149,8 +177,8 @@ const Start: React.FC<Props> = () => {
   //Set the pre-saved video styles.
   useEffect(() => {
     async function applyVideoStyles() {
-      const playerView = document.querySelector('[data-uia="player"]');
-      const canvas = playerView as HTMLElement;
+      // const playerView = document.querySelector('[data-uia="player"]');
+      // const canvas = playerView as HTMLElement;
       // Get selected filters from the local storage.
       // getStoredFilterValues().then((filters) => setFilterValues(filters));
       // Get stored resize value.
@@ -175,26 +203,29 @@ const Start: React.FC<Props> = () => {
     return () => clearInterval(interval);
   }, [movieId, videoElem]);
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === "SET_MOVIE_ID") {
-      // Clear redux cache.
-
-      dispatch(sliceResetSettings());
-      dispatch(sliceValidateMovieLoading(false));
-      setMovieId(() => request.movieId + "");
-      dispatch(sliceSetSmoothWidth(0));
-      sendResponse({
-        data: "Movie ID got reset",
-      });
-    } else if (!sender.tab && request.type === "RESET_MOVIE_ID") {
-      setMovieId(() => request.movieId + "");
-      dispatch(sliceSetSmoothWidth(0));
-      sendResponse({
-        data: "Movie ID got reset",
-      });
-    }
-    return true;
-  });
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.type === "SET_MOVIE_ID") {
+        // Clear redux cache.
+        console.log("SET_MOVIE_ID", { request });
+        dispatch(sliceResetSettings());
+        dispatch(sliceValidateMovieLoading(false));
+        setMovieId(() => request.movieId);
+        dispatch(sliceSetSmoothWidth(0));
+        sendResponse({
+          data: "Movie ID got reset",
+        });
+      } else if (request.type === "RESET_MOVIE_ID") {
+        console.log("RESET_MOVIE_ID", { request });
+        setMovieId(() => request.movieId);
+        dispatch(sliceSetSmoothWidth(0));
+        sendResponse({
+          data: "Movie ID got reset",
+        });
+      }
+      return true;
+    });
+  }, []);
 
   useEffect(() => {
     if (error) {

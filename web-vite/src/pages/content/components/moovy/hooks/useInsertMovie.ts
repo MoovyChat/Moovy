@@ -13,6 +13,23 @@ import {
   sliceSetLoadingText,
 } from "../../../../redux/slices/loading/loadingSlice";
 import { sliceAddMovie } from "../../../../redux/slices/movie/movieSlice";
+import { getMovieIdFromURL } from "../contentScript.utils";
+
+interface MovieResponse {
+  result: MovieFullInformation;
+}
+
+const sendMessage = (message) => {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(message, function (response) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(response);
+      }
+    });
+  });
+};
 
 export const useInsertMovie = (movieId: string) => {
   const [movieState, setMovie] = useState<Movie | null>(null);
@@ -22,57 +39,59 @@ export const useInsertMovie = (movieId: string) => {
   const [{ fetching }, insertMovieInfo] = useInsertMovieInformationMutation();
 
   useEffect(() => {
-    let count = 0;
-    if (!movieId) return;
-    if (movieExists) return;
-    const interval = setInterval(() => {
-      count += 500;
-      if (count >= 5000) clearInterval(interval);
-      if (movieId === null || movieId === undefined || movieId === "") {
-        dispatch(sliceSetIsMovieExists(false));
-        return;
-      }
+    const fetchMovieInfo = async () => {
+      let count = 0;
+      while (count < 5000) {
+        count += 500;
+        if (
+          movieId === null ||
+          movieId === undefined ||
+          movieId === "" ||
+          movieExists
+        ) {
+          dispatch(sliceSetIsMovieExists(false));
+          break;
+        }
 
-      if (movieExists) {
-        clearInterval(interval);
-        return;
-      }
-
-      chrome.runtime.sendMessage(
-        { type: "REQUEST_MOVIE_INFO", movieId },
-        function (response) {
+        const currentUrl = window.location.href;
+        try {
+          const response = (await sendMessage({
+            type: "REQUEST_MOVIE_INFO",
+            currentUrl,
+          })) as MovieResponse;
           const result: MovieFullInformation = response.result;
-          if (result !== null) clearInterval(interval);
-
+          const IdFromUrl = await getMovieIdFromURL(currentUrl);
           if (fetching) {
-            const text = `Adding ${result.title} to catalog`;
+            const text = `Adding ${IdFromUrl} to catalog`;
             dispatch(sliceSetLoadingText(text));
           }
-          insertMovieInfo({ options: result, mid: movieId }).then((res) => {
-            const { data, error } = res;
-            if (error) console.log(error);
-            if (data) {
-              const movieRes = data.insertMovieInformation as Movie;
-              setMovie(() => movieRes);
+          const res = await insertMovieInfo({ options: result, mid: movieId });
+          const { data, error } = res;
+          if (error) console.log(error);
+          if (data) {
+            const movieRes = data.insertMovieInformation as Movie;
+            setMovie(() => movieRes);
 
-              batch(() => {
-                dispatch(sliceAddMovie(movieRes));
-                dispatch(sliceSetIsMovieLoaded(true));
-                dispatch(sliceSetIsMovieExists(true));
-                dispatch(sliceSetIsMovieInsertionFinished(true));
-                dispatch(sliceSetLoadingText(""));
-              });
-
-              clearInterval(interval);
-              return;
-            }
-          });
+            batch(() => {
+              dispatch(sliceAddMovie(movieRes));
+              dispatch(sliceSetIsMovieLoaded(true));
+              dispatch(sliceSetIsMovieExists(true));
+              dispatch(sliceSetIsMovieInsertionFinished(true));
+              dispatch(sliceSetLoadingText(""));
+            });
+            break;
+          }
+          if (result !== null) break;
+        } catch (error) {
+          console.error("Error sending message:", error);
         }
-      );
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms before the next iteration
+      }
+    };
 
-      () => clearInterval(interval);
-    }, 500);
+    fetchMovieInfo();
   }, [movieId]);
+
   if (movieExists) return null;
   if (!movieId) return null;
   return movieState;

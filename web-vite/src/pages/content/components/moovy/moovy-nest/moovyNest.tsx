@@ -1,33 +1,53 @@
-import React, { MouseEvent, useContext, useEffect, useState } from "react";
-import { NestHeading, StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
-import { TextAreaContainer } from "../chat-interface/chatInterface.styles";
+import React, {
+  MouseEvent,
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { IoArrowForwardCircle } from "react-icons/io5";
 import ChatArea from "../../../../../components/chat-area/chatArea";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { TextAreaContainer } from "../chat-interface/chatInterface.styles";
+import { Profile } from "../commentInterface/commentInterface.styles";
+
 import {
   ChatTextBox,
   TextAreaIcon,
   TextAreaPost,
 } from "../messageBox/messageBox.styles";
-import { Profile } from "../commentInterface/commentInterface.styles";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { IoArrowForwardCircle } from "react-icons/io5";
+import { NestHeading, StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
 import NestChatBox from "./nest-chat-box/nestChatBox";
 
+import { useSpring, animated, useTransition } from "@react-spring/web";
+import { nanoid } from "nanoid";
+import { FiEdit3 } from "react-icons/fi";
+import { MdOutlineGifBox, MdTagFaces } from "react-icons/md";
+import { batch } from "react-redux";
+import EmojiPicker from "../../../../../components/emoji-picker/emojiPicker";
 import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
+import { NEST_TYPE } from "../../../../../helpers/enums";
+import {
+  sliceSetNestType,
+  sliceSetNestVisibility,
+} from "../../../../redux/slices/nestSlice";
 import {
   sliceSetIncomingMessages,
-  sliceSetIsRoomPublic,
-  sliceSetJoinedRoom,
-  sliceSetRoomId,
-  sliceSetRoomName,
+  sliceSetSocketConnectionStatus,
 } from "../../../../redux/slices/socket/socketSlice";
-import { sliceSetTextAreaMessage } from "../../../../redux/slices/textArea/textAreaSlice";
-import NestStatus from "./nest-status/nestStatus";
+import {
+  sliceSetIsTextAreaClicked,
+  sliceSetIsTextAreaFocused,
+  sliceSetTextAreaMessage,
+} from "../../../../redux/slices/textArea/textAreaSlice";
 import { SocketContext } from "../context/socketContextFile";
-import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
-import { batch } from "react-redux";
-import { nanoid } from "nanoid";
 import CopyToClipboard from "./copy-to-clipboard/copyToClipboard";
-
+import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
+import NestStatus from "./nest-status/nestStatus";
+import SmileyWindow from "../../../../../components/smiley-window/smileyWindow";
+import NestOptionWindow from "./nest-option-window/nestOptionWindow";
 interface Props {
   ref?: any;
   style?: any;
@@ -35,33 +55,33 @@ interface Props {
 const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const user = useAppSelector((state) => state.user);
   const socket = useContext(SocketContext);
+  const smileyIconRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const textAreaMessage = useAppSelector((state) => state.textArea.text);
   const roomId = useAppSelector((state) => state.socket.roomId);
   const roomName = useAppSelector((state) => state.socket.roomName);
   const isPublic = useAppSelector((state) => state.socket.isPublic);
+  const [isSmileyOpen, openSmiley] = useState<boolean>(false);
+  const [isGifOpen, openGif] = useState<boolean>(false);
   const [usersTyping, setUsersTyping] = useState([]);
   const dispatch = useAppDispatch();
-  const [isConnected, setIsConnected] = useState(false);
-
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const isTextAreaFocussed = useAppSelector(
+    (state) => state.textArea.isTextAreaFocused
+  );
+  const isNestAdmin = useAppSelector((state) => state.socket.isNestAdmin);
   useEffect(() => {
     if (socket) {
       socket.on("connect", () => {
         console.log("Connected:", socket.connected); // true when connected
-        setIsConnected(() => true);
+        dispatch(sliceSetSocketConnectionStatus(true));
       });
 
       socket.on("disconnect", () => {
         console.log("Connected:", socket.connected); // false when disconnected
-        setIsConnected(() => false);
-      });
-
-      socket.emit("joinRoom", roomId, roomName, user);
-      socket.on("userLeft", () => {
-        batch(() => {
-          dispatch(sliceSetRoomId(""));
-          dispatch(sliceSetRoomName(""));
-          dispatch(sliceSetIsRoomPublic(isPublic));
-          dispatch(sliceSetJoinedRoom(false));
-        });
+        dispatch(sliceSetSocketConnectionStatus(false));
       });
 
       socket.on("message", (incomingMessage) => {
@@ -98,7 +118,6 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
           // socket.close(); This will permanently close the socket. User will have to create a new socket connection.
           socket.off("connect");
           socket.off("disconnect");
-          socket.off("roomUsers");
           socket.off("message");
         }
       };
@@ -134,35 +153,22 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     }
   };
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
     e
   ) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.stopPropagation();
-      e.isPropagationStopped();
-    } else if (e.key === "Enter") {
+    if (e.key === "Enter") {
       e.preventDefault();
-      let value = (e.target as HTMLTextAreaElement).value;
+      let value = (e.target as HTMLInputElement).value;
       if (value) {
-        let id = nanoid(10);
-        socket.emit("message", {
+        socket.emit(SOCKET_MESSAGE_TYPES.ROOM_NAME_CHANGE, {
           roomId: roomId,
           data: {
-            id,
-            user,
-            type: "message",
-            message: value,
+            value: value,
+            message: `${user.nickname} changed the nest name to ${value}`,
           },
         });
-        socket.emit("message", {
-          roomId: roomId,
-          data: {
-            user,
-            type: "typing",
-            message: "",
-          },
-        });
-        dispatch(sliceSetTextAreaMessage(""));
+        setName(() => "");
+        setIsEdit(() => false);
       }
     } else if (
       (e.key >= "a" && e.key <= "z") ||
@@ -172,14 +178,160 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
     }
   };
 
+  const postMessage = (value: string) => {
+    if (value) {
+      let id = nanoid(10);
+      socket.emit("message", {
+        roomId: roomId,
+        data: {
+          id,
+          user,
+          type: "message",
+          message: value,
+        },
+      });
+      socket.emit("message", {
+        roomId: roomId,
+        data: {
+          user,
+          type: "typing",
+          message: "",
+        },
+      });
+      batch(() => {
+        dispatch(sliceSetTextAreaMessage(""));
+        dispatch(sliceSetNestVisibility(false));
+        dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
+        dispatch(sliceSetIsTextAreaFocused(false));
+        dispatch(sliceSetIsTextAreaClicked(false));
+      });
+      openSmiley(() => false);
+      openGif(() => false);
+    }
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.stopPropagation();
+      e.isPropagationStopped();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      let value = (e.target as HTMLTextAreaElement).value;
+      postMessage(value);
+    } else if (
+      (e.key >= "a" && e.key <= "z") ||
+      (e.key >= "A" && e.key <= "Z")
+    ) {
+      e.stopPropagation();
+    }
+  };
+
+  const handleInputBlur = () => {
+    inputRef && inputRef.current && inputRef.current.focus;
+  };
+
+  const handleGifOpen: MouseEventHandler<SVGElement> = (e) => {
+    e.stopPropagation();
+    openGif((open) => !open);
+    if (isGifOpen) {
+      batch(() => {
+        dispatch(sliceSetNestVisibility(false));
+        dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
+      });
+    } else {
+      batch(() => {
+        dispatch(sliceSetNestVisibility(true));
+        dispatch(sliceSetNestType(NEST_TYPE.GIPHY));
+
+        // When gif window opens, open other windows such as smiley window.
+        openSmiley(() => false);
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node) &&
+        smileyIconRef.current &&
+        !smileyIconRef.current.contains(event.target) &&
+        !event.target.classList.contains("smiley-window")
+      ) {
+        openSmiley(() => false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const transitions = useTransition(isSmileyOpen, {
+    from: { transform: "scale(0) translateY(0%)", borderRadius: "50%" },
+    enter: { transform: "scale(1) translateY(-20%)", borderRadius: "0%" },
+    leave: { transform: "scale(0) translateY(0%)", borderRadius: "50%" },
+    config: {
+      tension: 280,
+      friction: 120,
+      duration: 200,
+    },
+  });
+
   return (
     <StyledMoovyNest ref={ref}>
       <NestHeading>
-        <div>Nest: {roomName}</div>
+        <div className="nest-heading">
+          {isEdit ? (
+            <div className="nest-input">
+              <div className="fixed-label">Nest</div>
+              <input
+                ref={inputRef}
+                className="nst-input"
+                maxLength={25}
+                defaultValue={roomName}
+                value={name}
+                placeholder="Name of the Nest..."
+                onBlur={handleInputBlur}
+                onKeyDown={handleInputKeyDown}
+                onChange={(e) => setName(e.target.value)}
+                autoFocus
+              ></input>
+            </div>
+          ) : (
+            <React.Fragment>
+              <span>Nest: {roomName}</span>
+              {isNestAdmin && (
+                <FiEdit3
+                  size={20}
+                  onClick={() => setIsEdit(() => true)}
+                  style={{ cursor: "pointer" }}
+                />
+              )}
+            </React.Fragment>
+          )}
+        </div>
+
         <CopyToClipboard text={roomId} />
       </NestHeading>
       <Room />
       <NestChatBox />
+      {transitions((style, item) =>
+        item ? (
+          <animated.div
+            style={style}
+            className="emoji-container"
+            ref={containerRef}
+          >
+            <EmojiPicker />
+          </animated.div>
+        ) : null
+      )}
+
       <TypingStatus>
         {usersTyping.length === 1 && (
           <div>{`${usersTyping[0].nickname} is typing...`}</div>
@@ -203,11 +355,33 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
             handleInputChange={handleInputChange}
           />
           <TextAreaPost>
+            <div ref={smileyIconRef}>
+              <MdTagFaces
+                className="smiley-window"
+                size={25}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openSmiley((isSmileyOpen) => {
+                    if (!isSmileyOpen) {
+                      dispatch(sliceSetNestVisibility(false));
+                      dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
+                    }
+                    return !isSmileyOpen;
+                  });
+                }}
+              />
+            </div>
+            <MdOutlineGifBox
+              size={25}
+              onClick={handleGifOpen}
+              className="giphy-gif"
+            />
             <div
               className="text-send"
               onClick={(e: MouseEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 e.stopPropagation();
+                postMessage(textAreaMessage);
               }}
             >
               <IoArrowForwardCircle fill="#fa0000" size={25} />
@@ -215,7 +389,8 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
           </TextAreaPost>
         </ChatTextBox>
       </TextAreaContainer>
-      <NestStatus connected={isConnected} />
+      <NestStatus />
+      {isTextAreaFocussed && <NestOptionWindow />}
     </StyledMoovyNest>
   );
 };

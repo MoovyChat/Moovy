@@ -32,12 +32,13 @@ export const ChatTitleParent = styled.div`
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      .box {
+      .fav-box {
         position: relative;
         width: 25px;
         display: flex;
         justify-content: center;
         align-items: center;
+        font-size: 14px;
       }
     }
   }
@@ -59,6 +60,7 @@ export const ChatTitleParent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 12px;
   }
   .icon {
     grid-area: 1 / 9 / 2 / 11;

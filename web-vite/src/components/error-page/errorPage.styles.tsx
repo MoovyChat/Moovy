@@ -95,10 +95,14 @@ export const StyledErrorPage = styled.div`
   }
 `;
 
-export const StyledIFrameButton = styled.iframe`
+type Props = {
+  isLoaded: boolean;
+};
+export const StyledIFrameButton = styled.iframe<Props>`
   border: none;
   width: 195px;
-  height: 40px;
+  height: 47px;
   display: flex;
+  visibility: ${(p) => (p.isLoaded ? "auto" : "hidden")};
   border-radius: 12px;
 `;

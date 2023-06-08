@@ -31,6 +31,9 @@ export const wsUrl = __prod__
 export const serverUrl = __prod__
   ? `https://${CUSTOM_DOMAIN}/graphql`
   : `http://${CUSTOM_DOMAIN}/graphql`;
+export const serverScrape = __prod__
+  ? `https://${CUSTOM_DOMAIN}/scrape`
+  : `http://${CUSTOM_DOMAIN}/scrape`;
 export const textMapTypes = {
   USER: "user",
   TIME: "time",
@@ -39,12 +42,22 @@ export const textMapTypes = {
 };
 
 export const SOCKET_MESSAGE_TYPES = {
+  CREATE: "create",
   JOIN: "join",
   LEAVE: "leave",
   MESSAGE: "message",
   TYPING: "typing",
+  SEEK_TIME: "seekTime",
+  PAUSE: "pause",
+  PLAY: "play",
+  KICK: "kick",
+  GIF: "GIF",
+  URL_CHANGE: "urlChange",
+  ROOM_NAME_CHANGE: "roomNameChange",
 };
-export const SOCKET_URL = "http://localhost:3001/";
+export const SOCKET_URL = __prod__
+  ? "https://nest.moovychat.com/"
+  : "http://localhost:3001";
 
 export const isServerSide = () => typeof window === "undefined";
 
@@ -61,13 +74,24 @@ export const fonts = {
   "Source Sans Pro": "'Source Sans Pro', sans-serif",
   Ubuntu: "'Ubuntu', sans-serif",
 };
+export const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY;
 
 export const BOTTOMS_CONTROL = ".watch-video--bottom-controls-container";
 export const SKIP_BUTTON = ".watch-video--skip-content-button";
 
+export const GIPHY_LOGO =
+  "https://moovychatbucket.s3.us-west-1.amazonaws.com/giphy.gif";
 export const LOGO_128 =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/mc-128.png";
+export const ERROR_LOGO =
+  "http://icongal.com/gallery/image/297540/check_mark_errorcircle_error.png";
 export const RED_LOGO_128 =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/mcRed-128.png";
 export const FULL_LOGO_TRANSPARENT =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/MoovyChat_DarkTheme/fulllogo_transparent_nobuffer.png";
+export const MOOVY_NEST_GIF =
+  "https://moovychatbucket.s3.us-west-1.amazonaws.com/moovynest-crop.gif";
+export const GLOBAL_TO_NEST_GIF =
+  "https://moovychatbucket.s3.us-west-1.amazonaws.com/globalToNest.gif";
+export const PATREON_PNG =
+  "https://moovychatbucket.s3.us-west-1.amazonaws.com/patreon-word.webp";

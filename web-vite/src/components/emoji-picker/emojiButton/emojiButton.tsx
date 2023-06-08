@@ -1,11 +1,12 @@
 import { Emoji } from "emojibase";
 import { EmojiButtonParent } from "./emojiButton.styles";
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import { db } from "../../../pages/content/indexedDB/db";
 import { useAppSelector, useAppDispatch } from "../../../pages/redux/hooks";
 import {
   sliceSetTextAreaMessage,
   sliceSetIsTextAreaFocused,
+  sliceSetHoveredEmoji,
 } from "../../../pages/redux/slices/textArea/textAreaSlice";
 
 type props = {
@@ -68,8 +69,23 @@ const EmojiButton: React.FC<props> = ({ emoji }) => {
     addToRecentIndexedDB();
   };
 
+  const handleMouseEnter: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetHoveredEmoji(emoji));
+  };
+
+  const handleMouseLeave: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    // dispatch(sliceSetHoveredEmoji(null));
+  };
+
   return (
-    <EmojiButtonParent className="emoji-button" onClick={handleEmojiClick}>
+    <EmojiButtonParent
+      className="emoji-button"
+      onClick={handleEmojiClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <button id="text-focus">{emoji.emoji}</button>
     </EmojiButtonParent>
   );

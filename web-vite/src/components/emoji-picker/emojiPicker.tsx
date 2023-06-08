@@ -1,15 +1,24 @@
+import React, {
+  ChangeEventHandler,
+  UIEventHandler,
+  useRef,
+  useState,
+} from "react";
 import {
   EmojiPickerHeader,
   EmojiPickerParent,
+  EmojiSearch,
   HeaderKey,
 } from "./emojiPicker.styles";
-import { TouchEventHandler, WheelEventHandler, useRef, useState } from "react";
 
 /* eslint-disable react/react-in-jsx-scope */
 import { Emoji } from "emojibase";
-import EmojiGroup from "./emojiGroup/emojiGroup";
 import groupSet from "emojibase-data/meta/groups.json";
+import { MdSearch } from "react-icons/md";
 import useFetchEmojis from "../../pages/content/components/moovy/hooks/useFetchEmojis";
+import { useAppDispatch, useAppSelector } from "../../pages/redux/hooks";
+import { sliceSetEmojiSearchValue } from "../../pages/redux/slices/textArea/textAreaSlice";
+import EmojiGroup from "./emojiGroup/emojiGroup";
 
 export interface subGroup {
   [subKey: number]: Emoji[];
@@ -30,56 +39,89 @@ const headerEmoji: any = {
   flags: "🏁",
 };
 
-const EmojiPicker = () => {
+interface EmojiPickerProps {
+  onClose?: () => void;
+}
+
+const EmojiPicker: React.FC<EmojiPickerProps> = ({ onClose }) => {
   const { groups } = groupSet;
-  const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
   const [groupNumber, setGroupNumber] = useState<number>(0);
   const refinedGroups = useFetchEmojis();
-
-  const swipeThreshold = 30;
+  const groupRefs = useRef<(React.RefObject<HTMLDivElement> | null)[]>([]);
+  const value = useAppSelector((state) => state.textArea.emojiSearchValue);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const dispatch = useAppDispatch();
+  const hoveredEmoji = useAppSelector((state) => state.textArea.hoveredEmoji);
   const selectGroup = (groupNum: number) => {
     setGroupNumber(groupNum);
   };
 
-  const handleWheel: WheelEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: UIEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    e.preventDefault();
-    if (Math.abs(e.deltaX) >= swipeThreshold) {
-      if (e.deltaX > 0) {
-        // Swipe right
-        setGroupNumber((num) => (num + 1 >= 9 ? 9 : num + 1));
-      } else {
-        // Swipe left
-        setGroupNumber((num) => (num - 1 < 0 ? 0 : num - 1));
+
+    if (!groupRefs || !groupRefs.current) return;
+    // Store first found visible group index
+    let firstVisibleGroupIndex: number | null = null;
+
+    for (let index = 0; index < groupRefs.current.length; index++) {
+      const groupRef = groupRefs.current[index];
+      const groupElement = groupRef.current;
+      if (!groupElement) continue;
+
+      const { top } = groupElement.getBoundingClientRect();
+      const parentElement = groupElement.parentElement;
+
+      if (!parentElement) continue;
+
+      const parentTop = parentElement.getBoundingClientRect().top;
+      // Check if the group is in view
+      if (top <= parentTop && top > 0) {
+        // If this is the first visible group, store its index
+        if (firstVisibleGroupIndex === null) {
+          firstVisibleGroupIndex = index;
+        }
       }
     }
-  };
 
-  const handleTouchStart: TouchEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd: TouchEventHandler<HTMLDivElement> = (e) => {
-    e.stopPropagation();
-    touchEndX.current = e.changedTouches[0].clientX;
-    const deltaX = touchEndX.current - touchStartX.current;
-    if (deltaX > 0) {
-      // Swipe right
-      setGroupNumber((num) => (num + 1 >= 10 ? 10 : num + 1));
-    } else {
-      // Swipe left
-      setGroupNumber((num) => (num - 1 < 0 ? 0 : num - 1));
+    // If there is a visible group, set its index as the group number
+    if (firstVisibleGroupIndex !== null) {
+      setGroupNumber(firstVisibleGroupIndex);
     }
+  };
+
+  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    inputRef?.current?.focus();
+    if ((e.key >= "a" && e.key <= "z") || (e.key >= "A" && e.key <= "Z")) {
+      e.stopPropagation();
+    }
+  };
+
+  const changeValueHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetEmojiSearchValue(e.target.value));
   };
 
   return (
-    <EmojiPickerParent
-      onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
+    <EmojiPickerParent>
+      <EmojiSearch>
+        <MdSearch size={20} style={{ padding: "0 5px" }} />
+        <input
+          ref={inputRef}
+          type="text"
+          id="search"
+          onKeyDown={handleInputKeyDown}
+          name="search"
+          value={value}
+          onChange={changeValueHandler}
+          onBlur={(e) => {
+            e.stopPropagation();
+            inputRef.current.focus();
+          }}
+          placeholder="Search Emoji"
+        />
+      </EmojiSearch>
       <EmojiPickerHeader>
         {Object.values(groups).map(
           (value, index) =>
@@ -91,6 +133,11 @@ const EmojiPicker = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   selectGroup(index);
+                  if (groupRefs.current[index]?.current) {
+                    groupRefs.current[index].current.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
                 }}
               >
                 {headerEmoji[value]}
@@ -98,11 +145,35 @@ const EmojiPicker = () => {
             )
         )}
       </EmojiPickerHeader>
-      {refinedGroups && refinedGroups[groupNumber] && groupNumber !== 2 && (
-        <EmojiGroup
-          subGroup={refinedGroups[groupNumber]}
-          groupNumber={groupNumber}
-        />
+      <div className="container">
+        {refinedGroups && (
+          <div className="group-container" onScroll={handleScroll}>
+            {Object.values(refinedGroups).map((group, index) => {
+              // If this group's ref doesn't exist yet, create it
+              if (!groupRefs.current[index]) {
+                groupRefs.current[index] = React.createRef();
+              }
+
+              // Pass the ref to the EmojiGroup
+              return (
+                index !== 2 && (
+                  <EmojiGroup
+                    ref={groupRefs.current[index]}
+                    key={index}
+                    subGroup={group}
+                    groupNumber={groupNumber}
+                  />
+                )
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {hoveredEmoji && (
+        <div className="hovered-emoji">
+          <div className="hov-emoji">{hoveredEmoji.emoji}</div>
+          <div className="hov-desc">{hoveredEmoji.label}</div>
+        </div>
       )}
     </EmojiPickerParent>
   );

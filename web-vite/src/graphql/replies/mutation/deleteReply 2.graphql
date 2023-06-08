@@ -1,5 +1,0 @@
-mutation DeleteReply($rid: String!) {
-  deleteReply(rid: $rid) {
-    ...FullReply
-  }
-}

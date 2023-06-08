@@ -68,12 +68,30 @@ export const StyledCreateNest = styled.div`
   }
 `;
 
+export const SyncButtonSwitch = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 1px 1px;
+  border-radius: 50%;
+  :hover {
+    box-shadow: 0 0 2px 2px;
+  }
+  :active {
+    box-shadow: 0 0 3px 3px;
+  }
+`;
+
 export const CustomSwitch = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
   gap: 10px;
+  cursor: pointer;
 `;
 
 export const Root = styled("span")(

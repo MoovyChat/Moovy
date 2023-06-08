@@ -1,42 +1,30 @@
-import React, {
-  ChangeEventHandler,
-  FocusEventHandler,
-  KeyboardEventHandler,
-  useRef,
-  useState,
-} from "react";
-import {
-  CustomSwitch,
-  Root,
-  StyledCreateNest,
-  StyledInputElement,
-} from "./createNest.styles";
-import { ClickAwayListener, Input, Switch } from "@mui/base";
-import { StyledNestButton } from "../../nest-login/nestLogin.styles";
-import { useAppDispatch } from "../../../../../../redux/hooks";
+import { ClickAwayListener, Switch } from "@mui/base";
+import { nanoid } from "nanoid";
+import { ChangeEventHandler, useContext, useState } from "react";
+import { GiNestBirds } from "react-icons/gi";
+import { NEST_TYPE } from "../../../../../../../helpers/enums";
+import { useAppDispatch, useAppSelector } from "../../../../../../redux/hooks";
 import {
   sliceSetNestType,
   sliceSetNestVisibility,
 } from "../../../../../../redux/slices/nestSlice";
-import { NEST_TYPE } from "../../../../../../../helpers/enums";
-import {
-  sliceSetIsRoomPublic,
-  sliceSetJoinedRoom,
-  sliceSetRoomId,
-  sliceSetRoomName,
-} from "../../../../../../redux/slices/socket/socketSlice";
-import { batch } from "react-redux";
-import { GiNestBirds } from "react-icons/gi";
-import { nanoid } from "nanoid";
-import { openSnackBar } from "../snack-bar/snackBar";
+import { SocketContext } from "../../../context/socketContextFile";
+import { StyledNestButton } from "../../nest-login/nestLogin.styles";
 import NestInput from "../nest-input/nestInput";
+import { CustomSwitch, Root, StyledCreateNest } from "./createNest.styles";
+import {
+  sliceSetIsNestAdmin,
+  sliceSetIsRoomPublic,
+} from "../../../../../../redux/slices/socket/socketSlice";
 
 const CreateNest = () => {
+  const user = useAppSelector((state) => state.user);
+  const movie = useAppSelector((state) => state.movie);
   const label = { slotProps: { input: { "aria-label": "Public" } } };
   const dispatch = useAppDispatch();
   const [value, setValue] = useState<string>("");
-  const [isPublic, setPublic] = useState<boolean>(true);
-  const inputRef = useRef(null);
+  const isPublic = useAppSelector((state) => state.socket.isPublic);
+  const socket = useContext(SocketContext);
   const roomID = nanoid(10);
   const closeHandler = () => {
     dispatch(sliceSetNestVisibility(false));
@@ -45,19 +33,21 @@ const CreateNest = () => {
 
   const switchChangeHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.stopPropagation();
-    setPublic(() => e.target.checked);
+    dispatch(sliceSetIsRoomPublic(e.target.checked));
   };
 
   const createRoomHandler = () => {
-    batch(() => {
-      dispatch(sliceSetRoomId(roomID));
-      dispatch(sliceSetRoomName(value));
-      dispatch(sliceSetIsRoomPublic(isPublic));
-      dispatch(sliceSetJoinedRoom(true));
-      dispatch(sliceSetNestVisibility(false));
-      dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
+    const url = window.location.href;
+    //Emit the createRoom event to the socket.io
+    socket.emit("createRoom", {
+      roomID,
+      roomName: value,
+      user,
+      url,
+      isPublic,
+      movie,
     });
-    openSnackBar(`Created the ${value} Nest`);
+    dispatch(sliceSetIsNestAdmin(true));
   };
 
   return (
@@ -67,7 +57,12 @@ const CreateNest = () => {
           <GiNestBirds size={20} />
           <div>Create Nest</div>
         </CustomSwitch>
-        <NestInput value={value} setValue={setValue} />
+        <NestInput
+          value={value}
+          setValue={setValue}
+          type="create"
+          onEnter={createRoomHandler}
+        />
         <CustomSwitch>
           <label htmlFor="public">Public</label>
           <Switch
@@ -86,6 +81,7 @@ const CreateNest = () => {
             nestHover="#039b17"
             nestActive="#03a519"
             size={12}
+            height={30}
             onClick={createRoomHandler}
           >
             <div>Create</div>
@@ -95,6 +91,7 @@ const CreateNest = () => {
             nestHover="#930404"
             nestActive="#6c0303"
             size={12}
+            height={30}
             onClick={closeHandler}
           >
             <div>Cancel</div>

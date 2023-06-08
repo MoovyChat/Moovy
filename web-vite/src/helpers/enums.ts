@@ -15,8 +15,11 @@ export enum TOOLTIP {
 }
 
 export enum NEST_TYPE {
+  GIPHY = "GIPHY",
+  LIST_USERS = "LIST_USERS",
   CREATE = "CREATE",
   JOIN = "JOIN",
+  SETTINGS = "SETTINGS",
   EMPTY = "",
 }
 

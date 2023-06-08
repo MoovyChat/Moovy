@@ -1,6 +1,11 @@
 /// <reference types="chrome"/>
 
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import React, {
+  MouseEventHandler,
+  ReactEventHandler,
+  useEffect,
+  useState,
+} from "react";
 
 import { StyledErrorPage, StyledIFrameButton } from "./errorPage.styles";
 
@@ -15,6 +20,7 @@ import { sliceSetIsOpenChatWindow } from "../../pages/redux/slices/settings/sett
 import { sliceAddUser } from "../../pages/redux/slices/user/userSlice";
 import { withUrqlClient } from "next-urql";
 import { urqlClient } from "../../helpers/urql/urqlClient";
+import Loading from "../loading/loading";
 
 type props = {
   text: string;
@@ -23,6 +29,7 @@ const ErrorPage: React.FC<props> = ({ text }) => {
   const dispatch = useAppDispatch();
   const [err, setErr] = useState<string>("");
   const [, getUser] = useGetUserMutMutation();
+  const [iFrameLoaded, setIFrameLoaded] = useState<boolean>(false);
 
   const refetchToChrome = () => {
     chrome.runtime.sendMessage(
@@ -71,6 +78,11 @@ const ErrorPage: React.FC<props> = ({ text }) => {
       window.removeEventListener("message", handleIframeMessage, false);
     };
   }, []);
+
+  const iFrameLoadHandler: ReactEventHandler<HTMLIFrameElement> = () => {
+    setIFrameLoaded(true);
+  };
+
   return (
     <StyledErrorPage>
       <div
@@ -89,7 +101,12 @@ const ErrorPage: React.FC<props> = ({ text }) => {
         <img src={FULL_LOGO_TRANSPARENT} alt="Moovy" />
       </div>
       <div className="iframe-container">
-        <StyledIFrameButton src={url} />
+        {!iFrameLoaded && <Loading />}
+        <StyledIFrameButton
+          src={url}
+          onLoad={iFrameLoadHandler}
+          isLoaded={iFrameLoaded}
+        />
       </div>
       <div className="divider">
         <div className="line" />

@@ -1,6 +1,10 @@
 import styled from "styled-components";
+import { NEST_TYPE } from "../../../../../../helpers/enums";
 
-export const StyledNestPopUp = styled.div`
+type Props = {
+  isGiphy: boolean;
+};
+export const StyledNestPopUp = styled.div<Props>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -10,8 +14,9 @@ export const StyledNestPopUp = styled.div`
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: ${(p) => (p.isGiphy ? "flex-start" : "center")};
   align-items: center;
+  z-index: 1;
   .logo {
     position: absolute;
     top: 40px;
@@ -20,4 +25,13 @@ export const StyledNestPopUp = styled.div`
       object-fit: contain;
     }
   }
+`;
+
+interface SelectedElementProps {
+  nestType: string;
+}
+export const SelectedElementWrapper = styled.div<SelectedElementProps>`
+  height: ${({ nestType }) => (nestType === NEST_TYPE.GIPHY ? "100%" : "auto")};
+  display: ${({ nestType }) =>
+    nestType === NEST_TYPE.GIPHY ? "flex" : "auto"}; ;
 `;
