@@ -1,22 +1,7 @@
 import { Socket } from "socket.io";
 import { CustomSocket } from "./customSocket";
-import { Session, sessions } from "./sessionManager";
-
-export type RoomUser = {
-  id: string;
-  user: any;
-  name?: string;
-  socket?: Socket;
-  isAdmin: boolean;
-  isSharingCamera?: boolean;
-};
-
-export type RoomInfo = {
-  users: RoomUser[];
-  roomName: string;
-  roomId: string;
-  url: string;
-};
+import { sessions } from "./sessionManager";
+import { Movie, RoomInfo, RoomUser, Session } from "./interfaces";
 
 const rooms: RoomInfo[] = [];
 
@@ -43,7 +28,9 @@ function addUserToRoom(
   user: any,
   url: string,
   roomName: string,
-  isAdmin: boolean
+  isAdmin: boolean,
+  movie: Movie,
+  isPublic: boolean
 ) {
   socket.join(roomId);
   socket.roomId = roomId;
@@ -52,7 +39,7 @@ function addUserToRoom(
   let existingRoom = rooms.find((room: RoomInfo) => room.roomId === roomId);
 
   if (!existingRoom) {
-    existingRoom = { users: [], roomName, roomId, url };
+    existingRoom = { users: [], roomName, roomId, url, movie, isPublic };
     rooms.push(existingRoom);
   }
 
@@ -82,22 +69,17 @@ function addUserToRoom(
  * `false` if either the socket does not have a roomId or user property, or if the room could not be
  * found in the rooms array.
  */
-function removeUserFromRoom(socket: CustomSocket) {
+function removeUserFromRoom(socketId: string, roomId: string) {
   let removed = false;
 
   // We find the session corresponding to the socket
   sessions.forEach((session: Session, sessionId: string) => {
-    if (
-      session.socket.id === socket.id &&
-      session.socket.roomId === socket.roomId
-    ) {
-      const room = rooms.find(
-        (room: RoomInfo) => room.roomId === socket.roomId
-      );
+    if (session.socket.id === socketId && session.socket.roomId === roomId) {
+      const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
 
       // Filter out the leaving user from the room's users
       session.room.users = session.room.users.filter(
-        (roomUser: RoomUser) => roomUser.id !== socket.id
+        (roomUser: RoomUser) => roomUser.id !== socketId
       );
 
       // Remove the user's session

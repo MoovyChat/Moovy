@@ -4,11 +4,10 @@ import {
   addUserToRoom,
   removeUserFromRoom,
   getUsersInRoom,
-  RoomInfo,
-  RoomUser,
 } from "./roomsManager";
 import { CustomSocket } from "./customSocket";
 import { createSession, restoreSession } from "./sessionManager";
+import { Movie, RoomInfo, RoomUser } from "./interfaces";
 
 /**
  * The function handles playing a video in a room and checks if the user is authorized to do so.
@@ -44,7 +43,7 @@ function handlePlay(socket: CustomSocket, io: Server) {
         });
       }
     } else {
-      socket.emit("play-error", {
+      socket.emit("room-play-error", {
         message: "The room does not exist",
         user,
       });
@@ -172,7 +171,7 @@ function handlePause(socket: CustomSocket, io: Server) {
         });
       }
     } else {
-      socket.emit("pause-error", {
+      socket.emit("room-pause-error", {
         message: "The room does not exist",
         user,
       });
@@ -216,7 +215,7 @@ function handleSeekTime(socket: CustomSocket, io: Server) {
       }
     } else {
       // Emit an error if the room is not found
-      socket.emit("seekTime-error", {
+      socket.emit("room-seekTime-error", {
         message: "The room does not exist",
       });
     }
@@ -245,31 +244,49 @@ function handleGetRoomUsers(socket: CustomSocket, io: Server) {
 }
 
 /**
- * This function handles the creation of a new chat room and emits success or error messages
- * accordingly.
+ * This function handles the creation of a new room and emits success or error messages accordingly.
  * @param {CustomSocket} socket - A custom socket object representing the client's connection to the
  * server.
  * @param {Server} io - io is an instance of the Socket.IO server. It is used to emit events to all
  * connected clients or to specific clients in a room.
- * @returns The function `handleCreateRoom` is returning another function that takes in `roomId`,
- * `roomName`, `user`, and `url` as arguments.
+ * @returns The function `handleCreateRoom` is returning another function that takes in a `data` object
+ * as its argument. data is a object of {roomId, roomName, user, url, isPublic, movie }
  */
 function handleCreateRoom(socket: CustomSocket, io: Server) {
-  return (roomId: string, roomName: string, user: any, url: string) => {
+  return (data: {
+    roomID: string;
+    roomName: string;
+    user: any;
+    url: string;
+    isPublic: boolean;
+    movie: Movie;
+  }) => {
+    const { roomID, roomName, user, url, isPublic, movie } = data;
     // Check if the room already exists
-    const existingRoom = rooms.find((room: RoomInfo) => room.roomId === roomId);
+    const existingRoom = rooms.find((room: RoomInfo) => room.roomId === roomID);
 
     if (!existingRoom) {
-      let room = addUserToRoom(roomId, socket, user, url, roomName, true);
-      io.to(roomId).emit("message", {
+      let room = addUserToRoom(
+        roomID,
+        socket,
+        user,
+        url,
+        roomName,
+        true,
+        movie,
+        isPublic
+      );
+      io.to(roomID).emit("message", {
         type: "join",
         user,
-        message: `${user.name} created room ${roomId}`,
+        message: `${user.name} created room ${roomID}`,
       });
 
       const roomsList = rooms.map((room) => ({
         roomName: room.roomName,
         roomId: room.roomId,
+        isPublic,
+        movie,
       }));
       io.emit("nestsList", roomsList);
 
@@ -281,8 +298,8 @@ function handleCreateRoom(socket: CustomSocket, io: Server) {
       socket.emit("create-room-success", {
         message: "Successfully created the room",
         roomName,
-        roomId,
-        usersInRoom: getUsersInRoom(roomId),
+        roomId: roomID,
+        usersInRoom: getUsersInRoom(roomID),
         url,
       });
     } else {
@@ -321,7 +338,16 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
         socket.roomId = roomId;
         socket.user = user;
       } else {
-        addUserToRoom(roomId, socket, user, "", room.roomName, false);
+        addUserToRoom(
+          roomId,
+          socket,
+          user,
+          room.url,
+          room.roomName,
+          false,
+          room.movie,
+          room.isPublic
+        );
       }
       const usersInRoom = getUsersInRoom(roomId);
       io.to(roomId).emit("roomUsers", usersInRoom);
@@ -347,6 +373,15 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
         room,
         user,
       });
+
+      const adminUser = room.users.find((user) => user.isAdmin);
+
+      if (adminUser) {
+        io.to(roomId).emit("get-current-time", {
+          adminUser: adminUser.user,
+          joinedUser: user,
+        });
+      }
     } else {
       // Emit an error if the room is not present
       socket.emit("join-room-error", {
@@ -357,20 +392,94 @@ function handleJoinRoom(socket: CustomSocket, io: Server) {
   };
 }
 
-/**
- * The function handles sending a message to a specific room using a socket and server in TypeScript.
- * @param {Socket} socket - Socket is an object that represents a connection between a client and the
- * server. It allows bidirectional communication between the two.
- * @param {Server} io - The `io` parameter is an instance of the Socket.IO `Server` class, which is
- * used to manage socket connections and emit events to clients. It is typically created when setting
- * up a Socket.IO server.
- * @returns A function that takes in a socket and an io object as arguments and returns another
- * function that takes in an object with a roomId and data property as arguments. This inner function
- * emits a "message" event to all sockets in the specified roomId with the provided data.
- */
+function handleSyncWithAdmin(socket: Socket, io: Server) {
+  return (data: { roomId: string; requestingUser: any }) => {
+    const { roomId, requestingUser } = data;
+    const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
+    if (room) {
+      const adminUser = room.users.find((user) => user.isAdmin);
+
+      if (adminUser) {
+        io.to(roomId).emit("get-current-time", {
+          adminUser: adminUser.user,
+          joinedUser: requestingUser,
+        });
+      }
+    }
+  };
+}
+
+function handleSyncAllUsers(socket: Socket, io: Server) {
+  return (data: { roomId: string; adminUser: any; currentTime: number }) => {
+    const { roomId, adminUser, currentTime } = data;
+    const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
+    if (room) {
+      if (adminUser) {
+        io.to(roomId).emit("sync-non-admin-current-time", {
+          currentTime,
+          adminUser,
+        });
+      }
+    }
+  };
+}
+
 function handleMessage(socket: Socket, io: Server) {
   return ({ roomId, data }: { roomId: string; data: any }) => {
+    const room: RoomInfo | undefined = rooms.find(
+      (room: RoomInfo) => room.roomId === roomId
+    );
+    const user = room?.users.find((u: RoomUser) => u?.socket?.id === socket.id);
+    // if (!user) {
+    //   // The user is not part of this room.
+    //   return;
+    // }
     io.to(roomId).emit("message", data);
+  };
+}
+
+function handleToggleRoomType(socket: Socket, io: Server) {
+  return (data: { isPublic: boolean; roomId: string }) => {
+    const { isPublic, roomId } = data;
+
+    // Find the room
+    const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
+
+    if (room) {
+      // Update the room's public status
+      room.isPublic = isPublic;
+
+      // Emit an event to all clients in the room about the room type change
+      io.to(roomId).emit("room-type-changed", {
+        isPublic,
+        message: `Room type changed to ${isPublic}`,
+      });
+
+      // Emit a success message to the client who triggered the room type change
+      socket.emit("toggle-room-type-success", {
+        message: "Room type changed successfully",
+        isPublic,
+      });
+    } else {
+      // Emit an error if the room is not found
+      socket.emit("toggle-room-type-error", {
+        message: "The room does not exist",
+      });
+    }
+  };
+}
+
+function handleSendCurrentTime(socket: Socket, io: Server) {
+  return (data: { joinedUser: RoomUser; currentTime: number; roomId: any }) => {
+    const joinedUser = data.joinedUser;
+    const roomId = data.roomId;
+
+    if (joinedUser) {
+      io.to(roomId).emit("admin-current-time", {
+        currentTime: data.currentTime,
+        joinedUser,
+      });
+    }
   };
 }
 
@@ -384,13 +493,19 @@ function handleMessage(socket: Socket, io: Server) {
  * @returns A function is being returned. The function takes no arguments and when called, it retrieves
  * a list of rooms and emits an event "nestsList" to all connected sockets with the list of rooms.
  */
+
 function handleGetNests(socket: CustomSocket, io: Server) {
   return () => {
-    const roomsList = rooms.map((room) => ({
-      roomName: room.roomName,
-      roomId: room.roomId,
-    }));
-    io.emit("nestsList", roomsList);
+    const publicRoomsList = rooms
+      .filter((room) => room.isPublic)
+      .map((room) => ({
+        roomName: room.roomName,
+        roomId: room.roomId,
+        users: room.users,
+        movie: room.movie,
+      }));
+
+    io.emit("nestsList", publicRoomsList);
   };
 }
 
@@ -406,13 +521,11 @@ function handleGetNests(socket: CustomSocket, io: Server) {
  */
 function handleLeaveRoom(socket: CustomSocket, io: Server) {
   return () => {
-    console.log("handleLeaveRoom");
-
     const { roomId, user } = socket;
 
     if (roomId && user) {
       // Remove the user from the room
-      removeUserFromRoom(socket);
+      removeUserFromRoom(socket.id, socket.roomId);
 
       // Update the users in the room and notify the remaining users
       const usersInRoom = getUsersInRoom(roomId);
@@ -429,13 +542,59 @@ function handleLeaveRoom(socket: CustomSocket, io: Server) {
       // Remove roomId and user from the socket
       socket.roomId = "";
       socket.user = null;
-
-      console.log(`User ${user.nickname} left room ${roomId}`);
     } else {
       // Emit an error if the user is not in a room
       socket.emit("leave-room-error", {
         message: "You are not in a room",
         user,
+      });
+    }
+  };
+}
+
+function handleKickUser(socket: CustomSocket, io: Server) {
+  return (data: { kickedUser: any; roomId: string }) => {
+    const { kickedUser, roomId } = data;
+
+    // Find the room
+    const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
+    if (room) {
+      // Find the kicked user in the room
+      const kickedUserIndex = room.users.findIndex(
+        (u: RoomUser) => u.user.id === kickedUser.id
+      );
+
+      if (kickedUserIndex !== -1) {
+        const kickedUserObj = room.users[kickedUserIndex];
+
+        // Remove the user from the room
+        removeUserFromRoom(kickedUserObj.id, roomId);
+
+        // Update the users in the room and notify the remaining users
+        const usersInRoom = getUsersInRoom(roomId);
+        io.to(roomId).emit("roomUsers", usersInRoom);
+        io.to(roomId).emit("message", {
+          type: "kick",
+          user: kickedUser,
+          message: `${kickedUser.name} has been kicked from the room`,
+        });
+        io.to(roomId).emit("userLeft", kickedUser);
+
+        // Emit a success message to the client who initiated the kick
+        socket.emit("kick-user-success", {
+          message: `${kickedUser.name} has been kicked from the room`,
+          kickedUser,
+        });
+      } else {
+        // Emit an error if the kicked user is not found in the room
+        socket.emit("kick-user-error", {
+          message: "The user to be kicked does not exist in the room",
+        });
+      }
+    } else {
+      // Emit an error if the room is not found
+      socket.emit("room-kick-user-error", {
+        message: "The room does not exist",
       });
     }
   };
@@ -454,7 +613,6 @@ function handleLeaveRoom(socket: CustomSocket, io: Server) {
  */
 function handleCloseConnections(socket: CustomSocket, io: Server) {
   return () => {
-    console.log("handleCloseConnections");
     if (socket.roomId && getUsersInRoom(socket.roomId).length > 1) {
       getUsersInRoom(socket.roomId).forEach((roomUser: any) => {
         io.sockets.sockets.get(roomUser.id)?.disconnect();
@@ -483,7 +641,7 @@ function handleCloseConnections(socket: CustomSocket, io: Server) {
  */
 function handleDisconnect(socket: CustomSocket, io: Server) {
   return () => {
-    if (removeUserFromRoom(socket)) {
+    if (removeUserFromRoom(socket.id, socket.roomId)) {
       io.to(socket.roomId).emit("roomUsers", getUsersInRoom(socket.roomId));
 
       io.to(socket.roomId).emit("message", {
@@ -495,8 +653,41 @@ function handleDisconnect(socket: CustomSocket, io: Server) {
   };
 }
 
+export const handleRoomNameChange = (socket: CustomSocket, io: Server) => {
+  return (roomData: {
+    roomId: string;
+    data: { value: string; message: string };
+  }) => {
+    // Find the room
+    const room = rooms.find(
+      (room: RoomInfo) => room.roomId === roomData.roomId
+    );
+
+    if (!room) {
+      // Emit an error if the room does not exist
+      socket.emit("change-room-name-error", {
+        message: "The room does not exist",
+      });
+      return;
+    }
+    // Update the room name
+    room.roomName = roomData.data.value;
+
+    // Notify all users in the room about the room name change
+    io.to(roomData.roomId).emit("room-name-changed", {
+      message: roomData.data.message,
+    });
+
+    // Emit a success message to the client who changed the room name
+    socket.emit("change-room-name-success", {
+      message: "Successfully changed the room name",
+      newRoomName: room.roomName,
+    });
+  };
+};
+
 export const handleShowChange = (socket: CustomSocket, io: Server) => {
-  return (url: any, roomId: string) => {
+  return (url: any, roomId: string, movie: Movie) => {
     // Find the room where the movie is being watched
     const room = rooms.find((room: RoomInfo) => room.roomId === roomId);
 
@@ -512,6 +703,7 @@ export const handleShowChange = (socket: CustomSocket, io: Server) => {
     // Notify all users in the room about the movie change
     io.to(roomId).emit("movie-changed", {
       newUrl: url,
+      movie,
     });
 
     // Emit a success message to the client who changed the movie
@@ -553,4 +745,9 @@ export {
   handelSharing,
   handleSendingSignal,
   handleGetRoomUsers,
+  handleSendCurrentTime,
+  handleToggleRoomType,
+  handleKickUser,
+  handleSyncWithAdmin,
+  handleSyncAllUsers,
 };

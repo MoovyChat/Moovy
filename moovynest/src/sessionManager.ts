@@ -1,17 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { CustomSocket } from "./customSocket";
-import {
-  RoomInfo,
-  RoomUser,
-  addUserToRoom,
-  getUsersInRoom,
-} from "./roomsManager";
-
-export type Session = {
-  socket: CustomSocket;
-  user: any;
-  room: RoomInfo;
-};
+import { addUserToRoom, getUsersInRoom } from "./roomsManager";
+import { RoomInfo, RoomUser, Session } from "./interfaces";
 
 export const sessions: Map<string, Session> = new Map();
 
@@ -107,7 +97,9 @@ function updateSession(sessionId: string, newSocket: Socket, io: Server): void {
       session.user,
       session.room.url,
       session.room.roomName,
-      isAdmin
+      isAdmin,
+      session.room.movie,
+      session.room.isPublic
     );
     // Now notify the room's users
     // const usersInRoom = getUsersInRoom(session.roomId);
