@@ -23,13 +23,17 @@ import {
   StyledListUsers,
 } from "../list-users/listUsers.styles";
 import { Root } from "../create-nest/createNest.styles";
-import { sliceSetIsRoomPublic } from "../../../../../../redux/slices/socket/socketSlice";
+import {
+  sliceSetIsRoomPublic,
+  sliceSetShowMetaData,
+} from "../../../../../../redux/slices/socket/socketSlice";
 import { SocketContext } from "../../../context/socketContextFile";
 import { IoMdSync } from "react-icons/io";
 
 const NestSettings = () => {
   const dispatch = useAppDispatch();
   const isPublic = useAppSelector((state) => state.socket.isPublic);
+  const showMetaData = useAppSelector((state) => state.socket.showMetaData);
   const roomId = useAppSelector((state) => state.socket.roomId);
   const socket = useContext(SocketContext);
   const isNestAdmin = useAppSelector((state) => state.socket.isNestAdmin);
@@ -45,6 +49,11 @@ const NestSettings = () => {
     dispatch(sliceSetIsRoomPublic(e.target.checked));
     socket &&
       socket.emit("toggle-room-type", { isPublic: e.target.checked, roomId });
+  };
+
+  const switchMetaData: ChangeEventHandler<HTMLInputElement> = (e) => {
+    e.stopPropagation();
+    dispatch(sliceSetShowMetaData(e.target.checked));
   };
 
   const syncAllUsersHandler: MouseEventHandler<HTMLDivElement> = async (e) => {
@@ -69,6 +78,23 @@ const NestSettings = () => {
           <div>Nest Settings</div>
         </CustomSwitch>
         <StyledListUsers>
+          <StyledListUser>
+            <div className="usr">
+              <div className="nickname">Show Metadata</div>
+            </div>
+            <div className="options">
+              <CustomSwitch>
+                <Switch
+                  className="public"
+                  slots={{
+                    root: Root,
+                  }}
+                  defaultChecked={showMetaData}
+                  onChange={switchMetaData}
+                />
+              </CustomSwitch>
+            </div>
+          </StyledListUser>
           {isNestAdmin && (
             <StyledListUser>
               <div className="usr">

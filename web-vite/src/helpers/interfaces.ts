@@ -146,6 +146,7 @@ export interface loadingInterface {
   isNewCommentsLoaded: boolean;
   isNextCommentsLoaded: boolean;
   networkError: boolean;
+  networkMessage: string;
 }
 
 export interface borderType {

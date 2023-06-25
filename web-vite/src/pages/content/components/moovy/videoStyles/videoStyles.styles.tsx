@@ -21,6 +21,7 @@ export const PresetFilter = styled.div<filterProps>`
   align-items: center;
   justify-content: space-evenly;
   flex-direction: column;
+  font-size: 12px;
   cursor: pointer;
   gap: 3px;
   :hover {
@@ -279,6 +280,9 @@ export const OptionGroup = styled.div<props>`
   .options {
     height: auto;
     overflow: auto;
+    label {
+      font-size: 14px;
+    }
     .tool-option {
       display: flex;
       width: 100%;

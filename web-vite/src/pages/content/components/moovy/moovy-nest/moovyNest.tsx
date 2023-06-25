@@ -24,7 +24,7 @@ import NestChatBox from "./nest-chat-box/nestChatBox";
 import { useSpring, animated, useTransition } from "@react-spring/web";
 import { nanoid } from "nanoid";
 import { FiEdit3 } from "react-icons/fi";
-import { MdOutlineGifBox, MdTagFaces } from "react-icons/md";
+import { MdCancel, MdOutlineGifBox, MdTagFaces } from "react-icons/md";
 import { batch } from "react-redux";
 import EmojiPicker from "../../../../../components/emoji-picker/emojiPicker";
 import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
@@ -48,6 +48,7 @@ import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
 import NestStatus from "./nest-status/nestStatus";
 import SmileyWindow from "../../../../../components/smiley-window/smileyWindow";
 import NestOptionWindow from "./nest-option-window/nestOptionWindow";
+import AnimatedSmileys from "./animated-smileys/animatedSmileys";
 interface Props {
   ref?: any;
   style?: any;
@@ -60,7 +61,6 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const textAreaMessage = useAppSelector((state) => state.textArea.text);
   const roomId = useAppSelector((state) => state.socket.roomId);
   const roomName = useAppSelector((state) => state.socket.roomName);
-  const isPublic = useAppSelector((state) => state.socket.isPublic);
   const [isSmileyOpen, openSmiley] = useState<boolean>(false);
   const [isGifOpen, openGif] = useState<boolean>(false);
   const [usersTyping, setUsersTyping] = useState([]);
@@ -341,7 +341,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
         )}
         {usersTyping.length > 2 && <div>Several users are typing...</div>}
       </TypingStatus>
-
+      <AnimatedSmileys />
       <TextAreaContainer
         className="text-area-container"
         onClick={(e) => e.stopPropagation()}
@@ -371,11 +371,21 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
                 }}
               />
             </div>
-            <MdOutlineGifBox
-              size={25}
-              onClick={handleGifOpen}
-              className="giphy-gif"
-            />
+
+            {isGifOpen ? (
+              <MdCancel
+                size={25}
+                onClick={handleGifOpen}
+                className="giphy-gif"
+              />
+            ) : (
+              <MdOutlineGifBox
+                size={25}
+                onClick={handleGifOpen}
+                className="giphy-gif"
+              />
+            )}
+
             <div
               className="text-send"
               onClick={(e: MouseEvent<HTMLDivElement>) => {

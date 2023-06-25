@@ -42,7 +42,13 @@ const NestPopUp = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target) &&
+        nestType !== NEST_TYPE.GIPHY &&
+        nestType !== NEST_TYPE.CREATE &&
+        nestType != NEST_TYPE.JOIN
+      ) {
         dispatch(sliceSetNestVisibility(false));
         dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
       }

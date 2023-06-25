@@ -109,66 +109,79 @@ const getMovieInfo = async (currentUrl: string) => {
    * rating, year, runtime, advisories, and seasons.
    */
   const getNetflixMovieInfo = (movieId: number) => {
-    const netflixApi = (window as any).netflix;
-    // Let videoState = netflixApi.appContext?.getPlayerApp().getState();
-    const api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
-    const videoMetaData = api?.getVideoMetadataByVideoId(movieId);
-    const videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
-    const _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
-    const _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
-    const metaData = videoMetaData?._metadata?.video;
+    try {
+      const netflixApi = (window as any).netflix;
+      const api = netflixApi?.appContext?.getState()?.playerApp?.getAPI();
+      const videoMetaData = api?.getVideoMetadataByVideoId(movieId);
+      const videoAdvisories = api?.getAdvisoriesByVideoId(movieId);
 
-    const mainYear = metaData?.year;
-    const mainRunTime = metaData?.runtime;
-    const mainTitleType: string = metaData?.type;
-    const mainTitle: string = metaData?.title;
-    const artwork: string = metaData?.artwork[0]?.url;
-    const boxart: string = metaData?.boxart[0]?.url;
-    const storyart: string = metaData?.storyart[0]?.url;
-    const rating: string = metaData?.rating;
-    const synopsis: string = metaData?.synopsis;
-    const _seasons: any[] = videoMetaData?._seasons;
-    let _finalSeasonValue: SeasonInfo[] = [];
-    if (_seasons) {
-      _finalSeasonValue = _seasons.map((s) => {
-        const _seasonInfo = s?._season;
-        const title = _seasonInfo?.title;
-        const year = _seasonInfo?.year;
-        const { _episodes } = s;
-        const episodeReturnvalue = _episodes.map((e: any) => {
-          const episodeInfo: EpisodeInfo = {
-            id: String(e?._video?.id),
-            title: e?._video?.title,
-            thumbs: e?._video?.thumbs[0]?.url,
-            stills: e?._video?.stills[0]?.url,
-            runtime: e?._video?.runtime,
-            synopsis: e?._video?.synopsis,
+      const _advisoriesData = videoAdvisories ? videoAdvisories[0]?.data : null;
+      const _advisories = _advisoriesData ? _advisoriesData?.advisories : [];
+      const metaData = videoMetaData?._metadata?.video;
+
+      const mainYear = metaData?.year;
+      const mainRunTime = metaData?.runtime;
+      const mainTitleType: string = metaData?.type;
+      const mainTitle: string = metaData?.title;
+      const artwork: string = metaData?.artwork[0]?.url;
+      const boxart: string = metaData?.boxart[0]?.url;
+      const storyart: string = metaData?.storyart[0]?.url;
+      const rating: string = metaData?.rating;
+      const synopsis: string = metaData?.synopsis;
+      const _seasons: any[] = videoMetaData?._seasons;
+      let _finalSeasonValue: SeasonInfo[] = [];
+      if (_seasons) {
+        _finalSeasonValue = _seasons.map((s) => {
+          const _seasonInfo = s?._season;
+          const title = _seasonInfo?.title;
+          const year = _seasonInfo?.year;
+          const { _episodes } = s;
+          const episodeReturnvalue = _episodes.map((e: any) => {
+            const episodeInfo: EpisodeInfo = {
+              id: String(e?._video?.id),
+              title: e?._video?.title,
+              thumbs: e?._video?.thumbs[0]?.url,
+              stills: e?._video?.stills[0]?.url,
+              runtime: e?._video?.runtime,
+              synopsis: e?._video?.synopsis,
+            };
+            return episodeInfo;
+          });
+          const seasonInfo: SeasonInfo = {
+            year,
+            title,
+            episodes: episodeReturnvalue,
           };
-          return episodeInfo;
+          return seasonInfo;
         });
-        const seasonInfo: SeasonInfo = {
-          year,
-          title,
-          episodes: episodeReturnvalue,
-        };
-        return seasonInfo;
-      });
-    }
+      }
 
-    const finalResult: MovieFullInformation = {
-      type: mainTitleType,
-      title: mainTitle,
-      synopsis,
-      storyart,
-      rating,
-      boxart,
-      artwork,
-      year: mainYear,
-      runtime: mainRunTime,
-      advisories: _advisories,
-      seasons: _finalSeasonValue,
-    };
-    return finalResult;
+      const finalResult: MovieFullInformation = {
+        id:
+          mainTitleType !== "movie" && _finalSeasonValue
+            ? _finalSeasonValue[0]?.episodes[0]?.id
+            : String(movieId),
+        type: mainTitleType,
+        title: mainTitle,
+        synopsis,
+        storyart,
+        rating,
+        boxart,
+        artwork,
+        year: mainYear,
+        runtime: mainRunTime,
+        advisories: _advisories,
+        seasons: _finalSeasonValue,
+        platformId: 1,
+      };
+
+      return { data: finalResult, error: null };
+    } catch (error) {
+      console.error(
+        `An error occurred while getting Netflix movie info: ${error}`
+      );
+      return { data: null, error: error.message };
+    }
   };
 
   /**
@@ -176,8 +189,13 @@ const getMovieInfo = async (currentUrl: string) => {
    * and returns the data as a JSON object.
    * @param {string} url - The URL of the Aha video player page that you want to scrape information from.
    */
-  const getAhaInfo = async (url: string): Promise<MovieFullInformation> => {
+  const getAhaInfo = async (
+    url: string
+  ): Promise<{ data: MovieFullInformation | null; error: string | null }> => {
     const cleanedUrl = url.replace("/player", ""); // remove 'player' from the URL
+    let errorMessage = null;
+    let data: MovieFullInformation | null = null;
+
     try {
       const response = await fetch("http://localhost:4000/scrape", {
         method: "POST",
@@ -191,12 +209,13 @@ const getMovieInfo = async (currentUrl: string) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data: MovieFullInformation = await response.json();
-      return data;
+      data = (await response.json()) as MovieFullInformation;
     } catch (error) {
       console.error(`Failed to get data from Aha: ${error}`);
-      return null;
+      errorMessage = `Failed to get data from Aha: ${error}`;
     }
+
+    return { data, error: errorMessage };
   };
 
   switch (domain) {
@@ -204,15 +223,26 @@ const getMovieInfo = async (currentUrl: string) => {
       const idMatch = currentUrl.match(/\/(watch|title)\/(\d+)/);
       const id = idMatch ? idMatch[2] : null;
       if (id) {
-        const netflixInfo = getNetflixMovieInfo(parseInt(id));
-        return netflixInfo;
+        const { data: netflixInfo, error } = getNetflixMovieInfo(parseInt(id));
+        if (error) {
+          console.error(
+            `Error occurred while getting Netflix movie info: ${error}`
+          );
+          return { data: null, error };
+        }
+        return { data: netflixInfo, error: null };
       } else break;
     case domains.AHA:
-      const ahaInfo = await getAhaInfo(currentUrl);
-      console.log({ ahaInfo });
-      return ahaInfo;
+      const { data: ahaInfo, error: ahaError } = await getAhaInfo(currentUrl);
+      if (ahaError) {
+        console.error(
+          `Error occurred while getting Aha movie info: ${ahaError}`
+        );
+        return { data: null, error: ahaError };
+      }
+      return { data: ahaInfo, error: null };
     default:
-      break;
+      return { data: null, error: "Domain not supported" };
   }
 };
 

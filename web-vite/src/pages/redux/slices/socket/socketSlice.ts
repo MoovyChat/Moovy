@@ -11,6 +11,12 @@ export interface incomingMessageInterface {
   seekTime?: string;
 }
 
+export interface incomingSmileyInterface {
+  id?: string;
+  user: Users;
+  smiley: { url: string; emoji: string };
+}
+
 export type RoomUser = {
   id: string;
   user: Users;
@@ -33,6 +39,8 @@ interface SocketStateInterface {
   roomUsers: any[];
   isConnected: boolean;
   isNestAdmin: boolean;
+  smileys: incomingSmileyInterface[];
+  showMetaData: boolean;
 }
 
 const socketState: SocketStateInterface = {
@@ -47,6 +55,8 @@ const socketState: SocketStateInterface = {
   roomUsers: [],
   isConnected: false,
   isNestAdmin: false,
+  smileys: [],
+  showMetaData: true,
 };
 
 const socketSlice = createSlice({
@@ -59,8 +69,12 @@ const socketSlice = createSlice({
     sliceSetIsNestAdmin: (state, action) => {
       return { ...state, isNestAdmin: action.payload };
     },
+
     sliceSetRoomName: (state, action) => {
       return { ...state, roomName: action.payload };
+    },
+    sliceSetShowMetaData: (state, action) => {
+      return { ...state, showMetaData: action.payload };
     },
     sliceSetSocketConnectionStatus: (state, action) => {
       return { ...state, isConnected: action.payload };
@@ -81,6 +95,28 @@ const socketSlice = createSlice({
     },
     sliceSetAccessCamera: (state, action) => {
       return { ...state, accessCamera: action.payload };
+    },
+    sliceSetIncomingSmileys: (state, action) => {
+      // action.payload is an array of smileys
+      const newSmileys = action.payload;
+
+      // Merge the new smileys with the existing ones
+      const updatedSmileys = [...state.smileys, ...newSmileys];
+
+      return {
+        ...state,
+        smileys: updatedSmileys,
+      };
+    },
+
+    sliceRemoveSmiley: (state, action) => {
+      return {
+        ...state,
+        smileys: state.smileys.filter((smiley) => smiley.id !== action.payload),
+      };
+    },
+    sliceResetSmiley: (state) => {
+      return { ...state, smileys: [] };
     },
     sliceSetIncomingMessages: (state, action) => {
       const newMessage = action.payload;
@@ -108,12 +144,16 @@ const socketSlice = createSlice({
 
 export const {
   sliceSetRoomId,
+  sliceResetSmiley,
+  sliceSetShowMetaData,
   sliceSetRoomName,
   sliceSetJoinedRoom,
   sliceSetAccessCamera,
   sliceSetIsRoomPublic,
   sliceSetJoinedUsers,
   sliceSetIncomingMessages,
+  sliceSetIncomingSmileys,
+  sliceRemoveSmiley,
   sliceSetSocketConnectionStatus,
   sliceSetResetIncomingMessages,
   sliceSetUserTyping,

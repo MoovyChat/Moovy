@@ -24,6 +24,8 @@ import {
   sliceSetResetIncomingMessages,
   sliceSetIsNestAdmin,
   sliceSetIncomingMessages,
+  sliceSetIncomingSmileys,
+  sliceRemoveSmiley,
 } from "../../../../redux/slices/socket/socketSlice";
 import { SocketContext } from "../context/socketContextFile";
 import { openSnackBar } from "../moovy-nest/nest-popup/snack-bar/snackBar";
@@ -196,6 +198,24 @@ export const useSocketEvents = (user: User) => {
             text: "SEEK_VIDEO",
             time: String(currentTime),
           });
+      });
+
+      socket.on("receiveSmiley", (newSmiley) => {
+        const multipleSmileys = Array.from({
+          length: 2 + Math.floor(Math.random() * 2),
+        }).map((_, i) => ({
+          ...newSmiley,
+          id: newSmiley.id + i, // Ensure each smiley has a unique ID
+        }));
+        // Dispatch the array of smileys
+        dispatch(sliceSetIncomingSmileys(multipleSmileys));
+
+        // After 5 seconds (to match the animation duration), remove the smileys
+        const timer = setTimeout(() => {
+          multipleSmileys.forEach((smiley) => {
+            dispatch(sliceRemoveSmiley(smiley.id));
+          });
+        }, 5000);
       });
 
       socket.on("admin-current-time", ({ currentTime, joinedUser }) => {

@@ -110,12 +110,40 @@ export const StyledUserMessage = styled.div<Props>`
     padding: 0px;
     border-radius: 0px;
     .nest-gif {
-      font-size: 12px;
-      background-color: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #3498db; /* Change this color according to your theme */
+      box-sizing: border-box;
+      width: 200px;
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+      position: relative;
+      margin: 1em 0;
+
       .gif-msg {
-        width: 200px;
-        border-radius: 18px;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        position: relative;
       }
+    }
+
+    .nest-gif::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      z-index: 1;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .nest-gif:hover {
+      transform: scale(1.1);
     }
   }
   .container {

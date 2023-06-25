@@ -1,7 +1,7 @@
 import Loading from "../loading/loading";
 /* eslint-disable react/react-in-jsx-scope */
-import { MouseEventHandler } from "react";
-import { StyledSplashScreen } from "./logoLoading.styles";
+import { MouseEventHandler, useEffect, useState } from "react";
+import { HintText, StyledSplashScreen } from "./logoLoading.styles";
 import { getIdFromNetflixURL } from "../../pages/content/components/moovy/contentScript.utils";
 import { useAppSelector, useAppDispatch } from "../../pages/redux/hooks";
 import { sliceAddMovieId } from "../../pages/redux/slices/movie/movieSlice";
@@ -9,12 +9,17 @@ import { FULL_LOGO_TRANSPARENT } from "../../helpers/constants";
 import { sliceSetIsOpenChatWindow } from "../../pages/redux/slices/settings/settingsSlice";
 import { handleMouseEnter, handleMouseLeave } from "../../pages/popup/utils";
 import { MdOutlineExitToApp } from "react-icons/md";
+import CustomizedProgressBar from "../progress-bar/progressBar";
 
 const LogoLoading = () => {
   const text = useAppSelector((state) => state.loading.loadingText);
+  const networkErrorMessage = useAppSelector(
+    (state) => state.loading.networkMessage
+  );
   const networkError = useAppSelector((state) => state.loading.networkError);
   const isMovieLoaded = useAppSelector((state) => state.loading.isMovieLoaded);
   const dispatch = useAppDispatch();
+
   const refetchMovie: MouseEventHandler<HTMLDivElement> = async (e) => {
     e.stopPropagation();
     const currentUrl = window.location.href;
@@ -44,11 +49,22 @@ const LogoLoading = () => {
         <Loading />
       </div>
       <div className="loading-text">
-        {text
-          ? text
-          : networkError
-          ? "Server Error. Try refreshing the browser"
-          : "Something went wrong!"}
+        {text ? (
+          text
+        ) : networkError ? (
+          `${networkErrorMessage} Try refreshing the browser`
+        ) : (
+          <>
+            <CustomizedProgressBar />
+            {
+              <HintText>
+                This is a one-time loading process while we prepare your movie.
+                It should not take longer than 15 seconds. Thank you for your
+                patience.
+              </HintText>
+            }
+          </>
+        )}
       </div>
       {!isMovieLoaded && (
         <div className="fetch-movie" onClick={refetchMovie}>

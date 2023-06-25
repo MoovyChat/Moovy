@@ -392,6 +392,8 @@ export type MovieFullInformation = {
   advisories?: InputMaybe<Array<Scalars["String"]>>;
   artwork?: InputMaybe<Scalars["String"]>;
   boxart?: InputMaybe<Scalars["String"]>;
+  id?: InputMaybe<Scalars["String"]>;
+  platformId?: InputMaybe<Scalars["Int"]>;
   rating?: InputMaybe<Scalars["String"]>;
   runtime?: InputMaybe<Scalars["Int"]>;
   seasons?: InputMaybe<Array<SeasonInfo>>;

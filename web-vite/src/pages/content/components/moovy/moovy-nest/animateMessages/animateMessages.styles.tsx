@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import { SpringValue, animated } from "@react-spring/web";
+import styled, { keyframes } from "styled-components";
 
 export const StyledAnimatedMessages = styled.div`
   width: 100%;
@@ -70,4 +71,31 @@ export const StyledMessages = styled.div`
       opacity: 0;
     }
   }
+`;
+
+export const StyledAnimateSmiley = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+export const sway = keyframes`
+  0% { transform: translateX(0); }
+  25% { transform: translateX(5px); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+`;
+
+export interface EmojiStyleProps {
+  xy: SpringValue<readonly number[]>;
+  config: {
+    mass: number;
+    tension: number;
+    friction: number;
+  };
+}
+
+export const Emoji = styled(animated.div)<EmojiStyleProps>`
+  position: absolute;
+  font-size: 30px;
 `;

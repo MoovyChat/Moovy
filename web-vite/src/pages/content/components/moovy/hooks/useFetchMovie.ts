@@ -8,6 +8,8 @@ import { Movie } from "../../../../../helpers/interfaces";
 import { useAppDispatch } from "../../../../redux/hooks";
 import {
   sliceSetIsMovieExists,
+  sliceSetIsMovieLoaded,
+  sliceSetLoadingText,
   sliceValidateMovieLoading,
 } from "../../../../redux/slices/loading/loadingSlice";
 import {
@@ -49,6 +51,10 @@ export const useFetchMovie = (movieId: string) => {
       if (_data) {
         dispatch(sliceAddMovie(_data));
         dispatch(sliceValidateMovieLoading(true));
+        dispatch(sliceSetIsMovieLoaded(true));
+        dispatch(sliceSetIsMovieExists(true));
+
+        dispatch(sliceSetLoadingText(`Loading ${_data.name}`));
         // Increase views count
         incrementMovieViewCount({ mid: _data.id }).then((res) => {
           const { data } = res;

@@ -1,12 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import {
-  StyledJoinLeaveMessage,
-  StyledNest,
-  StyledUserMessage,
-} from "./nestChatBox.styles";
-import EmptyPage from "../../empty-page/emptyPage";
-import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import {
   MOOVY_NEST_GIF,
   SOCKET_MESSAGE_TYPES,
 } from "../../../../../../helpers/constants";
@@ -14,19 +7,17 @@ import {
   containsOnlyOneEmoji,
   secondsToTime,
 } from "../../../../../../helpers/utilities";
+import { useAppSelector } from "../../../../../redux/hooks";
+import EmptyPage from "../../empty-page/emptyPage";
 import {
-  sliceSetJoinedRoom,
-  sliceSetRoomId,
-} from "../../../../../redux/slices/socket/socketSlice";
-import {
-  sliceSetNestType,
-  sliceSetNestVisibility,
-} from "../../../../../redux/slices/nestSlice";
-import { NEST_TYPE } from "../../../../../../helpers/enums";
+  StyledJoinLeaveMessage,
+  StyledNest,
+  StyledUserMessage,
+} from "./nestChatBox.styles";
 
 const NestChatBox = () => {
   const user = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
+  const showMetaData = useAppSelector((state) => state.socket.showMetaData);
   const chatWindowRef = useRef(null);
   const incomingMessages = useAppSelector(
     (state) => state.socket.incomingMessages
@@ -35,7 +26,9 @@ const NestChatBox = () => {
   useEffect(() => {
     if (chatWindowRef && chatWindowRef.current) {
       const chatWindow = chatWindowRef.current;
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      setTimeout(() => {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }, 100); // Change the delay as needed
     }
   }, [incomingMessages, chatWindowRef]);
 
@@ -46,6 +39,21 @@ const NestChatBox = () => {
   return (
     <StyledNest ref={chatWindowRef}>
       {incomingMessages.map((data) => {
+        if (
+          !showMetaData &&
+          [
+            SOCKET_MESSAGE_TYPES.CREATE,
+            SOCKET_MESSAGE_TYPES.JOIN,
+            SOCKET_MESSAGE_TYPES.LEAVE,
+            SOCKET_MESSAGE_TYPES.SEEK_TIME,
+            SOCKET_MESSAGE_TYPES.PLAY,
+            SOCKET_MESSAGE_TYPES.URL_CHANGE,
+            SOCKET_MESSAGE_TYPES.KICK,
+            SOCKET_MESSAGE_TYPES.PAUSE,
+          ].includes(data.type)
+        ) {
+          return null; // skips rendering this type of message
+        }
         if (data.type === SOCKET_MESSAGE_TYPES.CREATE) {
           return (
             <StyledJoinLeaveMessage>
@@ -154,6 +162,11 @@ const NestChatBox = () => {
                           className="gif-msg"
                           src={(data.message as any).images.downsized.url}
                           alt={(data.message as any).title}
+                          onLoad={() => {
+                            // Scroll to the bottom after the image loads
+                            const chatWindow = chatWindowRef.current;
+                            chatWindow.scrollTop = chatWindow.scrollHeight;
+                          }}
                         />
                       )}
                     </div>
@@ -168,6 +181,11 @@ const NestChatBox = () => {
                           className="gif-msg"
                           src={(data.message as any).images.downsized.url}
                           alt={(data.message as any).title}
+                          onLoad={() => {
+                            // Scroll to the bottom after the image loads
+                            const chatWindow = chatWindowRef.current;
+                            chatWindow.scrollTop = chatWindow.scrollHeight;
+                          }}
                         />
                       )}
                     </div>

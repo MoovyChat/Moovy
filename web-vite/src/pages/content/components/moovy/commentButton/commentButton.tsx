@@ -70,7 +70,6 @@ const CommentButton: React.FC<props> = ({ visible }) => {
   // Redux: App Dispatch hook.
   const dispatch = useAppDispatch();
   useEffect(() => {
-    console.log("commentButton", { movieId });
     oldIntervalIds.forEach((interval) => clearInterval(interval));
   }, []);
   // React: useState React hook.

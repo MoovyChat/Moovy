@@ -21,7 +21,7 @@ export const ToastParent = styled(animated.div)<props>`
   overflow: hidden;
   border-radius: 60px;
   color: ${(p) => p.theme.chatBody};
-  font-size: 1.2em;
+  font-size: 14px;
   font-weight: 600;
   z-index: 16;
 
@@ -78,7 +78,7 @@ export const ToastParent = styled(animated.div)<props>`
         justify-content: flex-start;
         align-items: center;
         white-space: nowrap;
-        font-size: 1em;
+        font-size: 11px;
         padding: 0 10px;
       }
     }

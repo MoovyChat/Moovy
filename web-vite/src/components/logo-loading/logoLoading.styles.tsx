@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const StyledSplashScreen = styled.div`
   display: flex;
@@ -58,5 +58,30 @@ export const StyledSplashScreen = styled.div`
     }
   }
   .loading {
+  }
+`;
+
+const fadeIn = keyframes`
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+`;
+
+export const HintText = styled.p`
+  color: #2f3640; // A modern dark gray
+  background-color: hsla(228, 22%, 95%, 0.62); // A light, subtle gray
+  padding: 15px 20px;
+  border-radius: 5px;
+  border-left: 5px solid #1abc9c; // A bright, modern turquoise for emphasis
+  margin-top: 20px;
+  font-size: 14px; // A bit larger for readability
+  line-height: 1.6; // Space out the lines of text a bit for readability
+  animation: 1s ${fadeIn} ease-out;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.07);
+  max-width: 500px;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 6px 0 hsla(0, 0%, 0%, 0.11);
   }
 `;

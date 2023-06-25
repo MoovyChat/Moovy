@@ -15,6 +15,7 @@ import {
   sliceSetIsTextAreaFocused,
   sliceSetIsTextAreaClicked,
 } from "../../pages/redux/slices/textArea/textAreaSlice";
+import { getEventListeners } from "events";
 
 interface props {
   handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement>;
@@ -104,6 +105,14 @@ const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
     return () => {
       document.removeEventListener("click", textAreaClicked);
     };
+  }, []);
+
+  useEffect(() => {
+    document.querySelector("video").addEventListener("pause", function (e) {
+      if (document.activeElement.nodeName === "TEXTAREA") {
+        (e.target as any).play();
+      }
+    });
   }, []);
 
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {

@@ -6,6 +6,7 @@ import { SocketContext } from "../../context/socketContextFile";
 import { AvailableNest, NestIcon, NestInfo } from "./nestCard.styles";
 import { useAppSelector } from "../../../../../redux/hooks";
 import { SiNetflix } from "react-icons/si";
+import { OTT } from "../../../../../../helpers/constants";
 interface NestCardInterface {
   nest: AvailableRoom;
 }
@@ -41,7 +42,11 @@ const NestCard: React.FC<NestCardInterface> = ({ nest }) => {
           </div>
           <div className="nest-detail-show">
             <div className="nest-detail-icon">
-              <SiNetflix size={20} color="red" />
+              {nest?.movie?.platform === "aha" ? (
+                <img src={OTT.AHA.imgUrl} alt="aha" width={20} height={20} />
+              ) : (
+                <SiNetflix size={20} color="red" />
+              )}
             </div>
             <div className="nest-movie-name">
               {nest?.movie?.parentTitleName} {nest?.movie?.name}

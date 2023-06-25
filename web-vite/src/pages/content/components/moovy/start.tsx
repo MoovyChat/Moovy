@@ -25,6 +25,8 @@ import {
 import { urqlClient } from "../../../../helpers/urql/urqlClient";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import {
+  sliceSetIsMovieLoaded,
+  sliceSetLoadingText,
   sliceSetNetworkError,
   sliceValidateMovieLoading,
 } from "../../../redux/slices/loading/loadingSlice";
@@ -77,8 +79,8 @@ const Start: React.FC<Props> = () => {
 
   useEffect(() => {
     // Clear redux cache.
-
     dispatch(sliceResetSettings());
+    dispatch(sliceSetIsMovieLoaded(false));
     dispatch(sliceValidateMovieLoading(false));
     getStoredUserLoginDetails().then((res) => {
       setU(res);
@@ -105,7 +107,13 @@ const Start: React.FC<Props> = () => {
         const targetElement = mutation.target as HTMLElement;
         const currentUrl = window.location.href;
         let platform = getVideoPlatform(currentUrl);
+        const skipButtons = document.querySelectorAll(SKIP_BUTTON);
 
+        if (skipButtons.length > 0 && autoSkipValue) {
+          skipButtons.forEach((button: Element) => {
+            (button as HTMLElement).click();
+          });
+        }
         // For Netflix
         if (
           platform === "netflix" &&
@@ -113,12 +121,6 @@ const Start: React.FC<Props> = () => {
           mutation.attributeName === "style"
         ) {
           const bottomControls = document.querySelector(BOTTOMS_CONTROL);
-          const skipButton = document.querySelector(
-            SKIP_BUTTON
-          ) as HTMLElement | null;
-          if (skipButton && autoSkipValue) {
-            skipButton.click();
-          }
           if (bottomControls) {
             setIsBottomControlsVisible(() => true);
           } else {
@@ -137,7 +139,7 @@ const Start: React.FC<Props> = () => {
           if (className.includes("player-container__show")) {
             setIsBottomControlsVisible(() => true);
           } else {
-            setIsBottomControlsVisible(() => false);
+            setIsBottomControlsVisible(() => true);
           }
         }
       }
@@ -207,18 +209,21 @@ const Start: React.FC<Props> = () => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.type === "SET_MOVIE_ID") {
         // Clear redux cache.
-        console.log("SET_MOVIE_ID", { request });
         dispatch(sliceResetSettings());
         dispatch(sliceValidateMovieLoading(false));
+        dispatch(sliceSetNetworkError(false));
         setMovieId(() => request.movieId);
         dispatch(sliceSetSmoothWidth(0));
+        dispatch(sliceSetLoadingText(""));
         sendResponse({
           data: "Movie ID got reset",
         });
       } else if (request.type === "RESET_MOVIE_ID") {
-        console.log("RESET_MOVIE_ID", { request });
         setMovieId(() => request.movieId);
+        dispatch(sliceSetLoadingText(""));
+        dispatch(sliceValidateMovieLoading(false));
         dispatch(sliceSetSmoothWidth(0));
+        dispatch(sliceSetNetworkError(false));
         sendResponse({
           data: "Movie ID got reset",
         });

@@ -8,6 +8,7 @@ export const AvailableNest = styled.div`
   padding: 10px;
   font-size: 14px;
   min-height: 60px;
+  width: 100%;
 `;
 
 export const NestIcon = styled.div`

@@ -1,13 +1,11 @@
-import { Pic, Refresh, SetTop } from "./logout.styles";
 import React, {
   ChangeEventHandler,
-  Dispatch,
   MouseEvent,
   MouseEventHandler,
-  SetStateAction,
   useEffect,
   useState,
 } from "react";
+import { Pic, Refresh, SetTop } from "./logout.styles";
 
 import { FcGoogle } from "react-icons/fc";
 import { IoMdRefresh } from "react-icons/io";
@@ -15,16 +13,15 @@ import { MdHelp } from "react-icons/md";
 import { OTTType } from "../app/app";
 import Ott from "../ott/ott";
 
-import { WithOutLoginWindow } from "../login/login.styles";
-import { getSupportedMimeTypes } from "../../utils";
+import Button from "../../../../components/button/button";
+import { MOOVY_URL, constants } from "../../../../helpers/constants";
 import { User } from "../../../../helpers/interfaces";
 import {
   getStoredCheckedStatus,
   setStoredCheckedStatus,
   setStoredUserLoginDetails,
 } from "../../../../helpers/storage";
-import { MOOVY_URL, constants } from "../../../../helpers/constants";
-import Button from "../../../../components/button/button";
+import { WithOutLoginWindow } from "../login/login.styles";
 
 const signOut = async (setUser: (user: User) => void) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

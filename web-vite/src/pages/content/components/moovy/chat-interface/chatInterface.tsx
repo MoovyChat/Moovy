@@ -41,7 +41,7 @@ import ChatStats from "../chatStats/chatStats";
 import { getPlayerViewElement, getVideoElement } from "../contentScript.utils";
 import { SocketContext } from "../context/socketContextFile";
 import GlobalChat from "../global-chat/globalChat";
-import { useMousePosition } from "../hooks/useMouseMove";
+import useMousePosition from "../hooks/useMouseMove";
 import AnimateMessages from "../moovy-nest/animateMessages/animateMessages";
 import NestLogin from "../moovy-nest/nest-login/nestLogin";
 import SnackBar from "../moovy-nest/nest-popup/snack-bar/snackBar";
@@ -289,7 +289,7 @@ const ChatInterface: React.FC<props> = ({
         });
       };
     }
-  }, [position.x, position.y]);
+  }, [position]);
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (divRef.current !== null) {
@@ -306,13 +306,6 @@ const ChatInterface: React.FC<props> = ({
       return true;
     });
   }, [openChatWindow]);
-
-  useEffect(() => {
-    let loadingText = "";
-    if (!isMovieLoaded)
-      loadingText = movie.name && `Loading Title "${movie.name}"`;
-    loadingText && dispatch(sliceSetLoadingText(loadingText));
-  }, [isMovieLoaded]);
 
   const handleOutsideClick = (event: MouseEvent) => {
     const popSlide = document.querySelector(".pop-slide");
@@ -397,6 +390,7 @@ const ChatInterface: React.FC<props> = ({
 
   return (
     <Perimeter
+      id="chat-perimeter"
       className="chat-perimeter"
       thumbs={thumbs ? thumbs : ""}
       font={font}

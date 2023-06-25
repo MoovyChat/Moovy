@@ -3,6 +3,7 @@ import { useAppSelector } from "../../../../../redux/hooks";
 import { StyledAnimatedMessages } from "./animateMessages.styles";
 import Message from "./message";
 import { incomingMessageInterface } from "../../../../../redux/slices/socket/socketSlice";
+import AnimateSmiley from "./animateSmiley";
 
 interface DisplayedMessages {
   [key: string]: incomingMessageInterface;
@@ -57,6 +58,7 @@ const AnimateMessages = () => {
         Object.values(displayedMessages).map((message, index) =>
           message ? <Message key={index} message={message} /> : null
         )}
+      <AnimateSmiley />
     </StyledAnimatedMessages>
   );
 };
