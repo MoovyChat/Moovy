@@ -10,9 +10,7 @@ import {
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { EXTENSION_URL } from '../../constants';
-import MoovyLogoBlack from '../../svgs/moovy-black.svg';
-import MoovyLogoWhite from '../../svgs/moovy-white.svg';
+import { EXTENSION_URL, LOGO_128 } from '../../constants';
 import { googleSignIn } from '../login/login';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
@@ -99,11 +97,7 @@ const Header = () => {
         <div className="logo-image">
           <img
             className="image"
-            src={
-              (theme as any).themeType === 'light'
-                ? MoovyLogoBlack
-                : MoovyLogoWhite
-            }
+            src={LOGO_128}
             alt="QuietChat"
             id="blur-escape"
             loading="lazy"

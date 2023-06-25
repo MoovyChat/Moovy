@@ -48,8 +48,8 @@ const MovieThread = () => {
       setValid(false);
       return;
     }
-    const res = isNumber(id);
-    setValid(res);
+    if (id !== '') setValid(() => true);
+    else setValid(() => false);
   }, [id]);
 
   // GraphQL: Get movie info

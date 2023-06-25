@@ -4,7 +4,7 @@ export const NotFoundParent = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 100dvh;
   width: 100%;

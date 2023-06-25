@@ -11,6 +11,7 @@ import MoovyWhiteLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
 import { useTheme } from 'styled-components';
+import { LOGO_128 } from '../../constants';
 
 type props = {
   className: string;
@@ -31,11 +32,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
         <div className="logo-image">
           <img
             className="image"
-            src={
-              (theme as any).themeType === 'light'
-                ? MoovyBlackLogo
-                : MoovyWhiteLogo
-            }
+            src={LOGO_128}
             alt="QuietChat"
             id="blur-escape"
             loading="lazy"

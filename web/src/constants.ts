@@ -54,3 +54,14 @@ export const INSTAGRAM_LINK = 'https://www.instagram.com/moovychat/';
 export const PATREON = 'https://www.patreon.com/MoovyChat';
 export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
 export const G_TRACKING_ID = 'G-R7B18C6XQ2';
+
+export const GIPHY_LOGO =
+  'https://moovychatbucket.s3.us-west-1.amazonaws.com/giphy.gif';
+export const LOGO_128 =
+  'https://moovychatbucket.s3.us-west-1.amazonaws.com/mc-128.png';
+export const FULL_LOGO_TRANSPARENT =
+  'https://moovychatbucket.s3.us-west-1.amazonaws.com/MoovyChat_DarkTheme/fulllogo_transparent_nobuffer.png';
+export const MOOVY_NEST_GIF =
+  'https://moovychatbucket.s3.us-west-1.amazonaws.com/moovynest-crop.gif';
+export const PATREON_PNG =
+  'https://moovychatbucket.s3.us-west-1.amazonaws.com/patreon-word.webp';
