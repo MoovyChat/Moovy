@@ -52,6 +52,8 @@ class SeasonInfo {
 @InputType()
 class MovieFullInformation {
   @Field({ nullable: true })
+  id: string;
+  @Field({ nullable: true })
   title?: string;
   @Field({ nullable: true })
   type?: string;
@@ -73,6 +75,8 @@ class MovieFullInformation {
   year: number;
   @Field(() => [SeasonInfo], { nullable: true })
   seasons: SeasonInfo[];
+  @Field(() => Int, { defaultValue: 1 })
+  platformId: number;
 }
 @InputType()
 class MovieInput {
@@ -521,6 +525,7 @@ export class MovieResolver {
     @Arg("mid") mid: string
   ) {
     const {
+      id,
       type,
       artwork,
       boxart,
@@ -534,8 +539,7 @@ export class MovieResolver {
       seasons,
     } = options;
 
-    let uniqueId =
-      type !== "movie" && seasons ? seasons[0]?.episodes[0]?.id : mid;
+    let uniqueId = id;
 
     const titleRepo = conn.getRepository(Title);
     const movieRepo = conn.getRepository(Movie);

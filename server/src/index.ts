@@ -47,7 +47,7 @@ const getConfiguredRedisPubSub = new RedisPubSub({
 
 const main = async () => {
   await conn.initialize();
-  await conn.runMigrations();
+  // await conn.runMigrations();
   const app = express();
 
   // Enable gzip compression for all resources
@@ -174,7 +174,10 @@ const main = async () => {
         res.json(data);
       } catch (error) {
         console.error(`Failed to scrape page: ${error}`);
-        res.status(500).send("Failed to scrape page");
+        res.status(500).json({
+          message: "Failed to scrape page",
+          error: error.toString(),
+        });
       }
     })().catch((err) => {
       console.error(`Error in /scrape: ${err}`);

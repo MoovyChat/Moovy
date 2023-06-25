@@ -1,28 +1,13 @@
-import puppeteer from "puppeteer";
-
-// Define the structure of the data you're scraping.
-interface ScrapedData {
-  title: string;
-  artwork: string;
-  boxart: string;
-  rating: string;
-  storyart: string;
-  runtime: number | null;
-  type: "show" | "movie";
-  year: number | null;
-  genre: string | null;
-
-  seasons: number | null;
-  episodeTitle: string;
-  synopsis: string;
-}
+import puppeteer from "puppeteer-core";
 
 interface MovieFullInformation {
+  id: string;
   advisories?: string[];
   artwork?: string;
   boxart?: string;
   rating?: string;
   runtime: number | null;
+  platformId: number;
   seasons: SeasonInfo[];
   storyart?: string;
   synopsis?: string;
@@ -54,7 +39,14 @@ type ExtractedInfo = {
 };
 
 const scrapePage = async (url: string): Promise<MovieFullInformation> => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    // executablePath: "/usr/bin/google-chrome-stable",
+    executablePath:
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+
+    args: ["--no-sandbox"],
+  });
   const page = await browser.newPage();
   await page.goto(url);
   await page.waitForNavigation({ waitUntil: "networkidle0" });
@@ -133,10 +125,12 @@ const scrapePage = async (url: string): Promise<MovieFullInformation> => {
       ? genreDescriptionElement.innerText
       : "";
     const info = extractInformation(genreDescription);
-    const showTitle = showTitleElement ? showTitleElement.innerText : "";
     const episodeTitle = episodeTitleElement
       ? episodeTitleElement.innerText
       : "";
+    const showTitle = showTitleElement
+      ? showTitleElement.innerText
+      : episodeTitle;
     const boxart = imageElement ? imageElement.src : "";
     const synopsis = synopsisElement ? synopsisElement.innerText : "";
     const rating = ratingElement ? ratingElement.innerText : "";
@@ -157,6 +151,7 @@ const scrapePage = async (url: string): Promise<MovieFullInformation> => {
       episodes: [episodeInfo],
     };
     const finalResult: MovieFullInformation = {
+      id: type !== "movie" ? showTitle : episodeTitle,
       advisories: info ? (info.genre ? info.genre.split(" ") : []) : [],
       artwork: boxart,
       boxart,
@@ -168,6 +163,7 @@ const scrapePage = async (url: string): Promise<MovieFullInformation> => {
       title: showTitle,
       year: type === "movie" ? info.year : 0,
       seasons: type === "show" ? [seasonInfo] : [],
+      platformId: 2,
     };
     return finalResult;
   }, url);

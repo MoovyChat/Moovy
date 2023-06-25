@@ -9,6 +9,12 @@ export class InitialValues1686042739399 implements MigrationInterface {
         `);
 
     await queryRunner.query(`
+            INSERT INTO "platform"("name", "url", "createdAt", "updatedAt", "deletedAt")
+            VALUES ('aha', 'https://www.aha.video/', DEFAULT, DEFAULT, DEFAULT)
+            RETURNING "id", "createdAt", "updatedAt", "deletedAt"
+        `);
+
+    await queryRunner.query(`
             INSERT INTO "admin_notifications"("message", "createdAt", "updatedAt", "deletedAt")
             VALUES ('Welcome', DEFAULT, DEFAULT, DEFAULT)
             RETURNING *
@@ -25,6 +31,12 @@ export class InitialValues1686042739399 implements MigrationInterface {
             DELETE FROM "platform"
             WHERE "name" = 'Netflix'
             AND "url" = 'https://www.netflix.com/'
+        `);
+
+    await queryRunner.query(`
+            DELETE FROM "platform"
+            WHERE "name" = 'aha'
+            AND "url" = 'https://www.aha.video/'
         `);
   }
 }
