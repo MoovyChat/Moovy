@@ -438,6 +438,12 @@ function handleMessage(socket: Socket, io: Server) {
   };
 }
 
+function handleSmiley(socket: CustomSocket, io: Server) {
+  return ({ roomId, data }: { roomId: string; data: any }) => {
+    io.to(roomId).emit("receiveSmiley", data);
+  };
+}
+
 function handleToggleRoomType(socket: Socket, io: Server) {
   return (data: { isPublic: boolean; roomId: string }) => {
     const { isPublic, roomId } = data;
@@ -735,6 +741,7 @@ export {
   handleJoinRoom,
   handlePlay,
   handlePause,
+  handleSmiley,
   handleSeekTime,
   handleMessage,
   handleLeaveRoom,

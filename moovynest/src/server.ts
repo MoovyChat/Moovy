@@ -34,6 +34,7 @@ import {
   handleKickUser,
   handleSyncAllUsers,
   handleSyncWithAdmin,
+  handleSmiley,
 } from "./handlers";
 import { CustomSocket } from "./customSocket";
 
@@ -67,6 +68,7 @@ io.on("connection", (socket) => {
   socket.on("kick-user", handleKickUser(socket as CustomSocket, io));
   socket.on("sync-with-admin", handleSyncWithAdmin(socket as CustomSocket, io));
   socket.on("sync-all-users", handleSyncAllUsers(socket as CustomSocket, io));
+  socket.on("smiley", handleSmiley(socket as CustomSocket, io));
   // Listen for 'acknowledge' events
   socket.on("acknowledge", ({ signal, callerID }) => {
     socket.to(callerID).emit("acknowledge", signal);
