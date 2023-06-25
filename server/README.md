@@ -13,18 +13,18 @@ The requests are sent to `graphql` server https://server.moovychat.com/graphql.
 
 ### Quick Deploy (Update versions every time)
 
-Current deployed version: 0.1.1
-Next version: 0.1.2
+Current deployed version: 0.1.4
+Next version: 0.1.5
 
 ```
 docker login (kishore189/Chandra189)
-docker build -t kishore189/moovychat:0.1.2 .
-docker push kishore189/moovychat:0.1.2
+docker build -t kishore189/moovychat:0.1.5 .
+docker push kishore189/moovychat:0.1.5
 
 ssh root@137.184.201.17 (password: moovychat)
-docker pull kishore189/moovychat:0.1.2
-docker tag kishore189/moovychat:0.1.2 dokku/api:0.1.2
-dokku deploy api 0.1.2
+docker pull kishore189/moovychat:0.1.5
+docker tag kishore189/moovychat:0.1.5 dokku/api:0.1.5
+dokku deploy api 0.1.5
 ```
 
 ## Access POSTGRES inside dokku
