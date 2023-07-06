@@ -15,19 +15,14 @@ import { getThemeForHome } from '../home/home';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { CURRENT_DOMAIN } from '../../constants';
 
-const App = () => {
+const Main = () => {
   const dispatch = useAppDispatch();
   const [{ data, fetching, error }] = useMeQuery();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const theme = useAppSelector(state => state.settings.theme);
   const isAuth = useAppSelector(state => state.user);
-
   // Assume we're loading until proven otherwise
   const [showLoading, setShowLoading] = useState(!isAuth);
-
-  usePageView();
-
+  const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     // Log any errors with fetching user data
     if (error) {
@@ -52,13 +47,7 @@ const App = () => {
   if (showLoading) return <LogoLoading />;
 
   return (
-    <ThemeProvider theme={getThemeForHome(theme)}>
-      <Helmet>
-        <title>Moovy: Welcome</title>
-        <meta name="description" content="Welcome" />
-        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
-      </Helmet>
-      <GlobalStyles />
+    <>
       {isAuth && isAuth.id ? (
         <Suspense fallback={<LogoLoading />}>
           <Outlet />
@@ -69,6 +58,24 @@ const App = () => {
           <Welcome />
         </React.Fragment>
       )}
+    </>
+  );
+};
+
+const App = () => {
+  const theme = useAppSelector(state => state.settings.theme);
+
+  usePageView();
+
+  return (
+    <ThemeProvider theme={getThemeForHome(theme)}>
+      <Helmet>
+        <title>Moovy: Welcome</title>
+        <meta name="description" content="Welcome" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
+      </Helmet>
+      <GlobalStyles />
+      <Main />
     </ThemeProvider>
   );
 };
