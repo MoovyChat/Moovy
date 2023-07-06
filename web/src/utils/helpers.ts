@@ -170,4 +170,6 @@ export const randomUserNameGenerator = (nickname: string) => {
   return `${truncatedNickname}${padding}${randomNumber}`;
 };
 
-
+export const SuspenseTrigger = () => {
+  throw new Promise(() => {});
+};

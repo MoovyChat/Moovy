@@ -28,6 +28,7 @@ import FirstPage from './first-page/firstPage';
 import { Card } from './faq/card';
 import Heading from './heading/heading';
 import LogoLoading from '../logo-loading/logoLoading';
+import { SuspenseTrigger } from '../../utils/helpers';
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
 const FaTiktok = lazyIconFa('FaTiktok');
@@ -121,9 +122,11 @@ const Welcome = () => {
   }, []);
   return (
     <Suspense fallback={<LogoLoading />}>
+      <SuspenseTrigger />
       <WelcomeParent>
         <StyledFlaps>
           <Suspense fallback={<LogoLoading />}>
+            <SuspenseTrigger />
             <div className="social-container">
               <button
                 className="discord social"

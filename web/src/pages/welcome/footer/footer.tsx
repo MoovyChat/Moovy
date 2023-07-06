@@ -17,6 +17,7 @@ import PatreonWord from '../../../static/images/patreon-word.webp';
 import { lazyIconFa } from '../../../lazyLoad';
 import { useTheme } from 'styled-components';
 import LogoLoading from '../../logo-loading/logoLoading';
+import { SuspenseTrigger } from '../../../utils/helpers';
 
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
@@ -30,6 +31,7 @@ const Footer: React.FC<props> = ({ id }) => {
   const theme = useTheme();
   return (
     <Suspense fallback={<LogoLoading />}>
+      <SuspenseTrigger />
       <StyledFooter id={id}>
         <div className="image-container">
           <img
@@ -78,6 +80,7 @@ const Footer: React.FC<props> = ({ id }) => {
             <div className="title">Socials</div>
             <div className="links">
               <Suspense fallback={<LogoLoading />}>
+                <SuspenseTrigger />
                 <SocialButton
                   className="link"
                   onClick={e => {

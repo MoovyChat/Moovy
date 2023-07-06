@@ -14,6 +14,7 @@ import { withUrqlClient } from 'next-urql';
 import { getThemeForHome } from '../home/home';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { CURRENT_DOMAIN } from '../../constants';
+import { SuspenseTrigger } from '../../utils/helpers';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -53,6 +54,7 @@ const App = () => {
 
   return (
     <Suspense fallback={<LogoLoading />}>
+      <SuspenseTrigger />
       <ThemeProvider theme={getThemeForHome(theme)}>
         <Helmet>
           <title>Moovy: Welcome</title>
@@ -62,6 +64,7 @@ const App = () => {
         <GlobalStyles />
         {isAuth && isAuth.id ? (
           <Suspense fallback={<LogoLoading />}>
+            <SuspenseTrigger />
             <Outlet />
           </Suspense>
         ) : (
