@@ -19,7 +19,6 @@ import { withUrqlClient } from 'next-urql';
 
 const Header = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const [_userResult, createUser] = useCreateUserMutation();

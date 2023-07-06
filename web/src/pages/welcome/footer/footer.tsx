@@ -75,7 +75,7 @@ const Footer: React.FC<props> = ({ id }) => {
         <div className="block">
           <div className="title">Socials</div>
           <div className="links">
-            <Suspense>
+            <Suspense fallback={<div>Loading...</div>}>
               <SocialButton
                 className="link"
                 onClick={e => {
