@@ -23,28 +23,6 @@ const Main = () => {
   const [showLoading, setShowLoading] = useState(!isAuth);
   const navigate = useNavigate();
   const location = useLocation();
-  useEffect(() => {
-    // Log any errors with fetching user data
-    if (error) {
-      console.log(error);
-    }
-    // If user data is successfully fetched and not in the process of fetching, proceed
-    if (!fetching && data) {
-      // Retrieve user object and current path
-      const user = data?.me as Users;
-      // If a user object exists
-      if (user) {
-        // Update Redux store with user data and save user data in localStorage
-        dispatch(sliceSetUser(user));
-        if (location.pathname === '/') navigate('/home');
-        else navigate(location.pathname);
-        localStorage.setItem('user', JSON.stringify(user));
-      }
-      setShowLoading(false);
-    }
-  }, [fetching, data, error, isAuth]);
-
-  if (showLoading) return <LogoLoading />;
 
   return (
     <>
