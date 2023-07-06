@@ -9,7 +9,7 @@ import {
   TWITTER_LINK,
 } from '../../../constants';
 import { FooterLink, SocialButton, StyledFooter } from './footer.styles';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
 import MoovyWhite from '../../../svgs/moovy-text-logo-white.png';
@@ -74,66 +74,7 @@ const Footer: React.FC<props> = ({ id }) => {
 
         <div className="block">
           <div className="title">Socials</div>
-          <div className="links">
-            <Suspense fallback={<div>Loading...</div>}>
-              <SocialButton
-                className="link"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(DISCORD_INVITE_LINK, '_blank');
-                }}
-              >
-                <FaDiscord
-                  color="cornflowerblue"
-                  size={20}
-                  style={{ pointerEvents: 'none' }}
-                />
-                <FooterLink>Discord</FooterLink>
-              </SocialButton>
-              <SocialButton
-                className="link"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(TWITTER_LINK, '_blank');
-                }}
-              >
-                <FaTwitter
-                  color="deepskyblue"
-                  size={20}
-                  style={{ pointerEvents: 'none' }}
-                />
-                <FooterLink>Twitter</FooterLink>
-              </SocialButton>
-              <SocialButton
-                className="link"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(TIKTOK_LINK, '_blank');
-                }}
-              >
-                <FaTiktok
-                  className="icon"
-                  size={20}
-                  style={{ pointerEvents: 'none' }}
-                />
-                <FooterLink>Tiktok</FooterLink>
-              </SocialButton>
-              <SocialButton
-                className="link"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(INSTAGRAM_LINK, '_blank');
-                }}
-              >
-                <FaInstagram
-                  color="hotpink"
-                  size={20}
-                  style={{ pointerEvents: 'none' }}
-                />
-                <FooterLink>Instagram</FooterLink>
-              </SocialButton>
-            </Suspense>
-          </div>
+          <div className="links"></div>
         </div>
 
         <div className="block">
