@@ -1,28 +1,39 @@
 import './welcome.css';
 
-import { useEffect } from 'react';
-import { TwitterTimelineEmbed } from 'react-twitter-embed';
-import { CURRENT_DOMAIN } from '../../constants';
+import { Suspense, useEffect } from 'react';
+import {
+  CURRENT_DOMAIN,
+  DISCORD_INVITE_LINK,
+  INSTAGRAM_LINK,
+  TIKTOK_LINK,
+  TWITTER_LINK,
+} from '../../constants';
 import {
   SocialEmbed,
   StyledFAQ,
   StyledFlaps,
   WelcomeParent,
 } from './welcome.styles';
+import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
 import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
 import usePageView from '../../hooks/usePageView';
-
+import { lazyIconFa } from '../../lazyLoad';
 import { urqlClient } from '../../utils/urlClient';
 import Footer from './footer/footer';
 import HomeSlider from './home-slider/homeSlider';
-
 import { InstagramEmbed } from 'react-social-media-embed';
-import { Card } from './faq/card';
 import FirstPage from './first-page/firstPage';
+import { Card } from './faq/card';
 import Heading from './heading/heading';
+import LogoLoading from '../logo-loading/logoLoading';
+const FaDiscord = lazyIconFa('FaDiscord');
+const FaTwitter = lazyIconFa('FaTwitter');
+const FaTiktok = lazyIconFa('FaTiktok');
+const FaInstagram = lazyIconFa('FaInstagram');
 
+const iconSize = 25;
 export const streamingServices = [
   {
     title: 'Netflix',
@@ -109,49 +120,108 @@ const Welcome = () => {
     };
   }, []);
   return (
-    <WelcomeParent>
-      <StyledFlaps></StyledFlaps>
-      <Helmet>
-        <title>{`MoovyChat: Welcome`}</title>
-        <meta name="description" content={`Home page of MoovyChat.`} />
-        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
-      </Helmet>
-      <FirstPage />
-      <Heading
-        title="Key Features"
-        content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
-        id="features"
-      />
-      <HomeSlider />
-      {/* <InstallExtension /> */}
-      <Heading title="Hit Follow for more updates" id="socials" />
-      <SocialEmbed>
-        <div className="twitter-timeline-container">
-          <TwitterTimelineEmbed
-            theme="dark"
-            sourceType="profile"
-            screenName="MoovyChat"
-            noBorders={true}
-            options={{ height: 480, width: 400 }}
-            noFooter
-          />
-        </div>
-        <div className="instagram-feed">
-          <InstagramEmbed
-            url="https://www.instagram.com/p/CrSv_aHuL6X/"
-            width={328}
-            height={500}
-          />
-        </div>
-      </SocialEmbed>
-      <StyledFAQ>
-        <Heading title="Frequently Asked Questions" id="faq" />
-        {cards.map((card, index) => (
-          <Card key={index} title={card.title} content={card.content} />
-        ))}
-      </StyledFAQ>
-      <Footer id="footer" />
-    </WelcomeParent>
+    <Suspense fallback={<LogoLoading />}>
+      <WelcomeParent>
+        <StyledFlaps>
+          <Suspense fallback={<LogoLoading />}>
+            <div className="social-container">
+              <button
+                className="discord social"
+                onClick={e => {
+                  e.stopPropagation();
+                  window.open(DISCORD_INVITE_LINK, '_blank');
+                }}
+              >
+                <FaDiscord
+                  color="cornflowerblue"
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </button>
+              <button
+                className="twitter social"
+                onClick={e => {
+                  e.stopPropagation();
+                  window.open(TWITTER_LINK, '_blank');
+                }}
+              >
+                <FaTwitter
+                  color="deepskyblue"
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </button>
+              <button
+                className="tiktok social"
+                onClick={e => {
+                  e.stopPropagation();
+                  window.open(TIKTOK_LINK, '_blank');
+                }}
+              >
+                <FaTiktok
+                  className="icon"
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </button>
+              <button
+                className="instagram social"
+                onClick={e => {
+                  e.stopPropagation();
+                  window.open(INSTAGRAM_LINK, '_blank');
+                }}
+              >
+                <FaInstagram
+                  color="hotpink"
+                  size={iconSize}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </button>
+            </div>
+          </Suspense>
+        </StyledFlaps>
+        <Helmet>
+          <title>{`MoovyChat: Welcome`}</title>
+          <meta name="description" content={`Home page of MoovyChat.`} />
+          <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
+        </Helmet>
+        <FirstPage />
+        <Heading
+          title="Key Features"
+          content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
+          id="features"
+        />
+        <HomeSlider />
+        {/* <InstallExtension /> */}
+        <Heading title="Hit Follow for more updates" id="socials" />
+        <SocialEmbed>
+          <div className="twitter-timeline-container">
+            <TwitterTimelineEmbed
+              theme="dark"
+              sourceType="profile"
+              screenName="MoovyChat"
+              noBorders={true}
+              options={{ height: 480, width: 400 }}
+              noFooter
+            />
+          </div>
+          <div className="instagram-feed">
+            <InstagramEmbed
+              url="https://www.instagram.com/p/CrSv_aHuL6X/"
+              width={328}
+              height={500}
+            />
+          </div>
+        </SocialEmbed>
+        <StyledFAQ>
+          <Heading title="Frequently Asked Questions" id="faq" />
+          {cards.map((card, index) => (
+            <Card key={index} title={card.title} content={card.content} />
+          ))}
+        </StyledFAQ>
+        <Footer id="footer" />
+      </WelcomeParent>
+    </Suspense>
   );
 };
 
