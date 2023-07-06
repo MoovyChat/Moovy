@@ -14,7 +14,6 @@ import { withUrqlClient } from 'next-urql';
 import { getThemeForHome } from '../home/home';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { CURRENT_DOMAIN } from '../../constants';
-import { SuspenseTrigger } from '../../utils/helpers';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -53,27 +52,24 @@ const App = () => {
   if (showLoading) return <LogoLoading />;
 
   return (
-    <Suspense fallback={<LogoLoading />}>
-      <ThemeProvider theme={getThemeForHome(theme)}>
-        <Helmet>
-          <title>Moovy: Welcome</title>
-          <meta name="description" content="Welcome" />
-          <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
-        </Helmet>
-        <GlobalStyles />
-        {isAuth && isAuth.id ? (
-          <Suspense fallback={<LogoLoading />}>
-            <SuspenseTrigger />
-            <Outlet />
-          </Suspense>
-        ) : (
-          <React.Fragment>
-            <Header />
-            <Welcome />
-          </React.Fragment>
-        )}
-      </ThemeProvider>
-    </Suspense>
+    <ThemeProvider theme={getThemeForHome(theme)}>
+      <Helmet>
+        <title>Moovy: Welcome</title>
+        <meta name="description" content="Welcome" />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
+      </Helmet>
+      <GlobalStyles />
+      {isAuth && isAuth.id ? (
+        <Suspense fallback={<LogoLoading />}>
+          <Outlet />
+        </Suspense>
+      ) : (
+        <React.Fragment>
+          <Header />
+          <Welcome />
+        </React.Fragment>
+      )}
+    </ThemeProvider>
   );
 };
 

@@ -14,7 +14,6 @@ import {
   StyledFlaps,
   WelcomeParent,
 } from './welcome.styles';
-import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
 import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
@@ -23,12 +22,10 @@ import { lazyIconFa } from '../../lazyLoad';
 import { urqlClient } from '../../utils/urlClient';
 import Footer from './footer/footer';
 import HomeSlider from './home-slider/homeSlider';
-import { InstagramEmbed } from 'react-social-media-embed';
 import FirstPage from './first-page/firstPage';
 import { Card } from './faq/card';
 import Heading from './heading/heading';
 import LogoLoading from '../logo-loading/logoLoading';
-import { SuspenseTrigger } from '../../utils/helpers';
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
 const FaTiktok = lazyIconFa('FaTiktok');
@@ -121,109 +118,88 @@ const Welcome = () => {
     };
   }, []);
   return (
-    <Suspense fallback={<LogoLoading />}>
-      <WelcomeParent>
-        <StyledFlaps>
-          <Suspense fallback={<LogoLoading />}>
-            <SuspenseTrigger />
-            <div className="social-container">
-              <button
-                className="discord social"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(DISCORD_INVITE_LINK, '_blank');
-                }}
-              >
-                <FaDiscord
-                  color="cornflowerblue"
-                  size={iconSize}
-                  style={{ pointerEvents: 'none' }}
-                />
-              </button>
-              <button
-                className="twitter social"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(TWITTER_LINK, '_blank');
-                }}
-              >
-                <FaTwitter
-                  color="deepskyblue"
-                  size={iconSize}
-                  style={{ pointerEvents: 'none' }}
-                />
-              </button>
-              <button
-                className="tiktok social"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(TIKTOK_LINK, '_blank');
-                }}
-              >
-                <FaTiktok
-                  className="icon"
-                  size={iconSize}
-                  style={{ pointerEvents: 'none' }}
-                />
-              </button>
-              <button
-                className="instagram social"
-                onClick={e => {
-                  e.stopPropagation();
-                  window.open(INSTAGRAM_LINK, '_blank');
-                }}
-              >
-                <FaInstagram
-                  color="hotpink"
-                  size={iconSize}
-                  style={{ pointerEvents: 'none' }}
-                />
-              </button>
-            </div>
-          </Suspense>
-        </StyledFlaps>
-        <Helmet>
-          <title>{`MoovyChat: Welcome`}</title>
-          <meta name="description" content={`Home page of MoovyChat.`} />
-          <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
-        </Helmet>
-        <FirstPage />
-        <Heading
-          title="Key Features"
-          content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
-          id="features"
-        />
-        <HomeSlider />
-        {/* <InstallExtension /> */}
-        <Heading title="Hit Follow for more updates" id="socials" />
-        <SocialEmbed>
-          <div className="twitter-timeline-container">
-            <TwitterTimelineEmbed
-              theme="dark"
-              sourceType="profile"
-              screenName="MoovyChat"
-              noBorders={true}
-              options={{ height: 480, width: 400 }}
-              noFooter
-            />
+    <WelcomeParent>
+      <StyledFlaps>
+        <Suspense fallback={<LogoLoading />}>
+          <div className="social-container">
+            <button
+              className="discord social"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(DISCORD_INVITE_LINK, '_blank');
+              }}
+            >
+              <FaDiscord
+                color="cornflowerblue"
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </button>
+            <button
+              className="twitter social"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(TWITTER_LINK, '_blank');
+              }}
+            >
+              <FaTwitter
+                color="deepskyblue"
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </button>
+            <button
+              className="tiktok social"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(TIKTOK_LINK, '_blank');
+              }}
+            >
+              <FaTiktok
+                className="icon"
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </button>
+            <button
+              className="instagram social"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(INSTAGRAM_LINK, '_blank');
+              }}
+            >
+              <FaInstagram
+                color="hotpink"
+                size={iconSize}
+                style={{ pointerEvents: 'none' }}
+              />
+            </button>
           </div>
-          <div className="instagram-feed">
-            <InstagramEmbed
-              url="https://www.instagram.com/p/CrSv_aHuL6X/"
-              width={328}
-              height={500}
-            />
-          </div>
-        </SocialEmbed>
-        <StyledFAQ>
-          <Heading title="Frequently Asked Questions" id="faq" />
-          {cards.map((card, index) => (
-            <Card key={index} title={card.title} content={card.content} />
-          ))}
-        </StyledFAQ>
-        <Footer id="footer" />
-      </WelcomeParent>
-    </Suspense>
+        </Suspense>
+      </StyledFlaps>
+      <Helmet>
+        <title>{`MoovyChat: Welcome`}</title>
+        <meta name="description" content={`Home page of MoovyChat.`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
+      </Helmet>
+      <FirstPage />
+      <Heading
+        title="Key Features"
+        content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
+        id="features"
+      />
+      <HomeSlider />
+      {/* <InstallExtension /> */}
+      <Heading title="Hit Follow for more updates" id="socials" />
+
+      <StyledFAQ>
+        <Heading title="Frequently Asked Questions" id="faq" />
+        {cards.map((card, index) => (
+          <Card key={index} title={card.title} content={card.content} />
+        ))}
+      </StyledFAQ>
+      <Footer id="footer" />
+    </WelcomeParent>
   );
 };
 
