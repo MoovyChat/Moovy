@@ -31,7 +31,6 @@ const Footer: React.FC<props> = ({ id }) => {
   const theme = useTheme();
   return (
     <Suspense fallback={<LogoLoading />}>
-      <SuspenseTrigger />
       <StyledFooter id={id}>
         <div className="image-container">
           <img

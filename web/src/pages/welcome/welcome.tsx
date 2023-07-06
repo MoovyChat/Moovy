@@ -122,7 +122,6 @@ const Welcome = () => {
   }, []);
   return (
     <Suspense fallback={<LogoLoading />}>
-      <SuspenseTrigger />
       <WelcomeParent>
         <StyledFlaps>
           <Suspense fallback={<LogoLoading />}>

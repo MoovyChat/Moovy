@@ -54,7 +54,6 @@ const App = () => {
 
   return (
     <Suspense fallback={<LogoLoading />}>
-      <SuspenseTrigger />
       <ThemeProvider theme={getThemeForHome(theme)}>
         <Helmet>
           <title>Moovy: Welcome</title>
