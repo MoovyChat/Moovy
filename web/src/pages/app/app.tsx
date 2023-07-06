@@ -48,16 +48,10 @@ const Main = () => {
 
   return (
     <>
-      {isAuth && isAuth.id ? (
-        <Suspense fallback={<LogoLoading />}>
-          <Outlet />
-        </Suspense>
-      ) : (
-        <React.Fragment>
-          <Header />
-          <Welcome />
-        </React.Fragment>
-      )}
+      <React.Fragment>
+        <Header />
+        <Welcome />
+      </React.Fragment>
     </>
   );
 };
