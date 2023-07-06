@@ -190,7 +190,6 @@ const Welcome = () => {
       />
       <HomeSlider />
       {/* <InstallExtension /> */}
-      <Heading title="Hit Follow for more updates" id="socials" />
 
       <StyledFAQ>
         <Heading title="Frequently Asked Questions" id="faq" />
