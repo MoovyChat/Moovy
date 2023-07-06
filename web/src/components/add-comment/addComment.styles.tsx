@@ -126,7 +126,7 @@ export const AddCommentParent = styled.div<props>`
             justify-content: center;
             align-items: center;
           }
-          .text {
+          .option-text {
           }
         }
         .down {

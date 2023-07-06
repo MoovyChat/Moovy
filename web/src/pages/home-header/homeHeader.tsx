@@ -1,28 +1,42 @@
 import { DIRECTION, FOCUS_WINDOW } from '../../utils/enums';
-import { MdMenu, MdOutlineClose } from 'react-icons/md';
+import { MdMenu, MdOutlineClose, MdSearch } from 'react-icons/md';
 import React, { MouseEventHandler } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import FocusWindow from '../../components/focus-window/focusWindow';
 import { HomeHeaderParent } from './homeHeader.styles';
 import { Image } from '../../components/Image/image';
-import MoovyBlackLogo from '../../svgs/moovy-black.svg';
-import MoovyWhiteLogo from '../../svgs/moovy-white.svg';
 import SearchBar from '../../components/search-bar/searchBar';
 import { sliceSetNavBar } from '../../redux/slices/miscSlice';
 import { useTheme } from 'styled-components';
-import { LOGO_128 } from '../../constants';
+import { LOGO_128, popupStates } from '../../constants';
+import { RiPaintFill } from 'react-icons/ri';
+import {
+  sliceSetIsPopupOpened,
+  sliceSetSelectedElement,
+} from '../../redux/slices/popupSlice';
 
 type props = {
   className: string;
 };
 const HomeHeader: React.FC<props> = ({ className }) => {
-  const theme = useTheme();
   const isNavBarOpen = useAppSelector(state => state.misc.isNavBarOpen);
   const dispatch = useAppDispatch();
   const navBarHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     dispatch(sliceSetNavBar(!isNavBarOpen));
+  };
+
+  const openThemeHandler: MouseEventHandler<HTMLDivElement> = e => {
+    e.stopPropagation();
+    dispatch(sliceSetIsPopupOpened(true));
+    dispatch(sliceSetSelectedElement(popupStates.OPEN_THEME));
+  };
+
+  const openSearchHandler: MouseEventHandler<HTMLDivElement> = e => {
+    e.stopPropagation();
+    dispatch(sliceSetIsPopupOpened(true));
+    dispatch(sliceSetSelectedElement(popupStates.ADD_REPLY));
   };
 
   const user = useAppSelector(state => state.user);
@@ -61,8 +75,11 @@ const HomeHeader: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-      <div className="search">
-        <SearchBar />
+      <div className="search" onClick={openThemeHandler}>
+        <RiPaintFill size={25} className="search-icon" />
+      </div>
+      <div className="search" onClick={openSearchHandler}>
+        <MdSearch size={25} className="search-icon" />
       </div>
       <FocusWindow
         message={FOCUS_WINDOW.HEADER_OPTIONS}

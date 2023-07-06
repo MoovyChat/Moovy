@@ -46,7 +46,7 @@ const EmojiSubGroup: React.FC<props> = ({ emojiSet, setValues, index }) => {
   }, [searchValue]);
   return (
     <>
-      {emojis.length > 0 && (
+      {emojis.length > 0 && groupName && (
         <SubGroupParent className="emoji-sub-group">
           <div className="subgroup-name chip">
             {_.capitalize(groupName.split('-').join(' '))}

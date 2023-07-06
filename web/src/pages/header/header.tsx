@@ -87,7 +87,7 @@ const Header = () => {
     if (divElement) {
       const elementRect = divElement.getBoundingClientRect();
       const absoluteElementTop = elementRect.top + window.pageYOffset;
-      const middle = absoluteElementTop - window.innerHeight / 6;
+      const middle = absoluteElementTop - window.innerHeight / 24;
       window.scrollTo({ top: middle, behavior: 'smooth' });
     }
   };
@@ -127,10 +127,10 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('screenshots');
+            scrollIntoView('features');
           }}
         >
-          Screenshots
+          Features
         </HeaderButton>
         <HeaderButton
           tabIndex={0}
@@ -138,10 +138,21 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('features');
+            scrollIntoView('socials');
           }}
         >
-          Features
+          Socials
+        </HeaderButton>
+        <HeaderButton
+          tabIndex={0}
+          role="button"
+          className="install-button hb"
+          onClick={e => {
+            e.stopPropagation();
+            scrollIntoView('faq');
+          }}
+        >
+          FAQ
         </HeaderButton>
         {user && user.id ? (
           <HeaderButton

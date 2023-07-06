@@ -11,7 +11,7 @@ export const CommentIcon = styled.div<props>`
   height: 50px;
   width: 50px;
   border-radius: 50%;
-  left: 69%;
+  right: 10%;
   bottom: 5%;
   background-color: #6d0e85;
   box-shadow: inset 0 0 7px black, 0 0 5px;

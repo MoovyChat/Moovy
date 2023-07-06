@@ -89,7 +89,7 @@ const MovieThread = () => {
   if (!movieInfo) return <NotFound />;
 
   return (
-    <div>
+    <>
       <Helmet>
         <title>{`${movieInfo.name}: Comments`}</title>
         <meta name="description" content={`${movieInfo.name}: Comments`} />
@@ -105,7 +105,7 @@ const MovieThread = () => {
               <span>{headerTitle}</span>
               <WatchVideo
                 id={id}
-                platform="NETFLIX"
+                platform={movieInfo.platformId === 1 ? 'NETFLIX' : 'AHA'}
                 type="movie"
                 className="watch-video"
               />
@@ -143,7 +143,7 @@ const MovieThread = () => {
       ) : (
         <NotFound />
       )}
-    </div>
+    </>
   );
 };
 

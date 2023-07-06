@@ -13,7 +13,7 @@ export const EmojiButtonParent = styled.div`
     height: 100%;
     width: 100%;
     display: flex;
-    font-size: 1.2rem;
+    font-size: 2rem;
     overflow: hidden;
     position: relative;
     justify-content: center;

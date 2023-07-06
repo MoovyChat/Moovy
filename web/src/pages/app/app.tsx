@@ -2,7 +2,6 @@ import { CURRENT_DOMAIN, G_TRACKING_ID, themes } from '../../constants';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { Users, useMeQuery } from '../../generated/graphql';
-import { darkTheme, lightTheme } from '../../utils/themes/theme';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import { GlobalStyles } from '../../utils/themes/globalStyles';
@@ -15,6 +14,7 @@ import { sliceSetUser } from '../../redux/slices/userSlice';
 import { urqlClient } from '../../utils/urlClient';
 import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
+import { getThemeForHome } from '../home/home';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const App = () => {
   const navigate = useNavigate();
   const theme = useAppSelector(state => state.settings.theme);
   const isAuth = useAppSelector(state => state.user);
-    const [showLoading, setShowLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
 
   usePageView();
 
@@ -54,7 +54,7 @@ const App = () => {
   if (showLoading) return <LogoLoading />;
 
   return (
-    <ThemeProvider theme={theme === themes.DARK ? darkTheme : lightTheme}>
+    <ThemeProvider theme={getThemeForHome(theme)}>
       <Helmet>
         <title>Moovy: Welcome</title>
         <meta name="description" content="Welcome" />

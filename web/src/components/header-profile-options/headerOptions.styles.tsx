@@ -40,9 +40,9 @@ export const StyledHeaderOptions = styled.div`
       align-items: center;
       pointer-events: none;
     }
-    .text {
+    .options-text {
       flex: 1 1 80%;
-      font-size: 0.9em;
+      font-size: 1.4rem;
       font-weight: 500;
     }
     :hover {
