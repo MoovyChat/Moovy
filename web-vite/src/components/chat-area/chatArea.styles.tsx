@@ -5,9 +5,8 @@ type props = {
   textAreaHeight: number;
 };
 
-const textAreaMixin = () => css<props>`
-  overflow-x: hidden;
-  overflow-y: auto;
+const textAreaMixin = css<props>`
+  overflow: hidden auto;
   border: none;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -17,14 +16,17 @@ const textAreaMixin = () => css<props>`
   max-height: 50px;
   word-spacing: 0.2em;
   outline: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
   resize: none;
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 `;
 
 export const ChatAreaParent = styled.textarea<props>`
-  ${textAreaMixin()}
+  ${textAreaMixin}
   position: relative;
   background: transparent;
   height: ${(p) => p.textAreaHeight}px !important;
@@ -40,19 +42,16 @@ export const ChatAreaParent = styled.textarea<props>`
 
 export const Parent = styled.div<props>`
   width: 100%;
-  height: 100%;
   position: relative;
   display: flex;
   align-items: center;
 
   .text-area-background {
-    position: absolute;
-    top: 0;
-    left: 0;
+    ${textAreaMixin}
     .basic {
       white-space: pre-line;
     }
-    ${textAreaMixin()} .time,
+    .time,
     .user {
       ${commentStyleMixin()}
     }

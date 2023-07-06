@@ -5,12 +5,14 @@ interface NestStateInterface {
   type: string;
   visible: boolean;
   nests: AvailableRoom[];
+  isGifOpen: boolean;
 }
 
 const nestState: NestStateInterface = {
   type: "",
   visible: false,
   nests: [],
+  isGifOpen: false,
 };
 
 const nestSlice = createSlice({
@@ -26,9 +28,16 @@ const nestSlice = createSlice({
     sliceSetNestVisibility: (state, action) => {
       return { ...state, visible: action.payload };
     },
+    sliceSetIsGifOpen: (state, action) => {
+      return { ...state, isGifOpen: action.payload };
+    },
   },
 });
 
-export const { sliceSetNestType, sliceSetNestVisibility, sliceSetNests } =
-  nestSlice.actions;
+export const {
+  sliceSetNestType,
+  sliceSetNestVisibility,
+  sliceSetNests,
+  sliceSetIsGifOpen,
+} = nestSlice.actions;
 export default nestSlice.reducer;

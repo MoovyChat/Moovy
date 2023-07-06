@@ -107,6 +107,10 @@ export const randomUserNameGenerator = (nickname: string) => {
 };
 
 export const containsOnlyOneEmoji = (text: string): boolean => {
+  if (typeof text !== "string") {
+    return false;
+  }
+
   const emojiRegexPattern = emojiRegex();
   const emojiMatches = text.match(emojiRegexPattern);
   return (

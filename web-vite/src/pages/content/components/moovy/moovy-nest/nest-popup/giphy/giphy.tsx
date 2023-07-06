@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 import { IGif } from "@giphy/js-types";
 import { batch } from "react-redux";
 import {
+  sliceSetIsGifOpen,
   sliceSetNestType,
   sliceSetNestVisibility,
 } from "../../../../../../redux/slices/nestSlice";
@@ -61,6 +62,7 @@ const Giphy = () => {
     });
     batch(() => {
       dispatch(sliceSetNestVisibility(false));
+      dispatch(sliceSetIsGifOpen(false));
       dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
       dispatch(sliceSetTextAreaMessage(""));
     });

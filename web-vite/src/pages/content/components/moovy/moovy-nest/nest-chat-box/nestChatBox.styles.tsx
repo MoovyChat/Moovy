@@ -87,14 +87,19 @@ export const StyledUserMessage = styled.div<Props>`
   }
   .sender {
     align-self: flex-end;
-    background-color: #007bff;
     align-items: flex-end;
-    border-radius: 16px 16px 0 16px;
+    background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+    border: none;
+    border-radius: 15px 15px 0 15px;
     color: white;
-    margin-bottom: 8px;
-    max-width: 70%;
-    padding: 8px 16px;
+    margin-bottom: 12px;
+    margin-right: 10px;
+    max-width: 75%;
+    padding: 10px 20px;
     position: relative;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    line-height: 24px;
   }
   .one-emoji {
     background-color: transparent;
@@ -162,6 +167,7 @@ export const StyledUserMessage = styled.div<Props>`
       justify-content: flex-start;
       align-items: center;
       line-height: 1.6;
+      word-break: break-word;
     }
   }
 `;

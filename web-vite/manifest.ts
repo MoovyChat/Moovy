@@ -29,7 +29,6 @@ const manifest: chrome.runtime.ManifestV3 = {
         "*://www.netflix.com/*",
         "https://*.moovychat.com/*",
         "https://*.aha.video/*",
-        "*://localhost/*",
       ],
       js: ["src/pages/content/index.js", "netflix-categories.js"],
       // KEY for cache invalidation
@@ -50,7 +49,6 @@ const manifest: chrome.runtime.ManifestV3 = {
         "*://www.netflix.com/*",
         "https://*.aha.video/*",
         "https://*.moovychat.com/*",
-        "*://localhost/*",
       ],
     },
   ],
@@ -59,14 +57,12 @@ const manifest: chrome.runtime.ManifestV3 = {
       "*://www.netflix.com/*",
       "https://*.aha.video/*",
       "https://*.moovychat.com/*",
-      "*://localhost/*",
     ],
   },
   host_permissions: [
     "*://www.netflix.com/*",
     "https://*.aha.video/*",
     "https://*.moovychat.com/*",
-    "*://localhost/*",
   ],
   oauth2: {
     client_id:

@@ -239,9 +239,7 @@ export const insertReplyChanges = (
 
             let newNodes = [newReply, ...existingReplies];
             newNodes = _.uniqBy(newNodes, "id");
-            const newTotalCount = data.getCommentReplies?.totalCount
-              ? data.getCommentReplies.totalCount + 1
-              : 1;
+            const newTotalCount = data.getCommentReplies?.totalCount;
             const newEdges = newNodes.map((node) => ({
               __typename: "ReplyEdge",
               cursor: node.id,

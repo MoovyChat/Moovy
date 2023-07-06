@@ -319,7 +319,28 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       });
     sendResponse({ tab: sender.tab?.id });
   } else if (msg.type === "OPEN_LINK") {
-    chrome.tabs.create({ url: msg.url });
+    // Extract domain from url
+    const urlDomain = new URL(msg.url).hostname;
+
+    // Get all tabs
+    chrome.tabs.query({}, (tabs) => {
+      // Find tab with same domain and exact URL
+      const sameUrlTab = tabs.find((tab) => tab.url === msg.url);
+      const sameDomainTab = tabs.find(
+        (tab) => new URL(tab.url).hostname === urlDomain
+      );
+
+      // If exact URL found, switch to that tab.
+      // If not, but same domain found, update the tab.
+      // If none found, create new tab
+      if (sameUrlTab) {
+        chrome.tabs.update(sameUrlTab.id, { active: true });
+      } else if (sameDomainTab) {
+        chrome.tabs.update(sameDomainTab.id, { url: msg.url, active: true });
+      } else {
+        chrome.tabs.create({ url: msg.url, active: true });
+      }
+    });
   }
   return true;
 });

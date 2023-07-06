@@ -30,6 +30,7 @@ import EmojiPicker from "../../../../../components/emoji-picker/emojiPicker";
 import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
 import { NEST_TYPE } from "../../../../../helpers/enums";
 import {
+  sliceSetIsGifOpen,
   sliceSetNestType,
   sliceSetNestVisibility,
 } from "../../../../redux/slices/nestSlice";
@@ -62,7 +63,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const roomId = useAppSelector((state) => state.socket.roomId);
   const roomName = useAppSelector((state) => state.socket.roomName);
   const [isSmileyOpen, openSmiley] = useState<boolean>(false);
-  const [isGifOpen, openGif] = useState<boolean>(false);
+  const isGifOpen = useAppSelector((state) => state.nest.isGifOpen);
   const [usersTyping, setUsersTyping] = useState([]);
   const dispatch = useAppDispatch();
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -206,7 +207,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
         dispatch(sliceSetIsTextAreaClicked(false));
       });
       openSmiley(() => false);
-      openGif(() => false);
+      dispatch(sliceSetIsGifOpen(false));
     }
   };
 
@@ -234,7 +235,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
 
   const handleGifOpen: MouseEventHandler<SVGElement> = (e) => {
     e.stopPropagation();
-    openGif((open) => !open);
+    dispatch(sliceSetIsGifOpen(!isGifOpen));
     if (isGifOpen) {
       batch(() => {
         dispatch(sliceSetNestVisibility(false));
