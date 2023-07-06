@@ -24,6 +24,7 @@ import ShowLikes from '../show-follow/showLikes';
 import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
+import ThemeWindow from '../open-theme/themeWindow';
 
 const Popup = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -62,6 +63,8 @@ const Popup = () => {
         return <ShowFollow />;
       case popupStates.OPEN_LIKES:
         return <ShowLikes />;
+      case popupStates.OPEN_THEME:
+        return <ThemeWindow />;
       case popupStates.DELETE_COMMENT:
         return <DeleteComment type={DeleteCommentTypes.COMMENT} />;
       case popupStates.DELETE_REPLY:

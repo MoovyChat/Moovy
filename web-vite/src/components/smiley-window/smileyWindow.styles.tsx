@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const SmileyWindowParent = styled.div`
   position: absolute;
@@ -123,6 +123,57 @@ export const SmileyWindowParent = styled.div`
     }
     to {
       opacity: 1;
+    }
+  }
+`;
+
+export const StyledFreqEmoji = styled.div`
+  .section {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    animation: slideFromTop 0.3s linear forwards;
+
+    .title {
+      padding: 10px;
+    }
+    .wn-suggestions {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      .word {
+        font-weight: 700;
+        font-size: 1.2em;
+        :hover {
+          cursor: pointer;
+          transform: scale(1.1);
+          transition: transform 0.5s;
+        }
+      }
+    }
+
+    .emojis {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+    .emoji-child {
+      flex: 1 0 20%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    @keyframes slideFromTop {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   }
 `;

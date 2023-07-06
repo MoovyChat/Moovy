@@ -5,6 +5,7 @@ const movieState: Movie = {
   id: "",
   name: "",
   platformId: 1,
+  platform: "",
   totalCommentsCountOfMovie: 0,
   commentsLoadedCount: 0,
   likesCount: 0,
@@ -45,7 +46,11 @@ const MovieSlice = createSlice({
         titleId: movieObject.titleId,
         viewsCount: movieObject.viewsCount,
         totalCommentsCountOfMovie: movieObject.commentCount,
+        parentTitleName: movieObject.parentTitleName,
       };
+    },
+    sliceSetPlatform: (state, action) => {
+      return { ...state, platform: action.payload };
     },
     sliceAddMovieId: (state, action) => {
       state.id = action.payload;
@@ -81,6 +86,7 @@ const MovieSlice = createSlice({
 export const {
   sliceAddMovie,
   sliceAddMovieId,
+  sliceSetPlatform,
   sliceSetPastLoadedCount,
   sliceAddMovieName,
   sliceSetLoadNew,

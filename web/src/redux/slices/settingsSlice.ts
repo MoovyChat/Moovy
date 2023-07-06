@@ -3,17 +3,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import { themes } from '../../constants';
 
 export const settingsState = {
-  theme: themes.DARK,
+  theme: themes.MIDNIGHT_BLUE,
 };
 
 const SettingsSlice = createSlice({
   name: 'settings',
   initialState: settingsState,
   reducers: {
-    sliceSetTheme: (state, action: { payload: boolean }) => {
+    sliceSetTheme: (state, action) => {
       return {
         ...state,
-        theme: action.payload ? themes.DARK : themes.LIGHT,
+        theme: action.payload,
       };
     },
   },

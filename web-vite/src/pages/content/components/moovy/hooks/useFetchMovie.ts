@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useUpdateMovieViewCountMutation,
   useGetMovieQuery,
@@ -8,6 +8,8 @@ import { Movie } from "../../../../../helpers/interfaces";
 import { useAppDispatch } from "../../../../redux/hooks";
 import {
   sliceSetIsMovieExists,
+  sliceSetIsMovieLoaded,
+  sliceSetLoadingText,
   sliceValidateMovieLoading,
 } from "../../../../redux/slices/loading/loadingSlice";
 import {
@@ -15,18 +17,29 @@ import {
   sliceAddMovie,
   sliceUpdateViewsCount,
 } from "../../../../redux/slices/movie/movieSlice";
+import { getMovieIdFromURL } from "../contentScript.utils";
 
 export const useFetchMovie = (movieId: string) => {
+  const [mid, setMovieId] = useState<string>(movieId);
   const [movie, setMovie] = useState<Movie | null>(null);
   const dispatch = useAppDispatch();
   const [, incrementMovieViewCount] = useUpdateMovieViewCountMutation();
   const [getMovieInfo] = useGetMovieQuery({
-    variables: { mid: movieId },
+    variables: { mid: mid },
     pause: isServerSide(),
   });
 
+  useEffect(() => {
+    const fetchUrl = async () => {
+      const url = window.location.href;
+      const id = await getMovieIdFromURL(url);
+      setMovieId(() => id);
+    };
+    fetchUrl();
+  }, [movieId]);
+
   useMemo(() => {
-    if (!movieId) return;
+    if (!mid) return;
     if (movie) return;
     const { data, error, fetching } = getMovieInfo;
     if (error) {
@@ -38,6 +51,10 @@ export const useFetchMovie = (movieId: string) => {
       if (_data) {
         dispatch(sliceAddMovie(_data));
         dispatch(sliceValidateMovieLoading(true));
+        dispatch(sliceSetIsMovieLoaded(true));
+        dispatch(sliceSetIsMovieExists(true));
+
+        dispatch(sliceSetLoadingText(`Loading ${_data.name}`));
         // Increase views count
         incrementMovieViewCount({ mid: _data.id }).then((res) => {
           const { data } = res;
@@ -51,8 +68,8 @@ export const useFetchMovie = (movieId: string) => {
         setMovie(() => _data);
       }
     }
-  }, [getMovieInfo, movieId]);
+  }, [getMovieInfo, mid]);
 
-  if (!movieId) return null;
+  if (!mid) return null;
   return movie;
 };

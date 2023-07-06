@@ -1,43 +1,42 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { addBorder, applyFilter } from "./videoStyles/videoStyles.help";
-
 import CommentButton from "./commentButton/commentButton";
 
-import { getVideoElement } from "./contentScript.utils";
+import {
+  getMovieIdFromURL,
+  getVideoElement,
+  getVideoPlatform,
+} from "./contentScript.utils";
 
 import { useFetchMovie } from "./hooks/useFetchMovie";
 
 import { withUrqlClient } from "next-urql";
-import { User, filterType } from "../../../../helpers/interfaces";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useGetUserQuery } from "../../../../generated/graphql";
 import {
   BOTTOMS_CONTROL,
   SKIP_BUTTON,
   isServerSide,
 } from "../../../../helpers/constants";
+import { User } from "../../../../helpers/interfaces";
 import {
-  sliceResetSettings,
-  sliceSetSmoothWidth,
-  sliceSetVideoSize,
-} from "../../../redux/slices/settings/settingsSlice";
+  getStoredCheckedStatus,
+  getStoredUserLoginDetails,
+} from "../../../../helpers/storage";
+import { urqlClient } from "../../../../helpers/urql/urqlClient";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import {
+  sliceSetIsMovieLoaded,
+  sliceSetLoadingText,
   sliceSetNetworkError,
   sliceValidateMovieLoading,
 } from "../../../redux/slices/loading/loadingSlice";
-import {
-  getStoredBorder,
-  getStoredCheckedStatus,
-  getStoredFilterValues,
-  getStoredResizeValue,
-  getStoredUserLoginDetails,
-  getStoredVideoFilters,
-} from "../../../../helpers/storage";
-import { sliceAddUser } from "../../../redux/slices/user/userSlice";
 import { sliceAddMovieId } from "../../../redux/slices/movie/movieSlice";
+import {
+  sliceResetSettings,
+  sliceSetSmoothWidth,
+} from "../../../redux/slices/settings/settingsSlice";
+import { sliceAddUser } from "../../../redux/slices/user/userSlice";
 import { StyledStart } from "./start.styles";
-import { urqlClient } from "../../../../helpers/urql/urqlClient";
 
 interface Props {
   userDetails?: User;
@@ -66,13 +65,22 @@ const Start: React.FC<Props> = () => {
   );
 
   useEffect(() => {
+    const fetchUrl = async () => {
+      const url = window.location.href;
+      const id = await getMovieIdFromURL(url);
+      setMovieId(() => id);
+    };
+    fetchUrl();
+  }, [movieId]);
+
+  useEffect(() => {
     oldIntervalIds.forEach((interval) => clearInterval(interval));
   }, []);
 
   useEffect(() => {
     // Clear redux cache.
-
     dispatch(sliceResetSettings());
+    dispatch(sliceSetIsMovieLoaded(false));
     dispatch(sliceValidateMovieLoading(false));
     getStoredUserLoginDetails().then((res) => {
       setU(res);
@@ -96,21 +104,42 @@ const Start: React.FC<Props> = () => {
 
     const handleMutation = (mutationsList: MutationRecord[]) => {
       for (const mutation of mutationsList) {
+        const targetElement = mutation.target as HTMLElement;
+        const currentUrl = window.location.href;
+        let platform = getVideoPlatform(currentUrl);
+        const skipButtons = document.querySelectorAll(SKIP_BUTTON);
+
+        if (skipButtons.length > 0 && autoSkipValue) {
+          skipButtons.forEach((button: Element) => {
+            (button as HTMLElement).click();
+          });
+        }
+        // For Netflix
         if (
+          platform === "netflix" &&
           mutation.type === "attributes" &&
           mutation.attributeName === "style"
         ) {
           const bottomControls = document.querySelector(BOTTOMS_CONTROL);
-          const skipButton = document.querySelector(
-            SKIP_BUTTON
-          ) as HTMLElement | null;
-          if (skipButton && autoSkipValue) {
-            skipButton.click();
-          }
           if (bottomControls) {
             setIsBottomControlsVisible(() => true);
           } else {
             setIsBottomControlsVisible(() => false);
+          }
+        }
+        // For Aha
+        else if (
+          platform === "aha" &&
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class" &&
+          typeof targetElement.className === "string" &&
+          targetElement.className.includes("player-container__controls")
+        ) {
+          let className = targetElement.className as string;
+          if (className.includes("player-container__show")) {
+            setIsBottomControlsVisible(() => true);
+          } else {
+            setIsBottomControlsVisible(() => true);
           }
         }
       }
@@ -131,8 +160,8 @@ const Start: React.FC<Props> = () => {
       }
       startObserver();
     };
-
     startObserver();
+    // You might need to add dependencies here depending on your React component
 
     // Listen for a refresh message from the pop-up
     chrome.runtime.onMessage.addListener((message) => {
@@ -147,55 +176,61 @@ const Start: React.FC<Props> = () => {
     };
   }, []);
 
-  // Set the pre-saved video styles.
+  //Set the pre-saved video styles.
   useEffect(() => {
     async function applyVideoStyles() {
-      const playerView = document.querySelector('[data-uia="player"]');
-      const canvas = playerView as HTMLElement;
+      // const playerView = document.querySelector('[data-uia="player"]');
+      // const canvas = playerView as HTMLElement;
       // Get selected filters from the local storage.
-      getStoredFilterValues().then((filters) => setFilterValues(filters));
+      // getStoredFilterValues().then((filters) => setFilterValues(filters));
       // Get stored resize value.
-      getStoredResizeValue().then((res) => {
-        dispatch(sliceSetVideoSize(res));
-        if (canvas && res !== "100") {
-          getStoredBorder().then((border) => {
-            addBorder(canvas, res, border);
-          });
-        }
-      });
+      // getStoredResizeValue().then((res) => {
+      //   dispatch(sliceSetVideoSize(res));
+      //   if (canvas && res !== "100") {
+      //     getStoredBorder().then((border) => {
+      //       addBorder(canvas, res, border);
+      //     });
+      //   }
+      // });
       getVideoElement().then((res) => {
         setVideoElem(res[0]);
       });
     }
     const interval = setInterval(() => {
       applyVideoStyles().then(() => {
-        videoElem && filterValues && applyFilter(filterValues, videoElem);
+        // videoElem && filterValues && applyFilter(filterValues, videoElem);
       });
       if (videoElem) clearInterval(interval);
     }, 500);
     return () => clearInterval(interval);
   }, [movieId, videoElem]);
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (!sender.tab && request.type === "SET_MOVIE_ID") {
-      // Clear redux cache.
-
-      dispatch(sliceResetSettings());
-      dispatch(sliceValidateMovieLoading(false));
-      setMovieId(() => request.movieId + "");
-      dispatch(sliceSetSmoothWidth(0));
-      sendResponse({
-        data: "Movie ID got reset",
-      });
-    } else if (!sender.tab && request.type === "RESET_MOVIE_ID") {
-      setMovieId(() => request.movieId + "");
-      dispatch(sliceSetSmoothWidth(0));
-      sendResponse({
-        data: "Movie ID got reset",
-      });
-    }
-    return true;
-  });
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.type === "SET_MOVIE_ID") {
+        // Clear redux cache.
+        dispatch(sliceResetSettings());
+        dispatch(sliceValidateMovieLoading(false));
+        dispatch(sliceSetNetworkError(false));
+        setMovieId(() => request.movieId);
+        dispatch(sliceSetSmoothWidth(0));
+        dispatch(sliceSetLoadingText(""));
+        sendResponse({
+          data: "Movie ID got reset",
+        });
+      } else if (request.type === "RESET_MOVIE_ID") {
+        setMovieId(() => request.movieId);
+        dispatch(sliceSetLoadingText(""));
+        dispatch(sliceValidateMovieLoading(false));
+        dispatch(sliceSetSmoothWidth(0));
+        dispatch(sliceSetNetworkError(false));
+        sendResponse({
+          data: "Movie ID got reset",
+        });
+      }
+      return true;
+    });
+  }, []);
 
   useEffect(() => {
     if (error) {

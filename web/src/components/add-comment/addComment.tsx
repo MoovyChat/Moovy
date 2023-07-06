@@ -175,7 +175,7 @@ const AddComment: React.FC<props> = ({ type }) => {
                 <div className="icon">
                   <MdEmojiEmotions size={15} />
                 </div>
-                <div className="text">Emoji</div>
+                <div className="option-text">Emoji</div>
               </div>
             </FocusWindow>
             <div
@@ -188,7 +188,7 @@ const AddComment: React.FC<props> = ({ type }) => {
               <div className="icon">
                 <MdCode size={15} />
               </div>
-              <div className="text">Spoiler</div>
+              <div className="option-text">Spoiler</div>
             </div>
             <div
               className="chip down"
@@ -201,7 +201,7 @@ const AddComment: React.FC<props> = ({ type }) => {
               <div className="icon">
                 <AiOutlineNumber size={15} />
               </div>
-              <div className="text">{text.length}/300</div>
+              <div className="option-text">{text.length}/300</div>
             </div>
           </div>
           {type === AddCommentTypes.COMMENT && comment && (

@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyledToxicitySlider } from './toxicitySlider.styles';
+import React from "react";
+import { StyledToxicitySlider } from "./toxicitySlider.styles";
 
 interface ToxicitySliderProps {
   text: string;
@@ -13,21 +13,23 @@ const ToxicitySlider = ({ text, scores }: ToxicitySliderProps) => {
   };
 
   return (
-    <StyledToxicitySlider className='toxicity-slider'>
+    <StyledToxicitySlider className="toxicity-slider">
       {Object.entries(scores).map(([label, score]) => (
-        <div className='toxicity-container' key={label}>
-          <div className='toxicity-slider-label'>{text}</div>
-          <div key={label} className='toxicity-slider-row'>
-            <div className='toxicity-slider-value'>
-              {(score * 100).toFixed(1)}%
+        <div className="toxicity-container" key={label}>
+          <div className="toxicity-slider-label">{text}</div>
+          <div key={label} className="toxicity-slider-row">
+            <div className="toxicity-slider-value">
+              {(score * 100).toFixed(1)}
             </div>
-            <div
-              className='toxicity-slider-bar'
-              style={{
-                backgroundColor: getScoreColor(score),
-                width: `${score * 100}%`,
-              }}
-            />
+            <div className="toxicity-slider-bar">
+              <div
+                className="toxic-slider-child"
+                style={{
+                  backgroundColor: getScoreColor(score),
+                  width: `${score * 100}%`,
+                }}
+              />
+            </div>
           </div>
         </div>
       ))}

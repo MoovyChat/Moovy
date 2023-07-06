@@ -6,11 +6,10 @@ import packageJson from "./package.json";
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
   short_name: "MoovyChat",
-  name: "Moovy Chat",
-  description:
-    "Enjoy the Streaming now with the Comments. Available for Netflix.",
+  name: "MoovyChat: Nest, Sync, Chat",
+  description: packageJson.description,
+  version: packageJson.version,
   key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkytqfusvzuhsXy53QIiGy1CrMg2GksVqFRjtIJeU/NvyVc2/B6Ly8pdjUbQ1sHJyxqm0ueAjN5aug9NyEdWBgmXHMIlkxsnD2VYwyZ3CWGfksLeYl8WCRl3eUbWgshnz7AZbRFOb8KLzIGuYU3CRMDfs6EsoPENXIRIH44RfaWlA2U1m/SD7TNE8tYBePBLf7bNzPBWiZ3J6g5bG8gJBc/DUsshA66OXbbu1ypwxPIMPf0ZjIotppAZ7y+kTlt4sqV1lKoiREABwIoZX2P64nxHTgMxCGjbgYqnPYGtgUKDL6kfmg411QwWiGm16KwHgCsusMVXjCRPPmtybiINEQIDAQAB",
-  version: "1.0.8",
   permissions: ["identity", "storage", "tabs", "scripting", "system.display"],
   background: {
     service_worker: "src/pages/background/index.js",
@@ -29,9 +28,9 @@ const manifest: chrome.runtime.ManifestV3 = {
       matches: [
         "*://www.netflix.com/*",
         "https://*.moovychat.com/*",
-        "*://localhost/*",
+        "https://*.aha.video/*",
       ],
-      js: ["src/pages/content/index.js"],
+      js: ["src/pages/content/index.js", "netflix-categories.js"],
       // KEY for cache invalidation
       css: ["assets/css/Style.chunk.css"],
     },
@@ -40,6 +39,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     {
       resources: [
         "netflix.js",
+        "netflix-categories.js",
         "assets/img/*.*",
         "assets/img/moovy/*.*",
         "assets/js/*.js",
@@ -47,22 +47,22 @@ const manifest: chrome.runtime.ManifestV3 = {
       ],
       matches: [
         "*://www.netflix.com/*",
+        "https://*.aha.video/*",
         "https://*.moovychat.com/*",
-        "*://localhost/*",
       ],
     },
   ],
   externally_connectable: {
     matches: [
       "*://www.netflix.com/*",
+      "https://*.aha.video/*",
       "https://*.moovychat.com/*",
-      "*://localhost/*",
     ],
   },
   host_permissions: [
     "*://www.netflix.com/*",
+    "https://*.aha.video/*",
     "https://*.moovychat.com/*",
-    "*://localhost/*",
   ],
   oauth2: {
     client_id:

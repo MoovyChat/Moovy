@@ -20,10 +20,7 @@ import {
 import { NavLink } from 'react-router-dom';
 import ProfilePic from '../../../components/profilePic/profilePic';
 import { Users } from '../../../generated/graphql';
-import { lazyIconMd } from '../../../lazyLoad';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
-import { sliceSetTheme } from '../../../redux/slices/settingsSlice';
-import { themes } from '../../../constants';
 import { useAppSelector } from '../../../redux/hooks';
 
 type props = {
@@ -34,11 +31,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   const user = useAppSelector(state => state.user);
   const theme = useAppSelector(state => state.settings.theme);
   const dispatch = useDispatch();
-  const themeHandler: React.MouseEventHandler<HTMLDivElement> = e => {
-    e.stopPropagation();
-    const value = theme === themes.DARK ? false : true;
-    dispatch(sliceSetTheme(value));
-  };
+
   const iconSize = 25;
   // log changed data
   useEffect(() => {
@@ -84,13 +77,13 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon feed">
             <MdDynamicFeed size={iconSize} />
           </div>
-          <div className="text">Feed</div>
+          <div className="panel-text">Feed</div>
         </NavLink>
         <NavLink to="catalog" className="option" onClick={linkClickHandler}>
           <div className="icon catalog">
             <MdStorage size={iconSize} />
           </div>
-          <div className="text">Catalog</div>
+          <div className="panel-text">Catalog</div>
         </NavLink>
         <NavLink
           to={`profile/${user.nickname}`}
@@ -100,7 +93,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon p">
             <MdPerson size={iconSize} />
           </div>
-          <div className="text">Profile</div>
+          <div className="panel-text">Profile</div>
         </NavLink>
         <NavLink
           to={`activity/${user.nickname}/favorites`}
@@ -110,7 +103,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon favorites">
             <MdFavorite size={iconSize} />
           </div>
-          <div className="text">Favorites</div>
+          <div className="panel-text">Favorites</div>
         </NavLink>
         <NavLink
           to={`comments/${user.nickname}`}
@@ -120,7 +113,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon comments">
             <MdModeComment size={iconSize} />
           </div>
-          <div className="text">Comments</div>
+          <div className="panel-text">Comments</div>
         </NavLink>
         <NavLink
           to={`replies/${user.nickname}`}
@@ -130,7 +123,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon replies">
             <MdOutlineReply size={iconSize} />
           </div>
-          <div className="text">Replies</div>
+          <div className="panel-text">Replies</div>
         </NavLink>
         <NavLink
           to="notifications"
@@ -140,25 +133,8 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="icon notifications">
             <MdNotificationsActive size={iconSize} />
           </div>
-          <div className="text">Notifications</div>
+          <div className="panel-text">Notifications</div>
         </NavLink>
-        <div className="option" onClick={themeHandler}>
-          {theme === themes.DARK ? (
-            <React.Fragment>
-              <div className="icon">
-                <MdOutlineWbSunny size={iconSize} />
-              </div>
-              <div className="text">Light</div>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <div className="icon">
-                <MdNightlight size={iconSize} />
-              </div>
-              <div className="text">Dark</div>
-            </React.Fragment>
-          )}
-        </div>
       </div>
       <StyledLinks>
         <div

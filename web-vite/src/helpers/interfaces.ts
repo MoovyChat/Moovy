@@ -1,3 +1,5 @@
+import { Users } from "../generated/graphql";
+
 export interface User {
   id: string;
   name: string;
@@ -27,6 +29,7 @@ export interface Movie {
   id: string;
   name: string;
   platformId?: number;
+  platform?: string;
   totalCommentsCountOfMovie?: number;
   commentsLoadedCount?: number;
   totalRepliesCountOfMovie?: number;
@@ -41,6 +44,7 @@ export interface Movie {
   updatedAt?: any;
   fetchingComments?: boolean;
   initialLoadedTimeStamp?: string;
+  parentTitleName?: string;
   pastLoadedCount?: number;
   loadNew?: number;
   runtime?: number | null | undefined;
@@ -115,7 +119,15 @@ export interface SettingsInterface {
   isPopSlideOpen: boolean;
   popSlideContentType: string;
   popSlideUserId: string;
+  chatMode: "global" | "nest";
   popSlideData: { data: any };
+}
+
+export interface AvailableRoom {
+  roomId: string;
+  roomName: string;
+  users: { id: string; isAdmin: boolean; user: Users }[];
+  movie: Movie;
 }
 
 export interface textMap {
@@ -134,6 +146,7 @@ export interface loadingInterface {
   isNewCommentsLoaded: boolean;
   isNextCommentsLoaded: boolean;
   networkError: boolean;
+  networkMessage: string;
 }
 
 export interface borderType {

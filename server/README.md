@@ -13,18 +13,18 @@ The requests are sent to `graphql` server https://server.moovychat.com/graphql.
 
 ### Quick Deploy (Update versions every time)
 
-Current deployed version: 0.0.6
-Next version: 0.0.7
+Current deployed version: 0.1.4
+Next version: 0.1.5
 
 ```
 docker login (kishore189/Chandra189)
-docker build -t kishore189/moovychat:0.0.7 .
-docker push kishore189/moovychat:0.0.7
+docker build -t kishore189/moovychat:0.1.5 .
+docker push kishore189/moovychat:0.1.5
 
 ssh root@137.184.201.17 (password: moovychat)
-docker pull kishore189/moovychat:0.0.7
-docker tag kishore189/moovychat:0.0.7 dokku/api:0.0.7
-dokku deploy api 0.0.7
+docker pull kishore189/moovychat:0.1.5
+docker tag kishore189/moovychat:0.1.5 dokku/api:0.1.5
+dokku deploy api 0.1.5
 ```
 
 ## Access POSTGRES inside dokku
@@ -56,9 +56,11 @@ BEGIN
 END $$;
 
 ```
+
 - Delete all the tables in the database
+
 ```
-DO $$ 
+DO $$
 DECLARE
    tbl_name text;
 BEGIN
@@ -174,7 +176,7 @@ USER node
 ### Pre-requisites inside the vps before using the docker.
 
 - SSH to the server. `ssh root@<IPv4_Address_of_the_droplet>`
-- Create an app inside dokku `create app:create <$APP_NAME>`
+- Create an app inside dokku `dokku apps:create <$APP_NAME>`
 - Install the plugins for postgres and redis.
 
 ```

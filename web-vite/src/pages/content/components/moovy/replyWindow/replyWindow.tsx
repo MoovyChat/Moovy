@@ -83,7 +83,7 @@ const ReplyWindow: React.FC<props> = ({
       const nodes = _data.nodes as Reply[];
       setReplies(() => nodes);
       setHasMore(() => _data.pageInfo.hasNextPage);
-      setRepliesCount(() => _data.totalCount);
+      setRepliesCount(() => Math.max(_data.totalCount, nodes.length));
     }
   }, [res]);
 

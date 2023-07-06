@@ -8,11 +8,10 @@ import {
 
 import { Image } from '../Image/image';
 import { ImageStackParent } from './imageStack.style';
-import MoovyIcon from '../../svgs/moovy-logo-white.jpg';
 import Tooltip from '../tooltip/tooltip';
 import { Users } from '../../generated/graphql';
 import { batch } from 'react-redux';
-import { popupStates } from '../../constants';
+import { LOGO_128, popupStates } from '../../constants';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 
@@ -88,7 +87,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               data="Empty Slot"
               dir={DIRECTION.BOTTOM}
             >
-              <Image src={MoovyIcon} alt="profile" />
+              <Image src={LOGO_128} alt="profile" />
             </Tooltip>
           )}
         </div>
@@ -118,7 +117,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               data="Empty Slot"
               dir={DIRECTION.BOTTOM}
             >
-              <Image src={MoovyIcon} alt="profile" />
+              <Image src={LOGO_128} alt="profile" />
             </Tooltip>
           )}
         </div>
@@ -148,7 +147,7 @@ const ImageStack: React.FC<props> = ({ followers, following, count, user }) => {
               data="Empty Slot"
               dir={DIRECTION.BOTTOM}
             >
-              <Image src={MoovyIcon} alt="profile" />
+              <Image src={LOGO_128} alt="profile" />
             </Tooltip>
           )}
         </div>

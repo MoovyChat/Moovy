@@ -1,20 +1,11 @@
 import { ChatAreaParent, Parent } from "./chatArea.styles";
 
-import React, {
-  Dispatch,
-  FocusEventHandler,
-  KeyboardEventHandler,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { FocusEventHandler, useEffect, useRef, useState } from "react";
 
-import { AnyAction } from "redux";
 import _ from "lodash";
 
 import { withUrqlClient } from "next-urql";
-import { User, CommentInfo, textMap } from "../../helpers/interfaces";
+import { textMap } from "../../helpers/interfaces";
 import { urqlClient } from "../../helpers/urql/urqlClient";
 import { getFormattedWordsArray } from "../../helpers/utilities";
 import useDetoxify from "../../pages/content/components/moovy/hooks/useDetoxify";
@@ -23,26 +14,15 @@ import { useAppSelector, useAppDispatch } from "../../pages/redux/hooks";
 import {
   sliceSetIsTextAreaFocused,
   sliceSetIsTextAreaClicked,
-  sliceSetTextAreaMessage,
 } from "../../pages/redux/slices/textArea/textAreaSlice";
+import { getEventListeners } from "events";
 
 interface props {
-  postComment: (
-    user: User | undefined,
-    dispatch: Dispatch<AnyAction>,
-    replyWindowResponse: CommentInfo | undefined,
-    setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>
-  ) => Promise<void>;
-  replyWindowResponse: CommentInfo | undefined;
-  setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>;
+  handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement>;
+  handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
-const ChatArea: React.FC<props> = ({
-  postComment,
-  replyWindowResponse,
-  setReplyClickResponse,
-}) => {
+const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
   const user = useAppSelector((state) => state.user);
-
   const text = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
@@ -127,24 +107,17 @@ const ChatArea: React.FC<props> = ({
     };
   }, []);
 
+  useEffect(() => {
+    document.querySelector("video").addEventListener("pause", function (e) {
+      if (document.activeElement.nodeName === "TEXTAREA") {
+        (e.target as any).play();
+      }
+    });
+  }, []);
+
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
     e.stopPropagation();
     dispatch(sliceSetIsTextAreaFocused(true));
-  };
-
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.stopPropagation();
-      e.isPropagationStopped();
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      postComment(user, dispatch, replyWindowResponse, setReplyClickResponse);
-    } else if (
-      (e.key >= "a" && e.key <= "z") ||
-      (e.key >= "A" && e.key <= "Z")
-    ) {
-      e.stopPropagation();
-    }
   };
 
   const textAreaScrollListener: React.UIEventHandler<
@@ -170,15 +143,6 @@ const ChatArea: React.FC<props> = ({
     setFormattedTextMap(res);
   }, [text]);
 
-  const handleInputText: React.ChangeEventHandler<HTMLTextAreaElement> = async (
-    e
-  ) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const text = e.target.value;
-    dispatch(sliceSetTextAreaMessage(text));
-  };
-
   return (
     <Parent textAreaHeight={textAreaHeight}>
       <ChatAreaParent
@@ -197,7 +161,7 @@ const ChatArea: React.FC<props> = ({
         placeholder={placeholder}
         value={text}
         onKeyPress={handleKeyDown}
-        onChange={handleInputText}
+        onChange={handleInputChange}
       />
       <div id="text-area-background" className="text-area-background" ref={ref}>
         {formattedTextMap.map((value, index) => (

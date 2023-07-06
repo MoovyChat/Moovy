@@ -67,6 +67,7 @@ const MessageBox: React.FC<props> = ({
   const userFromRedux = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
+  const platform = useAppSelector((state) => state.movie.platform);
   // Redux: App dispatch hook.
   const dispatch = useAppDispatch();
   // React: useState hooks.
@@ -78,112 +79,104 @@ const MessageBox: React.FC<props> = ({
     dispatch(slicePopSlideContentType("smiley"));
   };
 
+  // Error handling
+  const handleDbError = (
+    error: any,
+    dispatch: Dispatch<AnyAction>,
+    message: string
+  ) => {
+    if (error.networkError) dispatch(sliceSetNetworkError(true));
+    dispatch(sliceSetToastVisible(true));
+    dispatch(
+      sliceSetToastBody({
+        icon: iconsEnum.ERROR,
+        message: message,
+      })
+    );
+  };
+
+  // Success handling
+  const handleSuccess = (dispatch: Dispatch<AnyAction>, message: string) => {
+    dispatch(sliceSetToastVisible(true));
+    dispatch(
+      sliceSetToastBody({
+        icon: iconsEnum.SUCCESS,
+        message: message,
+      })
+    );
+  };
+
+  // Creating reply
+  const createReply = (
+    user: User | undefined,
+    replyWindowResponse: CommentInfo | undefined,
+    text: string,
+    movieId: string
+  ) => {
+    return {
+      commentedUserId: user.id,
+      likesCount: 0,
+      repliesCount: 0,
+      commentedUserName: user?.nickname as string,
+      parentCommentId: replyWindowResponse.parentCommentId
+        ? replyWindowResponse.parentCommentId
+        : replyWindowResponse.id,
+      parentReplyId: replyWindowResponse.id,
+      parentRepliedUser: replyWindowResponse.commentedUserName,
+      message: text,
+      movieId: movieId,
+      platformId: platform === "netflix" ? 1 : 2,
+    } as ReplyInput;
+  };
+
+  // Creating comment
+  const createComment = (user: User, text: string, movieId: string) => {
+    return {
+      commentedUserId: user.id,
+      likesCount: 0,
+      message: text,
+      commentedUserName: user.nickname,
+      movieId: movieId,
+      platformId: platform === "netflix" ? 1 : 2,
+    };
+  };
+
   const postComment = async (
     user: User | undefined,
     dispatch: Dispatch<AnyAction>,
     replyWindowResponse: CommentInfo | undefined,
     setReplyClickResponse: Dispatch<SetStateAction<CommentInfo | undefined>>
   ) => {
-    if (replyWindowResponse) {
-      const newReply: ReplyInput = {
-        commentedUserId: userFromRedux.id,
-        likesCount: 0,
-        repliesCount: 0,
-        commentedUserName: userFromRedux?.nickname as string,
-        parentCommentId: replyWindowResponse.parentCommentId
-          ? replyWindowResponse.parentCommentId
-          : replyWindowResponse.id,
-        parentReplyId: replyWindowResponse.id,
-        parentRepliedUser: replyWindowResponse.commentedUserName,
-        message: text,
-        movieId: movieIdFromRedux,
-        platformId: 1,
-      };
-      if (text) {
-        // Adding replies to 'reply' collection in database.
-        insertReply({
-          options: newReply,
-        }).then((response) => {
+    if (text) {
+      if (replyWindowResponse) {
+        // Reply process
+        const newReply = createReply(
+          user,
+          replyWindowResponse,
+          text,
+          movieIdFromRedux
+        );
+        insertReply({ options: newReply }).then((response) => {
           const { data, error } = response;
-          if (error) {
-            if (error.networkError) dispatch(sliceSetNetworkError(true));
-            dispatch(sliceSetToastVisible(true));
-            dispatch(
-              sliceSetToastBody({
-                icon: iconsEnum.ERROR,
-                message: "Error adding Reply",
-              })
-            );
-          }
-          if (data) {
-            batch(() => {
-              dispatch(sliceSetToastVisible(true));
-              dispatch(
-                sliceSetToastBody({
-                  icon: iconsEnum.SUCCESS,
-                  message: "Reply added",
-                })
-              );
-            });
-          }
+          error
+            ? handleDbError(error, dispatch, "Error adding Reply")
+            : handleSuccess(dispatch, "Reply added");
           setIsReply(false);
           setReplyClickResponse(undefined);
         });
-        dispatch(sliceSetTextAreaMessage(""));
-      }
-    } else {
-      if (text && user) {
-        // Adding comments to 'comment' collection in database.
-        insertComment({
-          options: {
-            commentedUserId: user.id,
-            likesCount: 0,
-            message: text,
-            commentedUserName: user.nickname,
-            movieId: movieIdFromRedux,
-            platformId: 1,
-          },
-        }).then((response) => {
-          const { error, data } = response;
-          if (error) {
-            if (error.networkError) dispatch(sliceSetNetworkError(true));
-            dispatch(sliceSetToastVisible(true));
-            dispatch(
-              sliceSetToastBody({
-                icon: iconsEnum.ERROR,
-                message: "Error adding Comment",
-              })
-            );
-          }
-          if (data) {
-            const insertedComment = data?.insertComment;
-            if (!insertedComment) {
-              dispatch(sliceSetToastVisible(true));
-              dispatch(
-                sliceSetToastBody({
-                  icon: iconsEnum.ERROR,
-                  message: "Error adding Comment",
-                })
-              );
-            }
-            // Adds the new comment to redux store.
-            else
-              batch(() => {
-                dispatch(sliceSetPastLoadedCount(1));
-                dispatch(sliceSetToastVisible(true));
-                dispatch(
-                  sliceSetToastBody({
-                    icon: iconsEnum.SUCCESS,
-                    message: "Comment added",
-                  })
-                );
-              });
-          }
+      } else if (user) {
+        // Comment process
+        const newComment = createComment(user, text, movieIdFromRedux);
+        insertComment({ options: newComment }).then((response) => {
+          const { data, error } = response;
+          error
+            ? handleDbError(error, dispatch, "Error adding Comment")
+            : handleSuccess(dispatch, "Comment added");
           setIsReply(false);
           setReplyClickResponse(undefined);
         });
-        dispatch(sliceSetTextAreaMessage(""));
       }
+      dispatch(sliceSetTextAreaMessage(""));
     }
     dispatch(sliceSetIsTextAreaFocused(false));
     dispatch(sliceSetIsTextAreaClicked(false));
@@ -193,30 +186,69 @@ const MessageBox: React.FC<props> = ({
   useEffect(() => {
     if (replyWindowResponse) {
       setIsReply(true);
-      const parentComment = replyWindowResponse as CommentInfo;
+
       // GraphQL: Handle reply user data.
-      const referredUser = parentComment.commentedUserId;
-      if (referredUser) {
-        getUser({ uid: referredUser }).then((res) => {
-          const { data } = res;
-          const nickName = data?.getUserMut?.nickname;
-          nickName && dispatch(sliceSetTextAreaMessage(`@${nickName} `));
-          nickName && setRepliedUser(nickName);
+      const referredUserId = replyWindowResponse.commentedUserId;
+      if (referredUserId) {
+        getUser({ uid: referredUserId }).then((res) => {
+          const nickname = res.data?.getUserMut?.nickname;
+          if (nickname) {
+            dispatch(sliceSetTextAreaMessage(`@${nickname} `));
+            setRepliedUser(nickname);
+          }
         });
       }
     }
   }, [replyWindowResponse]);
+
+  const handleTextAreaClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.stopPropagation();
+      e.isPropagationStopped();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      postComment(
+        userFromRedux,
+        dispatch,
+        replyWindowResponse,
+        setReplyClickResponse
+      );
+    } else if (e.key === " ") {
+      e.stopPropagation();
+      const videoPlayer = document.querySelector("video");
+      if (videoPlayer && videoPlayer.paused) videoPlayer.play();
+    } else if (
+      (e.key >= "a" && e.key <= "z") ||
+      (e.key >= "A" && e.key <= "Z")
+    ) {
+      e.stopPropagation();
+    }
+  };
+
+  const handleInputChange: React.ChangeEventHandler<
+    HTMLTextAreaElement
+  > = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const text = e.target.value;
+    dispatch(sliceSetTextAreaMessage(text));
+  };
 
   return (
     <ChatTextBox className="chat-text-box" isReply={isReply}>
       <TextAreaIcon className="text-area-icon">
         <Profile profilePic={userFromRedux?.photoUrl}></Profile>
       </TextAreaIcon>
-      <MessageBoxParent>
+      <MessageBoxParent onClick={handleTextAreaClick}>
         <ChatArea
-          postComment={postComment}
-          replyWindowResponse={replyWindowResponse}
-          setReplyClickResponse={setReplyClickResponse}
+          handleKeyDown={handleKeyDown}
+          handleInputChange={handleInputChange}
         />
         {isReply ? (
           <ReplyTo>

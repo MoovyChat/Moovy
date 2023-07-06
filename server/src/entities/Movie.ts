@@ -9,16 +9,16 @@ import {
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+} from "typeorm";
+import { Field, Int, ObjectType } from "type-graphql";
 
-import { Comment } from './Comment';
-import { MovieStats } from './MovieStats';
-import { Platform } from './Platform';
-import { Reply } from './Reply';
-import { Title } from './Title';
-import { Users } from './Users';
-import { Visited } from './Visited';
+import { Comment } from "./Comment";
+import { MovieStats } from "./MovieStats";
+import { Platform } from "./Platform";
+import { Reply } from "./Reply";
+import { Title } from "./Title";
+import { Users } from "./Users";
+import { Visited } from "./Visited";
 
 @ObjectType()
 @Entity()
@@ -58,23 +58,23 @@ export class Movie extends BaseEntity {
   runtime: number;
 
   @Field(() => Int)
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 0 })
   likesCount: number;
 
   @Field(() => Int)
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 0 })
   commentCount: number;
 
   @Field(() => Int)
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 0 })
   viewsCount: number;
 
   @Field(() => Int)
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 0 })
   favCount: number;
 
   @Field(() => Int)
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 1 })
   platformId!: number;
 
   @Field()

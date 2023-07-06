@@ -1,4 +1,4 @@
-import { conn } from '../dataSource';
+import { conn } from "../dataSource";
 import {
   Arg,
   Field,
@@ -12,22 +12,22 @@ import {
   Resolver,
   Root,
   Subscription,
-} from 'type-graphql';
+} from "type-graphql";
 
-import { Comment } from '../entities/Comment';
-import { Movie } from '../entities/Movie';
-import { Users } from '../entities/Users';
-import { MoreThan } from 'typeorm';
-import { LIKES_AND_COMMENT } from '../constants';
-import { MovieStats } from '../entities/MovieStats';
-import { MovieCommentsConnection, MovieConnection } from '../connections';
-import { PageInfo } from '../pagination';
-import { Title } from '../entities/Title';
+import { Comment } from "../entities/Comment";
+import { Movie } from "../entities/Movie";
+import { Users } from "../entities/Users";
+import { MoreThan } from "typeorm";
+import { LIKES_AND_COMMENT } from "../constants";
+import { MovieStats } from "../entities/MovieStats";
+import { MovieCommentsConnection, MovieConnection } from "../connections";
+import { PageInfo } from "../pagination";
+import { Title } from "../entities/Title";
 
 @InputType()
 class EpisodeInfo {
-  @Field(() => Int, { defaultValue: 0 })
-  id: number;
+  @Field()
+  id: string;
   @Field({ nullable: true })
   title: string;
   @Field({ nullable: true })
@@ -52,6 +52,8 @@ class SeasonInfo {
 @InputType()
 class MovieFullInformation {
   @Field({ nullable: true })
+  id: string;
+  @Field({ nullable: true })
   title?: string;
   @Field({ nullable: true })
   type?: string;
@@ -73,6 +75,8 @@ class MovieFullInformation {
   year: number;
   @Field(() => [SeasonInfo], { nullable: true })
   seasons: SeasonInfo[];
+  @Field(() => Int, { defaultValue: 1 })
+  platformId: number;
 }
 @InputType()
 class MovieInput {
@@ -188,18 +192,18 @@ export class MovieResolver {
 
   @Query(() => PaginatedMovieComments, { nullable: true })
   async getCommentsOfTheMovie(
-    @Arg('mid') mid: string,
-    @Arg('time', { nullable: true })
+    @Arg("mid") mid: string,
+    @Arg("time", { nullable: true })
     time: string,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg("page", () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieComments | null> {
     const query = conn
       .getRepository(Comment)
-      .createQueryBuilder('comment')
-      .where('comment.movieId = :mid', { mid });
+      .createQueryBuilder("comment")
+      .where("comment.movieId = :mid", { mid });
     const totalCommentCount = await query.getCount();
-    if (time && time !== '') {
-      query.andWhere('comment.createdAt < :time', {
+    if (time && time !== "") {
+      query.andWhere("comment.createdAt < :time", {
         time: new Date(parseInt(time)),
       });
     }
@@ -207,11 +211,11 @@ export class MovieResolver {
     const comments = await query
       .offset((page - 1) * 10)
       .limit(10)
-      .orderBy('comment.createdAt', 'DESC')
+      .orderBy("comment.createdAt", "DESC")
       .getMany();
 
     const movie = await Movie.findOne({ where: { id: mid } });
-    if (!movie) throw new Error('Movie not found');
+    if (!movie) throw new Error("Movie not found");
     const id = `${mid}-${page}`;
     return {
       id,
@@ -228,28 +232,24 @@ export class MovieResolver {
 
   @Query(() => MovieCommentsConnection)
   async getCommentsOfTheMovieConnection(
-    @Arg('mid') mid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after', () => String, { nullable: true }) after: string
+    @Arg("mid") mid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after", () => String, { nullable: true }) after: string
   ): Promise<MovieCommentsConnection> {
     const query = conn
       .getRepository(Comment)
-      .createQueryBuilder('c')
-      .innerJoinAndSelect(
-        'c.movie',
-        'movie',
-        'movie.id = c.movieId'
-      )
-      .where('c.movieId = :mid', { mid });
+      .createQueryBuilder("c")
+      .innerJoinAndSelect("c.movie", "movie", "movie.id = c.movieId")
+      .where("c.movieId = :mid", { mid });
     const totalCount = await query.getCount();
     // If `after` cursor is provided, filter replies by cursor
     if (after) {
-      query.andWhere('c.updatedAt < :cursor', { cursor: new Date(after) });
+      query.andWhere("c.updatedAt < :cursor", { cursor: new Date(after) });
     }
 
     // Get `first` number of replies, plus 1 to check for next page
     const comments = await query
-      .orderBy('c.updatedAt', 'DESC')
+      .orderBy("c.updatedAt", "DESC")
       .take(first + 1)
       .getMany();
 
@@ -279,14 +279,14 @@ export class MovieResolver {
 
   @Query(() => MovieCommentObject)
   async getMovieComments(
-    @Arg('id') id: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg("id") id: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("page", () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<MovieCommentObject> {
     const query = conn
       .getRepository(Comment)
-      .createQueryBuilder('comment')
-      .where('comment.movieId = :id', { id });
+      .createQueryBuilder("comment")
+      .where("comment.movieId = :id", { id });
     const count = await query.getCount();
     const comments = await query
       .offset((page - 1) * limit)
@@ -302,8 +302,8 @@ export class MovieResolver {
 
   @Mutation(() => [Comment])
   async fetchNewComments(
-    @Arg('mid') mid: string,
-    @Arg('time') time: string
+    @Arg("mid") mid: string,
+    @Arg("time") time: string
   ): Promise<Comment[]> {
     const comments = await Comment.find({
       where: { movieId: mid, createdAt: MoreThan(new Date(parseInt(time))) },
@@ -312,12 +312,12 @@ export class MovieResolver {
   }
 
   @Query(() => Movie, { nullable: true })
-  getMovie(@Arg('mid') mid: string): Promise<Movie | null> {
+  getMovie(@Arg("mid") mid: string): Promise<Movie | null> {
     return Movie.findOne({ where: { id: mid } });
   }
 
   @Query(() => Movie, { nullable: true })
-  async getMovieById(@Arg('mid') mid: string): Promise<Movie | null> {
+  async getMovieById(@Arg("mid") mid: string): Promise<Movie | null> {
     const movie = await Movie.findOne({ where: { id: mid } });
     if (!movie) throw new Error(`Movie not found: ${mid}`);
     return movie;
@@ -325,22 +325,22 @@ export class MovieResolver {
 
   @Query(() => MovieConnection)
   async getMoviesByTitleId(
-    @Arg('tid') tid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after', () => String, { nullable: true }) after: string
+    @Arg("tid") tid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after", () => String, { nullable: true }) after: string
   ): Promise<MovieConnection> {
     const query = conn
       .getRepository(Movie)
-      .createQueryBuilder('movie')
-      .where('movie.titleId = :tid', { tid });
+      .createQueryBuilder("movie")
+      .where("movie.titleId = :tid", { tid });
     const totalCount = await query.getCount();
     // If `after` cursor is provided, filter replies by cursor
     if (after) {
-      query.andWhere('movie.id > :cursor', { cursor: after });
+      query.andWhere("movie.id > :cursor", { cursor: after });
     }
     // Get `first` number of replies, plus 1 to check for next page
     const titles = await query
-      .orderBy('movie.id', 'ASC')
+      .orderBy("movie.id", "ASC")
       .take(first + 1)
       .getMany();
     const nodes = titles.slice(0, first);
@@ -367,9 +367,9 @@ export class MovieResolver {
 
   @Query(() => PaginatedMovieStats, { nullable: true })
   async getFavTitles(
-    @Arg('uid') uid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg("uid") uid: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("page", () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieStats | null> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
@@ -377,12 +377,12 @@ export class MovieResolver {
     if (!user) return null;
     const query = conn
       .getRepository(MovieStats)
-      .createQueryBuilder('ms')
-      .where('ms.userId = :uid', { uid: user.id })
-      .andWhere('ms.favorite = :fav', { fav: true });
+      .createQueryBuilder("ms")
+      .where("ms.userId = :uid", { uid: user.id })
+      .andWhere("ms.favorite = :fav", { fav: true });
     const totalCount = await query.getCount();
     const stats = await query
-      .orderBy('ms.movieId', 'ASC')
+      .orderBy("ms.movieId", "ASC")
       .offset((page - 1) * limit)
       .limit(limit)
       .getMany();
@@ -396,9 +396,9 @@ export class MovieResolver {
 
   @Query(() => PaginatedMovieStats, { nullable: true })
   async getLikedTitles(
-    @Arg('uid') uid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg("uid") uid: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("page", () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<PaginatedMovieStats | null> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
@@ -406,12 +406,12 @@ export class MovieResolver {
     if (!user) return null;
     const query = conn
       .getRepository(MovieStats)
-      .createQueryBuilder('ms')
-      .where('ms.userId = :uid', { uid: user.id })
-      .andWhere('ms.like = :like', { like: true });
+      .createQueryBuilder("ms")
+      .where("ms.userId = :uid", { uid: user.id })
+      .andWhere("ms.like = :like", { like: true });
     const totalCount = await query.getCount();
     const stats = await query
-      .orderBy('ms.movieId', 'ASC')
+      .orderBy("ms.movieId", "ASC")
       .offset((page - 1) * limit)
       .limit(limit)
       .getMany();
@@ -425,7 +425,7 @@ export class MovieResolver {
 
   @Query(() => LikesAndComment, { nullable: true })
   async getMovieLikesAndCommentsCount(
-    @Arg('mid') mid: string,
+    @Arg("mid") mid: string,
     @PubSub() pubSub: PubSubEngine
   ): Promise<LikesAndComment> {
     const movie = await Movie.findOne({ where: { id: mid } });
@@ -437,14 +437,14 @@ export class MovieResolver {
   }
 
   @Query(() => LikesObject, { nullable: true })
-  async getMovieLikes(@Arg('mid') mid: string): Promise<LikesObject> {
+  async getMovieLikes(@Arg("mid") mid: string): Promise<LikesObject> {
     const qb = await conn
       .getRepository(Users)
-      .createQueryBuilder('user')
-      .innerJoinAndSelect('user.movieStats', 'stats', 'stats.movieId = :mid', {
+      .createQueryBuilder("user")
+      .innerJoinAndSelect("user.movieStats", "stats", "stats.movieId = :mid", {
         mid,
       })
-      .where('stats.like = :like', { like: true })
+      .where("stats.like = :like", { like: true })
       .getMany();
     const result = {
       id: mid,
@@ -455,32 +455,32 @@ export class MovieResolver {
   }
 
   @Query(() => Int, { nullable: true })
-  async getMovieFavoriteCount(@Arg('mid') mid: string): Promise<number> {
+  async getMovieFavoriteCount(@Arg("mid") mid: string): Promise<number> {
     const movie = await Movie.findOne({ where: { id: mid } });
     return movie?.favCount!;
   }
 
   @Mutation(() => Boolean, { nullable: true })
   async updateMovieTitle(
-    @Arg('mid') mid: string,
-    @Arg('name') name: string
+    @Arg("mid") mid: string,
+    @Arg("name") name: string
   ): Promise<boolean> {
     const res = await conn
       .createQueryBuilder()
       .update(Movie)
       .set({ name })
-      .where('id = :mid', { mid })
+      .where("id = :mid", { mid })
       .execute();
     if (res && res.affected && res.affected > 0) return true;
     return false;
   }
 
   @Mutation(() => Movie, { nullable: true })
-  async insertMovie(@Arg('options') options: MovieInput) {
+  async insertMovie(@Arg("options") options: MovieInput) {
     try {
       parseInt(options.id);
     } catch {
-      throw new Error('Invalid movie id');
+      throw new Error("Invalid movie id");
     }
     // Check if the movie already exists.
     const m = await conn.getRepository(Movie).findOneBy({ id: options.id });
@@ -509,7 +509,7 @@ export class MovieResolver {
               platformId: 1,
             },
           ])
-          .returning('*')
+          .returning("*")
           .execute();
         movie = result.raw[0];
       } catch (err) {
@@ -521,10 +521,11 @@ export class MovieResolver {
 
   @Mutation(() => Movie, { nullable: true })
   async insertMovieInformation(
-    @Arg('options') options: MovieFullInformation,
-    @Arg('mid') mid: string
+    @Arg("options") options: MovieFullInformation,
+    @Arg("mid") mid: string
   ) {
     const {
+      id,
       type,
       artwork,
       boxart,
@@ -538,8 +539,7 @@ export class MovieResolver {
       seasons,
     } = options;
 
-    let uniqueId =
-      type !== 'movie' && seasons ? seasons[0]?.episodes[0]?.id : mid;
+    let uniqueId = id;
 
     const titleRepo = conn.getRepository(Title);
     const movieRepo = conn.getRepository(Movie);
@@ -550,7 +550,7 @@ export class MovieResolver {
     // Upsert into "Title" table, irrespective of type.
     const titleResult = await titleRepo.upsert(
       {
-        id: String(uniqueId),
+        id: uniqueId,
         artwork,
         boxart,
         storyart,
@@ -562,44 +562,44 @@ export class MovieResolver {
         rating,
         advisories,
       },
-      { conflictPaths: ['id'] }
+      { conflictPaths: ["id"] }
     );
 
     if (titleResult) {
-      if (type === 'movie') {
+      if (type === "movie") {
         const movieInput = {
           id: String(mid),
           name: options?.title!,
-          season: '',
+          season: "",
           stills: options?.artwork!,
           synopsis: options?.synopsis!,
           thumbs: options?.boxart!,
-          parentTitleName: '',
+          parentTitleName: "",
           platformId: 1,
           runtime: options?.runtime,
           viewsCount: 1,
-          titleId: uniqueId + '',
+          titleId: uniqueId + "",
           year: options?.year,
         };
-        await movieRepo.upsert(movieInput, { conflictPaths: ['id'] });
-      } else if (type === 'show') {
+        await movieRepo.upsert(movieInput, { conflictPaths: ["id"] });
+      } else if (type === "show") {
         const promises = seasons?.flatMap((season) => {
           return season.episodes.map(async (episode) => {
             const episodeInput = {
-              id: String(episode?.id),
+              id: episode?.id,
               name: episode?.title,
               season: season?.title,
               stills: episode?.stills,
               synopsis: episode?.synopsis,
               thumbs: episode?.thumbs,
-              parentTitleName: options?.title ? options?.title : '',
+              parentTitleName: options?.title ? options?.title : "",
               platformId: 1,
               viewsCount: String(mid) === String(episode?.id) ? 1 : 0,
               runtime: episode?.runtime,
-              titleId: uniqueId + '',
+              titleId: uniqueId + "",
               year: season?.year,
             };
-            return movieRepo.upsert(episodeInput, { conflictPaths: ['id'] });
+            return movieRepo.upsert(episodeInput, { conflictPaths: ["id"] });
           });
         });
         await Promise.all(promises);
@@ -610,9 +610,9 @@ export class MovieResolver {
   }
 
   @Mutation(() => Int, { nullable: true })
-  async updateMovieViewCount(@Arg('mid') mid: string): Promise<number | null> {
+  async updateMovieViewCount(@Arg("mid") mid: string): Promise<number | null> {
     const repo = conn.getRepository(Movie);
-    await repo.increment({ id: mid }, 'viewsCount', 1);
+    await repo.increment({ id: mid }, "viewsCount", 1);
     const movie = await repo.findOne({ where: { id: mid } });
     if (!movie) return 0;
     return movie.viewsCount;

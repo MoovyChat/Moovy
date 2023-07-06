@@ -1,15 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const toastState = {
+  snackBarOpen: false,
   visible: false,
   message: "Default",
   icon: "",
+  snackBarText: "",
 };
 
 const ToastSlice = createSlice({
   name: "toast",
   initialState: toastState,
   reducers: {
+    sliceSetSnackBar: (state, action) => {
+      return { ...state, snackBarOpen: action.payload };
+    },
+    sliceSetSnackBarText: (state, action) => {
+      return { ...state, snackBarText: action.payload };
+    },
     sliceSetToastVisible: (state, action) => {
       return { ...state, visible: action.payload };
     },
@@ -20,5 +28,10 @@ const ToastSlice = createSlice({
   },
 });
 
-export const { sliceSetToastVisible, sliceSetToastBody } = ToastSlice.actions;
+export const {
+  sliceSetToastVisible,
+  sliceSetToastBody,
+  sliceSetSnackBar,
+  sliceSetSnackBarText,
+} = ToastSlice.actions;
 export default ToastSlice.reducer;

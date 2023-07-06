@@ -6,7 +6,6 @@ export const HomeHeaderParent = styled.div`
   display: flex;
   width: 100vw;
   justify-content: space-between;
-  border-bottom: 1px solid #8f8f8f81;
   .logo,
   .user {
     position: relative;
@@ -60,8 +59,21 @@ export const HomeHeaderParent = styled.div`
     }
   }
   .search {
-    width: 40%;
-    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .search-icon {
+      padding: 10px;
+      color: #ffffff; /* Black color */
+      cursor: pointer; /* Changes the cursor when hovering over the icon */
+      box-shadow: 0px 2px 4px rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+    }
+
+    .search-icon:hover {
+      color: #007bff; /* Changes the color of the icon to blue when hovered over */
+      box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.5);
+    }
   }
 
   @media (max-width: 800px) {

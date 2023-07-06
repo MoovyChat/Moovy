@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 interface props {
   accentColor: string;
@@ -11,10 +11,11 @@ export const SliderParent = styled.div<props>`
     min-width: 20%;
     flex: 1 1 10%;
     text-transform: capitalize;
+    font-size: 12px;
   }
   .slider {
     flex: 1 1 80%;
-    input[type='range'] {
+    input[type="range"] {
       width: 100%;
       accent-color: ${(p) => p.accentColor};
     }

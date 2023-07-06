@@ -1,32 +1,33 @@
 import './welcome.css';
 
+import { Suspense, useEffect } from 'react';
 import {
   CURRENT_DOMAIN,
   DISCORD_INVITE_LINK,
-  EXTENSION_URL,
   INSTAGRAM_LINK,
   TIKTOK_LINK,
   TWITTER_LINK,
 } from '../../constants';
-import { StyledFlaps, WelcomeParent } from './welcome.styles';
-import { Suspense, useEffect } from 'react';
+import {
+  SocialEmbed,
+  StyledFAQ,
+  StyledFlaps,
+  WelcomeParent,
+} from './welcome.styles';
+import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
-import Dark300 from '../../static/images/dark-chat-300x.webp';
-import Dark600 from '../../static/images/dark-chat-600x.webp';
-import Features from './features/features';
-import Footer from './footer/footer';
+import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
-import ImageWithFadeIn from '../../components/image-with-fadeIn/imageWithFadeIn';
-import Light300 from '../../static/images/light-chat-300x.webp';
-import Light600 from '../../static/images/light-chat-600x.webp';
-import { LogoSet } from '../../components/logoset/logoset';
-import { RiArrowRightCircleFill } from 'react-icons/ri';
-import Screenshots from './screenshots/screenshots';
+import usePageView from '../../hooks/usePageView';
 import { lazyIconFa } from '../../lazyLoad';
 import { urqlClient } from '../../utils/urlClient';
-import usePageView from '../../hooks/usePageView';
-import { withUrqlClient } from 'next-urql';
-
+import Footer from './footer/footer';
+import HomeSlider from './home-slider/homeSlider';
+import InstallExtension from './install-extension/installExtension';
+import { InstagramEmbed } from 'react-social-media-embed';
+import FirstPage from './first-page/firstPage';
+import { Card } from './faq/card';
+import Heading from './heading/heading';
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
 const FaTiktok = lazyIconFa('FaTiktok');
@@ -74,8 +75,36 @@ export const streamingServices = [
     status: 'Available soon',
   },
 ];
+
+const cards = [
+  {
+    title: 'What platforms does MoovyChat support?',
+    content:
+      'MoovyChat currently supports Netflix and Aha, an Indian OTT platform. More platforms will be added in the future.',
+  },
+  {
+    title: 'How does MoovyNest work?',
+    content:
+      'MoovyNest allows you to watch movies and TV shows together with friends and family at the exact same time. It also offers 3D Smileys and the ability to send gifs in real-time.',
+  },
+  {
+    title: 'Is MoovyChat available on mobile devices?',
+    content:
+      'Currently, MoovyChat is available as a chrome extension. However, iOS and Android apps are in development and will be released soon.',
+  },
+  {
+    title: 'Is MoovyChat free to use?',
+    content: 'Yes, both MoovyChat and MoovyNest are completely free to use.',
+  },
+  {
+    title: 'Will MoovyChat support more OTT platforms in the future?',
+    content:
+      'Yes, MoovyChat plans to expand its support to more OTT platforms in the future.',
+  },
+];
+
 const Welcome = () => {
-  const handleReloadMessage:any = () => {
+  const handleReloadMessage: any = () => {
     window.location.reload();
   };
 
@@ -155,88 +184,40 @@ const Welcome = () => {
         <meta name="description" content={`Home page of MoovyChat.`} />
         <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
-      <div className="custom-shape-divider-top-1672047931">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-            className="shape-fill"
-          ></path>
-        </svg>
-      </div>
-      <div className="home">
-        <div className="pics">
-          <div className="first pic">
-            <picture>
-              <ImageWithFadeIn
-                className="image"
-                src300={Light300}
-                src600={Light600}
-                alt="light"
-                sizes="300px"
-                width="300"
-                height="487"
-              />
-            </picture>
-          </div>
-          <div className="second pic">
-            <picture>
-              <ImageWithFadeIn
-                className="image"
-                src300={Dark300}
-                src600={Dark600}
-                alt="dark"
-                sizes="300px"
-                width="300"
-                height="509"
-              />
-            </picture>
-          </div>
+      <FirstPage />
+      <Heading
+        title="Key Features"
+        content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
+        id="features"
+      />
+      <HomeSlider />
+      {/* <InstallExtension /> */}
+      <Heading title="Hit Follow for more updates" id="socials" />
+      <SocialEmbed>
+        <div className="twitter-timeline-container">
+          <TwitterTimelineEmbed
+            theme="dark"
+            sourceType="profile"
+            screenName="MoovyChat"
+            noBorders={true}
+            options={{ height: 480, width: 400 }}
+            noFooter
+          />
         </div>
-        <div className="heading">
-          <div className="company">
-            <p>Supported Platforms</p>
-            <span className="supported-platforms">
-              {streamingServices.map(
-                platform =>
-                  platform.title === 'Netflix' && (
-                    <LogoSet platform={platform} key={platform.title} />
-                  ),
-              )}
-            </span>
-          </div>
-          <div className="text">Now stream movies with comments</div>
-          <div className="sub">
-            Moovy provides you a new way to enjoy your streaming experience with
-            a comment section and video filters.
-          </div>
-          <div className="sub2">
-            Why wait? Install our extension and step up the game with your
-            streaming experience. Please note that We are not affiliated with
-            Netflix.
-          </div>
-          <div
-            className="get-started"
-            tabIndex={0}
-            onClick={e => {
-              e.stopPropagation();
-              window.open(EXTENSION_URL, '_blank');
-            }}
-          >
-            <div className="fill"></div>
-            <label>Install Extension</label>
-            <RiArrowRightCircleFill size={25} />
-          </div>
+        <div className="instagram-feed">
+          <InstagramEmbed
+            url="https://www.instagram.com/p/CrSv_aHuL6X/"
+            width={328}
+            height={500}
+          />
         </div>
-        <div className="embed">MOOVY</div>
-      </div>
-      <Screenshots id="screenshots" />
-      <Features id="features" />
-      {/* <InstallationGuide id='install-guide' /> */}
+      </SocialEmbed>
+      <StyledFAQ>
+        <Heading title="Frequently Asked Questions" id="faq" />
+        {cards.map((card, index) => (
+          <Card key={index} title={card.title} content={card.content} />
+        ))}
+      </StyledFAQ>
       <Footer id="footer" />
     </WelcomeParent>
   );

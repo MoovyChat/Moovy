@@ -17,6 +17,7 @@ import {
   EXT_URL,
   INSTAGRAM_LINK,
   PATREON,
+  PATREON_PNG,
   TIKTOK_LINK,
   TWITTER_LINK,
 } from "../../helpers/constants";
@@ -29,42 +30,23 @@ import {
 } from "../../pages/content/indexedDB/db";
 import { useAppDispatch, useAppSelector } from "../../pages/redux/hooks";
 import { sliceSetTextAreaMessage } from "../../pages/redux/slices/textArea/textAreaSlice";
+import FrequentEmojis from "./frequentEmojis";
 
 const SmileyWindow = () => {
   const iconSize = 30;
   const scores = useAppSelector((state) => state.misc.toxicScores);
-  const [frequentEmojis, setFrequent] = useState<FrequentEmoji[]>([]);
-  const [recentEmojis, setRecent] = useState<RecentEmoji[]>([]);
   const wordSuggestions: string[] = useAppSelector(
     (state) => state.textArea.wordSuggestions
   );
   const nameSuggestions: NameObject[] = useAppSelector(
     (state) => state.textArea.nameSuggestions
   );
-  const ems = useLiveQuery(() => {
-    if (db.frequent) return db.frequent.toArray();
-    return [];
-  });
-  const ers = useLiveQuery(() => {
-    if (db.recent) return db.recent.toArray();
-    return [];
-  });
+
   const textAreaMessage = useAppSelector((state) => state.textArea.text);
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
   );
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (ems) {
-      const recent = ers ? ers.slice(-10).reverse() : [];
-      if (ers) setRecent(recent);
-      const sorted = _.chain(ems)
-        .sortBy((a) => -a.count)
-        .take(10)
-        .value();
-      if (ems) setFrequent(sorted);
-    }
-  }, [ems, ers]);
 
   const setSpoiler = () => {
     const newText = textAreaMessage + "<s></s>";
@@ -153,42 +135,7 @@ const SmileyWindow = () => {
                 />
               </div>
             )}
-            {recentEmojis && recentEmojis.length > 0 && (
-              <div className="section">
-                <div className="title">Recently used</div>
-                <div className="emojis">
-                  {recentEmojis.map((emoji, key) => (
-                    <div
-                      className="emoji-child recent"
-                      key={`${emoji.id}-${key}`}
-                    >
-                      <EmojiButton
-                        key={emoji.id}
-                        emoji={emoji.emoji}
-                      ></EmojiButton>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {frequentEmojis && frequentEmojis.length > 0 && (
-              <div className="section">
-                <div className="title">Frequently used</div>
-                <div className="emojis">
-                  {frequentEmojis.map((emoji, key) => (
-                    <div
-                      className="emoji-child frequent"
-                      key={`${key}-${emoji.id}`}
-                    >
-                      <EmojiButton
-                        key={emoji.id}
-                        emoji={emoji.emoji}
-                      ></EmojiButton>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FrequentEmojis />
             <div className="section">
               <div className="title">Comment options</div>
               <div
@@ -275,11 +222,7 @@ const SmileyWindow = () => {
                     }}
                   >
                     <div className="logo" id="text-focus">
-                      <img
-                        src={`${EXT_URL}/patreon-word.webp`}
-                        alt="patreon"
-                        id="text-focus"
-                      />
+                      <img src={PATREON_PNG} alt="patreon" id="text-focus" />
                     </div>
                   </div>
                   <div

@@ -15,7 +15,11 @@ import FollowButton from "../follow-button/followButton";
 import _ from "lodash";
 
 import { withUrqlClient } from "next-urql";
-import { isServerSide, MOOVY_URL } from "../../helpers/constants";
+import {
+  FULL_LOGO_TRANSPARENT,
+  isServerSide,
+  MOOVY_URL,
+} from "../../helpers/constants";
 import { urqlClient } from "../../helpers/urql/urqlClient";
 import EmptyPage from "../../pages/content/components/moovy/empty-page/emptyPage";
 import { useAppSelector } from "../../pages/redux/hooks";
@@ -85,7 +89,8 @@ const LikesWindow = () => {
       setLastPage(() => _lastPage);
     }
   }, [replyLikes]);
-  if (users.length === 0) return <EmptyPage msg="No likes yet!" />;
+  if (users.length === 0)
+    return <EmptyPage msg="No likes yet!" src={FULL_LOGO_TRANSPARENT} />;
   return (
     <LikesWindowStyle className="likes-window" onScroll={handleScroll}>
       {users.map(

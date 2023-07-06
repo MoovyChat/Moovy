@@ -14,7 +14,7 @@ export const PopupParent = styled.div`
   display: flex;
   border-radius: 18px;
   box-shadow: 0px 0px 5px, 0px 0px 3px 1px;
-  top: 35%;
+  top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
   background: ${p => p.theme.body};

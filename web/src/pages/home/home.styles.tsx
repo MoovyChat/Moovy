@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const offset = 60;
+
 type props = {
   isNavBarOpen: boolean;
 };
@@ -25,37 +26,74 @@ export const PanelsParent = styled.div<props>`
   align-items: center;
   height: calc(100% - ${offset}px);
   width: 99.9%;
+
+  .left,
+  .center,
+  .right {
+    position: relative;
+    transition: z-index 0.3s linear, transform 0.3s linear;
+    box-shadow: inset 0 0 10px black;
+    border-radius: 18px;
+
+    &:hover {
+      background-color: ${p => p.theme.hoverColor};
+    }
+  }
+
   .left {
     flex: 1 0 25%;
-    height: 100%;
+    border-radius: 18px;
+    margin: 10px;
+    margin-right: -20px; // add negative margin
+    max-height: 99%;
+    background-color: ${p => p.theme.primary};
+    box-shadow: inset 0 0 10px black;
+    z-index: 5;
+
+    &:hover {
+      z-index: 6;
+      transform: scale(1.02);
+    }
   }
+
   .center {
-    /* flex: 1 0 50%; */
+    margin-left: -20px; // add negative margin
+    margin-right: -20px; // add negative margin
+    background-color: ${p => p.theme.secondary};
+    border: 1px solid;
+    z-index: 1;
+    > div {
+      transition: width 0.1s linear;
+      margin: auto;
+      width: calc(100% - 80px);
+    }
+    &:hover {
+      z-index: 6;
+      transform: scale(1.02);
+      > div {
+        transition: width 0.1s linear;
+        margin: 0%;
+        width: 100%;
+      }
+    }
   }
+
   .right {
     flex: 1 0 25%;
     height: 100%;
+    margin-left: -20px; // add negative margin
+    background-color: ${p => p.theme.primary};
+    border-radius: 18px;
+    max-height: 99%;
+    box-shadow: inset 0 0 10px black;
+    z-index: 5;
+    &:hover {
+      z-index: 6;
+      transform: scale(1.02);
+    }
   }
 
   @media (max-width: 800px) {
-    .right {
-      display: none;
-    }
-    .left {
-      flex: none;
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      z-index: 99;
-      width: 60%;
-      left: ${p => (p.isNavBarOpen ? '0%' : '-60%')};
-      backdrop-filter: blur(15px);
-      transition: left 0.3s linear;
-    }
+    // ...
   }
-  /* @media (max-width: 900px) {
-      .right {
-        display: none;
-      }
-    } */
 `;

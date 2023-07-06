@@ -74,11 +74,11 @@ const RightPanel: React.FC<props> = ({ className }) => {
         <div className="content">
           {!trendingTitleQuery.fetching ? (
             trendingMovies &&
-            trendingMovies.map(title => (
+            trendingMovies.map((title, index) => (
               <div
                 className="item"
                 tabIndex={0}
-                key={title.title}
+                key={`${title.title}-${index}`}
                 onClick={e => {
                   e.stopPropagation();
                   navigate(`/home/movie/${title.id}`);
@@ -104,10 +104,10 @@ const RightPanel: React.FC<props> = ({ className }) => {
         <div className="content">
           {!trendingTitleQuery.fetching ? (
             trendingShows &&
-            trendingShows.map(title => (
+            trendingShows.map((title, index) => (
               <div
                 className="item"
-                key={title.title}
+                key={`${title.title}-${index}`}
                 tabIndex={0}
                 onClick={e => {
                   e.stopPropagation();

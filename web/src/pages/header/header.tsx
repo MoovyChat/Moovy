@@ -10,9 +10,7 @@ import {
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
-import { EXTENSION_URL } from '../../constants';
-import MoovyLogoBlack from '../../svgs/moovy-black.svg';
-import MoovyLogoWhite from '../../svgs/moovy-white.svg';
+import { EXTENSION_URL, LOGO_128 } from '../../constants';
 import { googleSignIn } from '../login/login';
 import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
@@ -89,7 +87,7 @@ const Header = () => {
     if (divElement) {
       const elementRect = divElement.getBoundingClientRect();
       const absoluteElementTop = elementRect.top + window.pageYOffset;
-      const middle = absoluteElementTop - window.innerHeight / 6;
+      const middle = absoluteElementTop - window.innerHeight / 24;
       window.scrollTo({ top: middle, behavior: 'smooth' });
     }
   };
@@ -99,11 +97,7 @@ const Header = () => {
         <div className="logo-image">
           <img
             className="image"
-            src={
-              (theme as any).themeType === 'light'
-                ? MoovyLogoBlack
-                : MoovyLogoWhite
-            }
+            src={LOGO_128}
             alt="QuietChat"
             id="blur-escape"
             loading="lazy"
@@ -133,10 +127,10 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('screenshots');
+            scrollIntoView('features');
           }}
         >
-          Screenshots
+          Features
         </HeaderButton>
         <HeaderButton
           tabIndex={0}
@@ -144,10 +138,21 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('features');
+            scrollIntoView('socials');
           }}
         >
-          Features
+          Socials
+        </HeaderButton>
+        <HeaderButton
+          tabIndex={0}
+          role="button"
+          className="install-button hb"
+          onClick={e => {
+            e.stopPropagation();
+            scrollIntoView('faq');
+          }}
+        >
+          FAQ
         </HeaderButton>
         {user && user.id ? (
           <HeaderButton

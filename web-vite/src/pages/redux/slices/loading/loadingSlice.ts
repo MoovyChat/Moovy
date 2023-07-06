@@ -12,6 +12,7 @@ const loadingState: loadingInterface = {
   isNextCommentsLoaded: false,
   isNewCommentsLoaded: false,
   networkError: false,
+  networkMessage: "",
 };
 
 const loadingSlice = createSlice({
@@ -72,6 +73,9 @@ const loadingSlice = createSlice({
     ) => {
       return { ...state, isMovieInsertionFinished: action.payload };
     },
+    sliceSetNetworkErrorMessage: (state, action) => {
+      return { ...state, networkMessage: action.payload };
+    },
     sliceValidateMovieLoading: (
       state,
       action: { payload: boolean; type: string }
@@ -88,6 +92,7 @@ const loadingSlice = createSlice({
 
 export const {
   sliceCheckCommentsLoaded,
+  sliceSetNetworkErrorMessage,
   sliceCheckRepliesLoaded,
   sliceCheckEditBoxOpen,
   sliceSetLoadingText,

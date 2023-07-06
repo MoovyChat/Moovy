@@ -2,13 +2,13 @@
 /* eslint-disable react/react-in-jsx-scope */
 import {
   getIdFromNetflixURL,
+  getMovieIdFromURL,
   getPlayerViewElement,
 } from "../contentScript.utils";
 import { useEffect, useState } from "react";
 
 import ChatWindow from "../createChatWindow/chatWindow";
 import { CommentHeader } from "./commentButton.styles";
-import { GoCommentDiscussion } from "react-icons/go";
 import { Provider as ReduxProvider } from "react-redux";
 import { createRoot } from "react-dom/client";
 import { useInsertMovie } from "../hooks/useInsertMovie";
@@ -20,7 +20,8 @@ import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
 import { sliceSetIntervalIds } from "../../../../redux/slices/misc/miscSlice";
 import { sliceSetIsOpenChatWindow } from "../../../../redux/slices/settings/settingsSlice";
 import { store } from "../../../../redux/store";
-import { LOGO_128 } from "../../../../../helpers/constants";
+import { ERROR_LOGO, LOGO_128 } from "../../../../../helpers/constants";
+import { SocketProvider } from "../context/socketContextFile";
 
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
@@ -29,7 +30,9 @@ const Loader = (chatElement: HTMLDivElement) => {
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <ReduxProvider store={store}>
-        <ChatWindow />
+        <SocketProvider>
+          <ChatWindow />
+        </SocketProvider>
       </ReduxProvider>
     );
   }
@@ -86,7 +89,7 @@ const CommentButton: React.FC<props> = ({ visible }) => {
     const sessionId = v4();
     const visitInterval = setInterval(async () => {
       const url = window.location.href;
-      const netflixId = await getIdFromNetflixURL(url);
+      const idFromPlatform = await getMovieIdFromURL(url);
       chrome.runtime.onMessage.addListener((request, sender) => {
         if (!sender.tab && request.type === "SET_MOVIE_ID") {
           clearInterval(visitInterval);
@@ -95,16 +98,16 @@ const CommentButton: React.FC<props> = ({ visible }) => {
           setIntervalIds([]);
         }
       });
-      if (netflixId === null) {
+      if (idFromPlatform === null) {
         clearInterval(visitInterval);
         intervalId && clearInterval(intervalId);
         intervalIds.forEach((id) => clearInterval(id));
         setIntervalIds([]);
       }
-      if (movieId && user.id && netflixId)
+      if (movieId && user.id && idFromPlatform)
         insertVisited({
           uid: user.id,
-          mid: netflixId + "",
+          mid: idFromPlatform,
           insertVisitedId: sessionId,
           time: 5,
         }).then((res) => {
@@ -124,9 +127,11 @@ const CommentButton: React.FC<props> = ({ visible }) => {
     };
   }, [user?.id, movieId]);
 
-  if (!movieId) return <img src={LOGO_128} alt="logo" width="40" height="40" />;
+  if (!movieId)
+    return <img src={ERROR_LOGO} alt="logo" width="40" height="40" />;
   return (
     <div
+      className="comment-container"
       onClick={(e) => {
         e.stopPropagation();
         setTimeout(() => {

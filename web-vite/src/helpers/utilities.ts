@@ -107,6 +107,10 @@ export const randomUserNameGenerator = (nickname: string) => {
 };
 
 export const containsOnlyOneEmoji = (text: string): boolean => {
+  if (typeof text !== "string") {
+    return false;
+  }
+
   const emojiRegexPattern = emojiRegex();
   const emojiMatches = text.match(emojiRegexPattern);
   return (
@@ -123,4 +127,33 @@ export const getPositiveHueValue = (value: number) => {
     positiveValue += 360;
   }
   return positiveValue % 360;
+};
+
+export const secondsToTime = (duration: string) => {
+  const d = parseFloat(duration);
+  const seconds = Math.floor(d % 60);
+  const minutes = Math.floor((d / 60) % 60);
+  const hours = Math.floor((d / (60 * 60)) % 24);
+
+  const pad = (num: number) => (num < 10 ? "0" + num : num.toString());
+
+  if (hours === 0) {
+    return pad(minutes) + ":" + pad(seconds);
+  }
+
+  return pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+};
+
+export const compareUrlsAndRedirect = (inputUrl) => {
+  // Get the current URL before the question mark
+  const currentUrl = window.location.href.split("?")[0];
+
+  // Get the input URL before the question mark
+  const inputUrlBeforeQuestionMark = inputUrl.split("?")[0];
+
+  // Compare the URLs
+  if (currentUrl !== inputUrlBeforeQuestionMark) {
+    // Redirect to the input URL
+    window.location.href = inputUrl;
+  }
 };

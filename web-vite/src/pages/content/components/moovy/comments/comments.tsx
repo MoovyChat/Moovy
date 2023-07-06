@@ -20,6 +20,7 @@ import {
   sliceSetTotalCommentsOfTheMovie,
   sliceSetPastLoadedCount,
 } from "../../../../redux/slices/movie/movieSlice";
+import { FULL_LOGO_TRANSPARENT } from "../../../../../helpers/constants";
 
 type props = {
   responseFromReplyWindow: (comment: CommentInfo) => void;
@@ -69,7 +70,12 @@ const Comments: React.FC<props> = ({
   }
 
   if (comments.length <= 0) {
-    return <EmptyPage msg="Feel free to share your thoughts!" />;
+    return (
+      <EmptyPage
+        msg="Feel free to share your thoughts!"
+        src={FULL_LOGO_TRANSPARENT}
+      />
+    );
   }
 
   return (

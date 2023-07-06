@@ -8,6 +8,60 @@ export const StyledErrorPage = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  .iframe-container {
+    margin-top: 40px;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+
+    .line {
+      -webkit-box-flex: 1;
+      flex-grow: 1;
+      width: 100px;
+      height: 1px;
+      background-color: rgb(255 255 255);
+    }
+
+    .text {
+      margin: 0px 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: rgb(255 255 255);
+    }
+  }
+
+  .common {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    gap: 5px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 0 1px white;
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    filter: drop-shadow(0 0 1px ${(p) => p.theme.text});
+    box-shadow: inset 0 0 1px ${(p) => p.theme.text};
+    color: ${(p) => p.theme.text};
+    .fav-count {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      .box {
+        position: relative;
+        width: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
   .logo {
     width: 50%;
     display: flex;
@@ -39,4 +93,16 @@ export const StyledErrorPage = styled.div`
   .err {
     color: #781313;
   }
+`;
+
+type Props = {
+  isLoaded: boolean;
+};
+export const StyledIFrameButton = styled.iframe<Props>`
+  border: none;
+  width: 195px;
+  height: 47px;
+  display: flex;
+  visibility: ${(p) => (p.isLoaded ? "auto" : "hidden")};
+  border-radius: 12px;
 `;

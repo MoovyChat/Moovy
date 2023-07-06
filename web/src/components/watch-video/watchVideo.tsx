@@ -24,13 +24,13 @@ const WatchVideo: React.FC<props> = ({
         type === 'show' ? 'title' : 'watch'
       }/${id}`;
       window.open(url, '_blank');
+    } else if (platform === 'AHA') {
+      let url = `https://aha.video/${type === 'show' ? 'show' : 'movie'}/${id}`;
+      window.open(url, '_blank');
     }
   };
   return (
-    <WatchVideoContainer
-      onClick={onClickHandler}
-      className={className}
-    >
+    <WatchVideoContainer onClick={onClickHandler} className={className}>
       <span>
         <MdOutlineLocalMovies size={20} />
       </span>

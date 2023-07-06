@@ -14,6 +14,15 @@ export enum TOOLTIP {
   MSG = "MSG",
 }
 
+export enum NEST_TYPE {
+  GIPHY = "GIPHY",
+  LIST_USERS = "LIST_USERS",
+  CREATE = "CREATE",
+  JOIN = "JOIN",
+  SETTINGS = "SETTINGS",
+  EMPTY = "",
+}
+
 // export enum AUDIO_FILTER_TYPES {
 //   LOWPASS = 'lowpass',
 //   HIGHPASS = 'highpass',

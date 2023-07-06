@@ -1,6 +1,11 @@
 /// <reference types="chrome"/>
 import { EXTENSION_URL, EXT_ID, isServer } from '../../constants';
-import { MdInstallDesktop, MdOutlineExitToApp, MdPerson, MdSync } from 'react-icons/md';
+import {
+  MdInstallDesktop,
+  MdOutlineExitToApp,
+  MdPerson,
+  MdSync,
+} from 'react-icons/md';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -13,8 +18,8 @@ import { sliceResetUser } from '../../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const HeaderOptions = () => {
-    const [isExtensionInstalled, setIsExtensionInstalled] =
-      useState<boolean>(false);
+  const [isExtensionInstalled, setIsExtensionInstalled] =
+    useState<boolean>(false);
 
   const [, logout] = useLogoutMutation();
   const user = useAppSelector(state => state.user);
@@ -33,31 +38,29 @@ const HeaderOptions = () => {
   useEffect(() => {
     type CheckExtensionCallback = (installed: boolean) => void;
     const checkExtension = (callback: CheckExtensionCallback): void => {
-      try{
- // Send a message to the extension with the specified ID
-      chrome.runtime.sendMessage(
-        EXT_ID,
-        { message: 'checkExtension' },
-        (response: any) => {
-          // If there's a response, the extension is installed and enabled
-          if (response) {
-            callback(true);
-          } else {
-            // No response indicates the extension is not installed or not enabled
-            callback(false);
-          }
-        },
-      );
-      }catch(e){
-         callback(false);
+      try {
+        // Send a message to the extension with the specified ID
+        chrome.runtime.sendMessage(
+          EXT_ID,
+          { message: 'checkExtension' },
+          (response: any) => {
+            // If there's a response, the extension is installed and enabled
+            if (response) {
+              callback(true);
+            } else {
+              // No response indicates the extension is not installed or not enabled
+              callback(false);
+            }
+          },
+        );
+      } catch (e) {
+        callback(false);
       }
-     
     };
     checkExtension((installed: boolean) => {
       setIsExtensionInstalled(installed);
     });
   }, []);
-
 
   const logOutHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
@@ -87,13 +90,13 @@ const HeaderOptions = () => {
         <div className="icon">
           <MdPerson size={20} />
         </div>
-        <div className="text">Profile</div>
+        <div className="options-text">Profile</div>
       </div>
       <div className="option" tabIndex={0} onClick={logOutHandler}>
         <div className="icon">
           <MdOutlineExitToApp size={20} />
         </div>
-        <div className="text">Logout</div>
+        <div className="options-text">Logout</div>
       </div>
       {isExtensionInstalled ? (
         <div
@@ -115,17 +118,20 @@ const HeaderOptions = () => {
           <div className="icon">
             <MdSync size={20} />
           </div>
-          <div className="text">Sync Login with Extension</div>
+          <div className="options-text">Sync Login with Extension</div>
         </div>
       ) : (
-        <div className="option" onClick={(e)=>{
-          e.stopPropagation();
-          window.open(EXTENSION_URL, '_blank');
-        }}>
+        <div
+          className="option"
+          onClick={e => {
+            e.stopPropagation();
+            window.open(EXTENSION_URL, '_blank');
+          }}
+        >
           <div className="icon">
             <MdInstallDesktop size={20} />
           </div>
-          <div className="text">Install Extension</div>
+          <div className="options-text">Install Extension</div>
         </div>
       )}
     </StyledHeaderOptions>

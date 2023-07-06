@@ -220,14 +220,14 @@ export const presetFilters: filterType[] = [
   {
     title: "Crema",
     sampleFilter:
-      "sepia(50%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(-2deg)",
+      "sepia(50%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(358deg)",
     isSelected: false,
     url: samplePhotoUrl,
   },
   {
     title: "EarlyBird",
     sampleFilter:
-      "sepia(25%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(-5deg)",
+      "sepia(25%) contrast(125%) brightness(115%) saturate(90%) hue-rotate(355deg)",
     isSelected: false,
     url: samplePhotoUrl,
   },
@@ -240,7 +240,7 @@ export const presetFilters: filterType[] = [
   {
     title: "Nashville",
     sampleFilter:
-      "sepia(25%) contrast(150%) brightness(90%) hue-rotate(-15deg)",
+      "sepia(25%) contrast(150%) brightness(90%) hue-rotate(345deg)",
     isSelected: false,
     url: samplePhotoUrl,
   },

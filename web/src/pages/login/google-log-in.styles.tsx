@@ -1,4 +1,6 @@
+import Button, { buttonClasses, ButtonTypeMap } from '@mui/base/Button';
 import styled from 'styled-components';
+import { PolymorphicComponent } from '@mui/base/utils';
 
 export const StyledGoogleLogin = styled.div`
   height: 640px;
@@ -118,4 +120,49 @@ export const StyledGoogleLogin = styled.div`
     color: #ffffff;
     text-decoration: underline;
   }
+`;
+
+const blue = {
+  500: '#007FFF',
+  600: '#0072E5',
+  700: '#0059B2',
+};
+
+export const CustomButton = styled(Button)`
+  font-family: IBM Plex Sans, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  background-color: ${blue[500]};
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: white;
+  transition: all 150ms ease;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  gap: 10px;
+  &:hover {
+    background-color: ${blue[600]};
+  }
+
+  &.${buttonClasses.active} {
+    background-color: ${blue[700]};
+  }
+
+  &.${buttonClasses.focusVisible} {
+    box-shadow: 0 4px 20px 0 rgba(61, 71, 82, 0.1),
+      0 0 0 5px rgba(0, 127, 255, 0.5);
+    outline: none;
+  }
+
+  &.${buttonClasses.disabled} {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+` as PolymorphicComponent<ButtonTypeMap>;
+
+export const StyledExtLoginButton = styled.div`
+  width: 200px;
+  height: 50px;
+  display: flex;
 `;

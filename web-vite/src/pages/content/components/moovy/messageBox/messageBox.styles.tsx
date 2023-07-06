@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 type mBoxProps = {
   isReply: boolean;
@@ -14,8 +14,8 @@ export const ChatTextBox = styled.div<mBoxProps>`
   transition: all 0.5s;
   border: 1px solid;
   border-radius: 40px;
-  border-color: ${(p) => p.isReply && '#ca0d00'};
-  box-shadow: 0 0 10px ${(p) => p.isReply && '#ca0d00'};
+  border-color: ${(p) => p.isReply && "#ca0d00"};
+  box-shadow: 0 0 10px ${(p) => p.isReply && "#ca0d00"};
   .smiley {
     display: flex;
     justify-content: center;
@@ -56,16 +56,26 @@ export const TextAreaPost = styled.div`
   font-size: 13px;
   color: inherit;
   border-radius: 10px;
+  gap: 10px;
+  .smiley-window {
+    cursor: pointer;
+  }
+  .giphy-gif {
+    :hover {
+      cursor: pointer;
+      filter: drop-shadow(0 0 15px white);
+    }
+  }
   .text-send {
     svg {
       stroke-width: 10px;
       stroke: white;
       mix-blend-mode: exclusion;
     }
-  }
-  :hover {
-    cursor: pointer;
-    filter: drop-shadow(0 0 15px white);
+    :hover {
+      cursor: pointer;
+      filter: drop-shadow(0 0 15px white);
+    }
   }
 `;
 

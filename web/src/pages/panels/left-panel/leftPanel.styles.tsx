@@ -53,7 +53,7 @@ export const LeftParent = styled.div`
       text-decoration: none;
       font-size: 14px;
       :hover {
-        background-color: ${p => p.theme.hoverColor};
+        background-color: ${p => p.theme.divHoverColor};
         cursor: pointer;
       }
       .icon {
@@ -62,14 +62,14 @@ export const LeftParent = styled.div`
         align-items: center;
         flex: 1 0 30%;
       }
-      .text {
+      .panel-text {
         flex: 1 0 80%;
         font-weight: 600;
       }
     }
     .active {
       transition: all 1s;
-      background-color: ${p => p.theme.hoverColor};
+      background-color: ${p => p.theme.divHoverColor};
       .icon {
         svg {
           height: 27px;
@@ -111,7 +111,7 @@ export const LeftParent = styled.div`
           fill: #426bda;
         }
       }
-      .text {
+      .panel-text {
       }
     }
   }
@@ -151,7 +151,7 @@ export const LeftParent = styled.div`
             width: 20px;
           }
         }
-        .text {
+        .panel-text {
           flex: 1 0 80%;
           font-size: 0.7rem;
           font-weight: 600;
