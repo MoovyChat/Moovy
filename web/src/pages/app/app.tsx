@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState, startTransition } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Users, useMeQuery } from '../../generated/graphql';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { GlobalStyles } from '../../utils/themes/globalStyles';
@@ -22,7 +22,9 @@ const App = () => {
   const navigate = useNavigate();
   const theme = useAppSelector(state => state.settings.theme);
   const isAuth = useAppSelector(state => state.user);
-  const [showLoading, setShowLoading] = useState(true);
+
+  // Assume we're loading until proven otherwise
+  const [showLoading, setShowLoading] = useState(!isAuth);
 
   usePageView();
 
@@ -33,24 +35,19 @@ const App = () => {
     }
     // If user data is successfully fetched and not in the process of fetching, proceed
     if (!fetching && data) {
-      startTransition(() => {
-        // Retrieve user object and current path
-        const user = data?.me as Users;
-        // If a user object exists
-        if (user) {
-          // Update Redux store with user data and save user data in localStorage
-          dispatch(sliceSetUser(user));
-          if (location.pathname === '/') navigate('/home');
-          else navigate(location.pathname);
-          localStorage.setItem('user', JSON.stringify(user));
-        }
-        // Set the showLoading state to false after 300ms
-        setTimeout(() => {
-          setShowLoading(false);
-        }, 300);
-      });
+      // Retrieve user object and current path
+      const user = data?.me as Users;
+      // If a user object exists
+      if (user) {
+        // Update Redux store with user data and save user data in localStorage
+        dispatch(sliceSetUser(user));
+        if (location.pathname === '/') navigate('/home');
+        else navigate(location.pathname);
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      setShowLoading(false);
     }
-  }, [fetching, data, error]);
+  }, [fetching, data, error, isAuth]);
 
   if (showLoading) return <LogoLoading />;
 
