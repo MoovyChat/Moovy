@@ -1,39 +1,28 @@
 import './welcome.css';
 
-import { Suspense, useEffect } from 'react';
-import {
-  CURRENT_DOMAIN,
-  DISCORD_INVITE_LINK,
-  INSTAGRAM_LINK,
-  TIKTOK_LINK,
-  TWITTER_LINK,
-} from '../../constants';
+import { useEffect } from 'react';
+import { TwitterTimelineEmbed } from 'react-twitter-embed';
+import { CURRENT_DOMAIN } from '../../constants';
 import {
   SocialEmbed,
   StyledFAQ,
   StyledFlaps,
   WelcomeParent,
 } from './welcome.styles';
-import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
 import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
 import usePageView from '../../hooks/usePageView';
-import { lazyIconFa } from '../../lazyLoad';
+
 import { urqlClient } from '../../utils/urlClient';
 import Footer from './footer/footer';
 import HomeSlider from './home-slider/homeSlider';
-import InstallExtension from './install-extension/installExtension';
-import { InstagramEmbed } from 'react-social-media-embed';
-import FirstPage from './first-page/firstPage';
-import { Card } from './faq/card';
-import Heading from './heading/heading';
-const FaDiscord = lazyIconFa('FaDiscord');
-const FaTwitter = lazyIconFa('FaTwitter');
-const FaTiktok = lazyIconFa('FaTiktok');
-const FaInstagram = lazyIconFa('FaInstagram');
 
-const iconSize = 25;
+import { InstagramEmbed } from 'react-social-media-embed';
+import { Card } from './faq/card';
+import FirstPage from './first-page/firstPage';
+import Heading from './heading/heading';
+
 export const streamingServices = [
   {
     title: 'Netflix',
@@ -121,64 +110,7 @@ const Welcome = () => {
   }, []);
   return (
     <WelcomeParent>
-      <StyledFlaps>
-        <Suspense>
-          <div className="social-container">
-            <button
-              className="discord social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(DISCORD_INVITE_LINK, '_blank');
-              }}
-            >
-              <FaDiscord
-                color="cornflowerblue"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="twitter social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(TWITTER_LINK, '_blank');
-              }}
-            >
-              <FaTwitter
-                color="deepskyblue"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="tiktok social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(TIKTOK_LINK, '_blank');
-              }}
-            >
-              <FaTiktok
-                className="icon"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="instagram social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(INSTAGRAM_LINK, '_blank');
-              }}
-            >
-              <FaInstagram
-                color="hotpink"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-          </div>
-        </Suspense>
-      </StyledFlaps>
+      <StyledFlaps></StyledFlaps>
       <Helmet>
         <title>{`MoovyChat: Welcome`}</title>
         <meta name="description" content={`Home page of MoovyChat.`} />
