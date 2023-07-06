@@ -5,6 +5,7 @@ export const StyledPopUP = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 7;
+  pointer-events: auto;
   backdrop-filter: blur(20px) brightness(0.5);
 `;
 export const PopupParent = styled.div`
@@ -19,6 +20,7 @@ export const PopupParent = styled.div`
   transform: translateX(-50%) translateY(-50%);
   background: ${p => p.theme.body};
   z-index: 8;
+  pointer-events: auto;
   flex-direction: column;
   display: flex;
   align-items: center;

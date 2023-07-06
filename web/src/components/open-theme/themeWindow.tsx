@@ -49,7 +49,9 @@ const ThemeWindow: React.FC = () => {
   // Move the current theme to the front of the array
   const sortedThemeKeys: ThemeKeys[] = [
     (currentTheme as any)?.themeType,
-    ...themeKeys.filter(key => key !== (currentTheme as any)?.themeType),
+    ...themeKeys
+      .filter(key => key !== (currentTheme as any)?.themeType)
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
   ];
 
   return (

@@ -5,6 +5,7 @@ import {
   DeleteCommentTypes,
   ImageChangerTypes,
 } from '../../utils/types';
+import FocusLock from 'react-focus-lock';
 import { PopupParent, StyledPopUP } from './popup.styles';
 import {
   sliceSetIsPopupOpened,
@@ -25,6 +26,7 @@ import { batch } from 'react-redux';
 import { popupStates } from '../../constants';
 import { sliceSetTextAreaMessage } from '../../redux/slices/textAreaSlice';
 import ThemeWindow from '../open-theme/themeWindow';
+import SearchBar from '../search-bar/searchBar';
 
 const Popup = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -65,6 +67,8 @@ const Popup = () => {
         return <ShowLikes />;
       case popupStates.OPEN_THEME:
         return <ThemeWindow />;
+      case popupStates.OPEN_SEARCH:
+        return <SearchBar />;
       case popupStates.DELETE_COMMENT:
         return <DeleteComment type={DeleteCommentTypes.COMMENT} />;
       case popupStates.DELETE_REPLY:
@@ -82,9 +86,11 @@ const Popup = () => {
       unmountOnExit
     >
       <StyledPopUP id="popup-parent" ref={ref}>
-        <PopupParent id="popup-child">
-          <SelectedElement />
-        </PopupParent>
+        <FocusLock returnFocus>
+          <PopupParent id="popup-child">
+            <SelectedElement />
+          </PopupParent>
+        </FocusLock>
       </StyledPopUP>
     </CSSTransition>
   );

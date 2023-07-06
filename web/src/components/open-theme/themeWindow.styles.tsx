@@ -91,7 +91,7 @@ export const ThemesList = styled.div`
   overflow: auto;
 `;
 
-export const ThemeItem = styled.div<props>`
+export const ThemeItem = styled.button<props>`
   padding: 10px;
   border: 2px solid ${p => p.theme.border};
   border-radius: 5px;
@@ -100,7 +100,10 @@ export const ThemeItem = styled.div<props>`
   gap: 10px;
   font-weight: 600;
   transition: background-color 0.3s ease;
-  background-color: ${p => (p.current ? '#919191' : p.selected && 'grey')};
+  background-color: ${p =>
+    p.current ? '#919191' : p.selected ? 'grey' : 'black'};
+  color: white;
+  font-size: 10px;
   .color-representor {
     width: 10px;
     height: 10px;

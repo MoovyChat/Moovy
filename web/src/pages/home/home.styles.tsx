@@ -31,7 +31,7 @@ export const PanelsParent = styled.div<props>`
   .center,
   .right {
     position: relative;
-    transition: z-index 0.3s linear, transform 0.3s linear;
+    transition: z-index 0.1s linear, transform 0.1s linear;
     box-shadow: inset 0 0 10px black;
     border-radius: 18px;
 

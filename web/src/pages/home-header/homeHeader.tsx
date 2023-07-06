@@ -36,7 +36,7 @@ const HomeHeader: React.FC<props> = ({ className }) => {
   const openSearchHandler: MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
     dispatch(sliceSetIsPopupOpened(true));
-    dispatch(sliceSetSelectedElement(popupStates.ADD_REPLY));
+    dispatch(sliceSetSelectedElement(popupStates.OPEN_SEARCH));
   };
 
   const user = useAppSelector(state => state.user);

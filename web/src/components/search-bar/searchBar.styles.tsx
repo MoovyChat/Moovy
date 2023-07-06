@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export const SearchBarParent = styled.div`
-  width: 100%;
+  width: 100vw;
+  height: 5vh;
   overflow: hidden;
   border-radius: 50px;
   display: flex;

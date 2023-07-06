@@ -97,6 +97,7 @@ export const popupStates = {
   DELETE_COMMENT: 'DELETE_COMMENT',
   DELETE_REPLY: 'DELETE_REPLY',
   OPEN_THEME: 'OPEN_THEME',
+  OPEN_SEARCH: 'OPEN_SEARCH',
 };
 
 export const Fonts = {

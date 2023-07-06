@@ -172,8 +172,9 @@ export const StyledLinks = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
-  div {
+  > div {
     cursor: pointer;
+    color: white;
     :hover {
       text-decoration: underline;
     }
