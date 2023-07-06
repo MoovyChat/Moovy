@@ -1,9 +1,6 @@
-import { CURRENT_DOMAIN, G_TRACKING_ID, themes } from '../../constants';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useState, startTransition } from 'react';
 import { Users, useMeQuery } from '../../generated/graphql';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-
 import { GlobalStyles } from '../../utils/themes/globalStyles';
 import Header from '../header/header';
 import { Helmet } from 'react-helmet';
@@ -15,6 +12,8 @@ import { urqlClient } from '../../utils/urlClient';
 import usePageView from '../../hooks/usePageView';
 import { withUrqlClient } from 'next-urql';
 import { getThemeForHome } from '../home/home';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { CURRENT_DOMAIN } from '../../constants';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -34,20 +33,22 @@ const App = () => {
     }
     // If user data is successfully fetched and not in the process of fetching, proceed
     if (!fetching && data) {
-      // Retrieve user object and current path
-      const user = data?.me as Users;
-      // If a user object exists
-      if (user) {
-        // Update Redux store with user data and save user data in localStorage
-        dispatch(sliceSetUser(user));
-        if (location.pathname === '/') navigate('/home');
-        else navigate(location.pathname);
-        localStorage.setItem('user', JSON.stringify(user));
-      }
-      // Set the showLoading state to false after 300ms
-      setTimeout(() => {
-        setShowLoading(false);
-      }, 300);
+      startTransition(() => {
+        // Retrieve user object and current path
+        const user = data?.me as Users;
+        // If a user object exists
+        if (user) {
+          // Update Redux store with user data and save user data in localStorage
+          dispatch(sliceSetUser(user));
+          if (location.pathname === '/') navigate('/home');
+          else navigate(location.pathname);
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        // Set the showLoading state to false after 300ms
+        setTimeout(() => {
+          setShowLoading(false);
+        }, 300);
+      });
     }
   }, [fetching, data, error]);
 
