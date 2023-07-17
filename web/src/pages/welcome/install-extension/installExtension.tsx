@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './style.css';
 import { StyledInstallExtension } from './installExtension.styles';
+import { EXTENSION_URL } from '../../../constants';
 
 const InstallExtension = () => {
   useEffect(() => {
@@ -24,7 +25,12 @@ const InstallExtension = () => {
     });
   }, []);
   return (
-    <StyledInstallExtension>
+    <StyledInstallExtension
+      onClick={e => {
+        e.stopPropagation();
+        window.open(EXTENSION_URL, '_blank');
+      }}
+    >
       <div className="sparkle-button">
         <button className="sparkle-btn">
           <span className="spark"></span>
