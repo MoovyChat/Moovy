@@ -21,10 +21,7 @@ import {
   setStoredFilterValues,
   setStoredUserLoginDetails,
 } from "../../helpers/storage";
-import {
-  getDomain,
-  getIdFromNetflixURL,
-} from "../content/components/moovy/contentScript.utils";
+import { getDomain } from "../content/components/moovy/contentScript.utils";
 
 /**
  * This function sends a message to a specific tab in a Chrome browser and returns a promise that

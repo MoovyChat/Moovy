@@ -82,6 +82,7 @@ const Giphy = () => {
         columns={2}
         fetchGifs={fetchGifs}
         onGifClick={(gif, e) => {
+          console.log({ gif });
           e.stopPropagation();
           e.preventDefault();
           handleSendGIF(gif);

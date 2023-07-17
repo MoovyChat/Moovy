@@ -151,7 +151,10 @@ const scrapePage = async (url: string): Promise<MovieFullInformation> => {
       episodes: [episodeInfo],
     };
     const finalResult: MovieFullInformation = {
-      id: type !== "movie" ? showTitle : episodeTitle,
+      id:
+        type !== "movie"
+          ? showTitle.toLowerCase().replace(/ /g, "-")
+          : episodeTitle.toLowerCase().replace(/ /g, "-"),
       advisories: info ? (info.genre ? info.genre.split(" ") : []) : [],
       artwork: boxart,
       boxart,

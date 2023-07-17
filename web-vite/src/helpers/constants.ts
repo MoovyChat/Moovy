@@ -9,7 +9,7 @@ export const constants = {
   main_color: "#990100",
   record_options: "Record options",
 };
-export const __prod__ = process.env.NODE_ENV !== "production";
+export const __prod__ = process.env.NODE_ENV === "production";
 
 export const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
 export const MOOVY_URL = __prod__
@@ -23,7 +23,7 @@ export const INSTAGRAM_LINK = "https://www.instagram.com/moovychat/";
 export const PATREON = "https://www.patreon.com/MoovyChat";
 export const BUY_ME_A_COFFEE = "https://www.buymeacoffee.com/moovychat";
 export const CUSTOM_DOMAIN = __prod__
-  ? "server.moovychat.com"
+  ? import.meta.env.VITE_CUSTOM_DOMAIN
   : "localhost:4000";
 export const wsUrl = __prod__
   ? `wss://${CUSTOM_DOMAIN}/graphql`
@@ -56,7 +56,7 @@ export const SOCKET_MESSAGE_TYPES = {
   ROOM_NAME_CHANGE: "roomNameChange",
 };
 export const SOCKET_URL = __prod__
-  ? "https://nest.moovychat.com/"
+  ? import.meta.env.VITE_SOCKET_URL
   : "http://localhost:3001";
 
 export const isServerSide = () => typeof window === "undefined";

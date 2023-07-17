@@ -6,7 +6,7 @@ docker push kishore189/moovychat:nest-5
 ```
 
 ```
-ssh root@137.184.201.17 (Get the IPv4 from the digital ocean)
+ssh root@137.184.201.17 (Get the IPv4 from the digital ocean) (PWD:moovychat)
 docker pull kishore189/moovychat:nest-5
 docker tag kishore189/moovychat:nest-5 dokku/nest:0.0.5
 dokku deploy nest 0.0.5

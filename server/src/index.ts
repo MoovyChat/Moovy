@@ -21,6 +21,7 @@ import session from "express-session";
 import { useServer } from "graphql-ws/lib/use/ws";
 import ws from "ws";
 import scrapePage from "./scrape";
+import { chatGPTHandler, getRecommendation, getTrivia } from "./chatGPT";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const regex = /^redis:\/\/(?::(.*)@)?(.*):(\d+)$/;
@@ -65,6 +66,11 @@ const main = async () => {
   // Increase the maximum request size limit to 50MB
   app.use(bodyParser.json({ limit: "50mb" }));
   app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
+  // Endpoints
+  app.post("/trivia", getTrivia);
+  app.post("/chat", chatGPTHandler);
+  app.post("/recommendations", getRecommendation);
 
   const server = createServer(app);
   const schema = await buildSchema({

@@ -24,6 +24,8 @@ interface props {
 const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
   const user = useAppSelector((state) => state.user);
   const text = useAppSelector((state) => state.textArea.text);
+  const [spacePressed, setSpacePressed] = useState(false);
+
   const textAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
   );
@@ -36,6 +38,26 @@ const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
   const [textAreaHeight, setTextAreaHeight] = useState<number>(17);
   const [formattedTextMap, setFormattedTextMap] = useState<textMap[]>([]);
   const [debouncedText, setDebouncedValue] = useState<string>("");
+
+  useEffect(() => {
+    function checkKey(e) {
+      if (e.code === "Space") {
+        setSpacePressed(true);
+      }
+    }
+
+    function clearKey() {
+      setSpacePressed(false);
+    }
+
+    window.addEventListener("keydown", checkKey);
+    window.addEventListener("keyup", clearKey);
+
+    return () => {
+      window.removeEventListener("keydown", checkKey);
+      window.removeEventListener("keyup", clearKey);
+    };
+  }, []);
 
   useEffect(() => {
     const debouncedSetValue = _.debounce((v) => {
@@ -108,11 +130,33 @@ const ChatArea: React.FC<props> = ({ handleKeyDown, handleInputChange }) => {
   }, []);
 
   useEffect(() => {
-    document.querySelector("video").addEventListener("pause", function (e) {
+    const videoElement = document.querySelector("video");
+    let timerId = null;
+
+    const playVideoIfInTextArea = (e) => {
       if (document.activeElement.nodeName === "TEXTAREA") {
-        (e.target as any).play();
+        e.target.play();
       }
+    };
+
+    // Wait for the video to load
+    videoElement.addEventListener("loadedmetadata", function (e) {
+      videoElement.addEventListener("pause", playVideoIfInTextArea);
     });
+
+    // Or wait for 30 seconds
+    timerId = setTimeout(() => {
+      videoElement.addEventListener("pause", playVideoIfInTextArea);
+    }, 5000);
+
+    // Clean up function to remove event listener and clear timeout
+    return () => {
+      videoElement.removeEventListener("pause", playVideoIfInTextArea);
+      videoElement.removeEventListener("loadedmetadata", playVideoIfInTextArea);
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
   }, []);
 
   const onFocusHandler: FocusEventHandler<HTMLTextAreaElement> = (e) => {
