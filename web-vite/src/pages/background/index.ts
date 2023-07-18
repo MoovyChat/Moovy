@@ -13,7 +13,7 @@ import {
   MovieFullInformation,
   SeasonInfo,
 } from "../../generated/graphql";
-import { __prod__ } from "../../helpers/constants";
+import { ServerScrape, __prod__ } from "../../helpers/constants";
 import { requestTypes } from "../../helpers/enums";
 import { User } from "../../helpers/interfaces";
 import {
@@ -194,7 +194,7 @@ const getMovieInfo = async (currentUrl: string) => {
     let data: MovieFullInformation | null = null;
 
     try {
-      const response = await fetch("http://localhost:4000/scrape", {
+      const response = await fetch(ServerScrape, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

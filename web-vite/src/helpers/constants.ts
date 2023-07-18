@@ -9,7 +9,7 @@ export const constants = {
   main_color: "#990100",
   record_options: "Record options",
 };
-export const __prod__ = process.env.NODE_ENV === "production";
+export const __prod__ = process.env.NODE_ENV !== "production";
 
 export const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
 export const MOOVY_URL = __prod__
@@ -31,7 +31,7 @@ export const wsUrl = __prod__
 export const serverUrl = __prod__
   ? `https://${CUSTOM_DOMAIN}/graphql`
   : `http://${CUSTOM_DOMAIN}/graphql`;
-export const serverScrape = __prod__
+export const ServerScrape = __prod__
   ? `https://${CUSTOM_DOMAIN}/scrape`
   : `http://${CUSTOM_DOMAIN}/scrape`;
 export const textMapTypes = {

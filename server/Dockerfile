@@ -1,17 +1,20 @@
-# Use an official Node runtime as the parent image
 FROM node:18
 
-# Set the working directory in the container to /usr/src/app
+# Create app directory
 WORKDIR /usr/src/app
 
-# Copy package.json and yarn.lock into the root directory of the app
-COPY package.json yarn.lock ./
-
 # Install app dependencies
-RUN yarn install --production --no-lockfile
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package.json ./
+COPY yarn.lock ./
 
-# Copy the rest of the application code into the app directory
+# Bundle app source
 COPY . .
+
+RUN yarn
+# If you are building your code for production
+# RUN npm ci --only=production
 
 # Add Chrome installation commands
 RUN apt-get update && \
@@ -21,20 +24,12 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y google-chrome-stable
 
-# Copy .env.production to .env
 COPY .env.production .env
 
-# Compile TypeScript to JavaScript
 RUN yarn build
 
-# Set environment variables
 ENV NODE_ENV production
 
-# Make the container listen on port 8080
 EXPOSE 8080
-
-# Define the command to run the app
 CMD [ "node", "dist/index.js" ]
-
-# Switch to the node user
 USER node

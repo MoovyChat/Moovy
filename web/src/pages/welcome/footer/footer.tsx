@@ -74,6 +74,18 @@ const Footer: React.FC<props> = ({ id }) => {
         </div>
 
         <div className="block">
+          <div className="title">Credits</div>
+          <div className="links">
+            <FooterLink
+              href="https://www.instagram.com/the_coding_wizard/"
+              target="_blank"
+            >
+              Sparkle Button & Key Features designed by @TheCodingWizard
+            </FooterLink>
+          </div>
+        </div>
+
+        <div className="block">
           <div className="title">Socials</div>
           <div className="links">
             <Suspense fallback={<LogoLoading />}>
