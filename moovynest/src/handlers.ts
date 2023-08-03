@@ -282,12 +282,14 @@ function handleCreateRoom(socket: CustomSocket, io: Server) {
         message: `${user.name} created room ${roomID}`,
       });
 
-      const roomsList = rooms.map((room) => ({
-        roomName: room.roomName,
-        roomId: room.roomId,
-        isPublic,
-        movie,
-      }));
+      const roomsList = rooms.map((room) => {
+        return {
+          roomName: room.roomName,
+          roomId: room.roomId,
+          isPublic,
+          movie: room.movie,
+        };
+      });
       io.emit("nestsList", roomsList);
 
       // Create a session for this user
