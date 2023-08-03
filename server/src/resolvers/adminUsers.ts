@@ -20,6 +20,9 @@ class TableData {
 
   @Field(() => GraphQLJSON)
   data: any;
+
+  @Field(() => Int)
+  totalRows: number;
 }
 
 @Resolver()
@@ -76,15 +79,24 @@ export class AdminResolver {
     // Run a raw SQL query to get the ordered column names from the table
     const columns = await entityManager.query(
       `SELECT column_name
-     FROM information_schema.columns
-     WHERE table_name = $1
-     ORDER BY ordinal_position`,
+   FROM information_schema.columns
+   WHERE table_name = $1
+   ORDER BY ordinal_position`,
       [tableName]
     );
 
     const columnNames = columns.map((column: any) => column.column_name);
 
-    return { columnNames, data: JSON.stringify(data) };
+    // Run a raw SQL query to get the total number of rows in the table
+    const totalRows = await entityManager.query(
+      `SELECT COUNT(*) FROM ${tableName}`
+    );
+
+    return {
+      columnNames,
+      data: JSON.stringify(data),
+      totalRows: totalRows[0].count, // This will add the row count to the returned data
+    };
   }
 
   // TODO: Perform Admin Checks before updating.
