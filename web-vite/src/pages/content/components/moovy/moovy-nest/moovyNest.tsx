@@ -21,16 +21,23 @@ import {
 import { NestHeading, StyledMoovyNest, TypingStatus } from "./moovyNest.styles";
 import NestChatBox from "./nest-chat-box/nestChatBox";
 
-import { useSpring, animated, useTransition } from "@react-spring/web";
+import { animated, useTransition } from "@react-spring/web";
 import { nanoid } from "nanoid";
 import { FiEdit3 } from "react-icons/fi";
-import { MdCancel, MdOutlineGifBox, MdTagFaces } from "react-icons/md";
+import {
+  MdCancel,
+  MdOpenInFull,
+  MdOutlineCloseFullscreen,
+  MdOutlineGifBox,
+  MdTagFaces,
+} from "react-icons/md";
 import { batch } from "react-redux";
 import EmojiPicker from "../../../../../components/emoji-picker/emojiPicker";
 import { SOCKET_MESSAGE_TYPES } from "../../../../../helpers/constants";
 import { NEST_TYPE } from "../../../../../helpers/enums";
 import {
   sliceSetIsGifOpen,
+  sliceSetNestFullScreen,
   sliceSetNestType,
   sliceSetNestVisibility,
 } from "../../../../redux/slices/nestSlice";
@@ -47,7 +54,6 @@ import { SocketContext } from "../context/socketContextFile";
 import CopyToClipboard from "./copy-to-clipboard/copyToClipboard";
 import Room from "./multiVideoComminication/video-chat-room/videoChatRoom";
 import NestStatus from "./nest-status/nestStatus";
-import SmileyWindow from "../../../../../components/smiley-window/smileyWindow";
 import NestOptionWindow from "./nest-option-window/nestOptionWindow";
 import AnimatedSmileys from "./animated-smileys/animatedSmileys";
 interface Props {
@@ -68,6 +74,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   const dispatch = useAppDispatch();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
+  const isFullScreen = useAppSelector((state) => state.nest.isFullScreen);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isTextAreaFocussed = useAppSelector(
     (state) => state.textArea.isTextAreaFocused
@@ -76,12 +83,10 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
   useEffect(() => {
     if (socket) {
       socket.on("connect", () => {
-        console.log("Connected:", socket.connected); // true when connected
         dispatch(sliceSetSocketConnectionStatus(true));
       });
 
       socket.on("disconnect", () => {
-        console.log("Connected:", socket.connected); // false when disconnected
         dispatch(sliceSetSocketConnectionStatus(false));
       });
 
@@ -315,6 +320,16 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
               )}
             </React.Fragment>
           )}
+          <div
+            className="nest-full-screen"
+            onClick={() => dispatch(sliceSetNestFullScreen(!isFullScreen))}
+          >
+            {isFullScreen ? (
+              <MdOutlineCloseFullscreen size={20} />
+            ) : (
+              <MdOpenInFull size={20} />
+            )}
+          </div>
         </div>
 
         <CopyToClipboard text={roomId} />
@@ -356,7 +371,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
             handleInputChange={handleInputChange}
           />
           <TextAreaPost>
-            <div ref={smileyIconRef}>
+            <div ref={smileyIconRef} style={{ display: "flex" }}>
               <MdTagFaces
                 className="smiley-window"
                 size={25}
@@ -389,6 +404,7 @@ const MoovyNest: React.FC<Props> = ({ ref, style }) => {
 
             <div
               className="text-send"
+              style={{ display: "flex" }}
               onClick={(e: MouseEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 e.stopPropagation();

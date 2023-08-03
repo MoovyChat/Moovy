@@ -135,6 +135,14 @@ export interface textMap {
   type: string;
 }
 
+export interface NestMovieType {
+  id: string;
+  name: string;
+  thumbs: string;
+  platform: string;
+  parentTitleName: string;
+}
+
 export interface loadingInterface {
   isCommentsLoaded: boolean;
   isRepliesLoaded: boolean;
@@ -152,4 +160,9 @@ export interface loadingInterface {
 export interface borderType {
   title: string;
   color: string;
+}
+
+export interface PlatformConfig {
+  domain: string;
+  getIdFromURL: (url: string) => Promise<any | null>;
 }

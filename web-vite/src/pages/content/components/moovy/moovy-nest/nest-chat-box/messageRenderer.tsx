@@ -10,6 +10,7 @@ import {
   StyledJoinLeaveMessage,
   StyledUserMessage,
 } from "./nestChatBox.styles";
+import GiphyImage from "./giphyImage";
 
 interface MessageRendererInterface {
   data: incomingMessageInterface;
@@ -129,12 +130,9 @@ const MessageRenderer: React.FC<MessageRendererInterface> = ({
             <div className={`${containerClassName} gif-container`}>
               <div className="nest-gif">
                 {(data.message as any) && (
-                  <img
-                    className="gif-msg"
-                    src={(data.message as any).images.downsized.url}
-                    alt={(data.message as any).title}
+                  <GiphyImage
+                    message={data.message as any}
                     onLoad={() => {
-                      // Scroll to the bottom after the image loads
                       const chatWindow = chatWindowRef.current;
                       chatWindow.scrollTop = chatWindow.scrollHeight;
                     }}
@@ -148,12 +146,9 @@ const MessageRenderer: React.FC<MessageRendererInterface> = ({
             <div className={`${containerClassName} gif-container`}>
               <div className="nest-gif">
                 {(data.message as any) && (
-                  <img
-                    className="gif-msg"
-                    src={(data.message as any).images.downsized.url}
-                    alt={(data.message as any).title}
+                  <GiphyImage
+                    message={data.message as any}
                     onLoad={() => {
-                      // Scroll to the bottom after the image loads
                       const chatWindow = chatWindowRef.current;
                       chatWindow.scrollTop = chatWindow.scrollHeight;
                     }}

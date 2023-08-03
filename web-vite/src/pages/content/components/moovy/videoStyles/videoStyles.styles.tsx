@@ -181,7 +181,6 @@ export const OptionGroup = styled.div<props>`
   transition: max-height 0.5s linear;
   .title {
     font-size: 18px;
-    margin: 10px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -278,8 +277,9 @@ export const OptionGroup = styled.div<props>`
   }
 
   .options {
-    height: auto;
+    max-height: ${(p) => (p.expandGroup ? "auto" : "0")};
     overflow: auto;
+
     label {
       font-size: 14px;
     }

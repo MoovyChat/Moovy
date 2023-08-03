@@ -22,7 +22,10 @@ import {
 import { MOOVY_URL } from "../../../../../helpers/constants";
 import { iconsEnum } from "../../../../../helpers/enums";
 import { urqlClient } from "../../../../../helpers/urql/urqlClient";
-import { getFormattedNumber } from "../../../../../helpers/utilities";
+import {
+  getFormattedNumber,
+  shouldSkipPlatform,
+} from "../../../../../helpers/utilities";
 import { handleMouseEnter, handleMouseLeave } from "../../../../popup/utils";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { sliceSetTheme } from "../../../../redux/slices/misc/miscSlice";
@@ -48,6 +51,7 @@ const ChatStats = memo(() => {
     id: movieId,
     totalCommentsCountOfMovie,
     viewsCount,
+    platform,
   } = useAppSelector((state) => state.movie);
   const { accentColor, theme } = useAppSelector((state) => state.misc);
   const [movieLikesSub] = useMovieStatusUpdateSubscription();
@@ -56,6 +60,7 @@ const ChatStats = memo(() => {
     variables: {
       mid: movieId,
     },
+    pause: shouldSkipPlatform(platform),
   });
   const [commentsUpdateStatus] = useMovieCommentsUpdateSubscription();
   const [nickname] = useState<string>(userNickname);
@@ -64,6 +69,7 @@ const ChatStats = memo(() => {
 
   // Get Likes Data on Initial Load.
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     const likesData = likesQuery.data;
     const likesFetching = likesQuery.fetching;
     if (!likesFetching && likesData) {
@@ -80,6 +86,7 @@ const ChatStats = memo(() => {
 
   // Checks the likes of the movie to determine if the movie is liked or not.
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     if (!movieLikesSub.fetching && movieLikesSub.data) {
       const { userLikesCount } = movieLikesSub.data.movieStatusUpdate;
       userLikesCount && setLikesCount(userLikesCount);
@@ -89,6 +96,7 @@ const ChatStats = memo(() => {
   // TODO: Discuss with team about subscriptions.
   // GraphQL Subscription: Get real time comment count.
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     const { data, fetching } = commentsUpdateStatus;
 
     if (!fetching && data) {
@@ -112,6 +120,7 @@ const ChatStats = memo(() => {
 
   // GraphQL: Toggle like of the movie.
   const toggleLike = useCallback(() => {
+    if (shouldSkipPlatform(platform)) return;
     setLike(!like);
     updateUserLikeFavorite({
       uid: userId,
@@ -146,6 +155,12 @@ const ChatStats = memo(() => {
     });
   }, [dispatch, theme]);
 
+  const customMouseEnterHandler = (type: string) => {
+    if (shouldSkipPlatform(platform)) {
+      handleMouseEnter("Unavailable");
+    } else handleMouseEnter(type);
+  };
+
   const goToVideoStyles = useCallback(() => {
     dispatch(sliceSetPopSlide(true));
     dispatch(slicePopSlideContentType("video-styles"));
@@ -156,13 +171,14 @@ const ChatStats = memo(() => {
       like={like}
       themeToggled={theme}
       accentColor={accentColor}
+      platform={shouldSkipPlatform(platform)}
     >
       <div className="capsule">
         <div
           className="likes"
           onClick={toggleLike}
-          onMouseEnter={handleMouseEnter("Like")}
-          onMouseLeave={handleMouseLeave("Like")}
+          onMouseEnter={() => customMouseEnterHandler("Like")}
+          onMouseLeave={handleMouseLeave("")}
         >
           <span>{getFormattedNumber(likesCount)}</span>
           {like ? (
@@ -173,7 +189,7 @@ const ChatStats = memo(() => {
         </div>
         <div
           className="div-cmt-count-style"
-          onMouseEnter={handleMouseEnter("Total Comments")}
+          onMouseEnter={() => customMouseEnterHandler("Total Comments")}
           onMouseLeave={handleMouseLeave("")}
         >
           <span>
@@ -185,7 +201,7 @@ const ChatStats = memo(() => {
         </div>
         <div
           className="div-cmt-count-style"
-          onMouseEnter={handleMouseEnter("Total Views")}
+          onMouseEnter={() => customMouseEnterHandler("Total Views")}
           onMouseLeave={handleMouseLeave("")}
         >
           <span>{getFormattedNumber(viewsCount ? viewsCount : 0)}</span>

@@ -25,7 +25,7 @@ export const StyledErrorPage = styled.div`
       background-color: rgb(255 255 255);
     }
 
-    .text {
+    .moovychat-text {
       margin: 0px 10px;
       font-size: 16px;
       font-weight: bold;
@@ -62,7 +62,7 @@ export const StyledErrorPage = styled.div`
       }
     }
   }
-  .logo {
+  .moovychat-logo {
     width: 50%;
     display: flex;
     justify-content: center;
@@ -82,9 +82,9 @@ export const StyledErrorPage = styled.div`
       box-shadow: 0 0 5px, inset 0 0 5px;
     }
   }
-  .text {
+  .moovychat-text {
     padding: 15px 20px;
-    font-size: 1.5rem;
+    font-size: 15px;
     font-weight: 600;
     margin-top: 1rem;
     opacity: 0.8;

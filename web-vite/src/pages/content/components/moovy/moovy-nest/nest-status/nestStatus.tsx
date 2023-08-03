@@ -23,7 +23,6 @@ const NestStatus: React.FC<Props> = () => {
   const connected = useAppSelector((state) => state.socket.isConnected);
   const handleAccessCamera: MouseEventHandler<HTMLDivElement> = (e) => {
     e.stopPropagation();
-    console.log("Socket instance when camera icon clicked:", socket);
     dispatch(sliceSetAccessCamera(!accessCamera));
   };
 

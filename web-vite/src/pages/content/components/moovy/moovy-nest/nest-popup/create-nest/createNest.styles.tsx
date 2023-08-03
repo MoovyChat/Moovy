@@ -60,7 +60,7 @@ export const StyledCreateNest = styled.div`
   border-radius: 16px;
   box-shadow: 0 0 3px 2px;
   gap: 15px;
-  .container {
+  .moovychat-container {
     display: flex;
     gap: 10px;
     justify-content: center;

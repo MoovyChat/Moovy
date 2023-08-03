@@ -53,7 +53,6 @@ const Start: React.FC<Props> = () => {
   const [isCommentEnabled, setIsCommentEnabled] = useState<boolean>(false);
   const autoSkipValue = useAppSelector((state) => state.misc.autoSkip);
   const [movieId, setMovieId] = useState<string>("");
-  const [filterValues, setFilterValues] = useState<any>();
   const [isBottomControlsVisible, setIsBottomControlsVisible] =
     useState<boolean>(false);
   const oldIntervalIds = useAppSelector((state) => state.misc.intervalIds);
@@ -142,6 +141,38 @@ const Start: React.FC<Props> = () => {
             setIsBottomControlsVisible(() => true);
           }
         }
+        // For Disney Plus
+        else if (
+          platform === "disneyplus" &&
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class" &&
+          typeof targetElement.className === "string" &&
+          targetElement.className.includes("overlay__controls")
+        ) {
+          let className = targetElement.className as string;
+          if (className.includes("overlay__controls--visually-show")) {
+            setIsBottomControlsVisible(() => true);
+          } else if (className.includes("overlay__controls--visually-hide")) {
+            setIsBottomControlsVisible(() => false);
+          }
+        }
+        // For Hulu
+        else if (
+          platform === "hulu" &&
+          mutation.type === "attributes" &&
+          mutation.attributeName === "style" &&
+          typeof targetElement.className === "string" &&
+          targetElement.className.includes("ControlsContainer__transition")
+        ) {
+          let opacity = window
+            .getComputedStyle(targetElement)
+            .getPropertyValue("opacity");
+          if (opacity === "1") {
+            setIsBottomControlsVisible(() => true);
+          } else {
+            setIsBottomControlsVisible(() => true);
+          }
+        }
       }
     };
 
@@ -179,19 +210,6 @@ const Start: React.FC<Props> = () => {
   //Set the pre-saved video styles.
   useEffect(() => {
     async function applyVideoStyles() {
-      // const playerView = document.querySelector('[data-uia="player"]');
-      // const canvas = playerView as HTMLElement;
-      // Get selected filters from the local storage.
-      // getStoredFilterValues().then((filters) => setFilterValues(filters));
-      // Get stored resize value.
-      // getStoredResizeValue().then((res) => {
-      //   dispatch(sliceSetVideoSize(res));
-      //   if (canvas && res !== "100") {
-      //     getStoredBorder().then((border) => {
-      //       addBorder(canvas, res, border);
-      //     });
-      //   }
-      // });
       getVideoElement().then((res) => {
         setVideoElem(res[0]);
       });

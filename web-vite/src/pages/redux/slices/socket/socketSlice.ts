@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { Users } from "./../../../../generated/graphql";
 import { createSlice } from "@reduxjs/toolkit";
-import { Socket } from "socket.io-client";
 
 export interface incomingMessageInterface {
   id?: string;

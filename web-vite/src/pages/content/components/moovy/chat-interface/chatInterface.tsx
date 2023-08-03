@@ -1,52 +1,30 @@
 import "./fonts.scss";
 
-import { ChatWindowParent, DragBar, Perimeter } from "./chatInterface.styles";
+import { DragBar, Perimeter } from "./chatInterface.styles";
 
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { Provider as ReduxProvider } from "react-redux";
-import { CSSTransition } from "react-transition-group";
 import { PersistGate } from "redux-persist/integration/react";
 
-import ChatTitle from "../../../../../components/chat-title/chatTitle";
-import ErrorPage from "../../../../../components/error-page/errorPage";
-import LogoLoading from "../../../../../components/logo-loading/logoLoading";
-
-import PopSlide from "../../../../../components/pop-slide/popSlide";
-import Tooltip from "../../../../../components/tooltip/tooltip";
 import { Profile } from "../../../../../generated/graphql";
 
-import { animated, useTransition } from "@react-spring/web";
 import { withUrqlClient } from "next-urql";
 import { createRoot } from "react-dom/client";
-import { CommentInfo, User } from "../../../../../helpers/interfaces";
+import { User } from "../../../../../helpers/interfaces";
 import { urqlClient } from "../../../../../helpers/urql/urqlClient";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { sliceSetLoadingText } from "../../../../redux/slices/loading/loadingSlice";
 import { sliceSetIsProfileNeedsToBeUpdated } from "../../../../redux/slices/misc/miscSlice";
 import {
   sliceResetPopUp,
   sliceSetChatWindowSize,
 } from "../../../../redux/slices/settings/settingsSlice";
 import { persistor, store } from "../../../../redux/store";
-import ChatStats from "../chatStats/chatStats";
 import { getPlayerViewElement, getVideoElement } from "../contentScript.utils";
 import { SocketContext } from "../context/socketContextFile";
-import GlobalChat from "../global-chat/globalChat";
 import useMousePosition from "../hooks/useMouseMove";
 import AnimateMessages from "../moovy-nest/animateMessages/animateMessages";
-import NestLogin from "../moovy-nest/nest-login/nestLogin";
-import SnackBar from "../moovy-nest/nest-popup/snack-bar/snackBar";
-import UpdateProfile from "../update-profile/updateProfile";
-import Intro from "../intro/intro";
+import ChatWindowParentComponent from "./chatWindowParentComponent";
 
 type props = {
   user: User;
@@ -69,34 +47,24 @@ const ChatInterface: React.FC<props> = ({
 }) => {
   const commentIcon = document.getElementById("comment-header");
   const [pos, setPosition] = useState({ x: 0, y: 0 });
-  const { movie, loading, misc, settings } = useAppSelector((state) => state);
+  const { movie, misc, settings } = useAppSelector((state) => state);
   const font = misc.font;
-  const { networkError, isMovieLoaded, isMovieInsertionFinished } = loading;
   const { enableBackground } = misc;
-  const { isPopSlideOpen } = settings;
   const chatWindowSize = settings.chatWindowSize || "30";
   const thumbs = movie.thumbs;
   const divRef = useRef<HTMLDivElement | null>(null);
   const videoElem = getPlayerViewElement();
-  const isProfileNeedsToBeUpdated = useAppSelector(
-    (state) => state.misc.isProfileNeedsToBeUpdated
-  );
+
   const windowTransition = `cubic-bezier(0.18, 0.89, 0.32, 1.28) 0s;`;
   const dispatch = useAppDispatch();
   const position = useMousePosition();
-  const chatMode = useAppSelector((state) => state.settings.chatMode);
-  // React:useState hooks.
-  const [replyWindowResponse, setReplyClickResponse] = useState<CommentInfo>();
+
   const [customLoading, setCustomLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<boolean>(true);
-  const globalChatRef = useRef(null);
-  const moovyNestRef = useRef(null);
+
   const socket = useContext(SocketContext);
   const roomId = useAppSelector((state) => state.socket.roomId);
   const platform = movie?.platform;
-  const [hasShownIntro, setHasShownIntro] = useState(
-    localStorage.getItem("hasShownIntro") === "true"
-  );
 
   useEffect(() => {
     setCustomLoading(() => true);
@@ -117,10 +85,6 @@ const ChatInterface: React.FC<props> = ({
       } else dispatch(sliceSetIsProfileNeedsToBeUpdated(false));
     }
   }, [profile, profileFetching]);
-
-  const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
-    setReplyClickResponse(comment);
-  }, []);
 
   useEffect(() => {
     let videoPlayer;
@@ -180,6 +144,16 @@ const ChatInterface: React.FC<props> = ({
   useEffect(() => {
     if (!divRef.current || !commentIcon || !videoElem) return;
 
+    if (platform === "disneyplus") {
+      const disneyPlusBottomContainer = document.querySelector(
+        ".btm-media-overlays-container"
+      ) as HTMLElement;
+
+      if (disneyPlusBottomContainer) {
+        disneyPlusBottomContainer.style.zIndex = "1";
+      }
+    }
+
     const commonTransition = `transition: all 1s ${windowTransition};`;
     let videoElemMaxWidth = `max-width: ${
       openChatWindow ? 100 - parseInt(chatWindowSize) || 70 : 100
@@ -218,6 +192,7 @@ const ChatInterface: React.FC<props> = ({
     videoElem.style.cssText = `
     ${videoElemMaxWidth}
     transition: max-width 1s ${windowTransition};
+    left: 0;
   `;
   }, [openChatWindow, divRef?.current, commentIcon, videoElem, platform]);
 
@@ -273,6 +248,7 @@ const ChatInterface: React.FC<props> = ({
                 if (videoWidthRef.current > 70) videoWidthRef.current = 70;
                 videoElem.style.cssText = `
                   max-width: ${videoWidthRef.current}% !important;
+                  left: 0;
                 `;
               }
             }
@@ -325,49 +301,6 @@ const ChatInterface: React.FC<props> = ({
     };
   }, []);
 
-  const transitions = useTransition(chatMode, {
-    key: chatMode,
-    unique: true,
-    from: {
-      opacity: 0,
-      transform:
-        chatMode === "global"
-          ? "translate3d(-100%, 0, 0)"
-          : "translate3d(100%, 0, 0)",
-      width: "0%",
-      display: "none",
-    },
-    enter: {
-      opacity: 1,
-      transform: "translate3d(0, 0, 0)",
-      width: "100%",
-      display: chatMode === "global" ? "flex" : "block",
-      overflow: "hidden",
-    },
-    leave: {
-      opacity: 0,
-      transform:
-        chatMode === "global"
-          ? "translate3d(100%, 0, 0)"
-          : "translate3d(-100%, 0, 0)",
-      width: "0%",
-      display: "none",
-    },
-  });
-
-  const AnimatedGlobalChat = animated(GlobalChat);
-  const AnimatedMoovyNest = animated(NestLogin);
-
-  useLayoutEffect(() => {
-    if (chatMode === "global") {
-      if (moovyNestRef && moovyNestRef.current)
-        moovyNestRef.current.style.display = "none";
-    } else {
-      if (globalChatRef && globalChatRef.current)
-        globalChatRef.current.style.display = "none";
-    }
-  }, [chatMode, globalChatRef, moovyNestRef]);
-
   function renderAnimateMessages(videoElement: HTMLVideoElement) {
     const animateMessagesDiv = document.createElement("div");
     videoElement.parentElement.appendChild(animateMessagesDiv);
@@ -399,62 +332,13 @@ const ChatInterface: React.FC<props> = ({
       onMouseMove={handleMouseMove}
     >
       <DragBar className="drag-bar" ref={dragRef}></DragBar>
-      {!isMovieLoaded || !isMovieInsertionFinished || networkError ? (
-        <LogoLoading />
-      ) : !user ? (
-        <ErrorPage
-          text={`Login using the extension, and click on Refetch`}
-        ></ErrorPage>
-      ) : profileFetching || customLoading ? (
-        <LogoLoading />
-      ) : isProfileNeedsToBeUpdated ? (
-        <UpdateProfile profile={profile} />
-      ) : (
-        <ChatWindowParent
-          className="chat-interface"
-          onClick={(e) => e.stopPropagation()}
-          windowOpened={display}
-        >
-          <React.Fragment>
-            {!hasShownIntro && <Intro />}
-            <ChatTitle />
-            <ChatStats />
-            {transitions((style, item) => (
-              <animated.div style={{ ...style, width: "100%", height: "100%" }}>
-                {item === "global" ? (
-                  <AnimatedGlobalChat
-                    replyWindowResponse={replyWindowResponse}
-                    responseFromReplyWindow={responseFromReplyWindow}
-                    setReplyClickResponse={setReplyClickResponse}
-                    ref={globalChatRef}
-                    style={style}
-                  />
-                ) : (
-                  <AnimatedMoovyNest ref={moovyNestRef} style={style} />
-                )}
-              </animated.div>
-            ))}
-          </React.Fragment>
-          <CSSTransition
-            in={isPopSlideOpen}
-            classNames="fade"
-            timeout={300}
-            unmountOnExit
-          >
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <PopSlide />
-            </div>
-          </CSSTransition>
-          <Tooltip left={pos.x} top={pos.y} />
-          <SnackBar />
-        </ChatWindowParent>
-      )}
+      <ChatWindowParentComponent
+        pos={pos}
+        display={display}
+        user={user}
+        fetchingOrLoading={profileFetching || customLoading}
+        profile={profile}
+      />
     </Perimeter>
   );
 };

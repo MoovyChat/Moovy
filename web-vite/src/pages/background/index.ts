@@ -95,9 +95,11 @@ const getMovieInfo = async (currentUrl: string) => {
     NETFLIX: "www.netflix.com",
     LOCALHOST: "localhost",
     DISNEY: "www.disneyplus.com",
+    HULU: "www.hulu.com",
     AMAZON: "www.amazon.com",
     AHA: "www.aha.video",
   };
+
   /**
    * The function retrieves information about a Netflix movie based on its ID.
    * @param {number} movieId - The ID of the Netflix movie for which we want to retrieve information.
@@ -214,7 +216,7 @@ const getMovieInfo = async (currentUrl: string) => {
 
     return { data, error: errorMessage };
   };
-
+  console.log({ domain });
   switch (domain) {
     case domains.NETFLIX:
       const idMatch = currentUrl.match(/\/(watch|title)\/(\d+)/);
@@ -238,6 +240,9 @@ const getMovieInfo = async (currentUrl: string) => {
         return { data: null, error: ahaError };
       }
       return { data: ahaInfo, error: null };
+    case domains.DISNEY:
+    case domains.HULU:
+      return { data: null, error: null };
     default:
       return { data: null, error: "Domain not supported" };
   }
@@ -369,6 +374,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     NETFLIX: "www.netflix.com",
     LOCALHOST: "localhost",
     DISNEY: "www.disneyplus.com",
+    HULU: "www.hulu.com",
     AMAZON: "www.amazon.com",
     AHA: "www.aha.video",
   };
@@ -392,6 +398,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             break;
           case domains.DISNEY:
             sendResponse({ domain: "DISNEY" });
+            break;
+          case domains.HULU:
+            sendResponse({ domain: "HULU" });
             break;
           case domains.AHA:
             sendResponse({ domain: "AHA" });

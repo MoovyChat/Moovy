@@ -17,10 +17,6 @@ const NestCard: React.FC<NestCardInterface> = ({ nest }) => {
     socket && socket.emit("joinRoom", roomId, user);
   };
 
-  useEffect(() => {
-    console.log({ nest });
-  }, [nest]);
-
   return (
     <AvailableNest>
       <NestIcon>
@@ -44,10 +40,20 @@ const NestCard: React.FC<NestCardInterface> = ({ nest }) => {
             <div className="nest-detail-icon">
               {nest?.movie?.platform === "aha" ? (
                 <img src={OTT.AHA.imgUrl} alt="aha" width={20} height={20} />
+              ) : nest?.movie?.platform === "disneyplus" ? (
+                <img
+                  src={OTT.DISNEY.imgUrl}
+                  alt="disneyplus"
+                  width={20}
+                  height={20}
+                />
+              ) : nest?.movie?.platform === "hulu" ? (
+                <img src={OTT.HULU.imgUrl} alt="hulu" width={20} height={20} />
               ) : (
                 <SiNetflix size={20} color="red" />
               )}
             </div>
+
             <div className="nest-movie-name">
               {nest?.movie?.parentTitleName} {nest?.movie?.name}
             </div>

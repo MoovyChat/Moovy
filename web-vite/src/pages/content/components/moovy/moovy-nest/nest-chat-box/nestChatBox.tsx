@@ -15,13 +15,6 @@ const NestChatBox = () => {
     (state) => state.socket.incomingMessages
   );
 
-  const messageTypeLookup = useMemo(() => {
-    return incomingMessages.reduce(
-      (acc, message) => ({ ...acc, [message.type]: true }),
-      {}
-    );
-  }, [incomingMessages]);
-
   useEffect(() => {
     if (chatWindowRef && chatWindowRef.current) {
       const chatWindow = chatWindowRef.current;

@@ -45,6 +45,12 @@ export const NestHeading = styled.div`
     gap: 10px;
     justify-content: center;
     align-items: center;
+    .nest-full-screen {
+      padding: 5px;
+      border-radius: 50%;
+      box-shadow: 0 0 2px;
+      cursor: pointer;
+    }
   }
   .nest-input {
     border: 2px solid rgb(204, 204, 204);

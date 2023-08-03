@@ -22,6 +22,7 @@ import { sliceSetIsOpenChatWindow } from "../../../../redux/slices/settings/sett
 import { store } from "../../../../redux/store";
 import { ERROR_LOGO, LOGO_128 } from "../../../../../helpers/constants";
 import { SocketProvider } from "../context/socketContextFile";
+import { shouldSkipPlatform } from "../../../../../helpers/utilities";
 
 const Loader = (chatElement: HTMLDivElement) => {
   const playerElement = getPlayerViewElement();
@@ -64,6 +65,7 @@ const CommentButton: React.FC<props> = ({ visible }) => {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [intervalIds, setIntervalIds] = useState<Array<NodeJS.Timeout>>([]);
   const user = useAppSelector((state) => state.user);
+  const platform = useAppSelector((state) => state.movie.platform);
   const [, insertVisited] = useInsertVisitedMutation();
   const smoothWidth = useAppSelector((state) => state.settings.smoothWidth);
   const movieId = useAppSelector((state) => state.movie.id);
@@ -78,6 +80,7 @@ const CommentButton: React.FC<props> = ({ visible }) => {
   useInsertMovie(movieId);
   // Logs user view history.
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     if (intervalId) {
       clearInterval(intervalId);
       intervalIds.forEach((id) => clearInterval(id));

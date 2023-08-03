@@ -19,6 +19,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  JSON: any;
 };
 
 export type AdminNotifications = {
@@ -432,7 +433,6 @@ export type MovieStats = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  addMovieIdToTheUserWatchList: Scalars["Boolean"];
   amIFollowingThisUser?: Maybe<Scalars["Boolean"]>;
   clearNotifications?: Maybe<Scalars["Boolean"]>;
   createCharge?: Maybe<Scalars["String"]>;
@@ -444,6 +444,7 @@ export type Mutation = {
   deleteMessages: Scalars["Boolean"];
   deleteReply?: Maybe<Reply>;
   deleteUser: Scalars["Boolean"];
+  executeSql: Scalars["Boolean"];
   fetchNewComments: Array<Comment>;
   getTopThreeUserNames?: Maybe<Array<NicKNameFormat>>;
   getUserByNickName?: Maybe<Users>;
@@ -474,12 +475,8 @@ export type Mutation = {
   updateUserMovieStats?: Maybe<LikeAndFav>;
   updateUserNickName: NickNameResponse;
   updateUserProfilePhoto: NickNameResponse;
+  updateVersionNumber?: Maybe<Scalars["String"]>;
   upsertProfile?: Maybe<Profile>;
-};
-
-export type MutationAddMovieIdToTheUserWatchListArgs = {
-  mid: Scalars["String"];
-  uid: Scalars["String"];
 };
 
 export type MutationAmIFollowingThisUserArgs = {
@@ -530,6 +527,11 @@ export type MutationDeleteReplyArgs = {
 
 export type MutationDeleteUserArgs = {
   uid: Scalars["String"];
+};
+
+export type MutationExecuteSqlArgs = {
+  params?: InputMaybe<Array<Scalars["String"]>>;
+  sql: Scalars["String"];
 };
 
 export type MutationFetchNewCommentsArgs = {
@@ -674,6 +676,10 @@ export type MutationUpdateUserProfilePhotoArgs = {
   url: Scalars["String"];
 };
 
+export type MutationUpdateVersionNumberArgs = {
+  newVersion: Scalars["String"];
+};
+
 export type MutationUpsertProfileArgs = {
   options: InputArgs;
 };
@@ -802,6 +808,7 @@ export type Query = {
   getReply?: Maybe<Reply>;
   getReplyLikes: ReplyLikesObject;
   getSearchResults?: Maybe<SearchObject>;
+  getTableData: TableData;
   getTitle?: Maybe<Title>;
   getTitleInfo?: Maybe<Title>;
   getTrendingTitles?: Maybe<TrendingOutput>;
@@ -814,6 +821,7 @@ export type Query = {
   getUserProfile?: Maybe<Profile>;
   getUserStatistics?: Maybe<FullUserObject>;
   getUserViewHistory?: Maybe<VisitedObject>;
+  getVersionNumber: Scalars["String"];
   getVisited?: Maybe<Visited>;
   hello: Scalars["String"];
   isFollowingUser?: Maybe<Scalars["Boolean"]>;
@@ -1010,6 +1018,11 @@ export type QueryGetReplyLikesArgs = {
 
 export type QueryGetSearchResultsArgs = {
   search: Scalars["String"];
+};
+
+export type QueryGetTableDataArgs = {
+  page?: InputMaybe<Scalars["Int"]>;
+  tableName: Scalars["String"];
 };
 
 export type QueryGetTitleArgs = {
@@ -1242,6 +1255,12 @@ export type SubscriptionReplyLikesUpdateArgs = {
   rid: Scalars["String"];
 };
 
+export type TableData = {
+  __typename?: "TableData";
+  columnNames: Array<Scalars["String"]>;
+  data: Scalars["JSON"];
+};
+
 export type Title = {
   __typename?: "Title";
   advisories?: Maybe<Array<Scalars["String"]>>;
@@ -1347,7 +1366,6 @@ export type Users = {
   nickname: Scalars["String"];
   photoUrl: Scalars["String"];
   updatedAt?: Maybe<Scalars["String"]>;
-  watchedMovies?: Maybe<Array<Scalars["String"]>>;
 };
 
 export type Visited = {
@@ -1527,7 +1545,6 @@ export type GetCommentedUserQuery = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -1553,7 +1570,6 @@ export type CommentLikesSubscription = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -1674,7 +1690,6 @@ export type FullUserFragment = {
   nickname: string;
   followerCount?: number | null;
   followingCount?: number | null;
-  watchedMovies?: Array<string> | null;
   joinedAt?: string | null;
   updatedAt?: string | null;
   deletedAt?: string | null;
@@ -1911,7 +1926,6 @@ export type GetMovieLikesQuery = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -2064,7 +2078,6 @@ export type SetReplyLikeMutation = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -2112,7 +2125,6 @@ export type GetRepliedUserQuery = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -2217,16 +2229,6 @@ export type CreateChargeMutation = {
   createCharge?: string | null;
 };
 
-export type AddMovieIdToUserWatchListMutationVariables = Exact<{
-  uid: Scalars["String"];
-  mid: Scalars["String"];
-}>;
-
-export type AddMovieIdToUserWatchListMutation = {
-  __typename?: "Mutation";
-  addMovieIdToTheUserWatchList: boolean;
-};
-
 export type CreateUserMutationVariables = Exact<{
   options: UserInput;
 }>;
@@ -2241,7 +2243,6 @@ export type CreateUserMutation = {
     name: string;
     photoUrl: string;
     joinedAt?: string | null;
-    watchedMovies?: Array<string> | null;
     updatedAt?: string | null;
   } | null;
 };
@@ -2286,7 +2287,6 @@ export type GetUserByNickNameMutation = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -2309,7 +2309,6 @@ export type GetUserMutMutation = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -2364,7 +2363,6 @@ export type UpdateUserNickNameMutation = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -2405,7 +2403,6 @@ export type GetAllUsersQuery = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -2435,7 +2432,6 @@ export type GetUserMiniProfileQuery = {
         nickname: string;
         followerCount?: number | null;
         followingCount?: number | null;
-        watchedMovies?: Array<string> | null;
         joinedAt?: string | null;
         updatedAt?: string | null;
         deletedAt?: string | null;
@@ -2455,7 +2451,6 @@ export type GetUserMiniProfileQuery = {
         nickname: string;
         followerCount?: number | null;
         followingCount?: number | null;
-        watchedMovies?: Array<string> | null;
         joinedAt?: string | null;
         updatedAt?: string | null;
         deletedAt?: string | null;
@@ -2570,7 +2565,6 @@ export type GetUserQuery = {
     nickname: string;
     followerCount?: number | null;
     followingCount?: number | null;
-    watchedMovies?: Array<string> | null;
     joinedAt?: string | null;
     updatedAt?: string | null;
     deletedAt?: string | null;
@@ -2596,7 +2590,6 @@ export type GetUserMovieStatusQuery = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -2640,7 +2633,6 @@ export type GetUserStatsQuery = {
       nickname: string;
       followerCount?: number | null;
       followingCount?: number | null;
-      watchedMovies?: Array<string> | null;
       joinedAt?: string | null;
       updatedAt?: string | null;
       deletedAt?: string | null;
@@ -2780,7 +2772,6 @@ export const FullUserFragmentDoc = gql`
     nickname
     followerCount
     followingCount
-    watchedMovies
     joinedAt
     updatedAt
     deletedAt
@@ -2940,9 +2931,7 @@ export function useCommentLikesSubscription<TData = CommentLikesSubscription>(
   options: Omit<
     Urql.UseSubscriptionArgs<CommentLikesSubscriptionVariables>,
     "query"
-  > = {
-    variables: undefined,
-  },
+  > = { variables: { cid: "" } },
   handler?: Urql.SubscriptionHandler<CommentLikesSubscription, TData>
 ) {
   return Urql.useSubscription<
@@ -3464,18 +3453,6 @@ export function useCreateChargeMutation() {
     CreateChargeDocument
   );
 }
-export const AddMovieIdToUserWatchListDocument = gql`
-  mutation addMovieIdToUserWatchList($uid: String!, $mid: String!) {
-    addMovieIdToTheUserWatchList(uid: $uid, mid: $mid)
-  }
-`;
-
-export function useAddMovieIdToUserWatchListMutation() {
-  return Urql.useMutation<
-    AddMovieIdToUserWatchListMutation,
-    AddMovieIdToUserWatchListMutationVariables
-  >(AddMovieIdToUserWatchListDocument);
-}
 export const CreateUserDocument = gql`
   mutation CreateUser($options: UserInput!) {
     createUser(options: $options) {
@@ -3485,7 +3462,6 @@ export const CreateUserDocument = gql`
       name
       photoUrl
       joinedAt
-      watchedMovies
       joinedAt
       updatedAt
     }

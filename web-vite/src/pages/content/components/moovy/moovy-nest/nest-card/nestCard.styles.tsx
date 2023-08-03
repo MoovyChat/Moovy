@@ -22,6 +22,7 @@ export const NestIcon = styled.div`
     width: 80px;
     height: 100%;
     min-height: 100px;
+    max-height: 120px;
   }
 `;
 
@@ -65,7 +66,7 @@ export const NestInfo = styled.div`
         margin-right: -20px;
         border-radius: 50%;
         overflow: hidden;
-        z-index: 3;
+        z-index: 1;
         .user-chip-img {
           height: 30px;
           width: 30px;
@@ -76,12 +77,12 @@ export const NestInfo = styled.div`
       }
 
       .user-chip:nth-child(2) {
-        z-index: 2;
+        z-index: 0;
         margin-right: -10px;
       }
 
       .user-chip:nth-child(3) {
-        z-index: 1;
+        z-index: -1;
         margin-right: 0px;
       }
 

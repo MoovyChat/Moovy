@@ -102,7 +102,7 @@ export const StyledUserMessage = styled.div<Props>`
     line-height: 24px;
   }
   .one-emoji {
-    background-color: transparent;
+    background: transparent !important;
     padding: 0px;
     margin-bottom: 0px;
     .nest-msg {
@@ -125,30 +125,31 @@ export const StyledUserMessage = styled.div<Props>`
       overflow: hidden;
       transition: all 0.3s ease-in-out;
       position: relative;
-      margin: 1em 0;
 
       .gif-msg {
         width: 100%;
         height: auto;
         object-fit: cover;
         position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
       }
-    }
 
-    .nest-gif::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 18px;
-      z-index: 1;
-      transition: all 0.3s ease-in-out;
-    }
+      .gif-msg.video,
+      .gif-msg.image {
+        display: block;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .gif-msg.video.hide,
+      .gif-msg.image.hide {
+        opacity: 0;
+        display: none;
+        pointer-events: none;
+      }
 
-    .nest-gif:hover {
-      transform: scale(1.1);
+      .nest-gif:hover .gif-msg {
+        transform: scale(1.1);
+      }
     }
   }
   .container {

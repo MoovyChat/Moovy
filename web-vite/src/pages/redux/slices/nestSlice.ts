@@ -6,6 +6,7 @@ interface NestStateInterface {
   visible: boolean;
   nests: AvailableRoom[];
   isGifOpen: boolean;
+  isFullScreen: boolean;
 }
 
 const nestState: NestStateInterface = {
@@ -13,6 +14,7 @@ const nestState: NestStateInterface = {
   visible: false,
   nests: [],
   isGifOpen: false,
+  isFullScreen: false,
 };
 
 const nestSlice = createSlice({
@@ -31,6 +33,9 @@ const nestSlice = createSlice({
     sliceSetIsGifOpen: (state, action) => {
       return { ...state, isGifOpen: action.payload };
     },
+    sliceSetNestFullScreen: (state, action) => {
+      return { ...state, isFullScreen: action.payload };
+    },
   },
 });
 
@@ -39,5 +44,6 @@ export const {
   sliceSetNestVisibility,
   sliceSetNests,
   sliceSetIsGifOpen,
+  sliceSetNestFullScreen,
 } = nestSlice.actions;
 export default nestSlice.reducer;

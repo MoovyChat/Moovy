@@ -65,39 +65,49 @@ export const useInsertMovie = (movieId: string) => {
           const responseData: MovieFullInformation = response.result.data;
 
           const error = response.result.error;
-          if (error) {
-            dispatch(sliceSetNetworkErrorMessage(error));
-            dispatch(sliceSetNetworkError(true));
-          }
-          if (responseData) {
-            const text = `Adding ${responseData.title} to catalog`;
-            dispatch(sliceSetLoadingText(text));
-            const res = await insertMovieInfo({
-              options: responseData,
-              mid: movieId,
-            });
-            const { data, error } = res;
+          if (!responseData && !error) {
+            // dispatch(sliceAddMovie(movieRes));
+            dispatch(sliceSetIsMovieLoaded(true));
+            dispatch(sliceSetIsMovieExists(true));
+            dispatch(sliceSetIsMovieInsertionFinished(true));
+            dispatch(sliceSetLoadingText(""));
+            dispatch(sliceSetNetworkErrorMessage(""));
+            dispatch(sliceSetNetworkError(false));
+          } else {
             if (error) {
-              dispatch(sliceSetNetworkErrorMessage(error.message));
+              dispatch(sliceSetNetworkErrorMessage(error));
               dispatch(sliceSetNetworkError(true));
             }
-            if (data) {
-              const movieRes = data.insertMovieInformation as Movie;
-              setMovie(() => movieRes);
-
-              batch(() => {
-                dispatch(sliceAddMovie(movieRes));
-                dispatch(sliceSetIsMovieLoaded(true));
-                dispatch(sliceSetIsMovieExists(true));
-                dispatch(sliceSetIsMovieInsertionFinished(true));
-                dispatch(sliceSetLoadingText(""));
-                dispatch(sliceSetNetworkErrorMessage(""));
-                dispatch(sliceSetNetworkError(false));
+            if (responseData) {
+              const text = `Adding ${responseData.title} to catalog`;
+              dispatch(sliceSetLoadingText(text));
+              const res = await insertMovieInfo({
+                options: responseData,
+                mid: movieId,
               });
-              break;
+              const { data, error } = res;
+              if (error) {
+                dispatch(sliceSetNetworkErrorMessage(error.message));
+                dispatch(sliceSetNetworkError(true));
+              }
+              if (data) {
+                const movieRes = data.insertMovieInformation as Movie;
+                setMovie(() => movieRes);
+
+                batch(() => {
+                  dispatch(sliceAddMovie(movieRes));
+                  dispatch(sliceSetIsMovieLoaded(true));
+                  dispatch(sliceSetIsMovieExists(true));
+                  dispatch(sliceSetIsMovieInsertionFinished(true));
+                  dispatch(sliceSetLoadingText(""));
+                  dispatch(sliceSetNetworkErrorMessage(""));
+                  dispatch(sliceSetNetworkError(false));
+                });
+                break;
+              }
             }
+            if (responseData !== null) break;
           }
-          if (responseData !== null) break;
         } catch (error) {
           console.error("Error sending message:", error);
           dispatch(sliceSetNetworkErrorMessage(error));

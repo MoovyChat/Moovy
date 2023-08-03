@@ -97,7 +97,7 @@ const ErrorPage: React.FC<props> = ({ text }) => {
         <MdOutlineExitToApp className="star" size={20} />
       </div>
 
-      <div className="logo">
+      <div className="moovychat-logo">
         <img src={FULL_LOGO_TRANSPARENT} alt="Moovy" />
       </div>
       <div className="iframe-container">
@@ -110,14 +110,14 @@ const ErrorPage: React.FC<props> = ({ text }) => {
       </div>
       <div className="divider">
         <div className="line" />
-        <span className="text">or</span>
+        <span className="moovychat-text">or</span>
         <div className="line" />
       </div>
-      <div className="text">{text}</div>
+      <div className="moovychat-text">{text}</div>
       <div className="refetch" onClick={refetchUser}>
         Refetch User details
       </div>
-      {err && <div className="err text">{err}</div>}
+      {err && <div className="err moovychat-text">{err}</div>}
     </StyledErrorPage>
   );
 };

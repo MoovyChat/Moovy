@@ -27,7 +27,7 @@ const EmptyPage: React.FC<props> = ({ msg, src, className }) => {
       nodeRef={parentRef}
     >
       <EmptyParent className={className}>
-        <div className="logo">
+        <div className="moovychat-logo">
           <img src={src} alt="Moovy" />
         </div>
         <div className="text">{msg}</div>

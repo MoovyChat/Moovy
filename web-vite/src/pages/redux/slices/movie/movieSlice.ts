@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Movie } from "../../../../helpers/interfaces";
+import { DEFAULT_BG } from "../../../../helpers/constants";
 
 const movieState: Movie = {
   id: "",
@@ -20,7 +21,7 @@ const movieState: Movie = {
   viewsCount: 0,
   commentCount: 0,
   runtime: 0,
-  thumbs: "",
+  thumbs: DEFAULT_BG,
   season: "",
   titleId: "",
   fetched: false,
@@ -57,7 +58,9 @@ const MovieSlice = createSlice({
     },
     sliceAddMovieName: (state, action) => {
       const { video_id, title } = action.payload;
-      if (state.id === video_id) state.name = title;
+      let updatedTitle = state.name;
+      if (state.id === video_id) updatedTitle = title;
+      return { ...state, name: updatedTitle };
     },
     sliceSetTotalCommentsOfTheMovie: (state, action) => {
       return { ...state, totalCommentsCountOfMovie: action.payload || 0 };

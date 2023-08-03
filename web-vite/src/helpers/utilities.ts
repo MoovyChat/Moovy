@@ -17,7 +17,6 @@ export const getTimeFrame = (postTime: string) => {
   const noOfHours = Math.round(diff / hour);
   const noOfDays = Math.round(diff / day);
   const noOfMinutes = Math.round(diff / minute);
-
   let finalString = "";
   if (noOfYears === 0) {
     if (noOfDays === 0) {
@@ -156,4 +155,11 @@ export const compareUrlsAndRedirect = (inputUrl) => {
     // Redirect to the input URL
     window.location.href = inputUrl;
   }
+};
+
+// Define the function at the beginning of your component
+export const shouldSkipPlatform = (platform: string) => {
+  // Add any platform that should be skipped to this array
+  const platformsToSkip = ["disneyplus", "hulu"];
+  return platformsToSkip.includes(platform);
 };

@@ -28,7 +28,9 @@ const manifest: chrome.runtime.ManifestV3 = {
       matches: [
         "*://www.netflix.com/*",
         "https://*.moovychat.com/*",
+        "https://*.disneyplus.com/*",
         "https://*.aha.video/*",
+        "https://*.hulu.com/*",
       ],
       js: ["src/pages/content/index.js", "netflix-categories.js"],
       // KEY for cache invalidation
@@ -49,6 +51,8 @@ const manifest: chrome.runtime.ManifestV3 = {
         "*://www.netflix.com/*",
         "https://*.aha.video/*",
         "https://*.moovychat.com/*",
+        "https://*.disneyplus.com/*",
+        "https://*.hulu.com/*",
       ],
     },
   ],
@@ -57,12 +61,16 @@ const manifest: chrome.runtime.ManifestV3 = {
       "*://www.netflix.com/*",
       "https://*.aha.video/*",
       "https://*.moovychat.com/*",
+      "https://*.disneyplus.com/*",
+      "https://*.hulu.com/*",
     ],
   },
   host_permissions: [
     "*://www.netflix.com/*",
     "https://*.aha.video/*",
     "https://*.moovychat.com/*",
+    "https://*.disneyplus.com/*",
+    "https://*.hulu.com/*",
   ],
   oauth2: {
     client_id:

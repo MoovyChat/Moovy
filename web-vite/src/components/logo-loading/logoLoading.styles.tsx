@@ -39,7 +39,7 @@ export const StyledSplashScreen = styled.div`
     }
   }
 
-  .logo {
+  .moovychat-logo {
     width: 30%;
     img {
       width: 100%;

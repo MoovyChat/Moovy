@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.fontFamily": "MesloLGS NF",
     "docwriter.progress.trackFunctions": true,
     "docwriter.progress.trackMethods": true,
     "docwriter.progress.trackClasses": true,

@@ -5,6 +5,7 @@ type props = {
   like: boolean;
   themeToggled: string;
   accentColor: string;
+  platform: boolean;
 };
 export const ChatStatContainer = styled.div<props>`
   display: flex;
@@ -24,7 +25,8 @@ export const ChatStatContainer = styled.div<props>`
     .likes {
       padding: 5px;
       cursor: pointer;
-      background: ${(p) => p.like && p.accentColor};
+      background: ${(p) =>
+        p.platform ? "#898989ab" : p.like && p.accentColor};
       box-shadow: ${(p) => p.like && `inset -2px 1px 5px 1px ${p.theme.text}`};
       transition: all 0.5s;
       .icon {
@@ -38,10 +40,13 @@ export const ChatStatContainer = styled.div<props>`
       :hover {
         box-shadow: inset -2px 1px 5px 1px;
       }
+      cursor: ${(p) => (p.platform ? "no-drop" : "default")};
     }
     .div-cmt-count-style {
       padding: 5px;
       cursor: default;
+      cursor: ${(p) => (p.platform ? "no-drop" : "default")};
+      background: ${(p) => p.platform && "#898989ab"};
     }
 
     .theme-mode {

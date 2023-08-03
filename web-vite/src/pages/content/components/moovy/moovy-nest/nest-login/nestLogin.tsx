@@ -19,7 +19,6 @@ interface NestLoginProps {
 }
 const NestLogin: React.FC<NestLoginProps> = ({ ref }) => {
   const dispatch = useAppDispatch();
-  const movie = useAppSelector((state) => state.movie);
   const popUpVisible = useAppSelector((state) => state.nest.visible);
   const isJoinedRoom = useAppSelector((state) => state.socket.joinedRoom);
   const socket = useContext(SocketContext);

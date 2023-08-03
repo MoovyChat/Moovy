@@ -16,6 +16,8 @@ import {
   sliceSetIsNestAdmin,
   sliceSetIsRoomPublic,
 } from "../../../../../../redux/slices/socket/socketSlice";
+import { NestMovieType } from "../../../../../../../helpers/interfaces";
+import { getVideoTitleFromWatch } from "../../../contentScript.utils";
 
 const CreateNest = () => {
   const user = useAppSelector((state) => state.user);
@@ -38,6 +40,7 @@ const CreateNest = () => {
 
   const createRoomHandler = () => {
     const url = window.location.href;
+    const title = getVideoTitleFromWatch(movie.platform);
     //Emit the createRoom event to the socket.io
     socket.emit("createRoom", {
       roomID,
@@ -45,7 +48,13 @@ const CreateNest = () => {
       user,
       url,
       isPublic,
-      movie,
+      movie: {
+        id: movie.id,
+        name: movie?.name || title,
+        thumbs: movie?.thumbs,
+        platform: movie?.platform,
+        parentTitleName: movie?.parentTitleName,
+      } as NestMovieType,
     });
     dispatch(sliceSetIsNestAdmin(true));
   };
@@ -75,7 +84,7 @@ const CreateNest = () => {
             onChange={switchChangeHandler}
           />
         </CustomSwitch>
-        <div className="container">
+        <div className="moovychat-container">
           <StyledNestButton
             nestColor="#02b61a"
             nestHover="#039b17"

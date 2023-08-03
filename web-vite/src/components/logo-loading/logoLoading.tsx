@@ -42,8 +42,8 @@ const LogoLoading = () => {
         <MdOutlineExitToApp className="star" size={20} />
       </div>
 
-      <div className="logo">
-        <img src={FULL_LOGO_TRANSPARENT} alt="logo" />
+      <div className="moovychat-logo">
+        <img src={FULL_LOGO_TRANSPARENT} alt="moovychat-logo" />
       </div>
       <div className="loading">
         <Loading />

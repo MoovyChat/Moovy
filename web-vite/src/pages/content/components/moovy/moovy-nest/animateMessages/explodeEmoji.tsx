@@ -39,7 +39,6 @@ const ExplodeEmoji: React.FC<ItemProps> = ({
   useEffect(() => {
     if (imageRef.current) {
       const rect = imageRef.current.getBoundingClientRect();
-      console.log(mousePosition);
       if (
         mousePosition.x !== 0 &&
         mousePosition.y !== 0 &&

@@ -151,7 +151,6 @@ export const useSocketEvents = (user: User) => {
       true, and hiding the nest. If the user who joined is not the current user, a snack bar
       notification is displayed indicating that the user has joined the room. */
       socket.on("join-room-success", (data) => {
-        console.log("Join-room-success", { data });
         data.user.id === user.id &&
           batch(() => {
             dispatch(sliceSetRoomId(data.room.roomId));

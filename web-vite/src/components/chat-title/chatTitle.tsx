@@ -2,7 +2,7 @@
 
 import { MdOutlineExitToApp, MdStar, MdStarOutline } from "react-icons/md";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   useGetMovieFavCountQuery,
   useGetOnlyUserMovieStatsQuery,
@@ -15,7 +15,8 @@ import { batch } from "react-redux";
 import { LOGO_128, RED_LOGO_128, isServerSide } from "../../helpers/constants";
 import { iconsEnum } from "../../helpers/enums";
 import { urqlClient } from "../../helpers/urql/urqlClient";
-import { getVideoTitleFromNetflixWatch } from "../../pages/content/components/moovy/contentScript.utils";
+import { getVideoTitleFromWatch } from "../../pages/content/components/moovy/contentScript.utils";
+import SimplePopper from "../../pages/content/components/moovy/popper/popper";
 import { handleMouseEnter, handleMouseLeave } from "../../pages/popup/utils";
 import { useAppDispatch, useAppSelector } from "../../pages/redux/hooks";
 import { sliceAddMovieName } from "../../pages/redux/slices/movie/movieSlice";
@@ -28,11 +29,8 @@ import {
   sliceSetToastVisible,
 } from "../../pages/redux/slices/toast/toastSlice";
 import { ChatTitleParent } from "./chatTitle.styles";
-import {
-  sliceSetToolTipMessage,
-  sliceSetTooltipVisible,
-} from "../../pages/redux/slices/tooltip/tooltipSlice";
-import SimplePopper from "../../pages/content/components/moovy/popper/popper";
+import { openSnackBar } from "../../pages/content/components/moovy/moovy-nest/nest-popup/snack-bar/snackBar";
+import { shouldSkipPlatform } from "../../helpers/utilities";
 
 const ChatTitle = () => {
   const [fav, setFav] = useState<boolean>(false);
@@ -42,6 +40,8 @@ const ChatTitle = () => {
   const [favCount, SetFavCount] = useState<number>(0);
   const accentColor = useAppSelector((state) => state.misc.accentColor);
   const movieTitle = useAppSelector((state) => state.movie.name);
+  const platform = useAppSelector((state) => state.movie.platform);
+  const movie = useAppSelector((state) => state.movie);
   const movieId = useAppSelector((state) => state.movie.id);
   const userId = useAppSelector((state) => state.user.id);
   const [, updateUserLikeFavorite] = useUpdateUserMovieStatusMutation();
@@ -58,9 +58,18 @@ const ChatTitle = () => {
   });
   const [movieStats] = useGetOnlyUserMovieStatsQuery({
     variables: { uid: userId, mid: movieId },
-    pause: isServerSide(),
+    pause: shouldSkipPlatform(platform) || isServerSide(),
   });
+
+  useEffect(() => {
+    if (shouldSkipPlatform(platform)) {
+      setToggleMode(() => false);
+      dispatch(sliceSetChatMode("nest"));
+    }
+  }, [movie]);
+
   useMemo(() => {
+    if (shouldSkipPlatform(platform)) return;
     const { fetching, data } = movieStats;
     if (!fetching && data) {
       const _data = data.getOnlyUserMovieStats;
@@ -68,12 +77,15 @@ const ChatTitle = () => {
       _fav && setFav(() => _fav);
     }
   }, [movieStats]);
+
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     if (movieId) _query();
   }, [movieId]);
   // Update Movie Favorite on the initial load.
   useEffect(() => {
     if (!movieId) return;
+    if (shouldSkipPlatform(platform)) return;
     updateUserLikeFavorite({
       uid: userId,
       mid: movieId,
@@ -89,6 +101,7 @@ const ChatTitle = () => {
 
   // Get Movie Fav count.
   useEffect(() => {
+    if (shouldSkipPlatform(platform)) return;
     if (error) {
       return;
     }
@@ -107,7 +120,7 @@ const ChatTitle = () => {
         clearInterval(interval);
         return;
       }
-      const title = getVideoTitleFromNetflixWatch();
+      const title = getVideoTitleFromWatch(platform);
       if (title) {
         setTempTitle(title);
         // Update movie name in the database only if the name is not available.
@@ -132,7 +145,10 @@ const ChatTitle = () => {
   }, [src]);
 
   return (
-    <ChatTitleParent className="chat-title">
+    <ChatTitleParent
+      className="chat-title"
+      platform={shouldSkipPlatform(platform)}
+    >
       <SimplePopper
         className="exit common"
         tooltip="Close"
@@ -145,17 +161,25 @@ const ChatTitle = () => {
       </SimplePopper>
 
       <SimplePopper
-        className="logo"
+        className="moovychat-logo"
         tooltip={toggleMode ? "Switch to Global Chat" : "Switch to MoovyNest"}
       >
         <img
           onClick={(e) => {
             e.stopPropagation();
-            setToggleMode(() => !toggleMode);
-            dispatch(sliceSetChatMode(toggleMode ? "global" : "nest"));
+            if (shouldSkipPlatform(platform)) {
+              setToggleMode(() => false);
+              dispatch(sliceSetChatMode("nest"));
+              openSnackBar(
+                `Public chat is not available for ${movie.platform}`
+              );
+            } else {
+              setToggleMode(() => !toggleMode);
+              dispatch(sliceSetChatMode(toggleMode ? "global" : "nest"));
+            }
           }}
           src={toggleMode ? RED_LOGO_128 : LOGO_128}
-          alt="logo"
+          alt="moovychat-logo"
           width="25"
           height="25"
         />
@@ -165,7 +189,7 @@ const ChatTitle = () => {
         <div className="set">{movieTitle ? movieTitle : tempTitle}</div>
       </div>
       <div
-        className="icon common"
+        className="icon common moovychat-fav"
         onClick={(e) => {
           e.stopPropagation();
           updateUserLikeFavorite({

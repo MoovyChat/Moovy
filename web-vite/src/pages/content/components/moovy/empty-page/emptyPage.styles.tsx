@@ -7,7 +7,7 @@ export const EmptyParent = styled.div`
   align-items: center;
   width: 99%;
   height: 100%;
-  .logo {
+  .moovychat-logo {
     width: 50%;
     img {
       width: 100%;

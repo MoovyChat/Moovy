@@ -38,6 +38,11 @@ const OTT = {
     imgUrl: "https://www.aha.video/aha-logo.db810aeaa42b356a86a7.png",
     color: "#ff6d2e",
   },
+  HULU: {
+    title: "Hulu",
+    imgUrl: "https://moovychatbucket.s3.us-west-1.amazonaws.com/hulu_logo.png",
+    color: "#1fe782",
+  },
   MOOVYCHAT: {
     title: "MoovyChat",
     imgUrl:
@@ -85,6 +90,9 @@ const App: React.FC = () => {
           break;
         case "AHA":
           setOTT(() => OTT.AHA);
+          break;
+        case "HULU":
+          setOTT(() => OTT.HULU);
           break;
         default:
           setOTT(() => OTT.OTHER);

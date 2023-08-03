@@ -34,10 +34,19 @@ const Giphy = () => {
   );
   const dispatch = useAppDispatch();
 
-  const fetchGifs = (offset: number) =>
-    textAreaText === ""
-      ? gf.search(searchQuery, { offset, limit: 10 })
-      : gf.search(textAreaText, { offset, limit: 10 });
+  const fetchGifs = async (offset: number) => {
+    let gifs;
+    if (textAreaText === "") {
+      gifs = await gf.search(searchQuery, { offset, limit: 10 });
+    } else {
+      gifs = await gf.search(textAreaText, { offset, limit: 10 });
+    }
+    if (gifs.data.length === 0) {
+      // If no gifs were found, fetch trending gifs
+      gifs = await gf.trending({ offset, limit: 10 });
+    }
+    return gifs;
+  };
 
   useEffect(() => {
     setSearchQuery(movieParentName ? `${movieParentName}` : `${movieTitle}`);

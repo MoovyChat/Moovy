@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import { rotate, wiggle } from "../../pages/content/styles/keyframes";
 
-export const ChatTitleParent = styled.div`
+type props = {
+  platform?: boolean;
+};
+export const ChatTitleParent = styled.div<props>`
   opacity: 1;
   text-align: center;
   font-size: 1.3em;
@@ -15,6 +18,10 @@ export const ChatTitleParent = styled.div`
   grid-template-rows: 1fr;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
+  .moovychat-fav {
+    visibility: ${(p) => (p.platform ? "hidden" : "visible")};
+    pointer-events: ${(p) => (p.platform ? "none" : "auto")};
+  }
   .common {
     gap: 5px;
     display: flex;
@@ -32,6 +39,7 @@ export const ChatTitleParent = styled.div`
       justify-content: center;
       align-items: center;
       overflow: hidden;
+
       .fav-box {
         position: relative;
         width: 25px;
@@ -45,7 +53,7 @@ export const ChatTitleParent = styled.div`
   .exit {
     grid-area: 1 / 1 / 2 / 2;
   }
-  .logo {
+  .moovychat-logo {
     grid-area: 1 / 2 / 2 / 3;
     display: flex;
     justify-content: center;

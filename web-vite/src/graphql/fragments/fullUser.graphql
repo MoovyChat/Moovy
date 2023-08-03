@@ -8,7 +8,6 @@ fragment FullUser on Users {
   nickname
   followerCount
   followingCount
-  watchedMovies
   joinedAt
   updatedAt
   deletedAt
