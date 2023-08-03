@@ -1,0 +1,6 @@
+query GetTableData($tableName: String!, $page: Int) {
+  getTableData(tableName: $tableName, page: $page) {
+    columnNames
+    data
+  }
+}

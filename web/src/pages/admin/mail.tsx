@@ -13,7 +13,7 @@ import {
   PaginationWrapper,
   SenderWrapper,
   StyledAdmin,
-} from './admin.styles';
+} from './mail.styles';
 import {
   Contact,
   Users,
@@ -33,7 +33,7 @@ import { withUrqlClient } from 'next-urql';
 
 interface AdminProps {}
 
-const Admin: React.FC<AdminProps> = () => {
+const Mail: React.FC<AdminProps> = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [checkedContacts, setCheckedContacts] = useState<Contact[]>([]);
@@ -91,9 +91,6 @@ const Admin: React.FC<AdminProps> = () => {
         <meta name="description" content="Admin" />
         <link rel="canonical" href={`${CURRENT_DOMAIN}/admin`} />
       </Helmet>
-      <div className="logo">
-        <img src={Moovy} alt="Moovy" />
-      </div>
       <div className="parent-container">
         <div className="comments-container">
           <Header>
@@ -251,4 +248,4 @@ const Admin: React.FC<AdminProps> = () => {
   );
 };
 
-export default withUrqlClient(urqlClient)(Admin);
+export default withUrqlClient(urqlClient)(Mail);

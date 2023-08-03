@@ -13,9 +13,12 @@
     "lint": "eslint '**/*.js' --ignore-pattern node_modules/"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@graphql-codegen/typescript-operations": "^3.0.3",
     "@graphql-codegen/typescript-urql": "^3.7.3",
     "@mui/base": "^5.0.0-alpha.128",
+    "@mui/system": "^5.14.1",
     "@react-spring/web": "^9.7.2",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/chrome": "^0.0.228",
@@ -62,6 +65,7 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "sass": "^1.63.6",
+    "sqlstring": "^2.3.3",
     "styled-components": "^5.3.9",
     "urql": "^4.0.0",
     "vite-plugin-compression": "^0.5.1",

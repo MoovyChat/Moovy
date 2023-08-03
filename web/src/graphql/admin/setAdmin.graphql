@@ -1,0 +1,9 @@
+mutation SetAdmin($role: Role!, $userId: String!) {
+  setAdmin(role: $role, userId: $userId) {
+    userId
+    role
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

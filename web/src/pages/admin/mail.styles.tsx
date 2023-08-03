@@ -146,9 +146,7 @@ type adminProps = {
 };
 export const StyledAdmin = styled.div<adminProps>`
   padding: 10px;
-  background-color: rgb(32, 33, 36);
   height: auto;
-  min-height: 100dvh;
   font-family: 'Convergence', sans-serif;
   .logo {
     width: 100vw;

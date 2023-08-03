@@ -12,7 +12,6 @@ mutation updateUserBg($url: String!, $uid: String!) {
       nickname
       updatedAt
       photoUrl
-      watchedMovies
     }
     errors {
       field

@@ -1,0 +1,3 @@
+mutation ExecuteSql($sql: String!, $params: [String!]) {
+  executeSql(sql: $sql, params: $params)
+}

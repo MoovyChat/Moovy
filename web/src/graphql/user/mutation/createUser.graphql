@@ -6,7 +6,6 @@ mutation CreateUser($options: UserInput!) {
     name
     photoUrl
     joinedAt
-    watchedMovies
     joinedAt
     updatedAt
   }

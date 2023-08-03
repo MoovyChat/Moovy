@@ -1,5 +1,5 @@
 import AboutUs from '../pages/about-us/aboutUs';
-import Admin from '../pages/admin/admin';
+import Admin from '../pages/admin/adminLayout';
 import App from '../pages/app/app';
 import ContactUs from '../pages/contact-us/contactUs';
 import CookiePolicy from '../pages/cookie-policy/cookiePolicy';
@@ -11,6 +11,9 @@ import TermsAndConditions from '../pages/terms-and-conditions/termsAndConditions
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy } from 'react';
 import GoogleLoginForExtension from '../pages/login/google-log-in-for-extension';
+import Mail from '../pages/admin/mail';
+import AdminDatabase from '../pages/admin/adminDatabase';
+import AdminIntro from '../pages/admin/adminIntro';
 
 const Feed = lazy(() => import('../pages/feed/feed'));
 const Home = lazy(() => import('../pages/home/home'));
@@ -178,6 +181,23 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: <Admin />,
         errorElement: <NotFound />,
+        children: [
+          {
+            path: '',
+            element: <AdminIntro />,
+            errorElement: <NotFound />,
+          },
+          {
+            path: 'mail',
+            element: <Mail />,
+            errorElement: <NotFound />,
+          },
+          {
+            path: 'database',
+            element: <AdminDatabase />,
+            errorElement: <NotFound />,
+          },
+        ],
       },
     ],
   },

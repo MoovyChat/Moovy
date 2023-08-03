@@ -1,0 +1,3 @@
+mutation InsertRow($sql: String!, $params: [String!]) {
+  insertRow(sql: $sql, params: $params)
+}

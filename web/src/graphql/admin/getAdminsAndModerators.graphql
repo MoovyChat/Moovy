@@ -1,0 +1,9 @@
+query GetAdminsAndModerators {
+  getAdminsAndModerators {
+    userId
+    role
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}
