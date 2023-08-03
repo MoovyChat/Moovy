@@ -88,7 +88,11 @@ const AdminIntro = () => {
 
   return (
     <AdminIntroWrapper>
-      <h1>Welcome, {isAdminOrMod ? loggedInUserName : 'User'}</h1>
+      <h1>
+        {isAdminOrMod
+          ? `Welcome, ${loggedInUserName}`
+          : 'You do not have access to the page'}
+      </h1>
       {isAdminOrMod && (
         <QuickActions>
           <ActionItem onClick={() => navigate('/admin/mail')}>Mail</ActionItem>
