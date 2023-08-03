@@ -11,7 +11,6 @@ export const userState: Users = {
   bg: '',
   followerCount: 0,
   followingCount: 0,
-  watchedMovies: [],
   joinedAt: '',
   updatedAt: '',
   deletedAt: '',
