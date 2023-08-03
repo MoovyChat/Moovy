@@ -1369,6 +1369,7 @@ export type TableData = {
   __typename?: 'TableData';
   columnNames: Array<Scalars['String']>;
   data: Scalars['JSON'];
+  totalRows: Scalars['Int'];
 };
 
 export type Title = {
@@ -1542,7 +1543,7 @@ export type GetTableDataQueryVariables = Exact<{
 }>;
 
 
-export type GetTableDataQuery = { __typename?: 'Query', getTableData: { __typename?: 'TableData', columnNames: Array<string>, data: any } };
+export type GetTableDataQuery = { __typename?: 'Query', getTableData: { __typename?: 'TableData', columnNames: Array<string>, data: any, totalRows: number } };
 
 export type InsertRowMutationVariables = Exact<{
   sql: Scalars['String'];
@@ -2314,6 +2315,7 @@ export const GetTableDataDocument = gql`
   getTableData(tableName: $tableName, page: $page) {
     columnNames
     data
+    totalRows
   }
 }
     `;

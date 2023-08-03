@@ -39,6 +39,7 @@ const AdminDatabase = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [columnNames, setColumnNames] = useState<string[]>([]);
+  const [totalRowsCount, setTotalRowsCount] = useState<number>(0);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newRowData, setNewRowData] = useState<Record<string, string>>({});
@@ -304,6 +305,8 @@ const AdminDatabase = () => {
     if (!fetching && data) {
       const _data = data.getTableData;
       const _columnNames = _data.columnNames;
+      const rowsCount = _data.totalRows;
+      setTotalRowsCount(() => rowsCount);
       setColumnNames(() => _columnNames);
       let columnData = JSON.parse(_data.data);
 
@@ -329,7 +332,10 @@ const AdminDatabase = () => {
       </div>
       {tableName && (
         <TableHeader>
-          <h2>{tables.find(table => table.id === tableName)?.name}</h2>
+          <h2>
+            {tables.find(table => table.id === tableName)?.name} (
+            {totalRowsCount})
+          </h2>
           <TableActions>
             <Pagination>
               <button
@@ -337,8 +343,18 @@ const AdminDatabase = () => {
               >
                 <IoIosArrowBack />
               </button>
-              <span>Page {page}</span>
-              <button onClick={() => setPage(prevPage => prevPage + 1)}>
+              <span>
+                Page {page}/
+                {Math.ceil(totalRowsCount / 10) === 0
+                  ? 1
+                  : Math.ceil(totalRowsCount / 10)}
+              </span>
+              <button
+                onClick={() => {
+                  if (Math.ceil(totalRowsCount / 10) > page)
+                    setPage(prevPage => prevPage + 1);
+                }}
+              >
                 <IoIosArrowForward />
               </button>
             </Pagination>
