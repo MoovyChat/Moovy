@@ -5,6 +5,7 @@ export const miscState = {
   emojiSearchValue: '',
   dominantColor: '',
   isProfileExists: false,
+  isUserAdmin: false,
   emojiGroupActive: {
     0: true,
     1: true,
@@ -28,6 +29,9 @@ const MiscSlice = createSlice({
   reducers: {
     sliceSetNavBar: (state, action: { payload: boolean }) => {
       return { ...state, isNavBarOpen: action.payload };
+    },
+    sliceSetIsUserAdmin: (state, action) => {
+      return { ...state, isUserAdmin: action.payload };
     },
     sliceSetIsProfileExists: (state, action) => {
       return { ...state, isProfileExists: action.payload };
@@ -53,5 +57,6 @@ export const {
   sliceSetIsProfileExists,
   sliceSetEmojiSearchValue,
   sliceSetEmojiGroupActive,
+  sliceSetIsUserAdmin,
 } = MiscSlice.actions;
 export default MiscSlice.reducer;

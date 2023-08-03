@@ -3,10 +3,11 @@ import {
   AdminUser,
   useGetAdminsAndModeratorsQuery,
 } from '../../generated/graphql';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import styled from 'styled-components';
 import LogoLoading from '../logo-loading/logoLoading';
 import { useNavigate } from 'react-router-dom';
+import { sliceSetIsUserAdmin } from '../../redux/slices/miscSlice';
 
 const AdminIntroWrapper = styled.div`
   display: flex;
@@ -53,6 +54,7 @@ const ActionItem = styled.button`
 
 const AdminIntro = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [{ fetching, error, data }] = useGetAdminsAndModeratorsQuery({});
   const [adminsAndMods, setAdminAndMods] = useState<AdminUser[]>([]);
   const loggedInUserId = useAppSelector(state => state.user.id);
@@ -60,6 +62,10 @@ const AdminIntro = () => {
   const isAdminOrMod = adminsAndMods.some(
     admin => admin.userId === loggedInUserId,
   );
+
+  useEffect(() => {
+    dispatch(sliceSetIsUserAdmin(isAdminOrMod));
+  }, [isAdminOrMod]);
 
   useEffect(() => {
     if (!fetching && data) {

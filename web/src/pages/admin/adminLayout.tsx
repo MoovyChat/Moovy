@@ -10,9 +10,15 @@ import {
   StyledRightContainer,
 } from './adminLayout.styles';
 import { LOGO_128 } from '../../constants';
+import { useAppSelector } from '../../redux/hooks';
 
 const AdminLayout = () => {
+  const isUserAdmin = useAppSelector(state => state.misc.isUserAdmin);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  if (!isUserAdmin) {
+    return <div>404: You don't have access to this page.</div>;
+  }
   return (
     <StyledAdminLayout isHovered={isHovered}>
       <StyledLeftNavBar
