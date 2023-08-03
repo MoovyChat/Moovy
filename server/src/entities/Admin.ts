@@ -7,10 +7,20 @@ import {
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+} from "typeorm";
+import { Field, ObjectType, registerEnumType } from "type-graphql";
+import { Users } from "./Users";
 
-import { Users } from './Users';
+export enum Role {
+  ADMIN = "ADMIN",
+  MODERATOR = "MODERATOR",
+  USER = "USER",
+}
+
+registerEnumType(Role, {
+  name: "Role", // this one is mandatory
+  description: "The basic roles of admin users", // this one is optional
+});
 
 @ObjectType()
 @Entity()
@@ -19,9 +29,13 @@ export class AdminUser extends BaseEntity {
   @PrimaryColumn()
   userId: string;
 
-  @Field(() => String, { nullable: true })
-  @Column()
-  role: string;
+  @Field(() => Role, { nullable: true })
+  @Column({
+    type: "enum",
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @ManyToOne(() => Users, (user) => user.admin)
   user: Users;

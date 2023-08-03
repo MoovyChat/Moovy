@@ -48,7 +48,7 @@ const getConfiguredRedisPubSub = new RedisPubSub({
 
 const main = async () => {
   await conn.initialize();
-  // await conn.runMigrations();
+  await conn.runMigrations();
   const app = express();
 
   // Enable gzip compression for all resources
@@ -87,6 +87,8 @@ const main = async () => {
       "https://server.moovychat.com/graphql",
       "https://www.moovychat.com",
       "https://www.aha.video",
+      "https://www.disneyplus.com",
+      "https://www.hulu.com",
       "ws://server.moovychat.com/graphql",
       "wss://server.moovychat.com/graphql",
       "https://www.netflix.com",

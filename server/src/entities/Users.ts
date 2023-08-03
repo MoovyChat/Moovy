@@ -67,10 +67,6 @@ export class Users extends BaseEntity {
   @Column({ default: 0 })
   followingCount: number;
 
-  @Field(() => [String], { nullable: true })
-  @Column({ type: 'text', array: true, default: [] })
-  watchedMovies?: string[];
-
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 

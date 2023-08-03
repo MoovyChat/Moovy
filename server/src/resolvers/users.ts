@@ -1,4 +1,4 @@
-import { conn } from '../dataSource';
+import { conn } from "../dataSource";
 import {
   Query,
   Resolver,
@@ -9,23 +9,23 @@ import {
   Int,
   ObjectType,
   Ctx,
-} from 'type-graphql';
-import { MyContext } from '../types';
-import _ from 'lodash';
-import { Users } from '../entities/Users';
-import { Comment } from '../entities/Comment';
-import { MovieStats } from '../entities/MovieStats';
-import { Movie } from '../entities/Movie';
-import { Reply } from '../entities/Reply';
-import { COOKIE_NAME } from '../constants';
-import { Follow } from '../entities/Follow';
-import { FeedItem } from '../objectTypes';
-import { FeedEdge, PageInfo } from '../pagination';
+} from "type-graphql";
+import { MyContext } from "../types";
+import _ from "lodash";
+import { Users } from "../entities/Users";
+import { Comment } from "../entities/Comment";
+import { MovieStats } from "../entities/MovieStats";
+import { Movie } from "../entities/Movie";
+import { Reply } from "../entities/Reply";
+import { COOKIE_NAME } from "../constants";
+import { Follow } from "../entities/Follow";
+import { FeedItem } from "../objectTypes";
+import { FeedEdge, PageInfo } from "../pagination";
 import {
   FeedConnection,
   ReplyConnection,
   UserCommentsConnection,
-} from '../connections';
+} from "../connections";
 
 @InputType()
 class UserInput {
@@ -135,25 +135,25 @@ export class UserResolver {
   }
 
   @Query(() => Users, { nullable: true })
-  getUser(@Arg('uid') uid: string): Promise<Users | null> {
+  getUser(@Arg("uid") uid: string): Promise<Users | null> {
     return Users.findOne({ where: [{ id: uid }, { nickname: uid }] });
   }
 
   @Mutation(() => Users, { nullable: true })
-  getUserByNickName(@Arg('nickname') nickname: string): Promise<Users | null> {
+  getUserByNickName(@Arg("nickname") nickname: string): Promise<Users | null> {
     return Users.findOne({ where: { nickname } });
   }
 
   @Query(() => Users, { nullable: true })
-  getUserByUserName(@Arg('nickname') nickname: string): Promise<Users | null> {
+  getUserByUserName(@Arg("nickname") nickname: string): Promise<Users | null> {
     return Users.findOne({ where: { nickname } });
   }
 
   @Query(() => FeedConnection)
   async getFeed(
-    @Arg('uid') uid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after') after: string
+    @Arg("uid") uid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after") after: string
   ): Promise<FeedConnection> {
     let result: FeedItem[] = [];
     const tenDaysAgo = new Date();
@@ -168,10 +168,10 @@ export class UserResolver {
       await queryRunner.startTransaction();
       const ids = await conn
         .getRepository(Follow)
-        .createQueryBuilder('f')
-        .select('f.followingId', 'id')
-        .where('f.userId = :uid', { uid })
-        .andWhere('f.follows = :f', { f: true })
+        .createQueryBuilder("f")
+        .select("f.followingId", "id")
+        .where("f.userId = :uid", { uid })
+        .andWhere("f.follows = :f", { f: true })
         .getRawMany();
       const updatedIds = [...ids, { id: uid }];
       const query = `
@@ -193,7 +193,7 @@ WITH comment_or_reply AS (
     FROM comment
     WHERE "commentedUserId" IN (${updatedIds
       .map(({ id }) => `'${id}'`)
-      .join(',')})
+      .join(",")})
       AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
     UNION ALL
     SELECT
@@ -205,13 +205,13 @@ WITH comment_or_reply AS (
     FROM reply
     WHERE "commentedUserId" IN (${updatedIds
       .map(({ id }) => `'${id}'`)
-      .join(',')})
+      .join(",")})
       AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
   ) AS combined
 )
 SELECT *
 FROM comment_or_reply
-${after ? `WHERE "compositeKey" < '${after}'` : ''}
+${after ? `WHERE "compositeKey" < '${after}'` : ""}
 ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
 LIMIT ${first};
 
@@ -235,7 +235,7 @@ LIMIT ${first};
     });
     const pageInfo: PageInfo = {
       hasNextPage: totalCount < intendedCount ? false : true,
-      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+      endCursor: result.length > 0 ? result[result.length - 1].id : "",
     };
     let finalRes: FeedConnection = {
       totalCount,
@@ -248,9 +248,9 @@ LIMIT ${first};
 
   @Query(() => FeedConnection)
   async getFeedWithLikes(
-    @Arg('uid') uid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after') after: string
+    @Arg("uid") uid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after") after: string
   ): Promise<FeedConnection> {
     let result: FeedItem[] = [];
     const tenDaysAgo = new Date();
@@ -265,10 +265,10 @@ LIMIT ${first};
       await queryRunner.startTransaction();
       const ids = await conn
         .getRepository(Follow)
-        .createQueryBuilder('f')
-        .select('f.followingId', 'id')
-        .where('f.userId = :uid', { uid })
-        .andWhere('f.follows = :f', { f: true })
+        .createQueryBuilder("f")
+        .select("f.followingId", "id")
+        .where("f.userId = :uid", { uid })
+        .andWhere("f.follows = :f", { f: true })
         .getRawMany();
       const updatedIds = [...ids, { id: uid }];
       const query = `
@@ -290,7 +290,7 @@ WITH comment_or_reply AS (
     FROM comment
     WHERE "commentedUserId" IN (${updatedIds
       .map(({ id }) => `'${id}'`)
-      .join(',')})
+      .join(",")})
       AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
     UNION ALL
     SELECT
@@ -302,13 +302,13 @@ WITH comment_or_reply AS (
     FROM reply
     WHERE "commentedUserId" IN (${updatedIds
       .map(({ id }) => `'${id}'`)
-      .join(',')})
+      .join(",")})
       AND "updatedAt" >= '${tenDaysAgo.toISOString()}'
   ) AS combined
 )
 SELECT *
 FROM comment_or_reply
-${after ? `WHERE "compositeKey" < '${after}'` : ''}
+${after ? `WHERE "compositeKey" < '${after}'` : ""}
 ORDER BY "updatedAt" DESC, "commentedUserId" ASC, "compositeKey" ASC
 LIMIT ${first};
 
@@ -332,7 +332,7 @@ LIMIT ${first};
     });
     const pageInfo: PageInfo = {
       hasNextPage: totalCount < intendedCount ? false : true,
-      endCursor: result.length > 0 ? result[result.length - 1].id : '',
+      endCursor: result.length > 0 ? result[result.length - 1].id : "",
     };
     let finalRes: FeedConnection = {
       totalCount,
@@ -345,7 +345,7 @@ LIMIT ${first};
 
   @Query(() => FullUserObject, { nullable: true })
   async getUserStatistics(
-    @Arg('uid') uid: string
+    @Arg("uid") uid: string
   ): Promise<FullUserObject | null> {
     let userStats: FullUserObject = {
       user: undefined,
@@ -375,48 +375,48 @@ LIMIT ${first};
       let rs = 0;
       let commentSum = await conn
         .getRepository(Comment)
-        .createQueryBuilder('comment')
-        .select('SUM(comment.likesCount)', 'sum')
-        .where('comment.commentedUserId = :uid', { uid })
+        .createQueryBuilder("comment")
+        .select("SUM(comment.likesCount)", "sum")
+        .where("comment.commentedUserId = :uid", { uid })
         .getRawOne();
       if (commentSum.sum) cs = parseInt(commentSum.sum);
       else cs = 0;
       let replySum = await conn
         .getRepository(Reply)
-        .createQueryBuilder('reply')
-        .select('SUM(reply.likesCount)', 'sum')
-        .where('reply.commentedUserId = :uid', { uid })
+        .createQueryBuilder("reply")
+        .select("SUM(reply.likesCount)", "sum")
+        .where("reply.commentedUserId = :uid", { uid })
         .getRawOne();
       if (replySum.sum) rs = parseInt(replySum.sum);
       else rs = 0;
       // Total watched movie count
-      const movieCount = user?.watchedMovies ? user?.watchedMovies?.length : 0;
+      const movieCount = 0;
 
       const likedMovies = await conn
         .getRepository(MovieStats)
-        .createQueryBuilder('ms')
-        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieId = m.id')
-        .select('ms.like', 'like')
-        .addSelect('ms.movieId', 'movieId')
-        .addSelect('ms.userId', 'userId')
-        .addSelect('m.name', 'movieName')
-        .where('ms.like = :like', { like: true })
-        .andWhere('ms.userId = :uid', { uid })
-        .orderBy('ms.updatedAt', 'DESC')
+        .createQueryBuilder("ms")
+        .leftJoinAndSelect("ms.movie", "m", "ms.movieId = m.id")
+        .select("ms.like", "like")
+        .addSelect("ms.movieId", "movieId")
+        .addSelect("ms.userId", "userId")
+        .addSelect("m.name", "movieName")
+        .where("ms.like = :like", { like: true })
+        .andWhere("ms.userId = :uid", { uid })
+        .orderBy("ms.updatedAt", "DESC")
         .getRawMany();
 
       // Favorite movies
       const favMovies = await conn
         .getRepository(MovieStats)
-        .createQueryBuilder('ms')
-        .leftJoinAndSelect('ms.movie', 'm', 'ms.movieId = m.id')
-        .select('ms.favorite', 'favorite')
-        .addSelect('ms.movieId', 'movieId')
-        .addSelect('ms.userId', 'userId')
-        .addSelect('m.name', 'movieName')
-        .where('ms.favorite = :fav', { fav: true })
-        .andWhere('ms.userId = :uid', { uid })
-        .orderBy('ms.updatedAt', 'DESC')
+        .createQueryBuilder("ms")
+        .leftJoinAndSelect("ms.movie", "m", "ms.movieId = m.id")
+        .select("ms.favorite", "favorite")
+        .addSelect("ms.movieId", "movieId")
+        .addSelect("ms.userId", "userId")
+        .addSelect("m.name", "movieName")
+        .where("ms.favorite = :fav", { fav: true })
+        .andWhere("ms.userId = :uid", { uid })
+        .orderBy("ms.updatedAt", "DESC")
         .getRawMany();
       // commit transaction now:
       await queryRunner.commitTransaction();
@@ -441,7 +441,7 @@ LIMIT ${first};
 
   @Mutation(() => [NicKNameFormat], { nullable: true, defaultValue: [] })
   async getTopThreeUserNames(
-    @Arg('search') search: string
+    @Arg("search") search: string
   ): Promise<NicKNameFormat[] | null> {
     const userRepository = conn.getRepository(Users);
     const query = `
@@ -458,13 +458,13 @@ LIMIT ${first};
   }
 
   @Mutation(() => Users, { nullable: true })
-  getUserMut(@Arg('uid') uid: string): Promise<Users | null> {
+  getUserMut(@Arg("uid") uid: string): Promise<Users | null> {
     return Users.findOne({ where: { id: uid } });
   }
 
   @Query(() => [Comment], { nullable: true })
   async getAllCommentsMadeByUser(
-    @Arg('uid') uid: string
+    @Arg("uid") uid: string
   ): Promise<Comment[] | null> {
     let allComments;
     try {
@@ -481,31 +481,31 @@ LIMIT ${first};
 
   @Query(() => UserCommentsConnection)
   async getCommentsOfTheUser(
-    @Arg('uid') uid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after', () => String, { nullable: true }) after: string
+    @Arg("uid") uid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after", () => String, { nullable: true }) after: string
   ): Promise<UserCommentsConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     const query = conn
       .getRepository(Comment)
-      .createQueryBuilder('c')
+      .createQueryBuilder("c")
       .innerJoinAndSelect(
-        'c.commentedUser',
-        'user',
-        'user.id = c.commentedUserId'
+        "c.commentedUser",
+        "user",
+        "user.id = c.commentedUserId"
       )
-      .where('c.commentedUserId = :uid', { uid: user?.id });
+      .where("c.commentedUserId = :uid", { uid: user?.id });
     const totalCount = await query.getCount();
     // If `after` cursor is provided, filter replies by cursor
     if (after) {
-      query.andWhere('c.updatedAt < :cursor', { cursor: new Date(after) });
+      query.andWhere("c.updatedAt < :cursor", { cursor: new Date(after) });
     }
 
     // Get `first` number of replies, plus 1 to check for next page
     const comments = await query
-      .orderBy('c.updatedAt', 'DESC')
+      .orderBy("c.updatedAt", "DESC")
       .take(first + 1)
       .getMany();
 
@@ -535,31 +535,31 @@ LIMIT ${first};
 
   @Query(() => ReplyConnection)
   async getRepliesOfTheUser(
-    @Arg('uid') uid: string,
-    @Arg('first', () => Int) first: number,
-    @Arg('after', () => String, { nullable: true }) after: string
+    @Arg("uid") uid: string,
+    @Arg("first", () => Int) first: number,
+    @Arg("after", () => String, { nullable: true }) after: string
   ): Promise<ReplyConnection> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
     const query = conn
       .getRepository(Reply)
-      .createQueryBuilder('r')
+      .createQueryBuilder("r")
       .innerJoinAndSelect(
-        'r.commentedUser',
-        'user',
-        'user.id = r.commentedUserId'
+        "r.commentedUser",
+        "user",
+        "user.id = r.commentedUserId"
       )
-      .where('r.commentedUserId = :uid', { uid: user?.id });
+      .where("r.commentedUserId = :uid", { uid: user?.id });
     const totalCount = await query.getCount();
     // If `after` cursor is provided, filter replies by cursor
     if (after) {
-      query.andWhere('r.updatedAt < :cursor', { cursor: new Date(after) });
+      query.andWhere("r.updatedAt < :cursor", { cursor: new Date(after) });
     }
 
     // Get `first` number of replies, plus 1 to check for next page
     const replies = await query
-      .orderBy('r.updatedAt', 'DESC')
+      .orderBy("r.updatedAt", "DESC")
       .take(first + 1)
       .getMany();
 
@@ -588,20 +588,20 @@ LIMIT ${first};
   }
 
   @Query(() => FullUserMovieStats, { nullable: true })
-  async getUserMovieStatus(@Arg('uid') uid: string, @Arg('mid') mid: string) {
+  async getUserMovieStatus(@Arg("uid") uid: string, @Arg("mid") mid: string) {
     const user = await Users.findOne({ where: { id: uid } });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error("User not found");
     const movie = await Movie.findOne({ where: { id: mid } });
-    if (!movie) throw new Error('Movie not found');
+    if (!movie) throw new Error("Movie not found");
     const movieStats = await MovieStats.findOne({
       where: { userId: uid, movieId: mid },
     });
-    if (!movieStats) throw new Error('Stats not found');
+    if (!movieStats) throw new Error("Stats not found");
     return { user, movie, movieStats };
   }
 
   @Mutation(() => Users, { nullable: true })
-  async createUser(@Arg('options') options: UserInput) {
+  async createUser(@Arg("options") options: UserInput) {
     let existingUser = await Users.findOne({ where: { id: options.id } });
     if (existingUser) return existingUser;
     let user;
@@ -619,7 +619,7 @@ LIMIT ${first};
             nickname: options.nickname,
           },
         ])
-        .returning('*')
+        .returning("*")
         .execute();
       user = result.raw[0];
     } catch (err) {
@@ -630,16 +630,16 @@ LIMIT ${first};
 
   @Mutation(() => NickNameResponse)
   async updateUserProfilePhoto(
-    @Arg('uid') uid: string,
-    @Arg('url') url: string
+    @Arg("uid") uid: string,
+    @Arg("url") url: string
   ): Promise<NickNameResponse> {
     const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
           {
-            field: 'user',
-            message: 'User not found',
+            field: "user",
+            message: "User not found",
           },
         ],
       };
@@ -649,8 +649,8 @@ LIMIT ${first};
       return {
         errors: [
           {
-            field: 'empty nick name',
-            message: 'URL should not be empty',
+            field: "empty nick name",
+            message: "URL should not be empty",
           },
         ],
       };
@@ -666,16 +666,16 @@ LIMIT ${first};
 
   @Mutation(() => NickNameResponse)
   async updateUserBg(
-    @Arg('uid') uid: string,
-    @Arg('url') url: string
+    @Arg("uid") uid: string,
+    @Arg("url") url: string
   ): Promise<NickNameResponse> {
     const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
           {
-            field: 'user',
-            message: 'User not found',
+            field: "user",
+            message: "User not found",
           },
         ],
       };
@@ -685,8 +685,8 @@ LIMIT ${first};
       return {
         errors: [
           {
-            field: 'empty nick name',
-            message: 'URL should not be empty',
+            field: "empty nick name",
+            message: "URL should not be empty",
           },
         ],
       };
@@ -702,16 +702,16 @@ LIMIT ${first};
 
   @Mutation(() => NickNameResponse)
   async updateUserNickName(
-    @Arg('uid') uid: string,
-    @Arg('nickname', () => String, { nullable: true }) nickname: string
+    @Arg("uid") uid: string,
+    @Arg("nickname", () => String, { nullable: true }) nickname: string
   ): Promise<NickNameResponse> {
     const user = await Users.findOne({ where: { id: uid } });
     if (!user) {
       return {
         errors: [
           {
-            field: 'user',
-            message: 'User not found',
+            field: "user",
+            message: "User not found",
           },
         ],
       };
@@ -721,8 +721,8 @@ LIMIT ${first};
       return {
         errors: [
           {
-            field: 'empty nick name',
-            message: 'Username should be at-least 3 characters long',
+            field: "empty nick name",
+            message: "Username should be at-least 3 characters long",
           },
         ],
       };
@@ -733,8 +733,8 @@ LIMIT ${first};
       return {
         errors: [
           {
-            field: 'nickname',
-            message: 'Username already exists',
+            field: "nickname",
+            message: "Username already exists",
           },
         ],
       };
@@ -749,29 +749,7 @@ LIMIT ${first};
   }
 
   @Mutation(() => Boolean)
-  async addMovieIdToTheUserWatchList(
-    @Arg('mid') mid: string,
-    @Arg('uid') uid: string
-  ): Promise<boolean> {
-    const user = await Users.findOne({ where: { id: uid } });
-    if (!user) throw new Error('User not found');
-    else {
-      let user = await Users.findOne({ where: { id: uid } });
-      let watchedMovies = user?.watchedMovies;
-      let newList = _.union(watchedMovies, [mid]);
-      let res = await conn
-        .createQueryBuilder()
-        .update(Users)
-        .set({ watchedMovies: newList })
-        .where('id=:uid', { uid })
-        .execute();
-      if (res && res.affected && res.affected > 0) return true;
-    }
-    return false;
-  }
-
-  @Mutation(() => Boolean)
-  async deleteUser(@Arg('uid') uid: string): Promise<boolean> {
+  async deleteUser(@Arg("uid") uid: string): Promise<boolean> {
     await Users.delete(uid);
     return true;
   }
@@ -789,13 +767,13 @@ LIMIT ${first};
 
   @Mutation(() => UserResponse, { nullable: true })
   async login(
-    @Arg('uid') uid: string,
+    @Arg("uid") uid: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const user = await Users.findOne({
       where: [{ id: uid }, { nickname: uid }],
     });
-    if (!user) return { error: 'User does not exist' };
+    if (!user) return { error: "User does not exist" };
     req.session.userId = user!.id;
     return { user };
   }
