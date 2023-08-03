@@ -22,7 +22,6 @@ import {
   TableContainer,
   TableHeader,
 } from './adminDatabase.styles';
-import * as sqlstring from 'sqlstring';
 import {
   useExecuteSqlMutation,
   useGetTableDataQuery,

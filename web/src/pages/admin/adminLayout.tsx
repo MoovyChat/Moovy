@@ -13,47 +13,46 @@ import { LOGO_128 } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
 
 const AdminLayout = () => {
-  const isUserAdmin = useAppSelector(state => state.misc.isUserAdmin);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const isUserAdmin = useAppSelector(state => state.misc.isUserAdmin);
 
-  if (!isUserAdmin) {
-    return <div>404: You don't have access to this page.</div>;
-  }
   return (
     <StyledAdminLayout isHovered={isHovered}>
-      <StyledLeftNavBar
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        isHovered={isHovered}
-        className="admin-left"
-      >
-        <NavBar className="nav-link">
-          <NavItem to="/admin/mail">
-            <div className="icon">
-              <MdEmail />
-            </div>
-            <div className="text">Mail</div>
-          </NavItem>
-          <NavItem to="/admin/database">
-            <div className="icon">
-              <FaDatabase />
-            </div>
-            <span className="text">Database</span>
-          </NavItem>
-          <NavItem to="/admin/settings">
-            <div className="icon">
-              <MdFlag />
-            </div>
-            <span className="text">Flagged Comments</span>
-          </NavItem>
-          <NavItem to="/admin/settings">
-            <div className="icon">
-              <MdReport />
-            </div>
-            <span className="text">Reported Users</span>
-          </NavItem>
-        </NavBar>
-      </StyledLeftNavBar>
+      {isUserAdmin && (
+        <StyledLeftNavBar
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          isHovered={isHovered}
+          className="admin-left"
+        >
+          <NavBar className="nav-link">
+            <NavItem to="/admin/mail">
+              <div className="icon">
+                <MdEmail />
+              </div>
+              <div className="text">Mail</div>
+            </NavItem>
+            <NavItem to="/admin/database">
+              <div className="icon">
+                <FaDatabase />
+              </div>
+              <span className="text">Database</span>
+            </NavItem>
+            <NavItem to="/admin/settings">
+              <div className="icon">
+                <MdFlag />
+              </div>
+              <span className="text">Flagged Comments</span>
+            </NavItem>
+            <NavItem to="/admin/settings">
+              <div className="icon">
+                <MdReport />
+              </div>
+              <span className="text">Reported Users</span>
+            </NavItem>
+          </NavBar>
+        </StyledLeftNavBar>
+      )}
       <StyledRightContainer className="admin-container">
         <div className="admin-header">
           <div className="logo">
