@@ -88,6 +88,7 @@ const main = async () => {
       "https://www.moovychat.com",
       "https://www.aha.video",
       "https://www.disneyplus.com",
+      "https://play.max.com",
       "https://www.hulu.com",
       "ws://server.moovychat.com/graphql",
       "wss://server.moovychat.com/graphql",
