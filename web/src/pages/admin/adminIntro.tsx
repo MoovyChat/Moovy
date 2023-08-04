@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import LogoLoading from '../logo-loading/logoLoading';
 import { useNavigate } from 'react-router-dom';
 import { sliceSetIsUserAdmin } from '../../redux/slices/miscSlice';
+import { useIsUserAdmin } from '../../hooks/useIsUserAdmin';
 
 const AdminIntroWrapper = styled.div`
   display: flex;
@@ -55,30 +56,18 @@ const ActionItem = styled.button`
 const AdminIntro = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [{ fetching, error, data }] = useGetAdminsAndModeratorsQuery({});
-  const [adminsAndMods, setAdminAndMods] = useState<AdminUser[]>([]);
-  const loggedInUserId = useAppSelector(state => state.user.id);
+  const { isAdminOrMod, loading, adminError } = useIsUserAdmin();
   const loggedInUserName = useAppSelector(state => state.user.nickname);
-  const isAdminOrMod = adminsAndMods.some(
-    admin => admin.userId === loggedInUserId,
-  );
 
   useEffect(() => {
     dispatch(sliceSetIsUserAdmin(isAdminOrMod));
   }, [isAdminOrMod]);
 
-  useEffect(() => {
-    if (!fetching && data) {
-      const _data = data?.getAdminsAndModerators;
-      setAdminAndMods(() => _data);
-    }
-  }, [fetching, error, data]);
-
-  if (fetching) {
+  if (loading) {
     return <LogoLoading />;
   }
 
-  if (error) {
+  if (adminError) {
     return (
       <div>
         Error fetching admins and moderators. Please try refreshing the page.

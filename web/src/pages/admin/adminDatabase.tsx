@@ -32,6 +32,8 @@ import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { IoAdd, IoFilter, IoRefresh, IoRemove } from 'react-icons/io5';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import SpringModal from './modal/BasicModal';
+import { useIsUserAdmin } from '../../hooks/useIsUserAdmin';
+import LogoLoading from '../logo-loading/logoLoading';
 
 const AdminDatabase = () => {
   const [tableName, setTableName] = useState<string>('users');
@@ -56,6 +58,8 @@ const AdminDatabase = () => {
   const [{ data, fetching, error }] = useGetTableDataQuery({
     variables: { tableName, page },
   });
+
+  const { isAdminOrMod, loading, adminError } = useIsUserAdmin();
 
   const [, executeSQLStatement] = useExecuteSqlMutation();
   const [, executeINSERTStatement] = useInsertRowMutation();
@@ -318,6 +322,18 @@ const AdminDatabase = () => {
     }
   }, [tableName, data, fetching, sortColumn]);
 
+  if (loading) {
+    return <LogoLoading />;
+  }
+
+  if (adminError) {
+    return (
+      <div>
+        Error fetching admins and moderators. Please try refreshing the page.
+      </div>
+    );
+  }
+  if (!isAdminOrMod) return <div>You do not have access to this page</div>;
   return (
     <StyledAdminDatabase>
       <div className="database-options">

@@ -30,6 +30,8 @@ import Loading from '../loading/loading';
 import Moovy from '../../svgs/moovy-text-logo-white.png';
 import { urqlClient } from '../../utils/urlClient';
 import { withUrqlClient } from 'next-urql';
+import LogoLoading from '../logo-loading/logoLoading';
+import { useIsUserAdmin } from '../../hooks/useIsUserAdmin';
 
 interface AdminProps {}
 
@@ -40,6 +42,7 @@ const Mail: React.FC<AdminProps> = () => {
   const [chooseRead, setChooseRead] = useState<boolean | null>(null);
   const [user, setUser] = useState<Users | null>(null);
   const [, markMessageAsRead] = useMarkMessageAsReadMutation();
+  const { isAdminOrMod, loading, adminError } = useIsUserAdmin();
   const [{ data, fetching, error }] = useGetAllMessagesQuery({
     variables: { page, limit: 10, read: chooseRead },
   });
@@ -82,8 +85,18 @@ const Mail: React.FC<AdminProps> = () => {
       </div>
     );
   }
-  // if (!user?.admin) return <div>You don't have access to this page.</div>;
+  if (loading) {
+    return <LogoLoading />;
+  }
 
+  if (adminError) {
+    return (
+      <div>
+        Error fetching admins and moderators. Please try refreshing the page.
+      </div>
+    );
+  }
+  if (!isAdminOrMod) return <div>You do not have access to this page</div>;
   return (
     <StyledAdmin contactSelected={selectedContact !== null}>
       <Helmet>
