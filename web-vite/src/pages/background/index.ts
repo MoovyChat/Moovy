@@ -94,6 +94,7 @@ const getMovieInfo = async (currentUrl: string) => {
     MOOVYCHAT: "www.moovychat.com",
     NETFLIX: "www.netflix.com",
     LOCALHOST: "localhost",
+    HBOMAX: "play.max.com",
     DISNEY: "www.disneyplus.com",
     HULU: "www.hulu.com",
     AMAZON: "www.amazon.com",
@@ -216,7 +217,6 @@ const getMovieInfo = async (currentUrl: string) => {
 
     return { data, error: errorMessage };
   };
-  console.log({ domain });
   switch (domain) {
     case domains.NETFLIX:
       const idMatch = currentUrl.match(/\/(watch|title)\/(\d+)/);
@@ -242,6 +242,7 @@ const getMovieInfo = async (currentUrl: string) => {
       return { data: ahaInfo, error: null };
     case domains.DISNEY:
     case domains.HULU:
+    case domains.HBOMAX:
       return { data: null, error: null };
     default:
       return { data: null, error: "Domain not supported" };
@@ -375,6 +376,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     LOCALHOST: "localhost",
     DISNEY: "www.disneyplus.com",
     HULU: "www.hulu.com",
+    HBOMAX: "play.max.com",
     AMAZON: "www.amazon.com",
     AHA: "www.aha.video",
   };
@@ -404,6 +406,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             break;
           case domains.AHA:
             sendResponse({ domain: "AHA" });
+            break;
+          case domains.HBOMAX:
+            sendResponse({ domain: "HBOMAX" });
             break;
           default:
             sendResponse({ domain: "OTHER" });

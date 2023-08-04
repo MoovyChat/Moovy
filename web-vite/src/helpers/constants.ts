@@ -9,7 +9,7 @@ export const constants = {
   main_color: "#990100",
   record_options: "Record options",
 };
-export const __prod__ = process.env.NODE_ENV === "production";
+export const __prod__ = process.env.NODE_ENV !== "production";
 
 export const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
 export const MOOVY_URL = __prod__
@@ -78,7 +78,7 @@ export const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY;
 
 export const BOTTOMS_CONTROL = ".watch-video--bottom-controls-container";
 export const SKIP_BUTTON =
-  ".watch-video--skip-content-button, .skip-intro, .skip__button";
+  ".watch-video--skip-content-button, .skip-intro, .skip__button, [class*='SkipButton-Beam-Web']";
 export const DEFAULT_BG =
   "https://moovychatbucket.s3.us-west-1.amazonaws.com/background_optimized_aspect.jpg";
 export const GIPHY_LOGO =
@@ -164,6 +164,11 @@ export const OTT = {
     title: "Hulu",
     imgUrl: "https://moovychatbucket.s3.us-west-1.amazonaws.com/hulu_logo.png",
     color: "#1fe782",
+  },
+  HBOMAX: {
+    title: "HBO Max",
+    imgUrl: "https://moovychatbucket.s3.us-west-1.amazonaws.com/OTT/HBOMax.png",
+    color: "#8626E5",
   },
   AHA: {
     title: "Aha",

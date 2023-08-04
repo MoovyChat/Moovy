@@ -20,7 +20,11 @@ import {
   sliceSetChatWindowSize,
 } from "../../../../redux/slices/settings/settingsSlice";
 import { persistor, store } from "../../../../redux/store";
-import { getPlayerViewElement, getVideoElement } from "../contentScript.utils";
+import {
+  getPlayerViewElement,
+  getVideoElement,
+  getVideoPlatform,
+} from "../contentScript.utils";
 import { SocketContext } from "../context/socketContextFile";
 import useMousePosition from "../hooks/useMouseMove";
 import AnimateMessages from "../moovy-nest/animateMessages/animateMessages";
@@ -303,7 +307,16 @@ const ChatInterface: React.FC<props> = ({
 
   function renderAnimateMessages(videoElement: HTMLVideoElement) {
     const animateMessagesDiv = document.createElement("div");
-    videoElement.parentElement.appendChild(animateMessagesDiv);
+    const platform = getVideoPlatform(window.location.href);
+    if (platform === "hbomax") {
+      videoElement.parentElement.insertBefore(
+        animateMessagesDiv,
+        videoElement.nextSibling
+      );
+    } else {
+      videoElement.parentElement.appendChild(animateMessagesDiv);
+    }
+
     const boot = createRoot(animateMessagesDiv);
     boot.render(
       <ReduxProvider store={store}>

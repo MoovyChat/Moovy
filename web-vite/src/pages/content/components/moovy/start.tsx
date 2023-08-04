@@ -173,6 +173,21 @@ const Start: React.FC<Props> = () => {
             setIsBottomControlsVisible(() => true);
           }
         }
+        // For HBO Max
+        else if (
+          platform === "hbomax" &&
+          mutation.type === "attributes" &&
+          mutation.attributeName === "style"
+        ) {
+          let visibility = window
+            .getComputedStyle(targetElement)
+            .getPropertyValue("visibility");
+          if (visibility === "visible") {
+            setIsBottomControlsVisible(() => true);
+          } else {
+            setIsBottomControlsVisible(() => false);
+          }
+        }
       }
     };
 

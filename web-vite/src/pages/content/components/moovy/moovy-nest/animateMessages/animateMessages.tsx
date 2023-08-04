@@ -11,6 +11,7 @@ interface DisplayedMessages {
 
 const AnimateMessages = () => {
   const messages = useAppSelector((state) => state.socket.incomingMessages);
+  const platform = useAppSelector((state) => state.movie.platform);
   const openChatWindow = useAppSelector(
     (state) => state.settings.openChatWindow
   );
@@ -53,7 +54,7 @@ const AnimateMessages = () => {
   }, [messages]); // notice that we removed displayedMessages from the dependencies
 
   return (
-    <StyledAnimatedMessages>
+    <StyledAnimatedMessages zIndex={platform === "hbomax" ? 0 : 1}>
       {!openChatWindow &&
         Object.values(displayedMessages).map((message, index) =>
           message ? <Message key={index} message={message} /> : null

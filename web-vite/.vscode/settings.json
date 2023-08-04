@@ -3,5 +3,8 @@
     "docwriter.progress.trackFunctions": true,
     "docwriter.progress.trackMethods": true,
     "docwriter.progress.trackClasses": true,
-    "docwriter.progress.trackTypes": true
+    "docwriter.progress.trackTypes": true,
+    "cSpell.words": [
+        "HBOURL"
+    ]
 }

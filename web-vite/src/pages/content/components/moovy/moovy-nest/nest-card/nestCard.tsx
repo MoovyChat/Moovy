@@ -49,6 +49,13 @@ const NestCard: React.FC<NestCardInterface> = ({ nest }) => {
                 />
               ) : nest?.movie?.platform === "hulu" ? (
                 <img src={OTT.HULU.imgUrl} alt="hulu" width={20} height={20} />
+              ) : nest?.movie?.platform === "hbomax" ? (
+                <img
+                  src={OTT.HBOMAX.imgUrl}
+                  alt="hbomax"
+                  width={20}
+                  height={20}
+                />
               ) : (
                 <SiNetflix size={20} color="red" />
               )}

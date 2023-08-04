@@ -1,7 +1,7 @@
 {
   "name": "moovychat",
-  "version": "1.1.6",
-  "description": "MoovyChat enhances your Netflix viewing. Sync streams with MoovyNest, share comments, and experience the joy of watching together.",
+  "version": "1.1.7",
+  "description": "Watch Netflix, HBO Max, Disney Plus, Hulu, and Aha in sync with friends",
   "license": "MIT",
   "repository": {
     "type": "git",

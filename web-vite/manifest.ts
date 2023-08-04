@@ -31,6 +31,7 @@ const manifest: chrome.runtime.ManifestV3 = {
         "https://*.disneyplus.com/*",
         "https://*.aha.video/*",
         "https://*.hulu.com/*",
+        "https://play.max.com/*",
       ],
       js: ["src/pages/content/index.js", "netflix-categories.js"],
       // KEY for cache invalidation
@@ -53,6 +54,7 @@ const manifest: chrome.runtime.ManifestV3 = {
         "https://*.moovychat.com/*",
         "https://*.disneyplus.com/*",
         "https://*.hulu.com/*",
+        "https://play.max.com/*",
       ],
     },
   ],
@@ -63,6 +65,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       "https://*.moovychat.com/*",
       "https://*.disneyplus.com/*",
       "https://*.hulu.com/*",
+      "https://play.max.com/*",
     ],
   },
   host_permissions: [
@@ -71,6 +74,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     "https://*.moovychat.com/*",
     "https://*.disneyplus.com/*",
     "https://*.hulu.com/*",
+    "https://play.max.com/*",
   ],
   oauth2: {
     client_id:

@@ -160,6 +160,6 @@ export const compareUrlsAndRedirect = (inputUrl) => {
 // Define the function at the beginning of your component
 export const shouldSkipPlatform = (platform: string) => {
   // Add any platform that should be skipped to this array
-  const platformsToSkip = ["disneyplus", "hulu"];
+  const platformsToSkip = ["disneyplus", "hulu", "hbomax"];
   return platformsToSkip.includes(platform);
 };

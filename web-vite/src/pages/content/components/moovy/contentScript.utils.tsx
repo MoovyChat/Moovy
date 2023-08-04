@@ -1,6 +1,4 @@
 import { PlatformConfig } from "../../../../helpers/interfaces";
-import { sliceSetPlatform } from "../../../redux/slices/movie/movieSlice";
-import { store } from "../../../redux/store";
 
 type NotPresentStrategy = "error" | "ignore";
 
@@ -85,6 +83,40 @@ export const getVideoTitleFromHuluWatch = (): string => {
   return video_title.trim();
 };
 
+export const getVideoTitleFromHBOmaxWatch = () => {
+  const metadataElement = document.querySelector(
+    '[data-testid="content-metadata"]'
+  );
+  if (!metadataElement) return "";
+
+  const titleElement = metadataElement.querySelector(
+    '[data-testid="player-ux-asset-title"]'
+  );
+  const subtitleContainerElement = metadataElement.querySelector(
+    '[class^="SeasonEpisodeSubtitleContainer-Beam-Web-Ent"]'
+  );
+
+  const title = titleElement ? titleElement.textContent || "" : "";
+
+  if (subtitleContainerElement) {
+    const seasonEpisodeElement = subtitleContainerElement.querySelector(
+      '[data-testid="player-ux-season-episode"]'
+    );
+    const subtitleElement = subtitleContainerElement.querySelector(
+      '[data-testid="player-ux-asset-subtitle"]'
+    );
+
+    const seasonEpisode = seasonEpisodeElement
+      ? seasonEpisodeElement.textContent || ""
+      : "";
+    const subtitle = subtitleElement ? subtitleElement.textContent || "" : "";
+
+    return `${title} ${seasonEpisode} ${subtitle}`.trim();
+  }
+
+  return title;
+};
+
 export const getVideoTitleFromWatch = (platform) => {
   if (platform === "disneyplus") {
     return getVideoTitleFromDisneyPlus();
@@ -92,6 +124,8 @@ export const getVideoTitleFromWatch = (platform) => {
     return getVideoTitleFromNetflixWatch();
   } else if (platform === "hulu") {
     return getVideoTitleFromHuluWatch();
+  } else if (platform === "hbomax") {
+    return getVideoTitleFromHBOmaxWatch();
   }
   return "";
 };
@@ -240,6 +274,40 @@ export const getIdFromHuluURL = (url: string): Promise<string | null> => {
   });
 };
 
+/**
+ * This function extracts the HBO Max ID from a given HBO Max URL.
+ * @param {string} url - The `url` parameter is a string representing an HBO Max URL that the function
+ * will extract the ID from.
+ * @returns A Promise that resolves to either a string (the HBO Max ID extracted from the input URL) or
+ * null if no ID is found.
+ */
+export const getIdFromHBOURL = (url: string): Promise<string | null> => {
+  return new Promise((resolve, reject) => {
+    const regex = /((http|https):\/\/)(play\.max\.com\/video\/watch\/)(.*)/gm;
+    let m;
+    let matchedId = "";
+    while ((m = regex.exec(url)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+
+      // The result can be accessed through the `m`-variable.
+      m.forEach((match, groupIndex) => {
+        if (groupIndex === 4) {
+          matchedId = match;
+        }
+      });
+    }
+
+    if (matchedId) {
+      resolve(matchedId);
+    } else {
+      resolve(null);
+    }
+  });
+};
+
 export const getDomain = (url: string) => {
   const _url = new URL(url);
   return _url.hostname;
@@ -247,7 +315,7 @@ export const getDomain = (url: string) => {
 
 export const getVideoPlatform = (
   url: string
-): "netflix" | "aha" | "disneyplus" | "hulu" | null => {
+): "netflix" | "aha" | "disneyplus" | "hulu" | "hbomax" | null => {
   if (url.includes("netflix.com")) {
     return "netflix";
   }
@@ -259,6 +327,9 @@ export const getVideoPlatform = (
   }
   if (url.includes("hulu.com")) {
     return "hulu";
+  }
+  if (url.includes("play.max.com")) {
+    return "hbomax";
   }
   return null;
 };
@@ -279,6 +350,10 @@ const platforms: PlatformConfig[] = [
   {
     domain: "hulu.com",
     getIdFromURL: getIdFromHuluURL,
+  },
+  {
+    domain: "play.max.com",
+    getIdFromURL: getIdFromHBOURL,
   },
   // More platforms can be added here...
 ];
@@ -327,6 +402,14 @@ export const getPlayerViewElement = (): HTMLElement | null => {
 
     if (huluElem) {
       return huluElem as HTMLElement;
+    }
+  } else if (platform === "hbomax") {
+    const hbomaxElem = document.querySelector(
+      "[class*='StyledPlayerShrinkTransitionContainer']"
+    );
+
+    if (hbomaxElem) {
+      return hbomaxElem as HTMLElement;
     }
   }
 

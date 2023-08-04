@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "short_name": "MoovyChat",
   "name": "MoovyChat: Nest, Sync, Chat",
-  "description": "MoovyChat enhances your Netflix viewing. Sync streams with MoovyNest, share comments, and experience the joy of watching together.",
-  "version": "1.1.6",
+  "description": "Watch Netflix, HBO Max, Disney Plus, Hulu, and Aha in sync with friends",
+  "version": "1.1.7",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkytqfusvzuhsXy53QIiGy1CrMg2GksVqFRjtIJeU/NvyVc2/B6Ly8pdjUbQ1sHJyxqm0ueAjN5aug9NyEdWBgmXHMIlkxsnD2VYwyZ3CWGfksLeYl8WCRl3eUbWgshnz7AZbRFOb8KLzIGuYU3CRMDfs6EsoPENXIRIH44RfaWlA2U1m/SD7TNE8tYBePBLf7bNzPBWiZ3J6g5bG8gJBc/DUsshA66OXbbu1ypwxPIMPf0ZjIotppAZ7y+kTlt4sqV1lKoiREABwIoZX2P64nxHTgMxCGjbgYqnPYGtgUKDL6kfmg411QwWiGm16KwHgCsusMVXjCRPPmtybiINEQIDAQAB",
   "permissions": [
     "identity",
@@ -31,7 +31,8 @@
         "https://*.moovychat.com/*",
         "https://*.disneyplus.com/*",
         "https://*.aha.video/*",
-        "https://*.hulu.com/*"
+        "https://*.hulu.com/*",
+        "https://play.max.com/*"
       ],
       "js": [
         "src/pages/content/index.js",
@@ -57,7 +58,8 @@
         "https://*.aha.video/*",
         "https://*.moovychat.com/*",
         "https://*.disneyplus.com/*",
-        "https://*.hulu.com/*"
+        "https://*.hulu.com/*",
+        "https://play.max.com/*"
       ]
     }
   ],
@@ -67,7 +69,8 @@
       "https://*.aha.video/*",
       "https://*.moovychat.com/*",
       "https://*.disneyplus.com/*",
-      "https://*.hulu.com/*"
+      "https://*.hulu.com/*",
+      "https://play.max.com/*"
     ]
   },
   "host_permissions": [
@@ -75,7 +78,8 @@
     "https://*.aha.video/*",
     "https://*.moovychat.com/*",
     "https://*.disneyplus.com/*",
-    "https://*.hulu.com/*"
+    "https://*.hulu.com/*",
+    "https://play.max.com/*"
   ],
   "oauth2": {
     "client_id": "486691720270-5ivse43f5qbrj660lefilapjihn7cc6u.apps.googleusercontent.com",
