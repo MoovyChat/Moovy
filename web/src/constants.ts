@@ -141,3 +141,12 @@ export const MOOVY_NEST_GIF =
   'https://moovychatbucket.s3.us-west-1.amazonaws.com/moovynest-crop.gif';
 export const PATREON_PNG =
   'https://moovychatbucket.s3.us-west-1.amazonaws.com/patreon-word.webp';
+export const HOMEPAGE_ICONS = {
+  like: 'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/like.png',
+  video:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/video.png',
+  hands:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/handsbg.webp',
+  pink_balls:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/pinkballsbg.webp',
+};

@@ -1,42 +1,23 @@
 import './welcome.css';
 
-import { Suspense, useEffect } from 'react';
-import {
-  CURRENT_DOMAIN,
-  DISCORD_INVITE_LINK,
-  INSTAGRAM_LINK,
-  TIKTOK_LINK,
-  TWITTER_LINK,
-} from '../../constants';
-import {
-  SocialEmbed,
-  StyledFAQ,
-  StyledFlaps,
-  WelcomeParent,
-} from './welcome.styles';
+import { useEffect } from 'react';
+import { CURRENT_DOMAIN, HOMEPAGE_ICONS } from '../../constants';
+import { HomeSection, StyledSpan, WelcomeParent } from './welcome.styles';
 
 import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
 import usePageView from '../../hooks/usePageView';
-import { lazyIconFa } from '../../lazyLoad';
 import { urqlClient } from '../../utils/urlClient';
 import Footer from './footer/footer';
-import HomeSlider from './home-slider/homeSlider';
-import FirstPage from './first-page/firstPage';
-import { Card } from './faq/card';
-import Heading from './heading/heading';
-import LogoLoading from '../logo-loading/logoLoading';
-const FaDiscord = lazyIconFa('FaDiscord');
-const FaTwitter = lazyIconFa('FaTwitter');
-const FaTiktok = lazyIconFa('FaTiktok');
-const FaInstagram = lazyIconFa('FaInstagram');
+import MiniInfoCard from './mini-info-card/miniInfoCard';
+import FadeInWhenVisible from '../../components/fade-in-when-visible/FadeInWhenVisible';
+import ParallaxImage from '../../components/parallax-image/parallaxImage';
 
-const iconSize = 25;
 export const streamingServices = [
   {
     title: 'Netflix',
     imgUrl:
-      'https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI',
+      'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/netflix.webp',
     color: '#E50915',
     home: 'https://www.netflix.com/',
     status: 'Available',
@@ -44,33 +25,34 @@ export const streamingServices = [
   {
     title: 'Disney+',
     imgUrl:
-      'https://play-lh.googleusercontent.com/xoGGYH2LgLibLDBoxMg-ZE16b-RNfITw_OgXBWRAPin2FZY4FGB9QKBYApR-0rSCkQ=w240-h480-rw',
+      'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/disney.webp',
     color: '#022B78',
     home: 'https://www.disneyplus.com/home',
-    status: 'Available soon',
+    status: 'Available',
   },
   {
     title: 'Hulu',
     imgUrl:
-      'https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/bk8cux6dapq8qjzylfaj',
+      'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/hulu.webp',
     color: '#21E684',
     home: 'https://www.hulu.com/',
-    status: 'Available soon',
+    status: 'Available',
   },
   {
     title: 'HBO Max',
     imgUrl:
-      'https://play-lh.googleusercontent.com/1iyX7VdQ7MlM7iotI9XDtTwgiVmqFGzqwz10L67XVoyiTmJVoHX87QtqvcXgUnb0AC8',
+      'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/hbomax.webp',
     color: '#370766',
     home: 'https://www.hbomax.com/',
-    status: 'Available soon',
+    status: 'Available',
   },
   {
-    title: 'Amazon Prime Video',
-    imgUrl: 'https://images-na.ssl-images-amazon.com/images/I/41mpv9rBhmL.webp',
-    color: '#2b9ec1',
-    home: 'https://www.amazon.com/gp/video/storefront/',
-    status: 'Available soon',
+    title: 'Aha',
+    imgUrl:
+      'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/aha.webp',
+    color: '#ed6002',
+    home: 'https://www.aha.video',
+    status: 'Available',
   },
 ];
 
@@ -119,85 +101,135 @@ const Welcome = () => {
   }, []);
   return (
     <WelcomeParent>
-      <StyledFlaps>
-        <Suspense fallback={<LogoLoading />}>
-          <div className="social-container">
-            <button
-              className="discord social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(DISCORD_INVITE_LINK, '_blank');
-              }}
-            >
-              <FaDiscord
-                color="cornflowerblue"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="twitter social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(TWITTER_LINK, '_blank');
-              }}
-            >
-              <FaTwitter
-                color="deepskyblue"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="tiktok social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(TIKTOK_LINK, '_blank');
-              }}
-            >
-              <FaTiktok
-                className="icon"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-            <button
-              className="instagram social"
-              onClick={e => {
-                e.stopPropagation();
-                window.open(INSTAGRAM_LINK, '_blank');
-              }}
-            >
-              <FaInstagram
-                color="hotpink"
-                size={iconSize}
-                style={{ pointerEvents: 'none' }}
-              />
-            </button>
-          </div>
-        </Suspense>
-      </StyledFlaps>
       <Helmet>
         <title>{`MoovyChat: Welcome`}</title>
         <meta name="description" content={`Home page of MoovyChat.`} />
         <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
-      <FirstPage />
-      <Heading
-        title="Key Features"
-        content="MoovyChat and MoovyNest - Enhancing your Streaming Experience"
-        id="features"
-      />
-      <HomeSlider />
-      {/* <InstallExtension /> */}
+      <HomeSection className="first-section">
+        <div className="mesh-container">
+          <section className="mesh-icons">
+            <div className="columns">
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="top"
+                distance="50px"
+              >
+                <div className="image-container">
+                  <img src={HOMEPAGE_ICONS.like} width={330} height={300} />
+                </div>
+              </FadeInWhenVisible>
 
-      <StyledFAQ>
-        <Heading title="Frequently Asked Questions" id="faq" />
-        {cards.map((card, index) => (
-          <Card key={index} title={card.title} content={card.content} />
-        ))}
-      </StyledFAQ>
-      <Footer id="footer" />
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="left"
+                distance="40px"
+              >
+                <div className="mini-card-container">
+                  <MiniInfoCard
+                    title="MoovyChat"
+                    subTitle="Transforming OTT Viewing"
+                    src={HOMEPAGE_ICONS.video}
+                  />
+                </div>
+              </FadeInWhenVisible>
+
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="bottom"
+                distance="50px"
+              >
+                <div className="image-container">
+                  <img src={HOMEPAGE_ICONS.video} width={300} height={300} />
+                </div>
+              </FadeInWhenVisible>
+            </div>
+          </section>
+          <section className="mesh-content"></section>
+          <section className="mesh-sub-content"></section>
+        </div>
+      </HomeSection>
+      <HomeSection className="second-section">
+        <div className="mesh-container">
+          <section className="mesh-icons">
+            <FadeInWhenVisible
+              animationDuration="3s"
+              animationDelay="0.6s"
+              direction="inPlace"
+            >
+              <div className="columns head-section">
+                <h1 className="head-title">
+                  <span>
+                    Join the Watch Party & <StyledSpan>Netflix</StyledSpan>{' '}
+                    Comments
+                  </span>
+                </h1>
+                <p className="">
+                  Experience Interactive Entertainment Like Never Before
+                </p>
+              </div>
+            </FadeInWhenVisible>
+          </section>
+        </div>
+      </HomeSection>
+      <HomeSection className="third-section">
+        <div className="mesh-container">
+          <section className="mesh-icons">
+            <div className="columns">
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="left"
+                distance="40px"
+              >
+                <div className="mini-card-container">
+                  <MiniInfoCard
+                    title="OTT Viewing Made Easy"
+                    subTitle="Casual"
+                    src={HOMEPAGE_ICONS.like}
+                  />
+                </div>
+              </FadeInWhenVisible>
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="inPlace"
+              >
+                <div className="mini-card-container">
+                  {streamingServices.map(s => (
+                    <div className="mini-image-container">
+                      <img src={s.imgUrl} />
+                    </div>
+                  ))}
+                </div>
+              </FadeInWhenVisible>
+
+              <FadeInWhenVisible
+                animationDuration="3s"
+                animationDelay="0.6s"
+                direction="left"
+                distance="40px"
+              >
+                <div className="mini-card-container">
+                  <MiniInfoCard
+                    title="React in Real-Time"
+                    subTitle="Join the MoovyNest"
+                    src={HOMEPAGE_ICONS.like}
+                  />
+                </div>
+              </FadeInWhenVisible>
+            </div>
+            <ParallaxImage src={HOMEPAGE_ICONS.hands} />
+          </section>
+          <section className="mesh-content"></section>
+          <section className="mesh-sub-content"></section>
+        </div>
+      </HomeSection>
+      <HomeSection className="fourth-section"></HomeSection>
+      {/* <Footer id="footer" /> */}
     </WelcomeParent>
   );
 };

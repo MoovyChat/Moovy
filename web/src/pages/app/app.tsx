@@ -14,6 +14,7 @@ import { withUrqlClient } from 'next-urql';
 import { getThemeForHome } from '../home/home';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { CURRENT_DOMAIN } from '../../constants';
+import { AppParent } from './app.styles';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -52,24 +53,23 @@ const App = () => {
   if (showLoading) return <LogoLoading />;
 
   return (
-    <ThemeProvider theme={getThemeForHome(theme)}>
+    <AppParent>
       <Helmet>
         <title>Moovy: Welcome</title>
         <meta name="description" content="Welcome" />
         <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
-      <GlobalStyles />
       {isAuth && isAuth.id ? (
         <Suspense fallback={<LogoLoading />}>
           <Outlet />
         </Suspense>
       ) : (
-        <React.Fragment>
+        <div className="homepage">
           <Header />
           <Welcome />
-        </React.Fragment>
+        </div>
       )}
-    </ThemeProvider>
+    </AppParent>
   );
 };
 

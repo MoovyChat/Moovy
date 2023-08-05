@@ -1,0 +1,9 @@
+/* styles.css */
+.fade-in {
+    transition: opacity var(--animation-duration, 1s) var(--animation-delay, 0s);
+    opacity: 0;
+}
+
+.fade-in.visible {
+    opacity: 1;
+}

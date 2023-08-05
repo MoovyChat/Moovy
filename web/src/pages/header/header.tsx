@@ -1,4 +1,9 @@
-import { HeaderButton, HeaderParent } from './header.styles';
+import {
+  HeaderButton,
+  HeaderButtons,
+  HeaderParent,
+  LogoImage,
+} from './header.styles';
 import React, { useEffect } from 'react';
 import {
   Users,
@@ -92,7 +97,7 @@ const Header = () => {
   };
   return (
     <HeaderParent>
-      <div className="header">
+      <LogoImage>
         <div className="logo-image">
           <img
             className="image"
@@ -103,10 +108,10 @@ const Header = () => {
             width="150"
             height="150"
           />
-          <div className="beta">beta</div>
+          <div className="beta">MoovyChat</div>
         </div>
-      </div>
-      <div className="header-buttons">
+      </LogoImage>
+      <HeaderButtons className="header-buttons">
         {user && user.id && (
           <HeaderButton
             tabIndex={0}
@@ -185,7 +190,7 @@ const Header = () => {
         >
           Install Extension
         </HeaderButton>
-      </div>
+      </HeaderButtons>
     </HeaderParent>
   );
 };

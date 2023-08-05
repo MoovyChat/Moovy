@@ -3,103 +3,89 @@ import styled from 'styled-components';
 export const WelcomeParent = styled.div`
   display: flex;
   width: 99vvw;
+  height: auto;
   flex-direction: column;
   overflow: hidden;
-
-  @keyframes fillBox {
-    0% {
-      width: 0%;
-    }
-    100% {
-      width: 100%;
-    }
-  }
+  min-height: 100vh;
 `;
 
-export const StyledFlaps = styled.div`
-  position: fixed;
-  right: 0;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  .social-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    border-radius: 20px;
-    padding: 5px;
-    background: ${p => p.theme.trendingTiles};
-    box-shadow: 0 0 4px ${p => p.theme.toggleBorder};
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    height: 40%;
-    .social {
-      cursor: pointer;
-      border: none;
-      background: none;
-      text-decoration: none;
-      color: inherit;
-      font-family: inherit;
-      :hover {
-        transform: scale(1.3);
-        transition: transform 0.5s;
+export const HomeSection = styled.section`
+  .mesh-container {
+    > section {
+    }
+    .mesh-icons {
+      .parallax-hands {
+        width: 110vw;
+        > img {
+          width: 100%;
+        }
       }
-      :active {
-        transform: scale(1);
-        transition: transform 0.2s;
+      .columns {
+        display: flex;
+        justify-content: space-evenly;
+        .mini-card-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          max-height: 50px;
+          .mini-image-container {
+            flex: 1 0 25%;
+            margin: 10px;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            > img {
+              border-radius: 50%;
+              height: 50px;
+              width: 50px;
+              object-fit: contain;
+              background-color: #ffffff;
+              border-color: #ffffff;
+              border-radius: 50%;
+              border-style: solid;
+              border-width: 6px;
+              box-shadow: hsla(0, 0%, 0%, 0.2) 0px 0px 14px 0px;
+              font-size: 10px;
+            }
+          }
+        }
+        .image-container {
+          height: 180px;
+          width: 150px;
+          display: flex;
+          align-items: flex-end;
+          img {
+            height: 120px;
+            width: 120px;
+            object-fit: contain;
+          }
+        }
+        .head-title {
+          font-size: 70px;
+          line-height: 1.2em;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          margin: 50px 0;
+          > span {
+            width: 70%;
+          }
+        }
+      }
+      .head-section {
+        display: flex;
+        flex-direction: column;
+        > p {
+          text-align: center;
+          font-size: 28px;
+        }
       }
     }
   }
 `;
 
-export const SocialEmbed = styled.div`
-  display: flex;
-  gap: 10px;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 500px;
-
-  .twitter-timeline-container {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-  }
-
-  .instagram-feed {
-    /* Add any styles needed for the Instagram feed */
-    .rsme-instagram-embed {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-
-  /* Styles for devices with max width of 768px */
-  @media (max-width: 768px) {
-    flex-direction: column;
-    height: auto;
-
-    .twitter-timeline-container {
-      width: 100%;
-    }
-
-    .instagram-feed {
-      /* Add any mobile-specific styles needed for the Instagram feed */
-    }
-  }
-`;
-
-export const StyledFAQ = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 20px;
+export const StyledSpan = styled.span`
+  padding: 12px;
+  background-color: #a700fa;
+  border-radius: 100px;
 `;

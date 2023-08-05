@@ -1,5 +1,6 @@
 import './footer.css';
 
+import React, { Suspense } from 'react';
 import {
   BUY_ME_A_COFFEE,
   DISCORD_INVITE_LINK,
@@ -9,13 +10,10 @@ import {
   TWITTER_LINK,
 } from '../../../constants';
 import { FooterLink, SocialButton, StyledFooter } from './footer.styles';
-import React, { Suspense } from 'react';
 
-import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
-import MoovyWhite from '../../../svgs/moovy-text-logo-white.png';
-import PatreonWord from '../../../static/images/patreon-word.webp';
 import { lazyIconFa } from '../../../lazyLoad';
-import { useTheme } from 'styled-components';
+import PatreonWord from '../../../static/images/patreon-word.webp';
+import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
 import LogoLoading from '../../logo-loading/logoLoading';
 
 const FaDiscord = lazyIconFa('FaDiscord');
@@ -27,15 +25,10 @@ type props = {
   id: string;
 };
 const Footer: React.FC<props> = ({ id }) => {
-  const theme = useTheme();
   return (
     <StyledFooter id={id}>
       <div className="image-container">
-        <img
-          src={(theme as any).themeType === 'light' ? MoovyBlack : MoovyWhite}
-          alt="moovy"
-          width="200px"
-        />
+        <img src={MoovyBlack} alt="moovy" width="200px" />
       </div>
       <div className="links-block">
         <div className="block">
