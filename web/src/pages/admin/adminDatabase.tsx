@@ -339,6 +339,7 @@ const AdminDatabase = () => {
       <div className="database-options">
         {tables.map(table => (
           <div
+            key={table.id}
             className="table-title"
             onClick={() => handleTableSelect(table.id)}
           >

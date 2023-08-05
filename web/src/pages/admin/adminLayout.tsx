@@ -11,6 +11,7 @@ import {
 } from './adminLayout.styles';
 import { LOGO_128 } from '../../constants';
 import { useAppSelector } from '../../redux/hooks';
+import Spline from '@splinetool/react-spline';
 
 const AdminLayout = () => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -18,6 +19,11 @@ const AdminLayout = () => {
 
   return (
     <StyledAdminLayout isHovered={isHovered}>
+      <Spline
+        scene="https://prod.spline.design/GWU-CMRxOgzCu4Zj/scene.splinecode"
+        className="spline-bg"
+      />
+
       {isUserAdmin && (
         <StyledLeftNavBar
           onMouseEnter={() => setIsHovered(true)}

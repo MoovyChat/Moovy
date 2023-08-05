@@ -64,6 +64,7 @@ const cache: Partial<CacheExchangeOpts> = {
     VisitedObject: () => null,
     PaginatedMovieStats: () => null,
     TableData: () => null,
+    AdminUser: () => null,
   },
   updates: {
     Mutation: {

@@ -21,6 +21,8 @@
     "@mui/system": "^5.14.1",
     "@react-spring/web": "^9.7.2",
     "@reduxjs/toolkit": "^1.9.3",
+    "@splinetool/react-spline": "^2.2.6",
+    "@splinetool/runtime": "^0.9.411",
     "@types/chrome": "^0.0.228",
     "@types/dompurify": "^3.0.1",
     "@types/lodash": "^4.14.192",

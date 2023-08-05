@@ -4,6 +4,10 @@ interface NavBarProps {
   isHovered: boolean;
 }
 export const StyledAdminLayout = styled.div<NavBarProps>`
+  .spline-bg {
+    position: fixed;
+    z-index: 0;
+  }
   background-image: radial-gradient(
       at 51% 52%,
       rgba(31, 38, 46, 0.5) 0px,
@@ -33,6 +37,8 @@ export const StyledAdminLayout = styled.div<NavBarProps>`
 
 export const StyledLeftNavBar = styled.div<NavBarProps>`
   background-color: rgba(0, 58, 117, 0.5);
+  position: relative;
+  z-index: 1;
   .nav-link {
     width: 100%;
     display: flex;
@@ -69,6 +75,7 @@ export const StyledRightContainer = styled.div`
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 1;
       > img {
         width: 40px;
         height: 40px;

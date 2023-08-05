@@ -21,6 +21,7 @@ export const StyledAdminDatabase = styled.div`
     box-shadow: 0 0 1px;
     padding: 10px;
     min-height: 20px;
+    z-index: 1;
     :hover {
       box-shadow: inset 0px -1px 4px;
       cursor: pointer;
@@ -43,6 +44,7 @@ export const StyledAdminDatabase = styled.div`
   }
   .data-container {
     max-height: 600px;
+    z-index: 1;
   }
 `;
 
@@ -51,6 +53,7 @@ interface TableProps {
 }
 
 export const StyledTH = styled.th<TableProps>`
+  z-index: 1;
   background-color: ${props => (props.isSorted ? '#461c6d' : '#3f51b5')};
 `;
 
@@ -60,6 +63,7 @@ export const StyledTable = styled.table`
   border-spacing: 0;
   box-shadow: 0px 0px 16px 2px rgba(157, 163, 180, 0.5);
   background-color: #2a2a2e;
+  z-index: 1;
   th,
   td {
     padding: 15px 20px;
@@ -100,12 +104,14 @@ export const TableContainer = styled.div`
   overflow-y: auto;
   margin-top: 20px;
   width: 96%;
+  z-index: 1;
 `;
 
 export const OperationsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   gap: 10px;
+  z-index: 1;
 `;
 
 interface ButtonProps {
@@ -195,6 +201,7 @@ export const TableHeader = styled.div`
   align-items: center;
   padding: 10px 0;
   width: 95%;
+  z-index: 1;
   h2 {
     color: #fff;
     font-size: 24px;
