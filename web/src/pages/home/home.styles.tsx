@@ -12,6 +12,8 @@ export const HomeParent = styled.div`
   width: 99.5vw;
   height: 100dvh;
   flex-direction: column;
+  background-color: ${p => p.theme.background};
+  color: white;
   .home-header {
     display: flex;
     width: 99.9%;
