@@ -11,6 +11,7 @@ export const StyledHeaderOptions = styled.div`
   box-shadow: 0 0 3px;
   border-radius: 5px;
   margin-bottom: 10px;
+  font-size: 14px;
   .us {
     display: flex;
     flex-direction: column;
@@ -42,7 +43,6 @@ export const StyledHeaderOptions = styled.div`
     }
     .options-text {
       flex: 1 1 80%;
-      font-size: 1.4rem;
       font-weight: 500;
     }
     :hover {
