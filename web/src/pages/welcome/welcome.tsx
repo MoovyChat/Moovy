@@ -2,7 +2,13 @@ import './welcome.css';
 
 import { useEffect } from 'react';
 import { CURRENT_DOMAIN, HOMEPAGE_ICONS } from '../../constants';
-import { HomeSection, StyledSpan, WelcomeParent } from './welcome.styles';
+import {
+  Heading1,
+  Heading2,
+  HomeSection,
+  StyledSpan,
+  WelcomeParent,
+} from './welcome.styles';
 
 import { withUrqlClient } from 'next-urql';
 import { Helmet } from 'react-helmet';
@@ -102,7 +108,7 @@ const Welcome = () => {
   return (
     <WelcomeParent>
       <Helmet>
-        <title>{`MoovyChat: Welcome`}</title>
+        <title>{`Home | MoovyChat`}</title>
         <meta name="description" content={`Home page of MoovyChat.`} />
         <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
       </Helmet>
@@ -148,12 +154,6 @@ const Welcome = () => {
               </FadeInWhenVisible>
             </div>
           </section>
-          <section className="mesh-content"></section>
-          <section className="mesh-sub-content"></section>
-        </div>
-      </HomeSection>
-      <HomeSection className="second-section">
-        <div className="mesh-container">
           <section className="mesh-icons">
             <FadeInWhenVisible
               animationDuration="3s"
@@ -161,74 +161,89 @@ const Welcome = () => {
               direction="inPlace"
             >
               <div className="columns head-section">
-                <h1 className="head-title">
+                <Heading1 className="head-title">
                   <span>
                     Join the Watch Party & <StyledSpan>Netflix</StyledSpan>{' '}
                     Comments
                   </span>
-                </h1>
+                </Heading1>
                 <p className="">
                   Experience Interactive Entertainment Like Never Before
                 </p>
               </div>
             </FadeInWhenVisible>
           </section>
-        </div>
-      </HomeSection>
-      <HomeSection className="third-section">
-        <div className="mesh-container">
-          <section className="mesh-icons">
-            <div className="columns">
-              <FadeInWhenVisible
-                animationDuration="3s"
-                animationDelay="0.6s"
-                direction="left"
-                distance="40px"
-              >
-                <div className="mini-card-container">
-                  <MiniInfoCard
-                    title="OTT Viewing Made Easy"
-                    subTitle="Casual"
-                    src={HOMEPAGE_ICONS.toothless}
-                  />
-                </div>
-              </FadeInWhenVisible>
-              <FadeInWhenVisible
-                animationDuration="3s"
-                animationDelay="0.6s"
-                direction="inPlace"
-              >
-                <div className="mini-card-container">
-                  {streamingServices.map(s => (
-                    <div className="mini-image-container">
-                      <img src={s.imgUrl} />
+          <section className="mesh-sub-content">
+            <div className="mesh-container">
+              <section className="mesh-icons">
+                <div className="columns">
+                  <FadeInWhenVisible
+                    animationDuration="3s"
+                    animationDelay="0.6s"
+                    direction="left"
+                    distance="40px"
+                  >
+                    <div className="mini-card-container">
+                      <MiniInfoCard
+                        title="OTT Viewing Made Easy"
+                        subTitle="Casual"
+                        src={HOMEPAGE_ICONS.toothless}
+                      />
                     </div>
-                  ))}
-                </div>
-              </FadeInWhenVisible>
+                  </FadeInWhenVisible>
+                  <FadeInWhenVisible
+                    animationDuration="3s"
+                    animationDelay="0.6s"
+                    direction="inPlace"
+                  >
+                    <div className="mini-card-container">
+                      {streamingServices.map(s => (
+                        <div className="mini-image-container">
+                          <img src={s.imgUrl} />
+                        </div>
+                      ))}
+                    </div>
+                  </FadeInWhenVisible>
 
-              <FadeInWhenVisible
-                animationDuration="3s"
-                animationDelay="0.6s"
-                direction="left"
-                distance="40px"
-              >
-                <div className="mini-card-container">
-                  <MiniInfoCard
-                    title="React in Real-Time"
-                    subTitle="Join the MoovyNest"
-                    src={HOMEPAGE_ICONS.spongebob}
-                  />
+                  <FadeInWhenVisible
+                    animationDuration="3s"
+                    animationDelay="0.6s"
+                    direction="left"
+                    distance="40px"
+                  >
+                    <div className="mini-card-container">
+                      <MiniInfoCard
+                        title="React in Real-Time"
+                        subTitle="Join the MoovyNest"
+                        src={HOMEPAGE_ICONS.spongebob}
+                      />
+                    </div>
+                  </FadeInWhenVisible>
                 </div>
-              </FadeInWhenVisible>
+                <ParallaxImage src={HOMEPAGE_ICONS.hands} />
+              </section>
             </div>
-            <ParallaxImage src={HOMEPAGE_ICONS.hands} />
           </section>
-          <section className="mesh-content"></section>
-          <section className="mesh-sub-content"></section>
         </div>
       </HomeSection>
-      <HomeSection className="fourth-section"></HomeSection>
+      <HomeSection className="second-section">
+        <div className="mesh-container">
+          <Heading2>
+            <StyledSpan>Our Services</StyledSpan>
+          </Heading2>
+          <p>
+            At MoovyChat, we specialize in transforming the way you watch your
+            favorite shows. Our platform allows you to sync your streams on
+            Netflix, DisneyPlus, Hulu, and Aha, and share real-time comments and
+            reactions with your friends in your own MoovyNest. Experience
+            interactive entertainment like never before!
+          </p>
+        </div>
+      </HomeSection>
+      <HomeSection className="third-section"></HomeSection>
+      <HomeSection className="fourth-section">
+        <div></div>
+      </HomeSection>
       {/* <Footer id="footer" /> */}
     </WelcomeParent>
   );

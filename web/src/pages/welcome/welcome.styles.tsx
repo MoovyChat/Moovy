@@ -7,6 +7,25 @@ export const WelcomeParent = styled.div`
   flex-direction: column;
   overflow: hidden;
   min-height: 100vh;
+  .second-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    > .mesh-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60%;
+      > p {
+        padding: 30px 0;
+        color: #00204c;
+        font-family: 'open sans', sans-serif;
+        font-size: 20px;
+        line-height: 32px;
+        text-align: center;
+      }
+    }
+  }
 `;
 
 export const HomeSection = styled.section`
@@ -60,17 +79,6 @@ export const HomeSection = styled.section`
             object-fit: contain;
           }
         }
-        .head-title {
-          font-size: 70px;
-          line-height: 1.2em;
-          text-align: center;
-          display: flex;
-          justify-content: center;
-          margin: 50px 0;
-          > span {
-            width: 70%;
-          }
-        }
       }
       .head-section {
         display: flex;
@@ -88,4 +96,32 @@ export const StyledSpan = styled.span`
   padding: 12px;
   background-color: #a700fa;
   border-radius: 100px;
+`;
+
+export const Heading1 = styled.h1`
+  font-size: 70px;
+  line-height: 1.2em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+  > span {
+    width: 70%;
+  }
+`;
+
+export const Heading2 = styled.h2`
+  color: #ffffff;
+  display: inline;
+  font-size: 44px;
+  font-weight: 700;
+  text-align: center;
+  margin-block: 0;
+  margin: 0;
+  letter-spacing: normal;
+  line-height: normal;
+  font: normal normal 500 44px/1.4em poppins-extralight, poppins, sans-serif;
+  > span {
+    padding: 10px 50px;
+  }
 `;
