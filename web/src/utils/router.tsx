@@ -181,9 +181,10 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: <Admin />,
         errorElement: <NotFound />,
+
         children: [
           {
-            path: '',
+            path: '/admin',
             element: <AdminIntro />,
             errorElement: <NotFound />,
           },
