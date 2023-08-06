@@ -41,7 +41,9 @@ const ParallaxImage: React.FC<ParallaxImageProps> = ({ src }) => {
         style={{
           width: '110vw',
           height: 'auto',
+          objectFit: 'cover',
           transform: `translateX(-${offset}px)`,
+          objectPosition: '50% 50%',
         }}
         alt="Parallax"
       />

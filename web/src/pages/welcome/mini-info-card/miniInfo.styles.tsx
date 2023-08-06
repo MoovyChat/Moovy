@@ -16,9 +16,12 @@ export const StyledMiniInfo = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 30px;
     margin: 10px;
-    box-shadow: 0 0 0 5px #eaf2ff;
+    overflow: hidden;
+    > img {
+      border-radius: 30px;
+      box-shadow: 0 0 0 5px #eaf2ff;
+    }
   }
   .mini-info {
     display: flex;

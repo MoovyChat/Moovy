@@ -131,7 +131,7 @@ const Welcome = () => {
                   <MiniInfoCard
                     title="MoovyChat"
                     subTitle="Transforming OTT Viewing"
-                    src={HOMEPAGE_ICONS.video}
+                    src={HOMEPAGE_ICONS.oswald}
                   />
                 </div>
               </FadeInWhenVisible>
@@ -189,7 +189,7 @@ const Welcome = () => {
                   <MiniInfoCard
                     title="OTT Viewing Made Easy"
                     subTitle="Casual"
-                    src={HOMEPAGE_ICONS.like}
+                    src={HOMEPAGE_ICONS.toothless}
                   />
                 </div>
               </FadeInWhenVisible>
@@ -217,7 +217,7 @@ const Welcome = () => {
                   <MiniInfoCard
                     title="React in Real-Time"
                     subTitle="Join the MoovyNest"
-                    src={HOMEPAGE_ICONS.like}
+                    src={HOMEPAGE_ICONS.spongebob}
                   />
                 </div>
               </FadeInWhenVisible>

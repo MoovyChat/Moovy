@@ -149,4 +149,10 @@ export const HOMEPAGE_ICONS = {
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/handsbg.webp',
   pink_balls:
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/pinkballsbg.webp',
+  oswald:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/oswald.jpg',
+  toothless:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/toothless.jpg',
+  spongebob:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/spongebob.jpg',
 };
