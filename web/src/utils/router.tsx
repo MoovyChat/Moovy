@@ -181,12 +181,10 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: <Admin />,
         errorElement: <NotFound />,
-
         children: [
           {
-            path: 'admin',
+            index: true,
             element: <AdminIntro />,
-            errorElement: <NotFound />,
           },
           {
             path: 'mail',
