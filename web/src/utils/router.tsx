@@ -184,7 +184,9 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
+            path: '',
             element: <AdminIntro />,
+            errorElement: <NotFound />,
           },
           {
             path: 'mail',
