@@ -67,7 +67,9 @@ const AdminDatabase = () => {
   const generateSqlStatement = (updatedRow: any) => {
     const keys = Object.keys(updatedRow);
     const values = Object.values(updatedRow);
-
+    if (!selectedRow) return;
+    console.log({ selectedRow });
+    const seletedRowId = selectedRow.id ? selectedRow.id : 'ADDKEYHERE';
     const setStatement = keys
       .map(
         (key, index) =>
@@ -83,7 +85,7 @@ const AdminDatabase = () => {
       )
       .join(', ');
 
-    const sqlStatement = `UPDATE "${tableName}" SET ${setStatement} WHERE id = '${selectedRow.id.replace(
+    const sqlStatement = `UPDATE "${tableName}" SET ${setStatement} WHERE id = '${seletedRowId.replace(
       /'/g,
       "''",
     )}'`;
