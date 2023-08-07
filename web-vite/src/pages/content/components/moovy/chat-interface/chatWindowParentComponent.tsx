@@ -1,4 +1,10 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { ChatWindowParent } from "./chatInterface.styles";
 import { useAppSelector } from "../../../../redux/hooks";
 import Intro from "../intro/intro";
@@ -15,7 +21,12 @@ import Tooltip from "../../../../../components/tooltip/tooltip";
 import LogoLoading from "../../../../../components/logo-loading/logoLoading";
 import ErrorPage from "../../../../../components/error-page/errorPage";
 import UpdateProfile from "../update-profile/updateProfile";
-import { Profile } from "../../../../../generated/graphql";
+import {
+  Profile,
+  useGetAllVersionsQuery,
+  useGetVersionNumberQuery,
+} from "../../../../../generated/graphql";
+import UpdateNeeded from "../../../../../components/update-needed/updateNeeded";
 
 interface ParentProps {
   pos: { x: number; y: number };
@@ -42,6 +53,7 @@ const ChatWindowParentComponent: React.FC<ParentProps> = ({
   const [hasShownIntro, setHasShownIntro] = useState(
     localStorage.getItem("hasShownIntro") === "true"
   );
+  const [updateNeeded, setUpdateNeeded] = useState(false);
   const isProfileNeedsToBeUpdated = useAppSelector(
     (state) => state.misc.isProfileNeedsToBeUpdated
   );
@@ -80,6 +92,22 @@ const ChatWindowParentComponent: React.FC<ParentProps> = ({
   const responseFromReplyWindow = useCallback((comment: CommentInfo) => {
     setReplyClickResponse(comment);
   }, []);
+  const [vn] = useGetVersionNumberQuery();
+  const [currentVersion, setCurrentVersion] = useState<string>("");
+  const [latestVersion, setLatestVersion] = useState<string>("");
+  const [releaseNotes, setReleaseNotes] = useState<string>("");
+  useEffect(() => {
+    const { data, fetching } = vn;
+    if (data && !fetching) {
+      const updatedVersion = vn.data.getVersionNumber.version;
+      setLatestVersion(() => updatedVersion);
+      setCurrentVersion(() => chrome.runtime.getManifest().version);
+      setReleaseNotes(() => vn.data.getVersionNumber.notes);
+      const isMandatory = vn.data.getVersionNumber.mandatory;
+      if (chrome.runtime.getManifest().version !== updatedVersion)
+        isMandatory && setUpdateNeeded(true);
+    }
+  }, [vn]);
 
   useLayoutEffect(() => {
     if (chatMode === "global") {
@@ -90,6 +118,16 @@ const ChatWindowParentComponent: React.FC<ParentProps> = ({
         globalChatRef.current.style.display = "none";
     }
   }, [chatMode, globalChatRef, moovyNestRef]);
+
+  if (updateNeeded) {
+    return (
+      <UpdateNeeded
+        currentVersion={currentVersion}
+        latestVersion={latestVersion}
+        releaseNotes={releaseNotes}
+      />
+    );
+  }
 
   if (!user)
     return (

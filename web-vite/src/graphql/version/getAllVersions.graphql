@@ -1,0 +1,8 @@
+query GetAllVersions {
+  getAllVersions {
+    version
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

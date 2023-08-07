@@ -92,14 +92,12 @@ export const StyledUserMessage = styled.div<Props>`
     border: none;
     border-radius: 15px 15px 0 15px;
     color: white;
-    margin-bottom: 12px;
-    margin-right: 10px;
     max-width: 75%;
     padding: 10px 20px;
     position: relative;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
     font-size: 16px;
-    line-height: 24px;
+    text-align: end;
   }
   .one-emoji {
     background: transparent !important;

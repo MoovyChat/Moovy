@@ -35,7 +35,7 @@ export type AdminUser = {
   __typename?: "AdminUser";
   createdAt: Scalars["String"];
   deletedAt?: Maybe<Scalars["String"]>;
-  role?: Maybe<Scalars["String"]>;
+  role?: Maybe<Role>;
   updatedAt: Scalars["String"];
   userId: Scalars["String"];
 };
@@ -455,6 +455,7 @@ export type Mutation = {
   insertMovie?: Maybe<Movie>;
   insertMovieInformation?: Maybe<Movie>;
   insertReply?: Maybe<Reply>;
+  insertRow: Scalars["Boolean"];
   insertTitle?: Maybe<Scalars["Boolean"]>;
   insertVisited?: Maybe<Visited>;
   isUserNameExists?: Maybe<Scalars["Boolean"]>;
@@ -576,6 +577,11 @@ export type MutationInsertReplyArgs = {
   options: ReplyInput;
 };
 
+export type MutationInsertRowArgs = {
+  params?: InputMaybe<Array<Scalars["String"]>>;
+  sql: Scalars["String"];
+};
+
 export type MutationInsertTitleArgs = {
   options: TitleOptions;
 };
@@ -622,7 +628,7 @@ export type MutationReportReplyArgs = {
 };
 
 export type MutationSetAdminArgs = {
-  role: Scalars["String"];
+  role: Role;
   userId: Scalars["String"];
 };
 
@@ -765,6 +771,7 @@ export type Profile = {
 export type Query = {
   __typename?: "Query";
   getAdminUsers: Array<AdminUser>;
+  getAdminsAndModerators: Array<AdminUser>;
   getAllComments: Array<Comment>;
   getAllCommentsMadeByUser?: Maybe<Array<Comment>>;
   getAllMessages: Array<Contact>;
@@ -772,6 +779,7 @@ export type Query = {
   getAllNotifications: Array<FollowNotifications>;
   getAllPlatforms: Array<Platform>;
   getAllReplies: Array<Reply>;
+  getAllVersions: Array<Version>;
   getAllVisited: Array<Visited>;
   getComment: Comment;
   getCommentLikes: CommentLikesObject;
@@ -821,7 +829,7 @@ export type Query = {
   getUserProfile?: Maybe<Profile>;
   getUserStatistics?: Maybe<FullUserObject>;
   getUserViewHistory?: Maybe<VisitedObject>;
-  getVersionNumber: Scalars["String"];
+  getVersionNumber?: Maybe<Version>;
   getVisited?: Maybe<Visited>;
   hello: Scalars["String"];
   isFollowingUser?: Maybe<Scalars["Boolean"]>;
@@ -1202,6 +1210,13 @@ export type ReplyStatsObject = {
   user: Users;
 };
 
+/** The basic roles of admin users */
+export enum Role {
+  Admin = "ADMIN",
+  Moderator = "MODERATOR",
+  User = "USER",
+}
+
 export type SearchMovieObject = {
   __typename?: "SearchMovieObject";
   lastPage?: Maybe<Scalars["Int"]>;
@@ -1259,6 +1274,7 @@ export type TableData = {
   __typename?: "TableData";
   columnNames: Array<Scalars["String"]>;
   data: Scalars["JSON"];
+  totalRows: Scalars["Int"];
 };
 
 export type Title = {
@@ -1366,6 +1382,16 @@ export type Users = {
   nickname: Scalars["String"];
   photoUrl: Scalars["String"];
   updatedAt?: Maybe<Scalars["String"]>;
+};
+
+export type Version = {
+  __typename?: "Version";
+  createdAt: Scalars["String"];
+  deletedAt?: Maybe<Scalars["String"]>;
+  mandatory?: Maybe<Scalars["Boolean"]>;
+  notes?: Maybe<Scalars["String"]>;
+  updatedAt: Scalars["String"];
+  version: Scalars["String"];
 };
 
 export type Visited = {
@@ -2664,6 +2690,34 @@ export type IsFollowingUserQuery = {
   isFollowingUser?: boolean | null;
 };
 
+export type GetAllVersionsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllVersionsQuery = {
+  __typename?: "Query";
+  getAllVersions: Array<{
+    __typename?: "Version";
+    version: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string | null;
+  }>;
+};
+
+export type GetVersionNumberQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetVersionNumberQuery = {
+  __typename?: "Query";
+  getVersionNumber?: {
+    __typename?: "Version";
+    version: string;
+    notes?: string | null;
+    mandatory?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string | null;
+  } | null;
+};
+
 export type InsertVisitedMutationVariables = Exact<{
   time: Scalars["Float"];
   insertVisitedId: Scalars["String"];
@@ -3828,6 +3882,46 @@ export function useIsFollowingUserQuery(
 ) {
   return Urql.useQuery<IsFollowingUserQuery, IsFollowingUserQueryVariables>({
     query: IsFollowingUserDocument,
+    ...options,
+  });
+}
+export const GetAllVersionsDocument = gql`
+  query GetAllVersions {
+    getAllVersions {
+      version
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export function useGetAllVersionsQuery(
+  options?: Omit<Urql.UseQueryArgs<GetAllVersionsQueryVariables>, "query">
+) {
+  return Urql.useQuery<GetAllVersionsQuery, GetAllVersionsQueryVariables>({
+    query: GetAllVersionsDocument,
+    ...options,
+  });
+}
+export const GetVersionNumberDocument = gql`
+  query GetVersionNumber {
+    getVersionNumber {
+      version
+      notes
+      mandatory
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export function useGetVersionNumberQuery(
+  options?: Omit<Urql.UseQueryArgs<GetVersionNumberQueryVariables>, "query">
+) {
+  return Urql.useQuery<GetVersionNumberQuery, GetVersionNumberQueryVariables>({
+    query: GetVersionNumberDocument,
     ...options,
   });
 }

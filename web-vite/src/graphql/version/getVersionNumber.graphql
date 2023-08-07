@@ -1,0 +1,10 @@
+query GetVersionNumber {
+  getVersionNumber {
+    version
+    notes
+    mandatory
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

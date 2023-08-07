@@ -12,6 +12,7 @@ export const constants = {
 export const __prod__ = process.env.NODE_ENV !== "production";
 
 export const EXT_ID = "ilkpekdilkpahngoeanmpnkegideejip";
+export const EXT_STORE_LINK = `https://chrome.google.com/webstore/detail/${EXT_ID}`;
 export const MOOVY_URL = __prod__
   ? "https://www.moovychat.com"
   : "http://localhost:3000";
