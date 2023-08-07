@@ -4,8 +4,8 @@ import { Version } from "../entities/Version";
 
 @Resolver()
 export class VersionResolver {
-  @Query(() => String)
-  async getVersionNumber(): Promise<string> {
+  @Query(() => Version, { nullable: true })
+  async getVersionNumber(): Promise<Version | null> {
     const entityManager = conn.createEntityManager();
     const latestVersion = await entityManager
       .getRepository(Version)
@@ -13,7 +13,12 @@ export class VersionResolver {
       .orderBy("version.createdAt", "DESC")
       .getOne();
 
-    return latestVersion ? latestVersion.version : "No version found";
+    return latestVersion;
+  }
+
+  @Query(() => [Version])
+  getAllVersions(): Promise<Version[]> {
+    return Version.find();
   }
 
   @Mutation(() => String, { nullable: true })
