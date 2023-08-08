@@ -118,13 +118,22 @@ export class AdminResolver {
     const setStatements = parsedSql[2].split(",").map((s) => s.trim());
     const fieldsToUpdate: Record<string, any> = {};
     setStatements.forEach((statement) => {
-      const parsedStatement = statement.match(/"(.+)" = '(.+)'/);
+      const parsedStatement = statement.match(/"(.+)" = (.+)/);
       if (parsedStatement) {
         const key = parsedStatement[1];
-        const value = parsedStatement[2];
+        const value = parsedStatement[2].trim();
         // Exclude updatedAt, createdAt, deletedAt
         if (["updatedAt", "createdAt", "deletedAt"].includes(key)) return;
-        fieldsToUpdate[key] = value;
+
+        if (value === "TRUE") {
+          fieldsToUpdate[key] = true;
+        } else if (value === "FALSE") {
+          fieldsToUpdate[key] = false;
+        } else if (value.startsWith("'") && value.endsWith("'")) {
+          fieldsToUpdate[key] = value.slice(1, -1);
+        } else {
+          fieldsToUpdate[key] = value;
+        }
       }
     });
 
@@ -153,9 +162,17 @@ export class AdminResolver {
     const columns = parsedSql[2]
       .split(",")
       .map((column) => column.replace(/"/g, "").trim());
-    const values = parsedSql[3]
-      .split(",")
-      .map((value) => value.replace(/'/g, "").trim());
+    const values = parsedSql[3].split(",").map((value) => {
+      value = value.trim();
+      if (value === "TRUE") {
+        return true;
+      } else if (value === "FALSE") {
+        return false;
+      } else if (value.startsWith("'") && value.endsWith("'")) {
+        return value.slice(1, -1);
+      }
+      return value;
+    });
 
     // Construct the data for insertion
     let data: Record<string, any> = {};

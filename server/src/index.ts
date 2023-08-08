@@ -80,6 +80,7 @@ const main = async () => {
   });
 
   const RedisStore = connectRedis(session);
+  const devOrigins = ["http://localhost:4000", "http://localhost:4000/graphql"];
   const corsOptions = {
     origin: [
       process.env.CORS_ORIGIN,
@@ -93,10 +94,9 @@ const main = async () => {
       "ws://server.moovychat.com/graphql",
       "wss://server.moovychat.com/graphql",
       "https://www.netflix.com",
-      "http://localhost:4000",
-      "http://localhost:4000/graphql",
       "chrome-extension://ilkpekdilkpahngoeanmpnkegideejip",
       process.env.REDIS_URL,
+      ...(process.env.NODE_ENV !== "production" ? devOrigins : []),
     ],
     credentials: true,
   };
