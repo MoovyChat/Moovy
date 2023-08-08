@@ -18,6 +18,7 @@ import Footer from './footer/footer';
 import MiniInfoCard from './mini-info-card/miniInfoCard';
 import FadeInWhenVisible from '../../components/fade-in-when-visible/FadeInWhenVisible';
 import ParallaxImage from '../../components/parallax-image/parallaxImage';
+import ServiceInfoCard from './service-info-card/ServiceInfoCard';
 
 export const streamingServices = [
   {
@@ -239,6 +240,51 @@ const Welcome = () => {
             interactive entertainment like never before!
           </p>
         </div>
+        <FadeInWhenVisible
+          animationDuration="1s"
+          animationDelay="0.2s"
+          direction="right"
+          distance="50px"
+        >
+          <ServiceInfoCard
+            src={HOMEPAGE_ICONS.oswald}
+            mockup={HOMEPAGE_ICONS.mockup2}
+            title="Experience Interactive Entertainment"
+            subTitle="Live Comments for Netflix and Aha"
+            desc="With MoovyChat, bring the theater chatter to your living room. Comment on your favorite Netflix shows and movies in real-time. Share your reactions and engage in lively discussions with friends and family, no matter where they are. Enjoy Netflix together, even when apart."
+          />
+        </FadeInWhenVisible>
+        <FadeInWhenVisible
+          animationDuration="3s"
+          animationDelay="0.2s"
+          direction="left"
+          distance="50px"
+        >
+          <ServiceInfoCard
+            otherWay={true}
+            src={HOMEPAGE_ICONS.toothless}
+            mockup={HOMEPAGE_ICONS.mockup2}
+            title="Join the MoovyNest, Watch Party"
+            subTitle="Share and React"
+            desc="Join the MoovyNest and share your thoughts and reactions to your favorite shows in real-time. Interact with friends and family like never before."
+          />
+        </FadeInWhenVisible>
+        <FadeInWhenVisible
+          animationDuration="3s"
+          animationDelay="0.2s"
+          direction="right"
+          distance="50px"
+        >
+          <ServiceInfoCard
+            src={HOMEPAGE_ICONS.spongebob}
+            mockup={HOMEPAGE_ICONS.filtersVideo5MB}
+            alternateMockUp={HOMEPAGE_ICONS.filtersVideo2MB}
+            isVideo={true}
+            title="Video Filters & Skip Feature"
+            subTitle="Customize Your Viewing, Streamline Your Experience"
+            desc="With MoovyChat, make every show your own. Use our Video Filters feature to enhance your viewing experience. Want to dive right into the story? Use the auto-skip feature to bypass intros and outros. Personalize your streaming, only with MoovyChat."
+          />
+        </FadeInWhenVisible>
       </HomeSection>
       <HomeSection className="third-section"></HomeSection>
       <HomeSection className="fourth-section">

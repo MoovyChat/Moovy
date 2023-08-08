@@ -155,4 +155,12 @@ export const HOMEPAGE_ICONS = {
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/toothless.jpg',
   spongebob:
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/spongebob.jpg',
+  mockup1:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/mockup1.webp',
+  mockup2:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/Screenshot+2023-08-07+at+8.30.37+PM.png',
+  filtersVideo2MB:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/OptimizedNoAudio_2MB.mp4',
+  filtersVideo5MB:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/OptimizedNoAudio_5MB.mp4',
 };

@@ -68,7 +68,6 @@ const AdminDatabase = () => {
     const keys = Object.keys(updatedRow);
     const values = Object.values(updatedRow);
     if (!selectedRow) return;
-    console.log({ selectedRow });
     const seletedRowId = selectedRow.id ? selectedRow.id : 'ADDKEYHERE';
     const setStatement = keys
       .map(
@@ -76,6 +75,8 @@ const AdminDatabase = () => {
           `"${key}" = ${
             Array.isArray(values[index])
               ? `{${(values[index] as any).join(',')}}`
+              : typeof values[index] === 'boolean' || values[index] === null
+              ? values[index]
               : `'${
                   typeof values[index] === 'string'
                     ? (values[index] as any).replace(/'/g, "''")
