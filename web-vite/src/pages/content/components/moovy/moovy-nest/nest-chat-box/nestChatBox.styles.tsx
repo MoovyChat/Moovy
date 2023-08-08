@@ -1,4 +1,14 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+const slideUp = keyframes`
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
 
 export const StyledNest = styled.div`
   width: 100%;
@@ -13,6 +23,7 @@ export const StyledJoinLeaveMessage = styled.div`
   align-items: center;
   text-align: center;
   margin-top: 25px;
+  animation: ${slideUp} 0.5s ease-out;
   .profile-pic {
     img {
       border-radius: 50%;
@@ -56,6 +67,7 @@ export const StyledUserMessage = styled.div<Props>`
   justify-content: ${(p) => (p.isUser ? "flex-end" : "flex-start")};
   align-items: center;
   margin-top: 25px;
+  animation: ${slideUp} 0.5s ease-out;
   .profile-pic {
     display: flex;
     align-items: center;

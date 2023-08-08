@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "short_name": "MoovyChat",
-  "name": "MoovyChat: Nest, Sync, Chat",
+  "name": "MoovyChat: Watch Party & Netflix Comments",
   "description": "Watch Netflix, HBO Max, Disney Plus, Hulu, and Aha in sync with friends",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkytqfusvzuhsXy53QIiGy1CrMg2GksVqFRjtIJeU/NvyVc2/B6Ly8pdjUbQ1sHJyxqm0ueAjN5aug9NyEdWBgmXHMIlkxsnD2VYwyZ3CWGfksLeYl8WCRl3eUbWgshnz7AZbRFOb8KLzIGuYU3CRMDfs6EsoPENXIRIH44RfaWlA2U1m/SD7TNE8tYBePBLf7bNzPBWiZ3J6g5bG8gJBc/DUsshA66OXbbu1ypwxPIMPf0ZjIotppAZ7y+kTlt4sqV1lKoiREABwIoZX2P64nxHTgMxCGjbgYqnPYGtgUKDL6kfmg411QwWiGm16KwHgCsusMVXjCRPPmtybiINEQIDAQAB",
   "permissions": [
     "identity",
