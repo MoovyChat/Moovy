@@ -18,7 +18,7 @@ import Footer from './footer/footer';
 import MiniInfoCard from './mini-info-card/miniInfoCard';
 import FadeInWhenVisible from '../../components/fade-in-when-visible/FadeInWhenVisible';
 import ParallaxImage from '../../components/parallax-image/parallaxImage';
-import ServiceInfoCard from './service-info-card/ServiceInfoCard';
+import ServiceInfoCard from './service-info-card/serviceInfoCardContainer';
 
 export const streamingServices = [
   {
