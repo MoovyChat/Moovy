@@ -32,6 +32,13 @@ const Header = () => {
   const [, logOutAction] = useLogoutMutation();
   const [me, _] = useMeQuery({});
 
+  const promiseNavigate = (path: string): Promise<void> => {
+    return new Promise(resolve => {
+      navigate(path);
+      setTimeout(resolve, 100); // Adjust this duration if needed
+    });
+  };
+
   useEffect(() => {
     const { data, error, fetching } = me;
     if (error) {
@@ -94,7 +101,7 @@ const Header = () => {
           <img
             className="image"
             src={LOGO_128}
-            alt="QuietChat"
+            alt="MoovyChat Logo"
             id="blur-escape"
             loading="lazy"
             width="150"
@@ -108,6 +115,7 @@ const Header = () => {
           <HeaderButton
             tabIndex={0}
             role="button"
+            aria-label="Navigate to Home after Login"
             className="install-button hb"
             onClick={e => {
               e.stopPropagation();
@@ -117,43 +125,53 @@ const Header = () => {
             Home
           </HeaderButton>
         )}
+
         <HeaderButton
           tabIndex={0}
           role="button"
+          aria-label="Navigate to features"
           className="install-button hb"
-          onClick={e => {
+          onClick={async e => {
             e.stopPropagation();
+            await promiseNavigate('/');
             scrollIntoView('features');
           }}
         >
           Features
         </HeaderButton>
+
         <HeaderButton
           tabIndex={0}
           role="button"
+          aria-label="Navigate to about page"
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('faq');
+            navigate('/about');
           }}
         >
           About
         </HeaderButton>
+
         <HeaderButton
           tabIndex={0}
           role="button"
+          aria-label="Navigate to contact section"
           className="install-button hb"
-          onClick={e => {
+          onClick={async e => {
             e.stopPropagation();
+            await promiseNavigate('/');
             scrollIntoView('contact');
           }}
         >
-          contact
+          Contact
         </HeaderButton>
+
         {user && user.id ? (
           <HeaderButton
             className="hb"
             id="logout-btn"
+            aria-label="Logout"
             onClick={logOutHandler}
             role="button"
             tabIndex={0}
@@ -175,6 +193,7 @@ const Header = () => {
           className="install-button hb"
           role="button"
           tabIndex={0}
+          aria-label="Install MoovyChat Chrome Extension"
           onClick={e => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');

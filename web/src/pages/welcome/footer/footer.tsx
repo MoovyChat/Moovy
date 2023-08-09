@@ -18,6 +18,7 @@ import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
 import LogoLoading from '../../logo-loading/logoLoading';
 import { LogoImage } from '../../header/header.styles';
 import { scrollIntoView } from '../../../utils/helpers';
+import { useNavigate } from 'react-router-dom';
 
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
@@ -28,15 +29,22 @@ type props = {
   id: string;
 };
 const Footer: React.FC<props> = ({ id }) => {
+  const navigate = useNavigate();
+  const promiseNavigate = (path: string): Promise<void> => {
+    return new Promise(resolve => {
+      navigate(path);
+      setTimeout(resolve, 100); // Adjust this duration if needed
+    });
+  };
   const ICON_SIZE = 25;
   return (
-    <StyledFooter id={id}>
+    <StyledFooter id={id} role="contentinfo">
       <LogoImage className="footer-logo">
         <div className="logo-image">
           <img
             className="image"
             src={LOGO_128}
-            alt="QuietChat"
+            alt="MoovyChat Logo"
             id="blur-escape"
             loading="lazy"
             width="150"
@@ -45,20 +53,21 @@ const Footer: React.FC<props> = ({ id }) => {
           <div className="beta">MoovyChat</div>
         </div>
       </LogoImage>
-      <div className="sub-title">
-        <p>
+      <section className="sub-title" aria-labelledby="app-description">
+        <p id="app-description">
           <span>Watch Together and Live Comments for Movies/Shows</span>
         </p>
-      </div>
+      </section>
       <div className="sub-title line"></div>
-      <div className="links-block">
+      <nav className="links-block" aria-label="Footer Navigation">
         <div className="block">
-          <div className="title">Contact</div>
+          <address className="title">Contact</address>
           <div className="links">
             <FooterLink
               className="special"
               href="mailto:support@moovychat.com"
               target="_blank"
+              aria-label="Email MoovyChat Support"
             >
               support@moovychat.com
             </FooterLink>
@@ -67,20 +76,58 @@ const Footer: React.FC<props> = ({ id }) => {
         <div className="block">
           <div className="title">Menu</div>
           <div className="links">
-            <FooterLink onClick={() => scrollIntoView('home')}>Home</FooterLink>
-            <FooterLink href="/about-us" target="_blank">
+            <FooterLink
+              onClick={async () => {
+                await promiseNavigate('/');
+                scrollIntoView('home');
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to home section"
+            >
+              Home
+            </FooterLink>
+            <FooterLink
+              onClick={async () => {
+                await promiseNavigate('/about');
+                scrollIntoView('home');
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to about section"
+            >
               About
             </FooterLink>
-            <FooterLink onClick={() => scrollIntoView('contact')}>
+            <FooterLink
+              onClick={async () => {
+                await promiseNavigate('/');
+                scrollIntoView('contact');
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to contact section"
+            >
               Contact
             </FooterLink>
-            <FooterLink href="/cookie-policy" target="_blank">
+            <FooterLink
+              href="/cookie-policy"
+              target="_blank"
+              aria-label="Read our cookie policy"
+            >
               Cookie Policy
             </FooterLink>
-            <FooterLink href="/privacy" target="_blank">
+            <FooterLink
+              href="/privacy"
+              target="_blank"
+              aria-label="Read our privacy policy"
+            >
               Privacy Policy
             </FooterLink>
-            <FooterLink href="/terms-and-conditions" target="_blank">
+            <FooterLink
+              href="/terms-and-conditions"
+              target="_blank"
+              aria-label="Read our terms and conditions"
+            >
               Terms & Conditions
             </FooterLink>
           </div>
@@ -95,52 +142,60 @@ const Footer: React.FC<props> = ({ id }) => {
                   e.stopPropagation();
                   window.open(DISCORD_INVITE_LINK, '_blank');
                 }}
+                aria-label="Visit our Discord"
               >
                 <FaDiscord
                   color="cornflowerblue"
                   size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
                 />
-                <FooterLink>Discord</FooterLink>
+                <span>Discord</span>
               </SocialButton>
               <SocialButton
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TWITTER_LINK, '_blank');
                 }}
+                aria-label="Visit our Twitter"
               >
                 <FaTwitter
                   color="deepskyblue"
                   size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
                 />
-                <FooterLink>Twitter</FooterLink>
+                <span>Twitter</span>
               </SocialButton>
               <SocialButton
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TIKTOK_LINK, '_blank');
                 }}
+                aria-label="Visit our Tiktok"
               >
                 <FaTiktok
                   className="icon"
                   size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
                 />
-                <FooterLink>Tiktok</FooterLink>
+                <span>Tiktok</span>
               </SocialButton>
               <SocialButton
                 onClick={e => {
                   e.stopPropagation();
                   window.open(INSTAGRAM_LINK, '_blank');
                 }}
+                aria-label="Visit our Instagram"
               >
                 <FaInstagram
                   color="hotpink"
                   size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
                 />
-                <FooterLink>Instagram</FooterLink>
+                <span>Instagram</span>
               </SocialButton>
             </Suspense>
           </div>
@@ -155,11 +210,12 @@ const Footer: React.FC<props> = ({ id }) => {
                 e.stopPropagation();
                 window.open(PATREON, '_blank');
               }}
+              aria-label="Support us on Patreon"
             >
               <div className="logo" id="text-focus">
                 <img
                   src={PatreonWord}
-                  alt="patreon"
+                  alt="Support us on Patreon"
                   id="text-focus"
                   width={120}
                 />
@@ -171,11 +227,12 @@ const Footer: React.FC<props> = ({ id }) => {
                 e.stopPropagation();
                 window.open(BUY_ME_A_COFFEE, '_blank');
               }}
+              aria-label="Buy us a coffee"
             >
               <div className="logo" id="text-focus">
                 <img
                   src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                  alt="bmc"
+                  alt="Buy us a coffee"
                   id="text-focus"
                   width={120}
                 />
@@ -183,7 +240,7 @@ const Footer: React.FC<props> = ({ id }) => {
             </SocialButton>
           </div>
         </div>
-      </div>
+      </nav>
       <div className="moovy-chat-copyright">
         © {new Date().getFullYear()} MoovyChat
       </div>

@@ -14,6 +14,8 @@ import GoogleLoginForExtension from '../pages/login/google-log-in-for-extension'
 import Mail from '../pages/admin/mail';
 import AdminDatabase from '../pages/admin/adminDatabase';
 import AdminIntro from '../pages/admin/adminIntro';
+import WelcomeHomePage from '../pages/welcome/welcome-home/welcomeHomePage';
+import About from '../pages/welcome/about/about';
 
 const Feed = lazy(() => import('../pages/feed/feed'));
 const Home = lazy(() => import('../pages/home/home'));
@@ -67,6 +69,17 @@ export const router = createBrowserRouter([
     element: <App />,
     errorElement: <NotFound />,
     children: [
+      {
+        index: true,
+        path: '',
+        element: <WelcomeHomePage />,
+        errorElement: <NotFound />,
+      },
+      {
+        path: 'about',
+        element: <About />,
+        errorElement: <NotFound />,
+      },
       {
         path: 'home',
         element: <Home />,
