@@ -21,6 +21,7 @@ import { urqlClient } from '../../utils/urlClient';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'styled-components';
 import { withUrqlClient } from 'next-urql';
+import { scrollIntoView } from '../../utils/helpers';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -86,17 +87,8 @@ const Header = () => {
     if (data) dispatch(sliceSetUser(userState));
   };
 
-  const scrollIntoView = (id: string) => {
-    const divElement = document.getElementById(id);
-    if (divElement) {
-      const elementRect = divElement.getBoundingClientRect();
-      const absoluteElementTop = elementRect.top + window.pageYOffset;
-      const middle = absoluteElementTop - window.innerHeight / 24;
-      window.scrollTo({ top: middle, behavior: 'smooth' });
-    }
-  };
   return (
-    <HeaderParent>
+    <HeaderParent id="home">
       <LogoImage>
         <div className="logo-image">
           <img
@@ -142,10 +134,10 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('socials');
+            scrollIntoView('faq');
           }}
         >
-          Socials
+          About
         </HeaderButton>
         <HeaderButton
           tabIndex={0}
@@ -153,10 +145,10 @@ const Header = () => {
           className="install-button hb"
           onClick={e => {
             e.stopPropagation();
-            scrollIntoView('faq');
+            scrollIntoView('contact');
           }}
         >
-          FAQ
+          contact
         </HeaderButton>
         {user && user.id ? (
           <HeaderButton

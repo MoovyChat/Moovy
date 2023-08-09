@@ -5,6 +5,7 @@ import {
   BUY_ME_A_COFFEE,
   DISCORD_INVITE_LINK,
   INSTAGRAM_LINK,
+  LOGO_128,
   PATREON,
   TIKTOK_LINK,
   TWITTER_LINK,
@@ -15,6 +16,8 @@ import { lazyIconFa } from '../../../lazyLoad';
 import PatreonWord from '../../../static/images/patreon-word.webp';
 import MoovyBlack from '../../../svgs/moovy-text-logo-black.png';
 import LogoLoading from '../../logo-loading/logoLoading';
+import { LogoImage } from '../../header/header.styles';
+import { scrollIntoView } from '../../../utils/helpers';
 
 const FaDiscord = lazyIconFa('FaDiscord');
 const FaTwitter = lazyIconFa('FaTwitter');
@@ -25,27 +28,30 @@ type props = {
   id: string;
 };
 const Footer: React.FC<props> = ({ id }) => {
+  const ICON_SIZE = 25;
   return (
     <StyledFooter id={id}>
-      <div className="image-container">
-        <img src={MoovyBlack} alt="moovy" width="200px" />
-      </div>
-      <div className="links-block">
-        <div className="block">
-          <div className="title">Legal</div>
-          <div className="links">
-            <FooterLink href="/terms-and-conditions" target="_blank">
-              Terms & Conditions
-            </FooterLink>
-            <FooterLink href="/privacy" target="_blank">
-              Privacy Policy
-            </FooterLink>
-            <FooterLink href="/cookie-policy" target="_blank">
-              Cookie Policy
-            </FooterLink>
-          </div>
+      <LogoImage className="footer-logo">
+        <div className="logo-image">
+          <img
+            className="image"
+            src={LOGO_128}
+            alt="QuietChat"
+            id="blur-escape"
+            loading="lazy"
+            width="150"
+            height="150"
+          />
+          <div className="beta">MoovyChat</div>
         </div>
-
+      </LogoImage>
+      <div className="sub-title">
+        <p>
+          <span>Watch Together and Live Comments for Movies/Shows</span>
+        </p>
+      </div>
+      <div className="sub-title line"></div>
+      <div className="links-block">
         <div className="block">
           <div className="title">Contact</div>
           <div className="links">
@@ -56,24 +62,26 @@ const Footer: React.FC<props> = ({ id }) => {
             >
               support@moovychat.com
             </FooterLink>
-            <FooterLink href="/about-us" target="_blank">
-              About us
-            </FooterLink>
-            <FooterLink href="/contact" target="_blank">
-              Contact us
-            </FooterLink>
-            <div>© {new Date().getFullYear()} MoovyChat</div>
           </div>
         </div>
-
         <div className="block">
-          <div className="title">Credits</div>
+          <div className="title">Menu</div>
           <div className="links">
-            <FooterLink
-              href="https://www.instagram.com/the_coding_wizard/"
-              target="_blank"
-            >
-              Sparkle Button & Key Features designed by @TheCodingWizard
+            <FooterLink onClick={() => scrollIntoView('home')}>Home</FooterLink>
+            <FooterLink href="/about-us" target="_blank">
+              About
+            </FooterLink>
+            <FooterLink onClick={() => scrollIntoView('contact')}>
+              Contact
+            </FooterLink>
+            <FooterLink href="/cookie-policy" target="_blank">
+              Cookie Policy
+            </FooterLink>
+            <FooterLink href="/privacy" target="_blank">
+              Privacy Policy
+            </FooterLink>
+            <FooterLink href="/terms-and-conditions" target="_blank">
+              Terms & Conditions
             </FooterLink>
           </div>
         </div>
@@ -83,7 +91,6 @@ const Footer: React.FC<props> = ({ id }) => {
           <div className="links">
             <Suspense fallback={<LogoLoading />}>
               <SocialButton
-                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(DISCORD_INVITE_LINK, '_blank');
@@ -91,13 +98,12 @@ const Footer: React.FC<props> = ({ id }) => {
               >
                 <FaDiscord
                   color="cornflowerblue"
-                  size={20}
+                  size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
                 />
                 <FooterLink>Discord</FooterLink>
               </SocialButton>
               <SocialButton
-                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TWITTER_LINK, '_blank');
@@ -105,13 +111,12 @@ const Footer: React.FC<props> = ({ id }) => {
               >
                 <FaTwitter
                   color="deepskyblue"
-                  size={20}
+                  size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
                 />
                 <FooterLink>Twitter</FooterLink>
               </SocialButton>
               <SocialButton
-                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(TIKTOK_LINK, '_blank');
@@ -119,13 +124,12 @@ const Footer: React.FC<props> = ({ id }) => {
               >
                 <FaTiktok
                   className="icon"
-                  size={20}
+                  size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
                 />
                 <FooterLink>Tiktok</FooterLink>
               </SocialButton>
               <SocialButton
-                className="link"
                 onClick={e => {
                   e.stopPropagation();
                   window.open(INSTAGRAM_LINK, '_blank');
@@ -133,7 +137,7 @@ const Footer: React.FC<props> = ({ id }) => {
               >
                 <FaInstagram
                   color="hotpink"
-                  size={20}
+                  size={ICON_SIZE}
                   style={{ pointerEvents: 'none' }}
                 />
                 <FooterLink>Instagram</FooterLink>
@@ -179,6 +183,9 @@ const Footer: React.FC<props> = ({ id }) => {
             </SocialButton>
           </div>
         </div>
+      </div>
+      <div className="moovy-chat-copyright">
+        © {new Date().getFullYear()} MoovyChat
       </div>
     </StyledFooter>
   );

@@ -98,6 +98,16 @@ export const getFormattedWordsArray = (text: string): textMap[] => {
   });
 };
 
+export const scrollIntoView = (id: string) => {
+  const divElement = document.getElementById(id);
+  if (divElement) {
+    const elementRect = divElement.getBoundingClientRect();
+    const absoluteElementTop = elementRect.top + window.pageYOffset;
+    const middle = absoluteElementTop - window.innerHeight / 24;
+    window.scrollTo({ top: middle, behavior: 'smooth' });
+  }
+};
+
 // Function to parse and sanitize HTML text
 // Uses regular expression to match links and replaces with HTML a elements
 // Adds a hook to make all links open a new window

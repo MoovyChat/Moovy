@@ -163,4 +163,6 @@ export const HOMEPAGE_ICONS = {
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/OptimizedNoAudio_2MB.mp4',
   filtersVideo5MB:
     'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/OptimizedNoAudio_5MB.mp4',
+  robot:
+    'https://moovychatbucket.s3.us-west-1.amazonaws.com/homepage/robo.webp',
 };

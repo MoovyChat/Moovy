@@ -1,20 +1,55 @@
 import styled from 'styled-components';
 
 export const StyledFooter = styled.div`
-  min-height: 150px;
+  height: 100vh;
   width: 99.5vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  align-items: flex-start;
+  padding: 50px;
   margin-top: 20px;
-  backdrop-filter: contrast(0.8);
-  .image-container {
+  position: relative;
+  .moovy-chat-copyright {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-bottom: 50px;
+    padding-left: 50px;
+    font-size: 20px;
+  }
+  .footer-logo {
+    flex-basis: 20%;
+  }
+  > .sub-title {
+    position: relative;
+    margin: 0px 0px 40px calc((100% - 980px) * 0);
+
+    justify-self: start;
+    align-self: start;
+    overflow-wrap: break-word;
+    pointer-events: none;
+    text-align: start;
+    > p {
+      overflow-wrap: break-word;
+      line-height: normal;
+      font-size: 28px;
+      margin-block: 0;
+      margin: 0;
+      font: normal normal normal 28px/1.4em 'open sans', sans-serif;
+    }
+  }
+
+  > .image-container {
     display: flex;
     justify-content: flex-start;
   }
 
-  .links-block {
+  > .line {
+    border: 1px solid;
+    width: 100%;
+  }
+
+  > .links-block {
     display: flex;
     justify-content: space-evenly;
     align-items: flex-start;
@@ -25,27 +60,29 @@ export const StyledFooter = styled.div`
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      width: 100%;
       gap: 10px;
+      flex: 1;
       .title {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
+        position: relative;
+        margin: 0px 0px 30px 0px;
+        justify-self: start;
+        align-self: start;
       }
       .links {
-        font-size: 12px;
+        font-size: 15px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        gap: 5px;
-        .link {
-          display: flex;
-          width: 100px;
-          gap: 20px;
-        }
+        align-items: flex-start;
+        gap: 20px;
+        width: 100%;
         .special {
           font-weight: 600;
-          color: #4385ff;
+          color: #00204c;
         }
       }
     }
@@ -61,21 +98,27 @@ export const SocialButton = styled.button`
   line-height: normal;
   overflow: visible;
   padding: 0;
-  text-align: inherit;
   text-decoration: none;
   vertical-align: baseline;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  color: #00204c;
 `;
 
 export const FooterLink = styled.a`
   color: ${p => p.theme.text};
-  font-size: 12px;
+  font-size: 15px;
   text-decoration: none;
   transition: color 0.2s ease-in-out;
   cursor: pointer;
+  color: #00204c;
   :visited {
-    color: #4385ff;
+    color: #00204c;
   }
   :hover {
-    color: #99ffff;
+    /* color: #99ffff; */
   }
 `;

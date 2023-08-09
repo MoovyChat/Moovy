@@ -26,6 +26,101 @@ export const WelcomeParent = styled.div`
       }
     }
   }
+  .third-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden; // Ensure that the image doesn't overflow the container
+    perspective: 1px; // Create the parallax effect
+    transform-style: preserve-3d; // Preserve 3D transformations
+    > .image-overlay {
+      position: absolute;
+      width: 100%;
+      height: 150vh;
+      aspect-ratio: auto 980 / 900;
+      z-index: 1;
+      opacity: 0.8;
+      background-color: #a700fa;
+    }
+    > img {
+      position: absolute;
+      width: 100%;
+      height: 150vh;
+      object-fit: cover;
+      object-position: 50% 50%;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+      aspect-ratio: auto 980 / 900;
+      pointer-events: none;
+      z-index: 0;
+      transform: scale(1.5);
+      will-change: transform;
+    }
+    .third-sec-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      width: 50%;
+      padding-top: 5%;
+      padding-left: 100px;
+      height: 100vh;
+      z-index: 1;
+      > .title {
+        color: #ffffff;
+        display: inline;
+        font: normal normal bold 24px/1.4em 'open sans', sans-serif;
+      }
+      > .subTitle {
+        color: #ffffff;
+        display: inline;
+        line-height: 61.6px;
+        font: normal normal 500 44px/1.4em poppins-extralight, poppins,
+          sans-serif;
+      }
+      > button {
+        width: 140px;
+        height: 60px;
+        font: normal normal bold 14px/1.4em 'open sans', sans-serif;
+        align-items: center;
+        background-color: #ffffff;
+        border-color: #ffffff;
+        border-radius: 100px;
+        border-style: solid;
+        border-width: 1px;
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+  .fourth-section {
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    top: -220px;
+    z-index: 3;
+    max-height: 60vh;
+    > .image {
+      > img {
+        width: 300px;
+        height: auto;
+        object-fit: cover;
+        object-position: 50% 50%;
+        box-shadow: 0 0 0 #000;
+        position: static;
+        user-select: none;
+      }
+    }
+    > .form {
+      padding: 50px 30px;
+      width: 35%;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: hsla(280, 100%, 49%, 0.17) 6.43px 7.66px 10px 0px;
+    }
+  }
 `;
 
 export const HomeSection = styled.section`

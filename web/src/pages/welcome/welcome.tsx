@@ -1,6 +1,6 @@
 import './welcome.css';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { CURRENT_DOMAIN, HOMEPAGE_ICONS } from '../../constants';
 import {
   Heading1,
@@ -19,6 +19,7 @@ import MiniInfoCard from './mini-info-card/miniInfoCard';
 import FadeInWhenVisible from '../../components/fade-in-when-visible/FadeInWhenVisible';
 import ParallaxImage from '../../components/parallax-image/parallaxImage';
 import ServiceInfoCard from './service-info-card/serviceInfoCardContainer';
+import ContactForm from './contact-form/contactForm';
 
 export const streamingServices = [
   {
@@ -91,11 +92,41 @@ const cards = [
 ];
 
 const Welcome = () => {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const handleReloadMessage: any = () => {
     window.location.reload();
   };
 
   usePageView();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (imageRef.current && sectionRef.current) {
+        const offsetTop = sectionRef.current.offsetTop;
+        const sectionHeight = sectionRef.current.offsetHeight;
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+
+        // Calculate the proportion of the section that is visible
+        const visibleProportion = Math.max(
+          0,
+          Math.min(1, (scrollY + windowHeight - offsetTop) / sectionHeight),
+        );
+
+        // Apply the transform based on the visible proportion
+        const offset = -visibleProportion * sectionHeight * 0.1;
+        imageRef.current.style.transform = `translateY(${offset}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   useEffect(() => {
     // listen for a message to reload the page
     const reloadTabsChannel = new BroadcastChannel('reloadTabsChannel');
@@ -227,7 +258,7 @@ const Welcome = () => {
           </section>
         </div>
       </HomeSection>
-      <HomeSection className="second-section">
+      <HomeSection className="second-section" id="features">
         <div className="mesh-container">
           <Heading2>
             <StyledSpan>Our Services</StyledSpan>
@@ -286,11 +317,27 @@ const Welcome = () => {
           />
         </FadeInWhenVisible>
       </HomeSection>
-      <HomeSection className="third-section"></HomeSection>
-      <HomeSection className="fourth-section">
-        <div></div>
+      <HomeSection className="third-section" ref={sectionRef}>
+        <img
+          ref={imageRef}
+          src="https://static.wixstatic.com/media/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg/v1/fill/w_980,h_900,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg"
+        ></img>
+        <div className="image-overlay"></div>
+        <div className="third-sec-container">
+          <h2 className="title">About MoovyChat</h2>
+          <p className="subTitle">Transforming OTT Viewing for the Future</p>
+          <button>Learn More</button>
+        </div>
       </HomeSection>
-      {/* <Footer id="footer" /> */}
+      <HomeSection className="fourth-section" id="contact">
+        <div className="image">
+          <img src={HOMEPAGE_ICONS.robot} />
+        </div>
+        <div className="form">
+          <ContactForm />
+        </div>
+      </HomeSection>
+      <Footer id="footer" />
     </WelcomeParent>
   );
 };
