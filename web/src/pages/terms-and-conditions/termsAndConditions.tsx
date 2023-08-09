@@ -13,7 +13,7 @@ const TermsAndConditions = () => {
   return (
     <PrivacyPolicyWrapper>
       <Helmet>
-        <title>{`Terms and Conditions`}</title>
+        <title>{`Terms and Conditions | MoovyChat`}</title>
         <meta name="description" content={`Terms and Conditions`} />
         <link
           rel="canonical"

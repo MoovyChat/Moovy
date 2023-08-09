@@ -39,7 +39,14 @@ const Footer: React.FC<props> = ({ id }) => {
   const ICON_SIZE = 25;
   return (
     <StyledFooter id={id} role="contentinfo">
-      <LogoImage className="footer-logo">
+      <LogoImage
+        className="footer-logo"
+        onClick={async e => {
+          e.stopPropagation();
+          await promiseNavigate('/');
+          scrollIntoView('home');
+        }}
+      >
         <div className="logo-image">
           <img
             className="image"

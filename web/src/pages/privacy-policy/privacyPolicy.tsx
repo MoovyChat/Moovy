@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
   return (
     <PrivacyPolicyWrapper>
       <Helmet>
-        <title>{`Privacy Policy`}</title>
+        <title>{`Privacy Policy | MoovyChat`}</title>
         <meta name="description" content={`Privacy Policy`} />
         <link rel="canonical" href={`${CURRENT_DOMAIN}/privacy}`} />
       </Helmet>

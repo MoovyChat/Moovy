@@ -35,7 +35,7 @@ const Header = () => {
   const promiseNavigate = (path: string): Promise<void> => {
     return new Promise(resolve => {
       navigate(path);
-      setTimeout(resolve, 100); // Adjust this duration if needed
+      setTimeout(resolve, 100);
     });
   };
 
@@ -96,7 +96,13 @@ const Header = () => {
 
   return (
     <HeaderParent id="home">
-      <LogoImage>
+      <LogoImage
+        onClick={async e => {
+          e.stopPropagation();
+          await promiseNavigate('/');
+          scrollIntoView('home');
+        }}
+      >
         <div className="logo-image">
           <img
             className="image"

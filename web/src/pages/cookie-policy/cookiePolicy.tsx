@@ -13,7 +13,7 @@ const CookiePolicy: React.FC = () => {
   return (
     <PrivacyPolicyWrapper>
       <Helmet>
-        <title>Cookie Policy</title>
+        <title>Cookie Policy | MoovyChat</title>
         <meta name="description" content="Cookie Policy" />
         <link rel="canonical" href={`${CURRENT_DOMAIN}/privacy`} />
       </Helmet>

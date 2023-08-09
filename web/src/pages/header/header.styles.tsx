@@ -39,6 +39,7 @@ export const LogoImage = styled.div`
   align-items: center;
   overflow: hidden;
   flex-basis: 30%;
+  cursor: pointer;
   .logo-image {
     display: flex;
     padding: 20px;

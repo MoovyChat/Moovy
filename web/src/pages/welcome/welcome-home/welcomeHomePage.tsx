@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { Heading1, Heading2, HomeSection, StyledSpan } from '../welcome.styles';
 import FadeInWhenVisible from '../../../components/fade-in-when-visible/FadeInWhenVisible';
-import { HOMEPAGE_ICONS } from '../../../constants';
+import { CURRENT_DOMAIN, HOMEPAGE_ICONS } from '../../../constants';
 import MiniInfoCard from '../mini-info-card/miniInfoCard';
 import { streamingServices } from '../welcome';
 import ParallaxImage from '../../../components/parallax-image/parallaxImage';
 import ServiceInfoCard from '../service-info-card/serviceInfoCardContainer';
 import ContactForm from '../contact-form/contactForm';
+import { Helmet } from 'react-helmet';
 
 const WelcomeHomePage = () => {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -39,6 +40,11 @@ const WelcomeHomePage = () => {
   }, []);
   return (
     <React.Fragment>
+      <Helmet>
+        <title>{`Home | MoovyChat`}</title>
+        <meta name="description" content={`Home page of MoovyChat.`} />
+        <link rel="canonical" href={`${CURRENT_DOMAIN}`} />
+      </Helmet>
       <HomeSection className="first-section">
         <div className="mesh-container">
           <section className="mesh-icons">
