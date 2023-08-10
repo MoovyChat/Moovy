@@ -41,7 +41,7 @@ export const FullMessageContainer = styled.div<adminProps>`
       flex: 1;
       font-size: 16px;
       line-height: 1.5;
-      color: #c2c2c2;
+      color: white;
       white-space: pre-line;
     }
   }
@@ -78,7 +78,6 @@ export const MessageWrapper = styled.div`
   flex: 2;
   margin-right: 10px;
   font-size: 16px;
-  color: #999;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -148,6 +147,8 @@ export const StyledAdmin = styled.div<adminProps>`
   padding: 10px;
   height: auto;
   font-family: 'Convergence', sans-serif;
+  position: relative;
+  color: white;
   .logo {
     width: 100vw;
     display: flex;
