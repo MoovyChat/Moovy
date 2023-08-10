@@ -8,6 +8,7 @@ interface FadeInWhenVisibleProps {
   animationDelay?: string;
   direction?: 'right' | 'left' | 'top' | 'bottom' | 'inPlace';
   distance?: string;
+  style?: React.CSSProperties;
 }
 
 const FadeInWhenVisible: React.FC<FadeInWhenVisibleProps> = ({
@@ -16,6 +17,7 @@ const FadeInWhenVisible: React.FC<FadeInWhenVisibleProps> = ({
   animationDelay = '0s',
   direction = 'inPlace',
   distance = '10cm',
+  style,
 }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -37,6 +39,7 @@ const FadeInWhenVisible: React.FC<FadeInWhenVisibleProps> = ({
       className={`fade-in ${inView ? 'visible' : ''}`}
       style={
         {
+          ...style,
           '--animation-duration': animationDuration,
           '--animation-delay': animationDelay,
           transition: `opacity var(--animation-duration) var(--animation-delay), transform var(--animation-duration) var(--animation-delay)`,

@@ -91,6 +91,15 @@ export const WelcomeParent = styled.div`
         border-width: 1px;
         display: flex;
         justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        :hover {
+          background-color: transparent;
+          color: white;
+        }
+        :active {
+          box-shadow: inset 0 0 5px;
+        }
       }
     }
   }

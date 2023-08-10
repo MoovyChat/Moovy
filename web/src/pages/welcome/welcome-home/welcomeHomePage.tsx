@@ -8,10 +8,20 @@ import ParallaxImage from '../../../components/parallax-image/parallaxImage';
 import ServiceInfoCard from '../service-info-card/serviceInfoCardContainer';
 import ContactForm from '../contact-form/contactForm';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+import { scrollIntoView } from '../../../utils/helpers';
 
 const WelcomeHomePage = () => {
   const imageRef = useRef<HTMLImageElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const promiseNavigate = (path: string): Promise<void> => {
+    return new Promise(resolve => {
+      navigate(path);
+      setTimeout(resolve, 100);
+    });
+  };
   useEffect(() => {
     const handleScroll = () => {
       if (imageRef.current && sectionRef.current) {
@@ -224,20 +234,44 @@ const WelcomeHomePage = () => {
           src="https://static.wixstatic.com/media/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg/v1/fill/w_980,h_900,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg"
         ></img>
         <div className="image-overlay"></div>
-        <div className="third-sec-container">
-          <h2 className="title">About MoovyChat</h2>
-          <p className="subTitle">Transforming OTT Viewing for the Future</p>
-          <button>Learn More</button>
-        </div>
+        <FadeInWhenVisible
+          animationDuration="2s"
+          animationDelay="0.2s"
+          direction="left"
+          distance="50px"
+          style={{ zIndex: '3' }}
+        >
+          <div className="third-sec-container">
+            <h2 className="title">About MoovyChat</h2>
+            <p className="subTitle">Transforming OTT Viewing for the Future</p>
+            <button
+              onClick={async e => {
+                e.stopPropagation();
+                await promiseNavigate('/about');
+                scrollIntoView('home');
+              }}
+            >
+              Learn More
+            </button>
+          </div>
+        </FadeInWhenVisible>
       </HomeSection>
-      <HomeSection className="fourth-section" id="contact">
-        <div className="image">
-          <img src={HOMEPAGE_ICONS.robot} />
-        </div>
-        <div className="form">
-          <ContactForm />
-        </div>
-      </HomeSection>
+      <FadeInWhenVisible
+        animationDuration="2s"
+        animationDelay="0.2s"
+        direction="right"
+        distance="50px"
+        style={{ zIndex: '3' }}
+      >
+        <HomeSection className="fourth-section" id="contact">
+          <div className="image">
+            <img src={HOMEPAGE_ICONS.robot} />
+          </div>
+          <div className="form">
+            <ContactForm />
+          </div>
+        </HomeSection>
+      </FadeInWhenVisible>
     </React.Fragment>
   );
 };
