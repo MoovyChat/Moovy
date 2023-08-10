@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
+import { useCreateMessageMutation } from '../../../generated/graphql';
+import SpringModal from '../../admin/modal/BasicModal';
 
 const FormWrapper = styled.div`
   display: flex;
@@ -20,6 +22,12 @@ const Form = styled.form`
   @media (max-width: 768px) {
     width: 90%;
   }
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 `;
 
 const Row = styled.div`
@@ -71,7 +79,15 @@ const TextArea = styled.textarea`
   min-height: 60px;
 `;
 
-const SubmitButton = styled.input`
+const StyledInput = styled(Input)<{ hasError: boolean }>`
+  border-color: ${props => (props.hasError ? 'red' : '#00204c')};
+`;
+
+const StyledTextArea = styled(TextArea)<{ hasError: boolean }>`
+  border-color: ${props => (props.hasError ? 'red' : '#00204c')};
+`;
+
+const SubmitButton = styled.button`
   align-items: center;
   background-color: #00204c;
   color: white;
@@ -80,12 +96,23 @@ const SubmitButton = styled.input`
   display: flex;
   font: normal normal bold 14px/1.4em 'open sans', sans-serif;
   justify-content: center;
+  cursor: pointer;
+  :hover {
+    background-color: hsla(215, 100%, 15%, 0.14);
+    color: black;
+    transition: all 0.3s;
+  }
+  :active {
+    background-color: #00204c;
+    color: white;
+  }
 `;
 
 interface FormValues {
   fname: string;
   mname: string;
   lname: string;
+  email: string;
   subject: string;
   message: string;
 }
@@ -93,53 +120,125 @@ interface FormValues {
 interface Errors {
   fname?: string;
   lname?: string;
+  email?: string;
   subject?: string;
   message?: string;
 }
 
 const ContactForm: React.FC = () => {
+  const [_, createMessage] = useCreateMessageMutation();
+  const [isMessageSent, setMessageSent] = useState<boolean>(false);
+
   const [formValues, setFormValues] = useState<FormValues>({
     fname: '',
     mname: '',
     lname: '',
+    email: '',
     subject: '',
     message: '',
   });
 
   const [errors, setErrors] = useState<Errors>({});
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validate the form fields
+    const errors = validate(formValues);
+    if (!Object.keys(errors).length) {
+      const fullName = `${formValues.fname} ${
+        formValues.mname ? formValues.mname + ' ' : ''
+      }${formValues.lname}`.trim();
+
+      // Only submit if there are no validation errors
+      createMessage({
+        name: fullName,
+        email: formValues.email,
+        subject: formValues.subject,
+        message: formValues.message,
+      })
+        .then(res => {
+          const { error, data } = res;
+          if (error) {
+            alert('Failed to send message');
+          }
+          if (data) {
+            setFormValues({
+              fname: '',
+              mname: '',
+              lname: '',
+              email: '',
+              subject: '',
+              message: '',
+            });
+          }
+          setMessageSent(() => true);
+        })
+        .catch(() => {
+          alert('Failed to send message');
+        });
+    } else {
+      setErrors(errors);
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
+    setFormValues(prevValues => ({
+      ...prevValues,
       [name]: value,
-    });
+    }));
+    // validate the changed input dynamically
+    const error = validateField(name, value);
+    if (error) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [name]: error,
+      }));
+    } else {
+      setErrors(prevErrors => {
+        const { [name as keyof Errors]: _, ...rest } = prevErrors;
+        return rest;
+      });
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrors(validate(formValues));
+  const validateField = (name: string, value: string): string | null => {
+    switch (name) {
+      case 'fname':
+        return value ? null : 'First Name is required';
+      case 'lname':
+        return value ? null : 'Last Name is required';
+      case 'email':
+        const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+        if (!value) {
+          return 'Email is required';
+        } else if (!emailPattern.test(value)) {
+          return 'Invalid email address';
+        } else {
+          return null;
+        }
+      case 'subject':
+        return value ? null : 'Subject is required';
+      case 'message':
+        return value ? null : 'Message is required';
+      default:
+        return null;
+    }
   };
 
   const validate = (values: FormValues): Errors => {
     let errors: Errors = {};
 
-    if (!values.fname) {
-      errors.fname = 'First Name is required';
-    }
+    const fieldsToValidate = ['fname', 'lname', 'email', 'subject', 'message'];
 
-    if (!values.lname) {
-      errors.lname = 'Last Name is required';
-    }
-
-    if (!values.subject) {
-      errors.subject = 'Subject is required';
-    }
-
-    if (!values.message) {
-      errors.message = 'Message is required';
+    for (const field of fieldsToValidate) {
+      const error = validateField(field, values[field as keyof FormValues]);
+      if (error) {
+        errors[field as keyof Errors] = error;
+      }
     }
 
     return errors;
@@ -155,56 +254,117 @@ const ContactForm: React.FC = () => {
       <Form onSubmit={handleSubmit}>
         <Row>
           <div>
-            <Input
+            <label htmlFor="fname">First Name</label>
+            <StyledInput
               type="text"
               id="fname"
               name="fname"
+              value={formValues.fname}
               placeholder="First Name"
               onChange={handleChange}
+              aria-describedby="fnameError"
+              hasError={!!errors.fname}
             />
-            {errors.fname && <p>{errors.fname}</p>}
+            {errors.fname && (
+              <ErrorText id="fnameError">{errors.fname}</ErrorText>
+            )}
           </div>
-          <Input
-            type="text"
-            id="mname"
-            name="mname"
-            placeholder="Middle Name"
-            onChange={handleChange}
-          />
           <div>
-            <Input
+            <label htmlFor="mname">Middle Name</label>
+            <StyledInput
+              type="text"
+              id="mname"
+              name="mname"
+              value={formValues.mname}
+              placeholder="Middle Name"
+              onChange={handleChange}
+              hasError={false}
+            />
+          </div>
+          <div>
+            <label htmlFor="lname">Last Name</label>
+            <StyledInput
               type="text"
               id="lname"
               name="lname"
               placeholder="Last Name"
+              value={formValues.lname}
               onChange={handleChange}
+              aria-describedby="lnameError"
+              hasError={!!errors.lname}
             />
-            {errors.lname && <p>{errors.lname}</p>}
+            {errors.lname && (
+              <ErrorText id="lnameError">{errors.lname}</ErrorText>
+            )}
           </div>
         </Row>
         <div>
-          <Input
+          <label htmlFor="email">Email</label>
+          <StyledInput
+            type="text"
+            id="email"
+            name="email"
+            placeholder="Email"
+            value={formValues.email}
+            onChange={handleChange}
+            aria-describedby="emailError"
+            hasError={!!errors.email}
+          />
+          {errors.email && (
+            <ErrorText id="emailError">{errors.email}</ErrorText>
+          )}
+        </div>
+        <div>
+          <label htmlFor="subject">Subject</label>
+          <StyledInput
             type="text"
             id="subject"
             name="subject"
+            value={formValues.subject}
             placeholder="Subject"
             onChange={handleChange}
+            aria-describedby="subjectError"
+            hasError={!!errors.subject}
           />
-          {errors.subject && <p>{errors.subject}</p>}
+          {errors.subject && (
+            <ErrorText id="subjectError">{errors.subject}</ErrorText>
+          )}
         </div>
-        <div className="text-area-container">
-          <TextArea
+        <div>
+          <label htmlFor="message">Message</label>
+          <StyledTextArea
             id="message"
             name="message"
             rows={4}
             cols={50}
+            value={formValues.message}
             placeholder="Leave us a message"
             onChange={handleChange}
+            aria-describedby="messageError"
+            hasError={!!errors.message}
           />
-          {errors.message && <p>{errors.message}</p>}
+          {errors.message && (
+            <ErrorText id="messageError">{errors.message}</ErrorText>
+          )}
         </div>
-        <SubmitButton type="submit" value="Submit" />
+        <SubmitButton type="submit">Submit</SubmitButton>
       </Form>
+      <SpringModal
+        open={isMessageSent}
+        handleClose={() => {
+          setMessageSent(() => false);
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          Message Sent Successfully
+        </div>
+      </SpringModal>
     </FormWrapper>
   );
 };
