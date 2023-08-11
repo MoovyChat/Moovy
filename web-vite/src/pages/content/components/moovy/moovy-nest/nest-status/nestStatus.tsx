@@ -57,9 +57,9 @@ const NestStatus: React.FC<Props> = () => {
         <div className="peopleCount">{roomUsers ? roomUsers.length : 0}</div>
         <MdPeopleOutline size={20} />
       </div>
-      {/* <div className="people-count cam" onClick={handleAccessCamera}>
+      <div className="people-count cam" onClick={handleAccessCamera}>
         <MdVideocam size={20} />
-      </div> */}
+      </div>
       <div className="people-count cam" onClick={showSettings}>
         <MdSettings size={20} />
       </div>

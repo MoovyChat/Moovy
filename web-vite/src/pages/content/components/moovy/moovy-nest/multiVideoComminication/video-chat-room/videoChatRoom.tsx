@@ -3,7 +3,6 @@ import { SocketContext } from "../../../context/socketContextFile";
 import { useAppSelector } from "../../../../../../redux/hooks";
 import { Container, StyledVideo } from "./videoChatRoom.styles";
 import Draggable from "react-draggable";
-import { addPeer, createPeer } from "./webRTC";
 import { openSnackBar } from "../../nest-popup/snack-bar/snackBar";
 
 type Props = {
@@ -44,10 +43,48 @@ const Room = () => {
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const peersRef = useRef([]);
-  const roomID = useAppSelector((state) => state.socket.roomId);
+  const roomId = useAppSelector((state) => state.socket.roomId);
   const socket = useContext(SocketContext);
   const accessCamera = useAppSelector((state) => state.socket.accessCamera);
 
+  // Handles when an offer is received from the broadcaster
+  useEffect(() => {
+    socket.on("receive-offer", async ({ offer, peerId }) => {
+      const peerConnection = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "stun:stun.stunprotocol.org",
+          },
+        ],
+      });
+      peerConnection.ontrack = (event) => {
+        // Handle the new stream...
+      };
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(offer)
+      );
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      socket.emit("send-answer", {
+        answer: peerConnection.localDescription,
+        peerId,
+      });
+    });
+  }, [socket]);
+
+  // Handles when an answer is received from a viewer
+  useEffect(() => {
+    socket.on("receive-answer", ({ answer, peerId }) => {
+      const peerConnection = peersRef.current.find(
+        (p) => p.peerId === peerId
+      )?.peerConnection;
+      if (peerConnection) {
+        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+      }
+    });
+  }, [socket]);
+
+  // Initialize broadcasting
   useMemo(() => {
     if (accessCamera && socket) {
       navigator.mediaDevices
@@ -58,64 +95,51 @@ const Room = () => {
         .then((stream) => {
           userVideo.current.srcObject = stream;
           streamRef.current = stream;
-          socket.emit("user started sharing", user.id); // Emit the event to the server
+
+          // Notify the server and other users in the room about the broadcast
+          socket.emit("initiate-broadcast", roomId);
+
+          socket.on("user-list", (users) => {
+            const newPeers = users.map((user) => {
+              const peerConnection = new RTCPeerConnection({
+                iceServers: [
+                  {
+                    urls: "stun:stun.stunprotocol.org",
+                  },
+                ],
+              });
+              stream
+                .getTracks()
+                .forEach((track) => peerConnection.addTrack(track, stream));
+              const peer = {
+                peerId: user.id,
+                peerConnection,
+              };
+              peersRef.current.push(peer);
+              return peer;
+            });
+
+            Promise.all(
+              newPeers.map((peer) => {
+                return peer.peerConnection
+                  .createOffer()
+                  .then((offer) =>
+                    peer.peerConnection.setLocalDescription(offer)
+                  )
+                  .then(() => {
+                    socket.emit("send-offer", {
+                      offer: peer.peerConnection.localDescription,
+                      toUserId: peer.peerId,
+                    });
+                  });
+              })
+            );
+
+            setPeers([...peers, ...newPeers]);
+          });
         });
     }
   }, [accessCamera, socket]);
-
-  useEffect(() => {
-    if (socket && user)
-      socket.on("user started sharing", (userSocket) => {
-        if (userSocket.user.id === user.id) {
-          return;
-        }
-        const existingPeer = peersRef.current.find(
-          (p) => p.peerID === userSocket.id
-        );
-        if (existingPeer) {
-          // If a peer connection to this user already exists, we don't need to do anything
-          return;
-        }
-        openSnackBar(`${userSocket.user.nickname} started sharing camera`);
-        console.log({ userSocket });
-        const peer = createPeer(
-          userSocket.id,
-          socket.id,
-          streamRef.current,
-          socket
-        );
-        peersRef.current.push({
-          peerID: userSocket.id,
-          peer,
-        });
-        setPeers((peers) => [...peers, peer]);
-      });
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      function handleUserJoined({ signal, callerID }) {
-        console.log("handleUserJoined");
-        const existingPeer = peersRef.current.find(
-          (p) => p.peerID === callerID
-        );
-        if (existingPeer) {
-          // If a peer connection to this user already exists, we don't need to do anything
-          return;
-        }
-        // (TODO) HERE streamRef.current should be received from server
-        const peer = addPeer(signal, callerID, streamRef.current, socket);
-        peersRef.current.push({
-          peerID: callerID,
-          peer,
-        });
-
-        setPeers((peers) => [...peers, peer]);
-      }
-
-      socket && socket.on("user joined", handleUserJoined);
-    }
-  }, [socket]);
 
   return (
     <Container>
@@ -129,9 +153,6 @@ const Room = () => {
           index={0}
         />
       </Draggable>
-      {peers.map((peer, index) => {
-        return <Video key={index} peer={peer} index={index} />;
-      })}
     </Container>
   );
 };
