@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyledServiceInfoCard } from './serviceInfoCard.styles';
+import { HOMEPAGE_ICONS } from '../../../constants';
 
 interface Props {
   src: string;
@@ -44,11 +45,11 @@ const ServiceInfoCard: React.FC<Props> = ({
             muted
             width="70%"
             disablePictureInPicture
-            aria-label={`Video of ${title}`} // accessibility enhancement
+            aria-label={`Video of ${title}`}
             title={`Promotional video for ${title}`}
-            poster="path_to_placeholder_image.jpg" // path to a placeholder image
+            poster={HOMEPAGE_ICONS.videoFilterPoster}
           >
-            <source src={src} type="video/mp4" />
+            <source src={mockup} type="video/mp4" />
             {alternateMockUp && (
               <source src={alternateMockUp} type="video/mp4" />
             )}
