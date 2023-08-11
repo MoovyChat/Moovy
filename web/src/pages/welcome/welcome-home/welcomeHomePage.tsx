@@ -200,7 +200,7 @@ const WelcomeHomePage = () => {
         >
           <ServiceInfoCard
             src={HOMEPAGE_ICONS.oswald}
-            mockup={HOMEPAGE_ICONS.mockup2}
+            mockup={HOMEPAGE_ICONS.moovyChatScreenshot}
             title="Experience Interactive Entertainment"
             subTitle="Live Comments for Netflix and Aha"
             desc="With MoovyChat, bring the theater chatter to your living room. Comment on your favorite Netflix shows and movies in real-time. Share your reactions and engage in lively discussions with friends and family, no matter where they are. Enjoy Netflix together, even when apart."
@@ -215,7 +215,7 @@ const WelcomeHomePage = () => {
           <ServiceInfoCard
             otherWay={true}
             src={HOMEPAGE_ICONS.toothless}
-            mockup={HOMEPAGE_ICONS.mockup2}
+            mockup={HOMEPAGE_ICONS.moovyChatScreenshot}
             title="Join the MoovyNest, Watch Party"
             subTitle="Share and React"
             desc="Join the MoovyNest and share your thoughts and reactions to your favorite shows in real-time. Interact with friends and family like never before."
