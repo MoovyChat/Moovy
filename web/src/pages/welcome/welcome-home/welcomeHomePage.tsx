@@ -69,6 +69,7 @@ const WelcomeHomePage = () => {
                   <img
                     src={HOMEPAGE_ICONS.like}
                     alt="3d-like"
+                    loading="lazy"
                     width={330}
                     height={300}
                   />
@@ -100,6 +101,7 @@ const WelcomeHomePage = () => {
                   <img
                     src={HOMEPAGE_ICONS.video}
                     alt="3d-video-camera"
+                    loading="lazy"
                     width={300}
                     height={300}
                   />
@@ -152,7 +154,7 @@ const WelcomeHomePage = () => {
                     <div className="mini-card-container">
                       {streamingServices.map(s => (
                         <div className="mini-image-container">
-                          <img src={s.imgUrl} alt={s.title} />
+                          <img src={s.imgUrl} alt={s.title} loading="lazy" />
                         </div>
                       ))}
                     </div>
@@ -242,6 +244,7 @@ const WelcomeHomePage = () => {
         <img
           ref={imageRef}
           alt="parallax image"
+          loading="lazy"
           src="https://static.wixstatic.com/media/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg/v1/fill/w_980,h_900,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg"
         ></img>
         <div className="image-overlay"></div>
@@ -276,7 +279,7 @@ const WelcomeHomePage = () => {
       >
         <HomeSection className="fourth-section" id="contact">
           <div className="image">
-            <img src={HOMEPAGE_ICONS.robot} alt="Robot" />
+            <img src={HOMEPAGE_ICONS.robot} alt="Robot" loading="lazy" />
           </div>
           <div className="form">
             <ContactForm />
