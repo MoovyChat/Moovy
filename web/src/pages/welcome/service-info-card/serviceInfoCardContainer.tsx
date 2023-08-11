@@ -11,6 +11,7 @@ interface Props {
   isVideo?: boolean;
   alternateMockUp?: string;
 }
+
 const ServiceInfoCard: React.FC<Props> = ({
   src,
   title,
@@ -26,18 +27,25 @@ const ServiceInfoCard: React.FC<Props> = ({
       <div className="service-container">
         <div className="image">
           <div className="mini-info-image">
-            <img src={src} width={78} height={78} />
+            <img src={src} alt={title} width={78} height={78} />
           </div>
           <div className="mini-info">
-            <div className="heading">{title}</div>
-            <div className="sub-heading">{subTitle}</div>
+            <h2 className="heading">{title}</h2> {/* Using semantic tags */}
+            <h3 className="sub-heading">{subTitle}</h3>
           </div>
         </div>
         <div className="description">{desc}</div>
       </div>
       <div className="mockup-image">
         {isVideo ? (
-          <video autoPlay loop muted width="70%" disablePictureInPicture>
+          <video
+            autoPlay
+            loop
+            muted
+            width="70%"
+            disablePictureInPicture
+            aria-label={`Video of ${title}`} /* accessibility enhancement */
+          >
             <source src={src} type="video/mp4" />
             {alternateMockUp && (
               <source src={alternateMockUp} type="video/mp4" />
@@ -45,7 +53,7 @@ const ServiceInfoCard: React.FC<Props> = ({
             Your browser does not support HTML5 video.
           </video>
         ) : (
-          <img src={mockup} />
+          <img src={mockup} alt={`Mockup of ${title}`} />
         )}
       </div>
     </StyledServiceInfoCard>

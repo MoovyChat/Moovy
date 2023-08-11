@@ -1,4 +1,4 @@
-import { LeftParent, StyledLinks } from './leftPanel.styles';
+import { LeftParent, StyledLinks, StyledNavLink } from './leftPanel.styles';
 import {
   MdDynamicFeed,
   MdFavorite,
@@ -59,84 +59,63 @@ const LeftPanel: React.FC<props> = ({ className }) => {
   };
   return (
     <LeftParent className={className} ref={ref}>
-      <div className="parent-profile">
-        <div className="profile">
-          <ProfilePic
-            src={user?.photoUrl!}
-            user={user as Users}
-            tooltip={true}
-          ></ProfilePic>
-        </div>
-        <div className="profile-text">
-          <div className="welcome-text">Welcome back</div>
-          <div className="user-text">{user.nickname}</div>
-        </div>
-      </div>
-      <div className="options">
-        <NavLink to="/home" className="option" end onClick={linkClickHandler}>
+      <div className="left-parent-options">
+        <StyledNavLink to="/home" end onClick={linkClickHandler}>
           <div className="icon feed">
             <MdDynamicFeed size={iconSize} />
           </div>
           <div className="panel-text">Feed</div>
-        </NavLink>
-        <NavLink to="catalog" className="option" onClick={linkClickHandler}>
+        </StyledNavLink>
+        <StyledNavLink to="catalog" onClick={linkClickHandler}>
           <div className="icon catalog">
             <MdStorage size={iconSize} />
           </div>
           <div className="panel-text">Catalog</div>
-        </NavLink>
-        <NavLink
+        </StyledNavLink>
+        <StyledNavLink
           to={`profile/${user.nickname}`}
-          className="option"
           onClick={linkClickHandler}
         >
           <div className="icon p">
             <MdPerson size={iconSize} />
           </div>
           <div className="panel-text">Profile</div>
-        </NavLink>
-        <NavLink
+        </StyledNavLink>
+        <StyledNavLink
           to={`activity/${user.nickname}/favorites`}
-          className="option"
           onClick={linkClickHandler}
         >
           <div className="icon favorites">
             <MdFavorite size={iconSize} />
           </div>
           <div className="panel-text">Favorites</div>
-        </NavLink>
-        <NavLink
+        </StyledNavLink>
+        <StyledNavLink
           to={`comments/${user.nickname}`}
-          className="option"
           onClick={linkClickHandler}
         >
           <div className="icon comments">
             <MdModeComment size={iconSize} />
           </div>
           <div className="panel-text">Comments</div>
-        </NavLink>
-        <NavLink
+        </StyledNavLink>
+        <StyledNavLink
           to={`replies/${user.nickname}`}
-          className="option"
           onClick={linkClickHandler}
         >
           <div className="icon replies">
             <MdOutlineReply size={iconSize} />
           </div>
           <div className="panel-text">Replies</div>
-        </NavLink>
-        <NavLink
-          to="notifications"
-          className="option"
-          onClick={linkClickHandler}
-        >
+        </StyledNavLink>
+        <StyledNavLink to="notifications" onClick={linkClickHandler}>
           <div className="icon notifications">
             <MdNotificationsActive size={iconSize} />
           </div>
           <div className="panel-text">Notifications</div>
-        </NavLink>
+        </StyledNavLink>
       </div>
-      <StyledLinks>
+      {/* <StyledLinks>
         <div
           onClick={e => {
             e.stopPropagation();
@@ -178,7 +157,7 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           Contact us
         </div>
         <div>© {new Date().getFullYear()} MoovyChat.</div>
-      </StyledLinks>
+      </StyledLinks> */}
     </LeftParent>
   );
 };

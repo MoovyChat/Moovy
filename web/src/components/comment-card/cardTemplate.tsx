@@ -314,78 +314,31 @@ const CardTemplate: React.FC<props> = ({
                   </span>
                 </div>
               )}
-              {!isMain && (
-                <div className="movie">
-                  {titleRef && titleRef?.type === 'show' && (
-                    <React.Fragment>
-                      <div
-                        className="name title"
-                        onMouseEnter={onTitleEnter}
-                        onMouseLeave={onTitleLeave}
-                        onClick={e => {
-                          e.stopPropagation();
-                          navigate(`/home/show/${titleRef?.id}`);
-                        }}
-                      >
-                        {titleRef?.title} {movieRef?.season}
-                      </div>
-                    </React.Fragment>
-                  )}
-                  <div
-                    className="name episode"
-                    onMouseEnter={onEpisodeEnter}
-                    onMouseLeave={onEpisodeLeave}
-                    onClick={e => {
-                      e.stopPropagation();
-                      navigate(`/home/movie/${movieRef?.id}`);
-                    }}
-                  >
-                    {movieRef?.name}
-                  </div>
-                </div>
-              )}
             </div>
             <div className="msg" ref={messageRef} onClick={goToComment}>
-              {!isMain && showEpisodeInfo ? (
-                <MovieInfo movie={movieRef!} />
-              ) : !isMain && showTitleInfo ? (
-                <MovieInfo title={titleRef!} />
-              ) : (
-                <div className="message-box" onClick={goToComment}>
-                  {formattedMsg.map((msg: textMap, index) =>
-                    msg.type === textMapTypes.SPOILER ? (
-                      <SpoilerTag key={index}>{msg.message}</SpoilerTag>
-                    ) : (
-                      <React.Fragment key={index}>
-                        <span
-                          key={index}
-                          className={msg.type}
-                          onClick={e => {
-                            if (msg.type === 'user') {
-                              e.stopPropagation();
-                              navigate(`/home/profile/${msg.message.slice(1)}`);
-                            }
-                          }}
-                        >
-                          {ParsedText(msg.message)}{' '}
-                        </span>
-                      </React.Fragment>
-                    ),
-                  )}
-                </div>
-              )}
-            </div>
-            {isEllipsis && !showEpisodeInfo && !showTitleInfo && (
-              <div
-                className="show-more"
-                onClick={e => {
-                  e.stopPropagation();
-                  setShowMore(!showMore);
-                }}
-              >
-                {showMore ? 'Show less' : 'Show more'}
+              <div className="message-box" onClick={goToComment}>
+                {formattedMsg.map((msg: textMap, index) =>
+                  msg.type === textMapTypes.SPOILER ? (
+                    <SpoilerTag key={index}>{msg.message}</SpoilerTag>
+                  ) : (
+                    <React.Fragment key={index}>
+                      <span
+                        key={index}
+                        className={msg.type}
+                        onClick={e => {
+                          if (msg.type === 'user') {
+                            e.stopPropagation();
+                            navigate(`/home/profile/${msg.message.slice(1)}`);
+                          }
+                        }}
+                      >
+                        {ParsedText(msg.message)}{' '}
+                      </span>
+                    </React.Fragment>
+                  ),
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
         {!showEpisodeInfo && !showTitleInfo && (

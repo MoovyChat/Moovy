@@ -36,7 +36,6 @@ export const MovieThreadParent = styled.div`
       height: calc(100% - 100px);
       margin-left: auto;
       margin-right: auto;
-      width: 90%;
       font-weight: 700;
       .show-more {
         font-size: 0.7em;

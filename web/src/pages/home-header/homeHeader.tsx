@@ -75,9 +75,6 @@ const HomeHeader: React.FC<props> = ({ className }) => {
           )}
         </div>
       </div>
-      <div className="search" onClick={openThemeHandler}>
-        <RiPaintFill size={25} className="search-icon" />
-      </div>
       <div className="search" onClick={openSearchHandler}>
         <MdSearch size={25} className="search-icon" />
       </div>

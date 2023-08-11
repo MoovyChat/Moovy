@@ -176,8 +176,7 @@ const Home = () => {
   if (profile.fetching || customLoading) return <LogoLoading />;
 
   return (
-    <ThemeProvider theme={getThemeForHome(theme)}>
-      <GlobalStyles />
+    <div>
       {isProfileExists ? (
         <HomeParent>
           <HomeHeader className="home-header" />
@@ -191,7 +190,7 @@ const Home = () => {
       ) : (
         <SetProfile profile={prof} />
       )}
-    </ThemeProvider>
+    </div>
   );
 };
 
