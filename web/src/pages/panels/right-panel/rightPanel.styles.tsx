@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { glassmorphism } from '../../../utils/mixins';
 
 export const RightParent = styled.div`
   height: 100%;
@@ -6,26 +7,22 @@ export const RightParent = styled.div`
   position: relative;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   overflow-y: scroll;
-  overflow-x: hidden;
-  border-left: 0.3px solid #8f8f8f81;
+  font-size: 14px;
   .trending {
     position: relative;
     width: 80%;
-    margin: 20px;
+    margin: 20px 0px;
     padding-top: 10px;
     padding-bottom: 15px;
-    border-radius: 20px;
-    background: ${p => p.theme.trendingTiles};
-    box-shadow: 0 0 4px ${p => p.theme.toggleBorder};
+    ${glassmorphism}
     .content {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
+      gap: 10px;
       .item {
-        padding: 10px 20px;
         display: flex;
         flex-direction: column;
         .title {
@@ -60,6 +57,7 @@ export const RightParent = styled.div`
     flex-direction: column;
     gap: 10px;
     margin-bottom: 10px;
+    ${glassmorphism}
     .socials-block {
       display: flex;
       flex-direction: column;

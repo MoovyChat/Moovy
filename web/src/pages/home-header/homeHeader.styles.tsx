@@ -4,14 +4,13 @@ import styled from 'styled-components';
 
 export const HomeHeaderParent = styled.div`
   display: flex;
-  width: 100vw;
   justify-content: space-between;
+
   .logo,
   .user {
     position: relative;
     display: flex;
     height: 100%;
-    margin: 0px 50px;
     justify-content: space-evenly;
     align-items: center;
 
@@ -43,6 +42,7 @@ export const HomeHeaderParent = styled.div`
   }
   .user {
     justify-content: space-evenly;
+    float: right;
     cursor: pointer;
     :hover {
       border-radius: 50%;
