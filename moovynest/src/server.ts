@@ -35,6 +35,10 @@ import {
   handleSyncAllUsers,
   handleSyncWithAdmin,
   handleSmiley,
+  handleInitiateBroadcast,
+  handleWebRTCOffer,
+  handleWebRTCAnswer,
+  handleWebRTCICECandidate,
 } from "./handlers";
 import { CustomSocket } from "./customSocket";
 
@@ -77,6 +81,16 @@ io.on("connection", (socket) => {
   socket.on("message", handleMessage(socket, io));
   socket.on("leaveRoom", handleLeaveRoom(socket as CustomSocket, io));
   socket.on("show-change", handleShowChange(socket as CustomSocket, io));
+  socket.on(
+    "initiate-broadcast",
+    handleInitiateBroadcast(socket as CustomSocket, io)
+  );
+  socket.on("webRTC-offer", handleWebRTCOffer(socket as CustomSocket, io));
+  socket.on("webRTC-answer", handleWebRTCAnswer(socket as CustomSocket));
+  socket.on(
+    "webRTC-ice-candidate",
+    handleWebRTCICECandidate(socket as CustomSocket, io)
+  );
   socket.on(
     "closeConnections",
     handleCloseConnections(socket as CustomSocket, io)
