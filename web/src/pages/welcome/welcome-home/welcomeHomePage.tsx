@@ -66,7 +66,12 @@ const WelcomeHomePage = () => {
                 distance="50px"
               >
                 <div className="image-container">
-                  <img src={HOMEPAGE_ICONS.like} width={330} height={300} />
+                  <img
+                    src={HOMEPAGE_ICONS.like}
+                    alt="3d-like"
+                    width={330}
+                    height={300}
+                  />
                 </div>
               </FadeInWhenVisible>
 
@@ -92,7 +97,12 @@ const WelcomeHomePage = () => {
                 distance="50px"
               >
                 <div className="image-container">
-                  <img src={HOMEPAGE_ICONS.video} width={300} height={300} />
+                  <img
+                    src={HOMEPAGE_ICONS.video}
+                    alt="3d-video-camera"
+                    width={300}
+                    height={300}
+                  />
                 </div>
               </FadeInWhenVisible>
             </div>
@@ -142,7 +152,7 @@ const WelcomeHomePage = () => {
                     <div className="mini-card-container">
                       {streamingServices.map(s => (
                         <div className="mini-image-container">
-                          <img src={s.imgUrl} />
+                          <img src={s.imgUrl} alt={s.title} />
                         </div>
                       ))}
                     </div>
@@ -231,6 +241,7 @@ const WelcomeHomePage = () => {
       <HomeSection className="third-section" ref={sectionRef}>
         <img
           ref={imageRef}
+          alt="parallax image"
           src="https://static.wixstatic.com/media/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg/v1/fill/w_980,h_900,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg"
         ></img>
         <div className="image-overlay"></div>
@@ -265,7 +276,7 @@ const WelcomeHomePage = () => {
       >
         <HomeSection className="fourth-section" id="contact">
           <div className="image">
-            <img src={HOMEPAGE_ICONS.robot} />
+            <img src={HOMEPAGE_ICONS.robot} alt="Robot" />
           </div>
           <div className="form">
             <ContactForm />
