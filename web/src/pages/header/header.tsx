@@ -39,6 +39,13 @@ const Header = () => {
     });
   };
 
+  const buttonKeyPressHandler = (event: any, action: any) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action(event);
+    }
+  };
+
   useEffect(() => {
     const { data, error, fetching } = me;
     if (error) {
@@ -51,13 +58,15 @@ const Header = () => {
 
   const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.stopPropagation();
-    const signedInUser = await googleSignIn();
-    loginAction({ uid: signedInUser.id }).then(res => {
+    try {
+      const signedInUser = await googleSignIn();
+      const res = await loginAction({ uid: signedInUser.id });
       const { data } = res;
       const user = data?.login?.user;
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
         dispatch(sliceSetUser(user as Users));
+        await navigate('/home');
       } else {
         const { name, email, photoUrl, nickname, id } = signedInUser;
         let user: Users = {
@@ -67,24 +76,20 @@ const Header = () => {
           nickname: nickname!,
           id: id!,
         };
-        createUser({
+        const createUserRes = await createUser({
           options: user as any,
-        })
-          .then(res => {
-            const { data, error } = res;
-            if (error) console.log(error);
-            const _data = data?.createUser;
-            localStorage.setItem('user', JSON.stringify(_data));
-            dispatch(sliceSetUser(_data as Users));
-            loginAction({ uid: _data?.id! });
-            navigate('/home');
-          })
-          .catch((err: any) => {
-            console.log('ERR: Unable to create user', err);
-          });
+        });
+        const _data = createUserRes.data?.createUser;
+        if (_data) {
+          localStorage.setItem('user', JSON.stringify(_data));
+          dispatch(sliceSetUser(_data as Users));
+          await loginAction({ uid: _data.id });
+          await navigate('/home');
+        }
       }
-      navigate('/home');
-    });
+    } catch (err) {
+      console.error('ERR: Unable to create user', err);
+    }
   };
 
   const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
@@ -102,6 +107,15 @@ const Header = () => {
           await promiseNavigate('/');
           scrollIntoView('home');
         }}
+        onKeyDown={e =>
+          buttonKeyPressHandler(e, async () => {
+            await promiseNavigate('/');
+            scrollIntoView('home');
+          })
+        }
+        tabIndex={0}
+        role="button"
+        aria-label="Navigate to MoovyChat homepage"
       >
         <div className="logo-image">
           <img
@@ -127,6 +141,7 @@ const Header = () => {
               e.stopPropagation();
               navigate('/home');
             }}
+            onKeyDown={e => buttonKeyPressHandler(e, () => navigate('/home'))}
           >
             Home
           </HeaderButton>
@@ -142,6 +157,12 @@ const Header = () => {
             await promiseNavigate('/');
             scrollIntoView('features');
           }}
+          onKeyDown={e =>
+            buttonKeyPressHandler(e, async () => {
+              await promiseNavigate('/');
+              scrollIntoView('features');
+            })
+          }
         >
           Features
         </HeaderButton>
@@ -155,6 +176,7 @@ const Header = () => {
             e.stopPropagation();
             navigate('/about');
           }}
+          onKeyDown={e => buttonKeyPressHandler(e, () => navigate('/about'))}
         >
           About
         </HeaderButton>
@@ -169,6 +191,12 @@ const Header = () => {
             await promiseNavigate('/');
             scrollIntoView('contact');
           }}
+          onKeyDown={e =>
+            buttonKeyPressHandler(e, async () => {
+              await promiseNavigate('/');
+              scrollIntoView('contact');
+            })
+          }
         >
           Contact
         </HeaderButton>
@@ -181,6 +209,7 @@ const Header = () => {
             onClick={logOutHandler}
             role="button"
             tabIndex={0}
+            onKeyDown={e => buttonKeyPressHandler(e, logOutHandler)}
           >
             Logout
           </HeaderButton>
@@ -191,6 +220,7 @@ const Header = () => {
             onClick={loginHandler}
             role="button"
             tabIndex={0}
+            onKeyDown={e => buttonKeyPressHandler(e, loginHandler)}
           >
             Login
           </HeaderButton>
@@ -204,6 +234,9 @@ const Header = () => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');
           }}
+          onKeyDown={e =>
+            buttonKeyPressHandler(e, () => window.open(EXTENSION_URL, '_blank'))
+          }
         >
           Install Extension
         </HeaderButton>
