@@ -44,7 +44,9 @@ const ServiceInfoCard: React.FC<Props> = ({
             muted
             width="70%"
             disablePictureInPicture
-            aria-label={`Video of ${title}`} /* accessibility enhancement */
+            aria-label={`Video of ${title}`} // accessibility enhancement
+            title={`Promotional video for ${title}`}
+            poster="path_to_placeholder_image.jpg" // path to a placeholder image
           >
             <source src={src} type="video/mp4" />
             {alternateMockUp && (
