@@ -1,9 +1,3 @@
-import {
-  HeaderButton,
-  HeaderButtons,
-  HeaderParent,
-  LogoImage,
-} from './header.styles';
 import React, { useEffect } from 'react';
 import {
   Users,
@@ -12,16 +6,21 @@ import {
   useLogoutMutation,
   useMeQuery,
 } from '../../generated/graphql';
-import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { sliceSetUser, userState } from '../../redux/slices/userSlice';
+import {
+  HeaderButton,
+  HeaderButtons,
+  HeaderParent,
+  LogoImage,
+} from './header.styles';
 
-import { EXTENSION_URL, LOGO_128 } from '../../constants';
-import { googleSignIn } from '../login/login';
-import { urqlClient } from '../../utils/urlClient';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from 'styled-components';
 import { withUrqlClient } from 'next-urql';
+import { useNavigate } from 'react-router-dom';
+import { EXTENSION_URL, LOGO_128 } from '../../constants';
 import { scrollIntoView } from '../../utils/helpers';
+import { urqlClient } from '../../utils/urlClient';
+import { googleSignIn } from '../login/login';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -115,7 +114,7 @@ const Header = () => {
         }
         tabIndex={0}
         role="button"
-        aria-label="Navigate to MoovyChat homepage"
+        aria-label="MoovyChat"
       >
         <div className="logo-image">
           <img
@@ -229,7 +228,7 @@ const Header = () => {
           className="install-button hb"
           role="button"
           tabIndex={0}
-          aria-label="Install MoovyChat Chrome Extension"
+          aria-label="Install Extension"
           onClick={e => {
             e.stopPropagation();
             window.open(EXTENSION_URL, '_blank');

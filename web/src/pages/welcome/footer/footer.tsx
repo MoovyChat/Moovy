@@ -74,7 +74,7 @@ const Footer: React.FC<props> = ({ id }) => {
               className="special"
               href="mailto:support@moovychat.com"
               target="_blank"
-              aria-label="Email MoovyChat Support"
+              aria-label="support@moovychat.com"
             >
               support@moovychat.com
             </FooterLink>
@@ -90,7 +90,7 @@ const Footer: React.FC<props> = ({ id }) => {
               }}
               tabIndex={0}
               role="button"
-              aria-label="Navigate to home section"
+              aria-label="Home"
             >
               Home
             </FooterLink>
@@ -101,7 +101,7 @@ const Footer: React.FC<props> = ({ id }) => {
               }}
               tabIndex={0}
               role="button"
-              aria-label="Navigate to about section"
+              aria-label="About"
             >
               About
             </FooterLink>
@@ -112,28 +112,28 @@ const Footer: React.FC<props> = ({ id }) => {
               }}
               tabIndex={0}
               role="button"
-              aria-label="Navigate to contact section"
+              aria-label="Contact"
             >
               Contact
             </FooterLink>
             <FooterLink
               href="/cookie-policy"
               target="_blank"
-              aria-label="Read our cookie policy"
+              aria-label="Cookie Policy"
             >
               Cookie Policy
             </FooterLink>
             <FooterLink
               href="/privacy"
               target="_blank"
-              aria-label="Read our privacy policy"
+              aria-label="Privacy Policy"
             >
               Privacy Policy
             </FooterLink>
             <FooterLink
               href="/terms-and-conditions"
               target="_blank"
-              aria-label="Read our terms and conditions"
+              aria-label="Terms and Conditions"
             >
               Terms & Conditions
             </FooterLink>
