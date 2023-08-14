@@ -40,6 +40,10 @@ export const LogoImage = styled.div`
   overflow: hidden;
   flex-basis: 30%;
   cursor: pointer;
+  /* Media query for mobile screens */
+  @media (max-width: 767px) {
+    flex-basis: 60%;
+  }
   .logo-image {
     display: flex;
     padding: 20px;
@@ -73,4 +77,53 @@ export const HeaderButtons = styled.div`
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
   height: 100%;
+  /* Hamburger menu hidden by default */
+  .hamburger-menu {
+    display: none;
+  }
+
+  /* Display buttons by default (for desktop) */
+  .hb {
+    display: inline-block; // or whatever display you prefer for the buttons
+  }
+
+  /* Media query for mobile screens */
+  @media (max-width: 767px) {
+    flex-basis: 40%;
+    .hamburger-menu {
+      display: block; // show hamburger menu for mobile view
+      font-size: 30px;
+    }
+  }
+`;
+
+interface Props {
+  isOpen: boolean;
+}
+export const DropdownMenu = styled.div<Props>`
+  display: flex;
+  position: relative;
+  align-self: flex-end;
+  float: right;
+  font-size: 10px;
+  margin-right: 20px;
+  gap: 10;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+  height: 100%;
+  /* Media query for mobile screens */
+  @media (max-width: 767px) {
+    position: absolute;
+    top: 40%;
+    right: 0px;
+    background-color: white;
+    border: 1px solid rgb(225, 225, 225);
+    border-radius: 5px;
+    z-index: 20;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 16px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+  }
 `;

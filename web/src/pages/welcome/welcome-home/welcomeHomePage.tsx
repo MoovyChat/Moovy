@@ -66,7 +66,13 @@ const WelcomeHomePage = () => {
                 distance="50px"
               >
                 <div className="image-container">
-                  <img src={HOMEPAGE_ICONS.like} width={330} height={300} />
+                  <img
+                    src={HOMEPAGE_ICONS.like}
+                    alt="3d-like"
+                    loading="lazy"
+                    width={330}
+                    height={300}
+                  />
                 </div>
               </FadeInWhenVisible>
 
@@ -92,7 +98,13 @@ const WelcomeHomePage = () => {
                 distance="50px"
               >
                 <div className="image-container">
-                  <img src={HOMEPAGE_ICONS.video} width={300} height={300} />
+                  <img
+                    src={HOMEPAGE_ICONS.video}
+                    alt="3d-video-camera"
+                    loading="lazy"
+                    width={300}
+                    height={300}
+                  />
                 </div>
               </FadeInWhenVisible>
             </div>
@@ -142,7 +154,7 @@ const WelcomeHomePage = () => {
                     <div className="mini-card-container">
                       {streamingServices.map(s => (
                         <div className="mini-image-container">
-                          <img src={s.imgUrl} />
+                          <img src={s.imgUrl} alt={s.title} loading="lazy" />
                         </div>
                       ))}
                     </div>
@@ -190,7 +202,7 @@ const WelcomeHomePage = () => {
         >
           <ServiceInfoCard
             src={HOMEPAGE_ICONS.oswald}
-            mockup={HOMEPAGE_ICONS.mockup2}
+            mockup={HOMEPAGE_ICONS.moovyChatScreenshot}
             title="Experience Interactive Entertainment"
             subTitle="Live Comments for Netflix and Aha"
             desc="With MoovyChat, bring the theater chatter to your living room. Comment on your favorite Netflix shows and movies in real-time. Share your reactions and engage in lively discussions with friends and family, no matter where they are. Enjoy Netflix together, even when apart."
@@ -205,7 +217,7 @@ const WelcomeHomePage = () => {
           <ServiceInfoCard
             otherWay={true}
             src={HOMEPAGE_ICONS.toothless}
-            mockup={HOMEPAGE_ICONS.mockup2}
+            mockup={HOMEPAGE_ICONS.moovyChatScreenshot}
             title="Join the MoovyNest, Watch Party"
             subTitle="Share and React"
             desc="Join the MoovyNest and share your thoughts and reactions to your favorite shows in real-time. Interact with friends and family like never before."
@@ -231,6 +243,8 @@ const WelcomeHomePage = () => {
       <HomeSection className="third-section" ref={sectionRef}>
         <img
           ref={imageRef}
+          alt="parallax image"
+          loading="lazy"
           src="https://static.wixstatic.com/media/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg/v1/fill/w_980,h_900,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/c837a6_46abf0a8171f47748472c8ecf2b19363~mv2.jpg"
         ></img>
         <div className="image-overlay"></div>
@@ -265,7 +279,7 @@ const WelcomeHomePage = () => {
       >
         <HomeSection className="fourth-section" id="contact">
           <div className="image">
-            <img src={HOMEPAGE_ICONS.robot} />
+            <img src={HOMEPAGE_ICONS.robot} alt="Robot" loading="lazy" />
           </div>
           <div className="form">
             <ContactForm />

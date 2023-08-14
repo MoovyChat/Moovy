@@ -79,4 +79,13 @@ export const StyledServiceInfoCard = styled.div<Props>`
         0 30px 20px rgba(0, 0, 0, 0.22);
     }
   }
+  @media (max-width: 767px) {
+    padding: 20px;
+    .service-container {
+      flex-basis: 100%;
+    }
+    .mockup-image {
+      display: none;
+    }
+  }
 `;

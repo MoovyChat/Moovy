@@ -1,10 +1,4 @@
-import {
-  HeaderButton,
-  HeaderButtons,
-  HeaderParent,
-  LogoImage,
-} from './header.styles';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Users,
   useCreateUserMutation,
@@ -12,16 +6,22 @@ import {
   useLogoutMutation,
   useMeQuery,
 } from '../../generated/graphql';
-import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { sliceSetUser, userState } from '../../redux/slices/userSlice';
+import {
+  DropdownMenu,
+  HeaderButton,
+  HeaderButtons,
+  HeaderParent,
+  LogoImage,
+} from './header.styles';
 
-import { EXTENSION_URL, LOGO_128 } from '../../constants';
-import { googleSignIn } from '../login/login';
-import { urqlClient } from '../../utils/urlClient';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from 'styled-components';
 import { withUrqlClient } from 'next-urql';
+import { useNavigate } from 'react-router-dom';
+import { EXTENSION_URL, LOGO_128 } from '../../constants';
 import { scrollIntoView } from '../../utils/helpers';
+import { urqlClient } from '../../utils/urlClient';
+import { googleSignIn } from '../login/login';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -31,13 +31,33 @@ const Header = () => {
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();
   const [me, _] = useMeQuery({});
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const promiseNavigate = (path: string): Promise<void> => {
     return new Promise(resolve => {
       navigate(path);
       setTimeout(resolve, 100);
     });
   };
+
+  const buttonKeyPressHandler = (event: any, action: any) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action(event);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(true); // close the dropdown on desktop view
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const { data, error, fetching } = me;
@@ -51,13 +71,15 @@ const Header = () => {
 
   const loginHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.stopPropagation();
-    const signedInUser = await googleSignIn();
-    loginAction({ uid: signedInUser.id }).then(res => {
+    try {
+      const signedInUser = await googleSignIn();
+      const res = await loginAction({ uid: signedInUser.id });
       const { data } = res;
       const user = data?.login?.user;
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
         dispatch(sliceSetUser(user as Users));
+        await navigate('/home');
       } else {
         const { name, email, photoUrl, nickname, id } = signedInUser;
         let user: Users = {
@@ -67,24 +89,20 @@ const Header = () => {
           nickname: nickname!,
           id: id!,
         };
-        createUser({
+        const createUserRes = await createUser({
           options: user as any,
-        })
-          .then(res => {
-            const { data, error } = res;
-            if (error) console.log(error);
-            const _data = data?.createUser;
-            localStorage.setItem('user', JSON.stringify(_data));
-            dispatch(sliceSetUser(_data as Users));
-            loginAction({ uid: _data?.id! });
-            navigate('/home');
-          })
-          .catch((err: any) => {
-            console.log('ERR: Unable to create user', err);
-          });
+        });
+        const _data = createUserRes.data?.createUser;
+        if (_data) {
+          localStorage.setItem('user', JSON.stringify(_data));
+          dispatch(sliceSetUser(_data as Users));
+          await loginAction({ uid: _data.id });
+          await navigate('/home');
+        }
       }
-      navigate('/home');
-    });
+    } catch (err) {
+      console.error('ERR: Unable to create user', err);
+    }
   };
 
   const logOutHandler: React.MouseEventHandler<HTMLButtonElement> = async e => {
@@ -102,6 +120,15 @@ const Header = () => {
           await promiseNavigate('/');
           scrollIntoView('home');
         }}
+        onKeyDown={e =>
+          buttonKeyPressHandler(e, async () => {
+            await promiseNavigate('/');
+            scrollIntoView('home');
+          })
+        }
+        tabIndex={0}
+        role="button"
+        aria-label="MoovyChat"
       >
         <div className="logo-image">
           <img
@@ -117,96 +144,131 @@ const Header = () => {
         </div>
       </LogoImage>
       <HeaderButtons className="header-buttons">
-        {user && user.id && (
-          <HeaderButton
-            tabIndex={0}
-            role="button"
-            aria-label="Navigate to Home after Login"
-            className="install-button hb"
-            onClick={e => {
-              e.stopPropagation();
-              navigate('/home');
-            }}
-          >
-            Home
-          </HeaderButton>
+        <span
+          className="hamburger-menu"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          ☰
+        </span>
+        {isMenuOpen && (
+          <DropdownMenu isOpen={isMenuOpen}>
+            {user && user.id && (
+              <HeaderButton
+                tabIndex={0}
+                role="button"
+                aria-label="Navigate to Home after Login"
+                className="install-button hb"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/home');
+                }}
+                onKeyDown={e =>
+                  buttonKeyPressHandler(e, () => navigate('/home'))
+                }
+              >
+                Home
+              </HeaderButton>
+            )}
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to features"
+              className="install-button hb"
+              onClick={async e => {
+                e.stopPropagation();
+                await promiseNavigate('/');
+                scrollIntoView('features');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, async () => {
+                  await promiseNavigate('/');
+                  scrollIntoView('features');
+                })
+              }
+            >
+              Features
+            </HeaderButton>
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to about page"
+              className="install-button hb"
+              onClick={e => {
+                e.stopPropagation();
+                navigate('/about');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, () => navigate('/about'))
+              }
+            >
+              About
+            </HeaderButton>
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to contact section"
+              className="install-button hb"
+              onClick={async e => {
+                e.stopPropagation();
+                await promiseNavigate('/');
+                scrollIntoView('contact');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, async () => {
+                  await promiseNavigate('/');
+                  scrollIntoView('contact');
+                })
+              }
+            >
+              Contact
+            </HeaderButton>
+
+            {user && user.id ? (
+              <HeaderButton
+                className="hb"
+                id="logout-btn"
+                aria-label="Logout"
+                onClick={logOutHandler}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => buttonKeyPressHandler(e, logOutHandler)}
+              >
+                Logout
+              </HeaderButton>
+            ) : (
+              <HeaderButton
+                className="hb"
+                id="login-btn"
+                onClick={loginHandler}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => buttonKeyPressHandler(e, loginHandler)}
+              >
+                Login
+              </HeaderButton>
+            )}
+            <HeaderButton
+              className="install-button hb"
+              role="button"
+              tabIndex={0}
+              aria-label="Install Extension"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(EXTENSION_URL, '_blank');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, () =>
+                  window.open(EXTENSION_URL, '_blank'),
+                )
+              }
+            >
+              Install Extension
+            </HeaderButton>
+          </DropdownMenu>
         )}
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to features"
-          className="install-button hb"
-          onClick={async e => {
-            e.stopPropagation();
-            await promiseNavigate('/');
-            scrollIntoView('features');
-          }}
-        >
-          Features
-        </HeaderButton>
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to about page"
-          className="install-button hb"
-          onClick={e => {
-            e.stopPropagation();
-            navigate('/about');
-          }}
-        >
-          About
-        </HeaderButton>
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to contact section"
-          className="install-button hb"
-          onClick={async e => {
-            e.stopPropagation();
-            await promiseNavigate('/');
-            scrollIntoView('contact');
-          }}
-        >
-          Contact
-        </HeaderButton>
-
-        {user && user.id ? (
-          <HeaderButton
-            className="hb"
-            id="logout-btn"
-            aria-label="Logout"
-            onClick={logOutHandler}
-            role="button"
-            tabIndex={0}
-          >
-            Logout
-          </HeaderButton>
-        ) : (
-          <HeaderButton
-            className="hb"
-            id="login-btn"
-            onClick={loginHandler}
-            role="button"
-            tabIndex={0}
-          >
-            Login
-          </HeaderButton>
-        )}
-        <HeaderButton
-          className="install-button hb"
-          role="button"
-          tabIndex={0}
-          aria-label="Install MoovyChat Chrome Extension"
-          onClick={e => {
-            e.stopPropagation();
-            window.open(EXTENSION_URL, '_blank');
-          }}
-        >
-          Install Extension
-        </HeaderButton>
       </HeaderButtons>
     </HeaderParent>
   );
