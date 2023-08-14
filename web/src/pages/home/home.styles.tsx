@@ -53,4 +53,28 @@ export const PanelsParent = styled.div<props>`
   align-items: flex-start;
   justify-content: center;
   gap: 20px;
+  @media (max-width: 800px) {
+    .right {
+      display: none;
+    }
+    .left {
+      flex: none;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      z-index: 99;
+      width: 60%;
+      left: ${p => (p.isNavBarOpen ? '0%' : '-60%')};
+      backdrop-filter: blur(40px);
+      transition: left 0.3s linear;
+    }
+    .center {
+      width: auto;
+    }
+  }
+  @media (max-width: 900px) {
+    .right {
+      display: none;
+    }
+  }
 `;
