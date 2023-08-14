@@ -31,7 +31,7 @@ const Header = () => {
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();
   const [me, _] = useMeQuery({});
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
   const promiseNavigate = (path: string): Promise<void> => {
     return new Promise(resolve => {
       navigate(path);
