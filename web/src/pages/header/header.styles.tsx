@@ -122,8 +122,10 @@ export const DropdownMenu = styled.div<Props>`
     z-index: 20;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 16px 0px;
     display: flex;
+    flex-wrap: nowrap;
     flex-direction: column;
     gap: 10px;
     padding: 10px 0;
+    height: auto;
   }
 `;
