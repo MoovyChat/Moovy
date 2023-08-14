@@ -47,6 +47,19 @@ const Header = () => {
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(true); // close the dropdown on desktop view
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     const { data, error, fetching } = me;
     if (error) {
       console.log(error);
@@ -137,7 +150,7 @@ const Header = () => {
         >
           ☰
         </span>
-        {isMenuOpen && window.innerWidth < 767 && (
+        {isMenuOpen && (
           <DropdownMenu isOpen={isMenuOpen}>
             {user && user.id && (
               <HeaderButton
