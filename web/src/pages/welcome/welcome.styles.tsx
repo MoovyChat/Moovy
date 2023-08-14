@@ -24,6 +24,9 @@ export const WelcomeParent = styled.div`
         line-height: 32px;
         text-align: center;
       }
+      @media (max-width: 767px) {
+        width: auto;
+      }
     }
   }
   .third-section {
@@ -31,7 +34,7 @@ export const WelcomeParent = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden; // Ensure that the image doesn't overflow the container
     perspective: 1px; // Create the parallax effect
     transform-style: preserve-3d; // Preserve 3D transformations
@@ -111,6 +114,7 @@ export const WelcomeParent = styled.div`
     top: -220px;
     z-index: 3;
     max-height: 60vh;
+
     > .image {
       > img {
         width: 300px;
@@ -128,6 +132,14 @@ export const WelcomeParent = styled.div`
       background-color: #ffffff;
       border-radius: 20px;
       box-shadow: hsla(280, 100%, 49%, 0.17) 6.43px 7.66px 10px 0px;
+    }
+    @media (max-width: 767px) {
+      top: -50px;
+      flex-direction: column;
+      max-height: fit-content;
+      > .form {
+        width: auto;
+      }
     }
   }
 `;

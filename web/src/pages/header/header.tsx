@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Users,
   useCreateUserMutation,
@@ -9,6 +9,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { sliceSetUser, userState } from '../../redux/slices/userSlice';
 import {
+  DropdownMenu,
   HeaderButton,
   HeaderButtons,
   HeaderParent,
@@ -30,7 +31,7 @@ const Header = () => {
   const [, loginAction] = useLoginMutation();
   const [, logOutAction] = useLogoutMutation();
   const [me, _] = useMeQuery({});
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const promiseNavigate = (path: string): Promise<void> => {
     return new Promise(resolve => {
       navigate(path);
@@ -130,115 +131,131 @@ const Header = () => {
         </div>
       </LogoImage>
       <HeaderButtons className="header-buttons">
-        {user && user.id && (
-          <HeaderButton
-            tabIndex={0}
-            role="button"
-            aria-label="Navigate to Home after Login"
-            className="install-button hb"
-            onClick={e => {
-              e.stopPropagation();
-              navigate('/home');
-            }}
-            onKeyDown={e => buttonKeyPressHandler(e, () => navigate('/home'))}
-          >
-            Home
-          </HeaderButton>
+        <span
+          className="hamburger-menu"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          ☰
+        </span>
+        {isMenuOpen && window.innerWidth < 767 && (
+          <DropdownMenu isOpen={isMenuOpen}>
+            {user && user.id && (
+              <HeaderButton
+                tabIndex={0}
+                role="button"
+                aria-label="Navigate to Home after Login"
+                className="install-button hb"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/home');
+                }}
+                onKeyDown={e =>
+                  buttonKeyPressHandler(e, () => navigate('/home'))
+                }
+              >
+                Home
+              </HeaderButton>
+            )}
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to features"
+              className="install-button hb"
+              onClick={async e => {
+                e.stopPropagation();
+                await promiseNavigate('/');
+                scrollIntoView('features');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, async () => {
+                  await promiseNavigate('/');
+                  scrollIntoView('features');
+                })
+              }
+            >
+              Features
+            </HeaderButton>
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to about page"
+              className="install-button hb"
+              onClick={e => {
+                e.stopPropagation();
+                navigate('/about');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, () => navigate('/about'))
+              }
+            >
+              About
+            </HeaderButton>
+
+            <HeaderButton
+              tabIndex={0}
+              role="button"
+              aria-label="Navigate to contact section"
+              className="install-button hb"
+              onClick={async e => {
+                e.stopPropagation();
+                await promiseNavigate('/');
+                scrollIntoView('contact');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, async () => {
+                  await promiseNavigate('/');
+                  scrollIntoView('contact');
+                })
+              }
+            >
+              Contact
+            </HeaderButton>
+
+            {user && user.id ? (
+              <HeaderButton
+                className="hb"
+                id="logout-btn"
+                aria-label="Logout"
+                onClick={logOutHandler}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => buttonKeyPressHandler(e, logOutHandler)}
+              >
+                Logout
+              </HeaderButton>
+            ) : (
+              <HeaderButton
+                className="hb"
+                id="login-btn"
+                onClick={loginHandler}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => buttonKeyPressHandler(e, loginHandler)}
+              >
+                Login
+              </HeaderButton>
+            )}
+            <HeaderButton
+              className="install-button hb"
+              role="button"
+              tabIndex={0}
+              aria-label="Install Extension"
+              onClick={e => {
+                e.stopPropagation();
+                window.open(EXTENSION_URL, '_blank');
+              }}
+              onKeyDown={e =>
+                buttonKeyPressHandler(e, () =>
+                  window.open(EXTENSION_URL, '_blank'),
+                )
+              }
+            >
+              Install Extension
+            </HeaderButton>
+          </DropdownMenu>
         )}
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to features"
-          className="install-button hb"
-          onClick={async e => {
-            e.stopPropagation();
-            await promiseNavigate('/');
-            scrollIntoView('features');
-          }}
-          onKeyDown={e =>
-            buttonKeyPressHandler(e, async () => {
-              await promiseNavigate('/');
-              scrollIntoView('features');
-            })
-          }
-        >
-          Features
-        </HeaderButton>
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to about page"
-          className="install-button hb"
-          onClick={e => {
-            e.stopPropagation();
-            navigate('/about');
-          }}
-          onKeyDown={e => buttonKeyPressHandler(e, () => navigate('/about'))}
-        >
-          About
-        </HeaderButton>
-
-        <HeaderButton
-          tabIndex={0}
-          role="button"
-          aria-label="Navigate to contact section"
-          className="install-button hb"
-          onClick={async e => {
-            e.stopPropagation();
-            await promiseNavigate('/');
-            scrollIntoView('contact');
-          }}
-          onKeyDown={e =>
-            buttonKeyPressHandler(e, async () => {
-              await promiseNavigate('/');
-              scrollIntoView('contact');
-            })
-          }
-        >
-          Contact
-        </HeaderButton>
-
-        {user && user.id ? (
-          <HeaderButton
-            className="hb"
-            id="logout-btn"
-            aria-label="Logout"
-            onClick={logOutHandler}
-            role="button"
-            tabIndex={0}
-            onKeyDown={e => buttonKeyPressHandler(e, logOutHandler)}
-          >
-            Logout
-          </HeaderButton>
-        ) : (
-          <HeaderButton
-            className="hb"
-            id="login-btn"
-            onClick={loginHandler}
-            role="button"
-            tabIndex={0}
-            onKeyDown={e => buttonKeyPressHandler(e, loginHandler)}
-          >
-            Login
-          </HeaderButton>
-        )}
-        <HeaderButton
-          className="install-button hb"
-          role="button"
-          tabIndex={0}
-          aria-label="Install Extension"
-          onClick={e => {
-            e.stopPropagation();
-            window.open(EXTENSION_URL, '_blank');
-          }}
-          onKeyDown={e =>
-            buttonKeyPressHandler(e, () => window.open(EXTENSION_URL, '_blank'))
-          }
-        >
-          Install Extension
-        </HeaderButton>
       </HeaderButtons>
     </HeaderParent>
   );

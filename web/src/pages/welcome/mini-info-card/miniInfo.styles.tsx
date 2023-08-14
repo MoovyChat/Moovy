@@ -40,4 +40,7 @@ export const StyledMiniInfo = styled.div`
       line-height: 1.4em;
     }
   }
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;

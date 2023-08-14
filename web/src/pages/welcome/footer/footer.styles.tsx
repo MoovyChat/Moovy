@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const StyledFooter = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   width: 99.5vw;
   display: flex;
   flex-direction: column;
@@ -56,6 +56,9 @@ export const StyledFooter = styled.div`
     width: 100%;
     gap: 50px;
     flex-wrap: wrap;
+    @media (max-width: 767px) {
+      flex-direction: column;
+    }
     .block {
       display: flex;
       flex-direction: column;
@@ -85,6 +88,17 @@ export const StyledFooter = styled.div`
           color: #00204c;
         }
       }
+    }
+  }
+  @media (max-width: 767px) {
+    padding: 20px;
+    .footer-logo {
+      flex-basis: 40%;
+      margin: 10px;
+    }
+    > .moovy-chat-copyright {
+      padding-bottom: 0px;
+      padding-left: 0px;
     }
   }
 `;
