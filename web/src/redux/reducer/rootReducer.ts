@@ -7,7 +7,8 @@ import settingsReducer from '../slices/settingsSlice';
 import storage from 'redux-persist/lib/storage';
 import textAreaReducer from '../slices/textAreaSlice';
 import userReducer from '../slices/userSlice';
-
+import socketReducer from '../slices/socketSlice';
+import nestReducer from '../slices/nestSlice';
 const persistConfig = {
   key: 'root',
   storage,
@@ -22,4 +23,6 @@ export const rootReducer = {
   misc: miscReducer,
   profile: profileReducer,
   textArea: textAreaReducer,
+  socket: socketReducer,
+  nest: nestReducer,
 };

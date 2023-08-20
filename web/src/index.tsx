@@ -9,20 +9,22 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import React from 'react';
 import reportWebVitals from './reportWebVitals';
+import { SocketProvider } from './context/socketContext.js';
 
 const rootElement = document.getElementById('root');
 
 const root = rootElement && ReactDOMClient.createRoot(rootElement);
-
 
 root &&
   root.render(
     <React.StrictMode>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistedStore}>
-          <React.Fragment>
-            <Main />
-          </React.Fragment>
+          <SocketProvider>
+            <React.Fragment>
+              <Main />
+            </React.Fragment>
+          </SocketProvider>
         </PersistGate>
       </Provider>
     </React.StrictMode>,

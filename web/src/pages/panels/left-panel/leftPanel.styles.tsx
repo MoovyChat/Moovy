@@ -62,6 +62,11 @@ export const LeftParent = styled.div`
           fill: #426bda;
         }
       }
+      .icon.nests {
+        svg {
+          fill: #da214f;
+        }
+      }
       .panel-text {
       }
     }

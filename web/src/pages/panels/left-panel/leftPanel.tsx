@@ -16,12 +16,10 @@ import {
   sliceSetIsPopupOpened,
   sliceSetSelectedElement,
 } from '../../../redux/slices/popupSlice';
-
-import { NavLink } from 'react-router-dom';
-import ProfilePic from '../../../components/profilePic/profilePic';
-import { Users } from '../../../generated/graphql';
+import { FaMicrophoneLines } from 'react-icons/fa6';
 import { sliceSetNavBar } from '../../../redux/slices/miscSlice';
 import { useAppSelector } from '../../../redux/hooks';
+import ListCard from '../../../components/list-card/listCard';
 
 type props = {
   className: string;
@@ -29,7 +27,6 @@ type props = {
 const LeftPanel: React.FC<props> = ({ className }) => {
   const ref = useRef<HTMLDivElement>(null);
   const user = useAppSelector(state => state.user);
-  const theme = useAppSelector(state => state.settings.theme);
   const dispatch = useDispatch();
 
   const iconSize = 25;
@@ -108,6 +105,12 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           </div>
           <div className="panel-text">Replies</div>
         </StyledNavLink>
+        <StyledNavLink to={`nests`} onClick={linkClickHandler}>
+          <div className="icon nests">
+            <FaMicrophoneLines size={iconSize} />
+          </div>
+          <div className="panel-text">Nests</div>
+        </StyledNavLink>
         <StyledNavLink to="notifications" onClick={linkClickHandler}>
           <div className="icon notifications">
             <MdNotificationsActive size={iconSize} />
@@ -115,6 +118,12 @@ const LeftPanel: React.FC<props> = ({ className }) => {
           <div className="panel-text">Notifications</div>
         </StyledNavLink>
       </div>
+      {/* <ListCard title="Web Nests">
+        <></>
+      </ListCard>
+      <ListCard title="Moovy Nest">
+        <></>
+      </ListCard> */}
       {/* <StyledLinks>
         <div
           onClick={e => {

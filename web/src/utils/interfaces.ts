@@ -1,3 +1,5 @@
+import { Movie, Users } from '../generated/graphql';
+
 export interface Comment {
   __typename?: 'Comment';
   commentedUserId: string;
@@ -47,4 +49,11 @@ export interface VisitedInterface {
   id: string;
   visitTime: number;
   watchTime: number;
+}
+
+export interface AvailableRoom {
+  roomId: string;
+  roomName: string;
+  users: { id: string; isAdmin: boolean; user: Users }[];
+  movie: Movie;
 }

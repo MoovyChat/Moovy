@@ -11,9 +11,18 @@ export enum DIRECTION {
 
 export enum TOOLTIP {
   USER = 'USER',
-  MESSAGE = 'MESSAGE'
+  MESSAGE = 'MESSAGE',
 }
 export enum FOCUS_WINDOW {
   EMOJI = 'EMOJI',
   HEADER_OPTIONS = 'HEADER_OPTIONS',
+}
+
+export enum NEST_TYPE {
+  GIPHY = 'GIPHY',
+  LIST_USERS = 'LIST_USERS',
+  CREATE = 'CREATE',
+  JOIN = 'JOIN',
+  SETTINGS = 'SETTINGS',
+  EMPTY = '',
 }

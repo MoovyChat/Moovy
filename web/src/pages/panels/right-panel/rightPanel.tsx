@@ -21,6 +21,7 @@ import { RightParent } from './rightPanel.styles';
 import { getFormattedNumber } from '../../../utils/helpers';
 import { useAppSelector } from '../../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
+import ListCard from '../../../components/list-card/listCard';
 
 type props = {
   className: string;
@@ -96,12 +97,8 @@ const RightPanel: React.FC<props> = ({ className }) => {
         </div>
       </div>
 
-      <div className="trending titles">
-        <div className="heading">
-          <MdLocalFireDepartment color="#fc0404" size={20} />
-          <div className="sub">Trending Shows</div>
-        </div>
-        <div className="content">
+      <ListCard title="Trending Shows">
+        <React.Fragment>
           {!trendingTitleQuery.fetching ? (
             trendingShows &&
             trendingShows.map((title, index) => (
@@ -123,8 +120,8 @@ const RightPanel: React.FC<props> = ({ className }) => {
           ) : (
             <Loading />
           )}
-        </div>
-      </div>
+        </React.Fragment>
+      </ListCard>
 
       <div className="socials">
         <div className="socials-block">

@@ -16,6 +16,9 @@ import AdminDatabase from '../pages/admin/adminDatabase';
 import AdminIntro from '../pages/admin/adminIntro';
 import WelcomeHomePage from '../pages/welcome/welcome-home/welcomeHomePage';
 import About from '../pages/welcome/about/about';
+import Nests from '../pages/nests/nests';
+import NestsList from '../pages/nests/nestsList';
+import NestsInfo from '../pages/nests/nestsInfo';
 
 const Feed = lazy(() => import('../pages/feed/feed'));
 const Home = lazy(() => import('../pages/home/home'));
@@ -96,6 +99,15 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <MoviesCatalog /> },
               { path: 'shows', element: <ShowsCatalog /> },
+            ],
+          },
+          {
+            path: 'nests',
+            element: <Nests />,
+            errorElement: <NotFound />,
+            children: [
+              { index: true, element: <NestsList /> },
+              { path: ':id', element: <NestsInfo /> },
             ],
           },
           {

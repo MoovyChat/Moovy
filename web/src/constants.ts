@@ -131,6 +131,20 @@ export const PATREON = 'https://www.patreon.com/MoovyChat';
 export const BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/moovychat';
 export const G_TRACKING_ID = 'G-R7B18C6XQ2';
 
+export const SOCKET_MESSAGE_TYPES = {
+  CREATE: 'create',
+  JOIN: 'join',
+  LEAVE: 'leave',
+  MESSAGE: 'message',
+  TYPING: 'typing',
+  GIF: 'GIF',
+  ROOM_NAME_CHANGE: 'roomNameChange',
+};
+
+export const SOCKET_URL = __prod__
+  ? import.meta.env.VITE_SOCKET_URL
+  : 'http://localhost:3001';
+
 export const GIPHY_LOGO =
   'https://moovychatbucket.s3.us-west-1.amazonaws.com/giphy.gif';
 export const LOGO_128 =
