@@ -1,0 +1,559 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		037B8AF42B376F8500814897 /* Beat_CastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8AF32B376F8500814897 /* Beat_CastApp.swift */; };
+		037B8AF62B376F8500814897 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8AF52B376F8500814897 /* ContentView.swift */; };
+		037B8AF82B376F8700814897 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8AF72B376F8700814897 /* Assets.xcassets */; };
+		037B8AFB2B376F8700814897 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8AFA2B376F8700814897 /* Preview Assets.xcassets */; };
+		037B8B082B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B072B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift */; };
+		037B8B0A2B3B794D00814897 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B092B3B794D00814897 /* ContentView.swift */; };
+		037B8B0C2B3B795200814897 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8B0B2B3B795200814897 /* Assets.xcassets */; };
+		037B8B0F2B3B795200814897 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8B0E2B3B795200814897 /* Preview Assets.xcassets */; };
+		037B8B122B3B795200814897 /* BeatCast for Apple Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 037B8B052B3B794D00814897 /* BeatCast for Apple Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		037B8B182B3B7AB500814897 /* HeartRateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */; };
+		037B8B1A2B3B7AD400814897 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B192B3B7AD400814897 /* HealthKitManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		037B8B102B3B795200814897 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 037B8AE82B376F8500814897 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 037B8B042B3B794D00814897;
+			remoteInfo = "BeatCast for Apple Watch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		037B8B162B3B795200814897 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				037B8B122B3B795200814897 /* BeatCast for Apple Watch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		037B8AF02B376F8500814897 /* Beat Cast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beat Cast.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		037B8AF32B376F8500814897 /* Beat_CastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beat_CastApp.swift; sourceTree = "<group>"; };
+		037B8AF52B376F8500814897 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		037B8AF72B376F8700814897 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		037B8AFA2B376F8700814897 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		037B8B052B3B794D00814897 /* BeatCast for Apple Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BeatCast for Apple Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		037B8B072B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatCast_for_Apple_WatchApp.swift; sourceTree = "<group>"; };
+		037B8B092B3B794D00814897 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		037B8B0B2B3B795200814897 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		037B8B0E2B3B795200814897 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateViewModel.swift; sourceTree = "<group>"; };
+		037B8B192B3B7AD400814897 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		037B8B1B2B3B834C00814897 /* Beat Cast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Beat Cast.entitlements"; sourceTree = "<group>"; };
+		037B8B1C2B3B836000814897 /* BeatCast for Apple Watch Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BeatCast for Apple Watch Watch App.entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		037B8AED2B376F8500814897 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		037B8B022B3B794D00814897 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		037B8AE72B376F8500814897 = {
+			isa = PBXGroup;
+			children = (
+				037B8AF22B376F8500814897 /* Beat Cast */,
+				037B8B062B3B794D00814897 /* BeatCast for Apple Watch Watch App */,
+				037B8AF12B376F8500814897 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		037B8AF12B376F8500814897 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				037B8AF02B376F8500814897 /* Beat Cast.app */,
+				037B8B052B3B794D00814897 /* BeatCast for Apple Watch Watch App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		037B8AF22B376F8500814897 /* Beat Cast */ = {
+			isa = PBXGroup;
+			children = (
+				037B8B1B2B3B834C00814897 /* Beat Cast.entitlements */,
+				037B8AF32B376F8500814897 /* Beat_CastApp.swift */,
+				037B8AF52B376F8500814897 /* ContentView.swift */,
+				037B8AF72B376F8700814897 /* Assets.xcassets */,
+				037B8AF92B376F8700814897 /* Preview Content */,
+			);
+			path = "Beat Cast";
+			sourceTree = "<group>";
+		};
+		037B8AF92B376F8700814897 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				037B8AFA2B376F8700814897 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		037B8B062B3B794D00814897 /* BeatCast for Apple Watch Watch App */ = {
+			isa = PBXGroup;
+			children = (
+				037B8B1C2B3B836000814897 /* BeatCast for Apple Watch Watch App.entitlements */,
+				037B8B072B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift */,
+				037B8B092B3B794D00814897 /* ContentView.swift */,
+				037B8B0B2B3B795200814897 /* Assets.xcassets */,
+				037B8B0D2B3B795200814897 /* Preview Content */,
+				037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */,
+				037B8B192B3B7AD400814897 /* HealthKitManager.swift */,
+			);
+			path = "BeatCast for Apple Watch Watch App";
+			sourceTree = "<group>";
+		};
+		037B8B0D2B3B795200814897 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				037B8B0E2B3B795200814897 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		037B8AEF2B376F8500814897 /* Beat Cast */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 037B8AFE2B376F8700814897 /* Build configuration list for PBXNativeTarget "Beat Cast" */;
+			buildPhases = (
+				037B8AEC2B376F8500814897 /* Sources */,
+				037B8AED2B376F8500814897 /* Frameworks */,
+				037B8AEE2B376F8500814897 /* Resources */,
+				037B8B162B3B795200814897 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				037B8B112B3B795200814897 /* PBXTargetDependency */,
+			);
+			name = "Beat Cast";
+			productName = "Beat Cast";
+			productReference = 037B8AF02B376F8500814897 /* Beat Cast.app */;
+			productType = "com.apple.product-type.application";
+		};
+		037B8B042B3B794D00814897 /* BeatCast for Apple Watch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 037B8B132B3B795200814897 /* Build configuration list for PBXNativeTarget "BeatCast for Apple Watch Watch App" */;
+			buildPhases = (
+				037B8B012B3B794D00814897 /* Sources */,
+				037B8B022B3B794D00814897 /* Frameworks */,
+				037B8B032B3B794D00814897 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "BeatCast for Apple Watch Watch App";
+			productName = "BeatCast for Apple Watch Watch App";
+			productReference = 037B8B052B3B794D00814897 /* BeatCast for Apple Watch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		037B8AE82B376F8500814897 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1510;
+				LastUpgradeCheck = 1510;
+				TargetAttributes = {
+					037B8AEF2B376F8500814897 = {
+						CreatedOnToolsVersion = 15.1;
+					};
+					037B8B042B3B794D00814897 = {
+						CreatedOnToolsVersion = 15.1;
+					};
+				};
+			};
+			buildConfigurationList = 037B8AEB2B376F8500814897 /* Build configuration list for PBXProject "Beat Cast" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 037B8AE72B376F8500814897;
+			productRefGroup = 037B8AF12B376F8500814897 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				037B8AEF2B376F8500814897 /* Beat Cast */,
+				037B8B042B3B794D00814897 /* BeatCast for Apple Watch Watch App */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		037B8AEE2B376F8500814897 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037B8AFB2B376F8700814897 /* Preview Assets.xcassets in Resources */,
+				037B8AF82B376F8700814897 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		037B8B032B3B794D00814897 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037B8B0F2B3B795200814897 /* Preview Assets.xcassets in Resources */,
+				037B8B0C2B3B795200814897 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		037B8AEC2B376F8500814897 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037B8AF62B376F8500814897 /* ContentView.swift in Sources */,
+				037B8AF42B376F8500814897 /* Beat_CastApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		037B8B012B3B794D00814897 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				037B8B182B3B7AB500814897 /* HeartRateViewModel.swift in Sources */,
+				037B8B0A2B3B794D00814897 /* ContentView.swift in Sources */,
+				037B8B1A2B3B7AD400814897 /* HealthKitManager.swift in Sources */,
+				037B8B082B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		037B8B112B3B795200814897 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 037B8B042B3B794D00814897 /* BeatCast for Apple Watch Watch App */;
+			targetProxy = 037B8B102B3B795200814897 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		037B8AFC2B376F8700814897 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		037B8AFD2B376F8700814897 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		037B8AFF2B376F8700814897 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Beat Cast/Beat Cast.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Beat Cast/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.Beat-Cast";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		037B8B002B376F8700814897 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Beat Cast/Beat Cast.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Beat Cast/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.Beat-Cast";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		037B8B142B3B795200814897 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "BeatCast for Apple Watch Watch App/BeatCast for Apple Watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BeatCast for Apple Watch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "BeatCast for Apple Watch";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.moovychat.Beat-Cast";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.Beat-Cast.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Debug;
+		};
+		037B8B152B3B795200814897 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "BeatCast for Apple Watch Watch App/BeatCast for Apple Watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BeatCast for Apple Watch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "BeatCast for Apple Watch";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.moovychat.Beat-Cast";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.Beat-Cast.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		037B8AEB2B376F8500814897 /* Build configuration list for PBXProject "Beat Cast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				037B8AFC2B376F8700814897 /* Debug */,
+				037B8AFD2B376F8700814897 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		037B8AFE2B376F8700814897 /* Build configuration list for PBXNativeTarget "Beat Cast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				037B8AFF2B376F8700814897 /* Debug */,
+				037B8B002B376F8700814897 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		037B8B132B3B795200814897 /* Build configuration list for PBXNativeTarget "BeatCast for Apple Watch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				037B8B142B3B795200814897 /* Debug */,
+				037B8B152B3B795200814897 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 037B8AE82B376F8500814897 /* Project object */;
+}
