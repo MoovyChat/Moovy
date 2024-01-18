@@ -35,10 +35,6 @@ import {
   handleSyncAllUsers,
   handleSyncWithAdmin,
   handleSmiley,
-  handleInitiateBroadcast,
-  handleWebRTCOffer,
-  handleWebRTCAnswer,
-  handleWebRTCICECandidate,
 } from "./handlers";
 import { CustomSocket } from "./customSocket";
 
@@ -65,32 +61,17 @@ io.on("connection", (socket) => {
   socket.on("pause", handlePause(socket as CustomSocket, io));
   socket.on("seektime", handleSeekTime(socket as CustomSocket, io));
   socket.on("getNests", handleGetNests(socket as CustomSocket, io));
-  socket.on("user started sharing", handelSharing(socket as CustomSocket, io));
-  socket.on("sending signal", handleSendingSignal(socket as CustomSocket, io));
   socket.on("restoreSession", handleRestoreSession(socket, io));
   socket.on("toggle-room-type", handleToggleRoomType(socket, io));
   socket.on("kick-user", handleKickUser(socket as CustomSocket, io));
   socket.on("sync-with-admin", handleSyncWithAdmin(socket as CustomSocket, io));
   socket.on("sync-all-users", handleSyncAllUsers(socket as CustomSocket, io));
   socket.on("smiley", handleSmiley(socket as CustomSocket, io));
-  // Listen for 'acknowledge' events
-  socket.on("acknowledge", ({ signal, callerID }) => {
-    socket.to(callerID).emit("acknowledge", signal);
-  });
   socket.on("current-time", handleSendCurrentTime(socket, io));
   socket.on("message", handleMessage(socket, io));
   socket.on("leaveRoom", handleLeaveRoom(socket as CustomSocket, io));
   socket.on("show-change", handleShowChange(socket as CustomSocket, io));
-  socket.on(
-    "initiate-broadcast",
-    handleInitiateBroadcast(socket as CustomSocket, io)
-  );
-  socket.on("webRTC-offer", handleWebRTCOffer(socket as CustomSocket, io));
-  socket.on("webRTC-answer", handleWebRTCAnswer(socket as CustomSocket));
-  socket.on(
-    "webRTC-ice-candidate",
-    handleWebRTCICECandidate(socket as CustomSocket, io)
-  );
+
   socket.on(
     "closeConnections",
     handleCloseConnections(socket as CustomSocket, io)

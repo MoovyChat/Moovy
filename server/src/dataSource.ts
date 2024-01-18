@@ -24,6 +24,7 @@ import { Visited } from "./entities/Visited";
 import path from "path";
 import { userSubscriber } from "./subscriptions/user.subscription";
 import { Version } from "./entities/Version";
+import { Room } from "./entities/Room";
 
 export const conn = new DataSource({
   type: "postgres",
@@ -53,6 +54,7 @@ export const conn = new DataSource({
     CommentReport,
     ReplyReport,
     Version,
+    Room,
   ],
   subscribers: [userSubscriber, MovieStatsSubscriber],
   migrations: [path.join("dist/migrations/*.js")],

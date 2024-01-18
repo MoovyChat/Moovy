@@ -1,95 +1,96 @@
-//
-//  ContentView.swift
-//  BeatCast for Apple Watch Watch App
-//
-//  Created by Chandra Kishore Danduri on 12/26/23.
-//
-
 import SwiftUI
+import HealthKit
 
 struct ContentView: View {
-    @State private var animate = false
-    private let animation = Animation.easeInOut(duration: 1).repeatForever(autoreverses: false)
+    private var healthStore = HKHealthStore()
+    let heartRateQuantity = HKUnit(from: "count/min")
     
-    @StateObject var viewModel = HeartRateViewModel()
-    var body: some View {
-        ZStack {
-            // Ripple effect layer
-            // Note: Implementing a ripple effect will require a custom animation
-
-            // Pulsing heart layer
-            HeartView(heartRate: viewModel.heartRate)
-                .padding()
-                .scaleEffect(viewModel.pulseEffect)
-                .animation(
-                    Animation.easeInOut(duration: viewModel.pulseDuration)
-                        .repeatForever(autoreverses: true),
-                    value: viewModel.pulseEffect
-                )
-        }
-        .onAppear {
-            viewModel.requestAuthorization()
-        }
-    }
-}
-
-struct RippleEffect: View {
-    @State private var scale: CGFloat = 0
+    @State private var value = 0
     
     var body: some View {
-        Circle()
-            .stroke(Color.red, lineWidth: 2)
-            .scaleEffect(scale)
-            .animation(
-                Animation.easeOut(duration: 2)
-                    .repeatForever(autoreverses: false)
-                    .delay(0.5),
-                value: scale
-            )
-            .onAppear {
-                self.scale = 1
+        VStack{
+            HStack{
+                Text("❤️")
+                    .font(.system(size: 50))
+                Spacer()
+
             }
-    }
-}
-
-struct HeartView: View {
-    let heartRate: Double
-    @State private var isPulsing = false
-    
-    var body: some View {
-        Image(systemName: "heart.fill")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundColor(self.heartColor)
-            .scaleEffect(self.isPulsing ? 0.8 : 0.7)
-            .animation(
-                Animation.easeInOut(duration: self.pulseDuration)
-                    .repeatForever(autoreverses: true),
-                value: self.isPulsing
-            )
-            .onAppear {
-                self.isPulsing.toggle()
+            
+            HStack{
+                Text("\(value)")
+                    .fontWeight(.regular)
+                    .font(.system(size: 70))
+                
+                Text("BPM")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.red)
+                    .padding(.bottom, 28.0)
+                
+                Spacer()
+                
             }
-            .overlay(
-                           Text("\(Int(heartRate))")
-                               .font(.title)
-                               .foregroundColor(.white)
-                       )
-    }
-    
-    private var pulseDuration: Double {
-        return max(60 / heartRate, 0.5) // Ensure a minimum duration to avoid overly fast animations
+
+        }
+        .padding()
+        .onAppear(perform: start)
     }
 
-    private var heartColor: Color {
-        switch heartRate {
-        case ...60: return .green
-        case 61...100: return .yellow
-        default: return .red
+    
+    func start() {
+        autorizeHealthKit()
+        startHeartRateQuery(quantityTypeIdentifier: .heartRate)
+    }
+    
+    func autorizeHealthKit() {
+        let healthKitTypes: Set = [
+        HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!]
+
+        healthStore.requestAuthorization(toShare: healthKitTypes, read: healthKitTypes) { _, _ in }
+    }
+    
+    private func startHeartRateQuery(quantityTypeIdentifier: HKQuantityTypeIdentifier) {
+        
+        // 1
+        let devicePredicate = HKQuery.predicateForObjects(from: [HKDevice.local()])
+        // 2
+        let updateHandler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = {
+            query, samples, deletedObjects, queryAnchor, error in
+            
+            // 3
+        guard let samples = samples as? [HKQuantitySample] else {
+            return
+        }
+            
+        self.process(samples, type: quantityTypeIdentifier)
+
+        }
+        
+        // 4
+        let query = HKAnchoredObjectQuery(type: HKObjectType.quantityType(forIdentifier: quantityTypeIdentifier)!, predicate: devicePredicate, anchor: nil, limit: HKObjectQueryNoLimit, resultsHandler: updateHandler)
+        
+        query.updateHandler = updateHandler
+        
+        // 5
+        
+        healthStore.execute(query)
+    }
+    
+    private func process(_ samples: [HKQuantitySample], type: HKQuantityTypeIdentifier) {
+        var lastHeartRate = 0.0
+        
+        for sample in samples {
+            if type == .heartRate {
+                lastHeartRate = sample.quantity.doubleValue(for: heartRateQuantity)
+            }
+            
+            self.value = Int(lastHeartRate)
         }
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

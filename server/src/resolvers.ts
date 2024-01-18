@@ -19,6 +19,7 @@ import { TitleResolver } from "./resolvers/movieInfo";
 import { UserResolver } from "./resolvers/users";
 import { VisitedResolver } from "./resolvers/visited";
 import { VersionResolver } from "./resolvers/versionNumber";
+import { RoomResolver } from "./resolvers/rooms/roomResolvers";
 
 export const resolvers = [
   HelloResolver,
@@ -42,4 +43,5 @@ export const resolvers = [
   ReportResolver,
   AdminResolver,
   VersionResolver,
+  RoomResolver,
 ];

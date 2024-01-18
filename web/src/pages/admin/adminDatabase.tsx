@@ -280,6 +280,10 @@ const AdminDatabase = () => {
       name: 'Visited',
       id: 'visited',
     },
+    {
+      name: 'Room',
+      id: 'room',
+    },
   ];
 
   const handleRowSelect = (row: any) => {

@@ -16,8 +16,7 @@
 		037B8B0C2B3B795200814897 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8B0B2B3B795200814897 /* Assets.xcassets */; };
 		037B8B0F2B3B795200814897 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037B8B0E2B3B795200814897 /* Preview Assets.xcassets */; };
 		037B8B122B3B795200814897 /* BeatCast for Apple Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 037B8B052B3B794D00814897 /* BeatCast for Apple Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		037B8B182B3B7AB500814897 /* HeartRateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */; };
-		037B8B1A2B3B7AD400814897 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B192B3B7AD400814897 /* HealthKitManager.swift */; };
+		037B8B1E2B3B94E100814897 /* HeartRateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037B8B1D2B3B94E100814897 /* HeartRateManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,10 +54,10 @@
 		037B8B092B3B794D00814897 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		037B8B0B2B3B795200814897 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		037B8B0E2B3B795200814897 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateViewModel.swift; sourceTree = "<group>"; };
-		037B8B192B3B7AD400814897 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		037B8B1B2B3B834C00814897 /* Beat Cast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Beat Cast.entitlements"; sourceTree = "<group>"; };
 		037B8B1C2B3B836000814897 /* BeatCast for Apple Watch Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BeatCast for Apple Watch Watch App.entitlements"; sourceTree = "<group>"; };
+		037B8B1D2B3B94E100814897 /* HeartRateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateManager.swift; sourceTree = "<group>"; };
+		037B8B1F2B3CDEEF00814897 /* BeatCast-for-Apple-Watch-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "BeatCast-for-Apple-Watch-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +104,7 @@
 				037B8AF52B376F8500814897 /* ContentView.swift */,
 				037B8AF72B376F8700814897 /* Assets.xcassets */,
 				037B8AF92B376F8700814897 /* Preview Content */,
+				037B8B1D2B3B94E100814897 /* HeartRateManager.swift */,
 			);
 			path = "Beat Cast";
 			sourceTree = "<group>";
@@ -120,13 +120,12 @@
 		037B8B062B3B794D00814897 /* BeatCast for Apple Watch Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				037B8B1F2B3CDEEF00814897 /* BeatCast-for-Apple-Watch-Watch-App-Info.plist */,
 				037B8B1C2B3B836000814897 /* BeatCast for Apple Watch Watch App.entitlements */,
 				037B8B072B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift */,
 				037B8B092B3B794D00814897 /* ContentView.swift */,
 				037B8B0B2B3B795200814897 /* Assets.xcassets */,
 				037B8B0D2B3B795200814897 /* Preview Content */,
-				037B8B172B3B7AB500814897 /* HeartRateViewModel.swift */,
-				037B8B192B3B7AD400814897 /* HealthKitManager.swift */,
 			);
 			path = "BeatCast for Apple Watch Watch App";
 			sourceTree = "<group>";
@@ -242,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				037B8AF62B376F8500814897 /* ContentView.swift in Sources */,
+				037B8B1E2B3B94E100814897 /* HeartRateManager.swift in Sources */,
 				037B8AF42B376F8500814897 /* Beat_CastApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,9 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				037B8B182B3B7AB500814897 /* HeartRateViewModel.swift in Sources */,
 				037B8B0A2B3B794D00814897 /* ContentView.swift in Sources */,
-				037B8B1A2B3B7AD400814897 /* HealthKitManager.swift in Sources */,
 				037B8B082B3B794D00814897 /* BeatCast_for_Apple_WatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,6 +465,7 @@
 				DEVELOPMENT_TEAM = LRBD7S9FK8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "BeatCast-for-Apple-Watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "BeatCast for Apple Watch";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";
@@ -501,6 +500,7 @@
 				DEVELOPMENT_TEAM = LRBD7S9FK8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "BeatCast-for-Apple-Watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "BeatCast for Apple Watch";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Needs access to your heart rate data for monitoring";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Needs access to your heart rate data for monitoring";

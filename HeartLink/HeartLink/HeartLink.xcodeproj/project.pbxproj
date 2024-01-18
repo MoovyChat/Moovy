@@ -1,0 +1,1056 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		035A23862B27F9200052F0FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23852B27F9200052F0FB /* AppDelegate.swift */; };
+		035A238A2B27F9200052F0FB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23892B27F9200052F0FB /* ViewController.swift */; };
+		035A238D2B27F9200052F0FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035A238B2B27F9200052F0FB /* Main.storyboard */; };
+		035A238F2B27F9220052F0FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035A238E2B27F9220052F0FB /* Assets.xcassets */; };
+		035A23922B27F9220052F0FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035A23902B27F9220052F0FB /* LaunchScreen.storyboard */; };
+		035A239D2B27F9230052F0FB /* HeartLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A239C2B27F9230052F0FB /* HeartLinkTests.swift */; };
+		035A23A72B27F9230052F0FB /* HeartLinkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23A62B27F9230052F0FB /* HeartLinkUITests.swift */; };
+		035A23A92B27F9230052F0FB /* HeartLinkUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23A82B27F9230052F0FB /* HeartLinkUITestsLaunchTests.swift */; };
+		035A23B72B27FACE0052F0FB /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23B62B27FACE0052F0FB /* HealthKitManager.swift */; };
+		035A23BF2B34EBE80052F0FB /* HeartLink__Watch_App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23BE2B34EBE80052F0FB /* HeartLink__Watch_App.swift */; };
+		035A23C12B34EBE80052F0FB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23C02B34EBE80052F0FB /* ContentView.swift */; };
+		035A23C32B34EBEC0052F0FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035A23C22B34EBEC0052F0FB /* Assets.xcassets */; };
+		035A23C62B34EBEC0052F0FB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035A23C52B34EBEC0052F0FB /* Preview Assets.xcassets */; };
+		035A23D02B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23CF2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppTests.swift */; };
+		035A23DA2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23D92B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITests.swift */; };
+		035A23DC2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23DB2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITestsLaunchTests.swift */; };
+		035A23DF2B34EBEC0052F0FB /* HeartLink (Watch) Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 035A23BC2B34EBE80052F0FB /* HeartLink (Watch) Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		035A23EC2B34EDCB0052F0FB /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23EB2B34EDCB0052F0FB /* HealthKitManager.swift */; };
+		035A23EE2B34EF590052F0FB /* HeartRateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035A23ED2B34EF590052F0FB /* HeartRateViewModel.swift */; };
+		037B8AE62B376B2200814897 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 037B8AE52B376B2200814897 /* Storyboard.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		035A23992B27F9230052F0FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 035A237A2B27F9200052F0FB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 035A23812B27F9200052F0FB;
+			remoteInfo = HeartLink;
+		};
+		035A23A32B27F9230052F0FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 035A237A2B27F9200052F0FB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 035A23812B27F9200052F0FB;
+			remoteInfo = HeartLink;
+		};
+		035A23CC2B34EBEC0052F0FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 035A237A2B27F9200052F0FB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 035A23BB2B34EBE80052F0FB;
+			remoteInfo = "HeartLink (Watch) Watch App";
+		};
+		035A23D62B34EBEC0052F0FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 035A237A2B27F9200052F0FB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 035A23BB2B34EBE80052F0FB;
+			remoteInfo = "HeartLink (Watch) Watch App";
+		};
+		035A23DD2B34EBEC0052F0FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 035A237A2B27F9200052F0FB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 035A23BB2B34EBE80052F0FB;
+			remoteInfo = "HeartLink (Watch) Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		035A23E02B34EBED0052F0FB /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				035A23DF2B34EBEC0052F0FB /* HeartLink (Watch) Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		035A23822B27F9200052F0FB /* HeartLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeartLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A23852B27F9200052F0FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		035A23892B27F9200052F0FB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		035A238C2B27F9200052F0FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		035A238E2B27F9220052F0FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		035A23912B27F9220052F0FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		035A23932B27F9220052F0FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		035A23982B27F9230052F0FB /* HeartLinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeartLinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A239C2B27F9230052F0FB /* HeartLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLinkTests.swift; sourceTree = "<group>"; };
+		035A23A22B27F9230052F0FB /* HeartLinkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeartLinkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A23A62B27F9230052F0FB /* HeartLinkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLinkUITests.swift; sourceTree = "<group>"; };
+		035A23A82B27F9230052F0FB /* HeartLinkUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLinkUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		035A23B52B27F9AB0052F0FB /* HeartLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeartLink.entitlements; sourceTree = "<group>"; };
+		035A23B62B27FACE0052F0FB /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		035A23BC2B34EBE80052F0FB /* HeartLink (Watch) Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HeartLink (Watch) Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A23BE2B34EBE80052F0FB /* HeartLink__Watch_App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLink__Watch_App.swift; sourceTree = "<group>"; };
+		035A23C02B34EBE80052F0FB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		035A23C22B34EBEC0052F0FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		035A23C52B34EBEC0052F0FB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		035A23CB2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HeartLink (Watch) Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A23CF2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLink__Watch__Watch_AppTests.swift; sourceTree = "<group>"; };
+		035A23D52B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HeartLink (Watch) Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		035A23D92B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLink__Watch__Watch_AppUITests.swift; sourceTree = "<group>"; };
+		035A23DB2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartLink__Watch__Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		035A23EA2B34ED110052F0FB /* HeartLink (Watch) Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "HeartLink (Watch) Watch App.entitlements"; sourceTree = "<group>"; };
+		035A23EB2B34EDCB0052F0FB /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		035A23ED2B34EF590052F0FB /* HeartRateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateViewModel.swift; sourceTree = "<group>"; };
+		037B8AE52B376B2200814897 /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		035A237F2B27F9200052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23952B27F9230052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A239F2B27F9230052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23B92B34EBE80052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23C82B34EBEC0052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23D22B34EBEC0052F0FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		035A23792B27F9200052F0FB = {
+			isa = PBXGroup;
+			children = (
+				035A23842B27F9200052F0FB /* HeartLink */,
+				035A239B2B27F9230052F0FB /* HeartLinkTests */,
+				035A23A52B27F9230052F0FB /* HeartLinkUITests */,
+				035A23BD2B34EBE80052F0FB /* HeartLink (Watch) Watch App */,
+				035A23CE2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests */,
+				035A23D82B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests */,
+				035A23832B27F9200052F0FB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		035A23832B27F9200052F0FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				035A23822B27F9200052F0FB /* HeartLink.app */,
+				035A23982B27F9230052F0FB /* HeartLinkTests.xctest */,
+				035A23A22B27F9230052F0FB /* HeartLinkUITests.xctest */,
+				035A23BC2B34EBE80052F0FB /* HeartLink (Watch) Watch App.app */,
+				035A23CB2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests.xctest */,
+				035A23D52B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		035A23842B27F9200052F0FB /* HeartLink */ = {
+			isa = PBXGroup;
+			children = (
+				035A23B52B27F9AB0052F0FB /* HeartLink.entitlements */,
+				035A23852B27F9200052F0FB /* AppDelegate.swift */,
+				035A23892B27F9200052F0FB /* ViewController.swift */,
+				035A238B2B27F9200052F0FB /* Main.storyboard */,
+				035A238E2B27F9220052F0FB /* Assets.xcassets */,
+				035A23902B27F9220052F0FB /* LaunchScreen.storyboard */,
+				035A23932B27F9220052F0FB /* Info.plist */,
+				035A23B62B27FACE0052F0FB /* HealthKitManager.swift */,
+			);
+			path = HeartLink;
+			sourceTree = "<group>";
+		};
+		035A239B2B27F9230052F0FB /* HeartLinkTests */ = {
+			isa = PBXGroup;
+			children = (
+				035A239C2B27F9230052F0FB /* HeartLinkTests.swift */,
+			);
+			path = HeartLinkTests;
+			sourceTree = "<group>";
+		};
+		035A23A52B27F9230052F0FB /* HeartLinkUITests */ = {
+			isa = PBXGroup;
+			children = (
+				035A23A62B27F9230052F0FB /* HeartLinkUITests.swift */,
+				035A23A82B27F9230052F0FB /* HeartLinkUITestsLaunchTests.swift */,
+			);
+			path = HeartLinkUITests;
+			sourceTree = "<group>";
+		};
+		035A23BD2B34EBE80052F0FB /* HeartLink (Watch) Watch App */ = {
+			isa = PBXGroup;
+			children = (
+				035A23EA2B34ED110052F0FB /* HeartLink (Watch) Watch App.entitlements */,
+				035A23BE2B34EBE80052F0FB /* HeartLink__Watch_App.swift */,
+				035A23C02B34EBE80052F0FB /* ContentView.swift */,
+				035A23C22B34EBEC0052F0FB /* Assets.xcassets */,
+				035A23C42B34EBEC0052F0FB /* Preview Content */,
+				035A23EB2B34EDCB0052F0FB /* HealthKitManager.swift */,
+				035A23ED2B34EF590052F0FB /* HeartRateViewModel.swift */,
+				037B8AE52B376B2200814897 /* Storyboard.storyboard */,
+			);
+			path = "HeartLink (Watch) Watch App";
+			sourceTree = "<group>";
+		};
+		035A23C42B34EBEC0052F0FB /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				035A23C52B34EBEC0052F0FB /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		035A23CE2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests */ = {
+			isa = PBXGroup;
+			children = (
+				035A23CF2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppTests.swift */,
+			);
+			path = "HeartLink (Watch) Watch AppTests";
+			sourceTree = "<group>";
+		};
+		035A23D82B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				035A23D92B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITests.swift */,
+				035A23DB2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITestsLaunchTests.swift */,
+			);
+			path = "HeartLink (Watch) Watch AppUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		035A23812B27F9200052F0FB /* HeartLink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23AC2B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLink" */;
+			buildPhases = (
+				035A237E2B27F9200052F0FB /* Sources */,
+				035A237F2B27F9200052F0FB /* Frameworks */,
+				035A23802B27F9200052F0FB /* Resources */,
+				035A23E02B34EBED0052F0FB /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				035A23DE2B34EBEC0052F0FB /* PBXTargetDependency */,
+			);
+			name = HeartLink;
+			productName = HeartLink;
+			productReference = 035A23822B27F9200052F0FB /* HeartLink.app */;
+			productType = "com.apple.product-type.application";
+		};
+		035A23972B27F9230052F0FB /* HeartLinkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23AF2B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLinkTests" */;
+			buildPhases = (
+				035A23942B27F9230052F0FB /* Sources */,
+				035A23952B27F9230052F0FB /* Frameworks */,
+				035A23962B27F9230052F0FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				035A239A2B27F9230052F0FB /* PBXTargetDependency */,
+			);
+			name = HeartLinkTests;
+			productName = HeartLinkTests;
+			productReference = 035A23982B27F9230052F0FB /* HeartLinkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		035A23A12B27F9230052F0FB /* HeartLinkUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23B22B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLinkUITests" */;
+			buildPhases = (
+				035A239E2B27F9230052F0FB /* Sources */,
+				035A239F2B27F9230052F0FB /* Frameworks */,
+				035A23A02B27F9230052F0FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				035A23A42B27F9230052F0FB /* PBXTargetDependency */,
+			);
+			name = HeartLinkUITests;
+			productName = HeartLinkUITests;
+			productReference = 035A23A22B27F9230052F0FB /* HeartLinkUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		035A23BB2B34EBE80052F0FB /* HeartLink (Watch) Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23E72B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch App" */;
+			buildPhases = (
+				035A23B82B34EBE80052F0FB /* Sources */,
+				035A23B92B34EBE80052F0FB /* Frameworks */,
+				035A23BA2B34EBE80052F0FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "HeartLink (Watch) Watch App";
+			productName = "HeartLink (Watch) Watch App";
+			productReference = 035A23BC2B34EBE80052F0FB /* HeartLink (Watch) Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		035A23CA2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23E82B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch AppTests" */;
+			buildPhases = (
+				035A23C72B34EBEC0052F0FB /* Sources */,
+				035A23C82B34EBEC0052F0FB /* Frameworks */,
+				035A23C92B34EBEC0052F0FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				035A23CD2B34EBEC0052F0FB /* PBXTargetDependency */,
+			);
+			name = "HeartLink (Watch) Watch AppTests";
+			productName = "HeartLink (Watch) Watch AppTests";
+			productReference = 035A23CB2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		035A23D42B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035A23E92B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch AppUITests" */;
+			buildPhases = (
+				035A23D12B34EBEC0052F0FB /* Sources */,
+				035A23D22B34EBEC0052F0FB /* Frameworks */,
+				035A23D32B34EBEC0052F0FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				035A23D72B34EBEC0052F0FB /* PBXTargetDependency */,
+			);
+			name = "HeartLink (Watch) Watch AppUITests";
+			productName = "HeartLink (Watch) Watch AppUITests";
+			productReference = 035A23D52B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		035A237A2B27F9200052F0FB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1510;
+				LastUpgradeCheck = 1510;
+				TargetAttributes = {
+					035A23812B27F9200052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+					};
+					035A23972B27F9230052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+						TestTargetID = 035A23812B27F9200052F0FB;
+					};
+					035A23A12B27F9230052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+						TestTargetID = 035A23812B27F9200052F0FB;
+					};
+					035A23BB2B34EBE80052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+					};
+					035A23CA2B34EBEC0052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+						TestTargetID = 035A23BB2B34EBE80052F0FB;
+					};
+					035A23D42B34EBEC0052F0FB = {
+						CreatedOnToolsVersion = 15.1;
+						TestTargetID = 035A23BB2B34EBE80052F0FB;
+					};
+				};
+			};
+			buildConfigurationList = 035A237D2B27F9200052F0FB /* Build configuration list for PBXProject "HeartLink" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 035A23792B27F9200052F0FB;
+			productRefGroup = 035A23832B27F9200052F0FB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				035A23812B27F9200052F0FB /* HeartLink */,
+				035A23972B27F9230052F0FB /* HeartLinkTests */,
+				035A23A12B27F9230052F0FB /* HeartLinkUITests */,
+				035A23BB2B34EBE80052F0FB /* HeartLink (Watch) Watch App */,
+				035A23CA2B34EBEC0052F0FB /* HeartLink (Watch) Watch AppTests */,
+				035A23D42B34EBEC0052F0FB /* HeartLink (Watch) Watch AppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		035A23802B27F9200052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23922B27F9220052F0FB /* LaunchScreen.storyboard in Resources */,
+				035A238F2B27F9220052F0FB /* Assets.xcassets in Resources */,
+				035A238D2B27F9200052F0FB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23962B27F9230052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23A02B27F9230052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23BA2B34EBE80052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23C62B34EBEC0052F0FB /* Preview Assets.xcassets in Resources */,
+				035A23C32B34EBEC0052F0FB /* Assets.xcassets in Resources */,
+				037B8AE62B376B2200814897 /* Storyboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23C92B34EBEC0052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23D32B34EBEC0052F0FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		035A237E2B27F9200052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A238A2B27F9200052F0FB /* ViewController.swift in Sources */,
+				035A23862B27F9200052F0FB /* AppDelegate.swift in Sources */,
+				035A23B72B27FACE0052F0FB /* HealthKitManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23942B27F9230052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A239D2B27F9230052F0FB /* HeartLinkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A239E2B27F9230052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23A72B27F9230052F0FB /* HeartLinkUITests.swift in Sources */,
+				035A23A92B27F9230052F0FB /* HeartLinkUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23B82B34EBE80052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23C12B34EBE80052F0FB /* ContentView.swift in Sources */,
+				035A23BF2B34EBE80052F0FB /* HeartLink__Watch_App.swift in Sources */,
+				035A23EC2B34EDCB0052F0FB /* HealthKitManager.swift in Sources */,
+				035A23EE2B34EF590052F0FB /* HeartRateViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23C72B34EBEC0052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23D02B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		035A23D12B34EBEC0052F0FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035A23DA2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITests.swift in Sources */,
+				035A23DC2B34EBEC0052F0FB /* HeartLink__Watch__Watch_AppUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		035A239A2B27F9230052F0FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 035A23812B27F9200052F0FB /* HeartLink */;
+			targetProxy = 035A23992B27F9230052F0FB /* PBXContainerItemProxy */;
+		};
+		035A23A42B27F9230052F0FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 035A23812B27F9200052F0FB /* HeartLink */;
+			targetProxy = 035A23A32B27F9230052F0FB /* PBXContainerItemProxy */;
+		};
+		035A23CD2B34EBEC0052F0FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 035A23BB2B34EBE80052F0FB /* HeartLink (Watch) Watch App */;
+			targetProxy = 035A23CC2B34EBEC0052F0FB /* PBXContainerItemProxy */;
+		};
+		035A23D72B34EBEC0052F0FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 035A23BB2B34EBE80052F0FB /* HeartLink (Watch) Watch App */;
+			targetProxy = 035A23D62B34EBEC0052F0FB /* PBXContainerItemProxy */;
+		};
+		035A23DE2B34EBEC0052F0FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 035A23BB2B34EBE80052F0FB /* HeartLink (Watch) Watch App */;
+			targetProxy = 035A23DD2B34EBEC0052F0FB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		035A238B2B27F9200052F0FB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				035A238C2B27F9200052F0FB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		035A23902B27F9220052F0FB /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				035A23912B27F9220052F0FB /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		035A23AA2B27F9230052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		035A23AB2B27F9230052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		035A23AD2B27F9230052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HeartLink/HeartLink.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HeartLink/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		035A23AE2B27F9230052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HeartLink/HeartLink.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HeartLink/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		035A23B02B27F9230052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLinkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeartLink.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeartLink";
+			};
+			name = Debug;
+		};
+		035A23B12B27F9230052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLinkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeartLink.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeartLink";
+			};
+			name = Release;
+		};
+		035A23B32B27F9230052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLinkUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HeartLink;
+			};
+			name = Debug;
+		};
+		035A23B42B27F9230052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLinkUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HeartLink;
+			};
+			name = Release;
+		};
+		035A23E12B34EBED0052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "HeartLink (Watch) Watch App/HeartLink (Watch) Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HeartLink (Watch) Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "HeartLink (Watch)";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your heart rate data to monitor your health during workouts";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your heart rate data to monitor your health during workouts";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.moovychat.HeartLink;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLink.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Debug;
+		};
+		035A23E22B34EBED0052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "HeartLink (Watch) Watch App/HeartLink (Watch) Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HeartLink (Watch) Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "HeartLink (Watch)";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your heart rate data to monitor your health during workouts";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your heart rate data to monitor your health during workouts";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.moovychat.HeartLink;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moovychat.HeartLink.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Release;
+		};
+		035A23E32B34EBED0052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.HeartLink--Watch--Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeartLink (Watch) Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeartLink (Watch) Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Debug;
+		};
+		035A23E42B34EBED0052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.HeartLink--Watch--Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeartLink (Watch) Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeartLink (Watch) Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Release;
+		};
+		035A23E52B34EBED0052F0FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.HeartLink--Watch--Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HeartLink (Watch) Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Debug;
+		};
+		035A23E62B34EBED0052F0FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LRBD7S9FK8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.moovychat.HeartLink--Watch--Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HeartLink (Watch) Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		035A237D2B27F9200052F0FB /* Build configuration list for PBXProject "HeartLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23AA2B27F9230052F0FB /* Debug */,
+				035A23AB2B27F9230052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23AC2B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23AD2B27F9230052F0FB /* Debug */,
+				035A23AE2B27F9230052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23AF2B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLinkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23B02B27F9230052F0FB /* Debug */,
+				035A23B12B27F9230052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23B22B27F9230052F0FB /* Build configuration list for PBXNativeTarget "HeartLinkUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23B32B27F9230052F0FB /* Debug */,
+				035A23B42B27F9230052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23E72B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23E12B34EBED0052F0FB /* Debug */,
+				035A23E22B34EBED0052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23E82B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23E32B34EBED0052F0FB /* Debug */,
+				035A23E42B34EBED0052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035A23E92B34EBED0052F0FB /* Build configuration list for PBXNativeTarget "HeartLink (Watch) Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035A23E52B34EBED0052F0FB /* Debug */,
+				035A23E62B34EBED0052F0FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 035A237A2B27F9200052F0FB /* Project object */;
+}

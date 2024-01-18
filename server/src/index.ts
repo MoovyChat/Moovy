@@ -13,7 +13,6 @@ import compression from "compression";
 import { conn } from "./dataSource";
 import connectRedis from "connect-redis";
 import cors from "cors";
-import { createClient } from "redis";
 import { createServer } from "http";
 import express from "express";
 import { resolvers } from "./resolvers";
@@ -22,6 +21,8 @@ import { useServer } from "graphql-ws/lib/use/ws";
 import ws from "ws";
 import scrapePage from "./scrape";
 import { chatGPTHandler, getRecommendation, getTrivia } from "./chatGPT";
+import { createCommentLoader } from "./loaders/CommentLoader";
+import { setupSocket } from "./socketManager";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const regex = /^redis:\/\/(?::(.*)@)?(.*):(\d+)$/;
@@ -37,17 +38,17 @@ const options: RedisOptions = {
   port,
   password: password ?? "",
 };
-const redisClient = createClient({
-  url: redisUrl,
-  legacyMode: true,
-});
+const redisClient = new Redis(options);
+const redisClientForSub = new Redis(options);
+const redisClientForPub = new Redis(options);
 const getConfiguredRedisPubSub = new RedisPubSub({
-  publisher: new Redis(options),
-  subscriber: new Redis(options),
+  publisher: redisClientForPub,
+  subscriber: redisClientForSub,
 });
 
 const main = async () => {
   await conn.initialize();
+
   await conn.runMigrations();
   const app = express();
 
@@ -73,6 +74,7 @@ const main = async () => {
   app.post("/recommendations", getRecommendation);
 
   const server = createServer(app);
+  const io = setupSocket(server, redisClient);
   const schema = await buildSchema({
     resolvers: resolvers as any,
     pubSub: getConfiguredRedisPubSub,
@@ -130,7 +132,12 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req, res }): MyContext => ({ req, res }),
+    context: ({ req, res }): MyContext => ({
+      req,
+      res,
+      io,
+      commentLoader: createCommentLoader(),
+    }),
     persistedQueries: false,
     introspection: __prod__ ? false : true,
     plugins: [
@@ -145,12 +152,13 @@ const main = async () => {
       },
     ],
   });
-  try {
-    await redisClient.connect();
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
+
+  // try {
+  //   await redisClient.connect();
+  // } catch (error) {
+  //   console.error(error);
+  //   process.exit(1);
+  // }
 
   try {
     await apolloServer.start();

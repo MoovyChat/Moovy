@@ -7,16 +7,16 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+} from "typeorm";
+import { Field, ObjectType } from "type-graphql";
 
-import { Comment } from './Comment';
-import { Reply } from './Reply';
+import { Comment } from "./Comment";
+import { Reply } from "./Reply";
 
 @ObjectType()
 @Entity()
 export class Platform extends BaseEntity {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_platform_id' })
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: "pk_platform_id" })
   @Field(() => String)
   id!: string;
 
@@ -25,7 +25,7 @@ export class Platform extends BaseEntity {
   name!: string;
 
   @Field(() => String)
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   url!: string;
 
   @OneToMany(() => Comment, (comment) => comment.platform)

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var heartRateManager = HeartRateManager()
+
     var body: some View {
         ZStack {
             Image(systemName: "heart.fill")
@@ -15,23 +17,29 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(Color.red)
                 .scaleEffect(0.8)
+                // Updated to the new SwiftUI 3 animation API
                 .animation(
                     Animation.easeInOut(duration: 0.6)
                         .repeatForever(autoreverses: true),
-                    value: 0.6
+                    value: heartRateManager.heartRate
                 )
-            Text(/*@START_MENU_TOKEN@*/"Placeholder"/*@END_MENU_TOKEN@*/)
+            
+            // Update the text with the received heart rate
+            Text("\(Int(heartRateManager.heartRate)) bpm")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(Color.white)
                 .multilineTextAlignment(.center)
-                .lineLimit(0)
+                .lineLimit(1)
         }
         .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
+
 

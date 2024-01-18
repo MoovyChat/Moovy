@@ -1,4 +1,4 @@
-import { conn } from '../dataSource';
+import { conn } from "../dataSource";
 import {
   Arg,
   Field,
@@ -12,14 +12,16 @@ import {
   Subscription,
   Root,
   ObjectType,
-} from 'type-graphql';
-import fetch from 'isomorphic-fetch';
-import { Comment } from '../entities/Comment';
-import { Users } from '../entities/Users';
-import { CommentStats } from '../entities/CommentStat';
-import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from '../constants';
-import { Movie } from '../entities/Movie';
-import { Reply } from '../entities/Reply';
+  Ctx,
+} from "type-graphql";
+import fetch from "isomorphic-fetch";
+import { Comment } from "../entities/Comment";
+import { Users } from "../entities/Users";
+import { CommentStats } from "../entities/CommentStat";
+import { COMMENT_COUNT_UPDATE, COMMENT_LIKES_SUB } from "../constants";
+import { Movie } from "../entities/Movie";
+import { Reply } from "../entities/Reply";
+import { MyContext } from "../types";
 
 @InputType()
 class CommentInput {
@@ -73,24 +75,27 @@ export class CommentResolver {
   }
 
   @Query(() => Comment)
-  getComment(@Arg('cid') cid: string): Promise<Comment | null> {
-    return Comment.findOne({ where: { id: cid } });
+  async getComment(
+    @Arg("cid") cid: string,
+    @Ctx() context: MyContext
+  ): Promise<Comment | undefined> {
+    return context.commentLoader.load(cid);
   }
 
   @Query(() => CommentOrReply, { nullable: true })
   async getCommentOrReply(
-    @Arg('id') id: string,
-    @Arg('type') type: string
+    @Arg("id") id: string,
+    @Arg("type") type: string
   ): Promise<CommentOrReply | null> {
     let comment = null;
     let reply = null;
     await conn.transaction(async (manager) => {
       const commentRepo = manager.getRepository(Comment);
       const replyRepo = manager.getRepository(Reply);
-      if (type === 'comment') {
+      if (type === "comment") {
         comment = await commentRepo.findOne({ where: { id } });
       }
-      if (type === 'reply') {
+      if (type === "reply") {
         reply = await replyRepo.findOne({ where: { id } });
       }
     });
@@ -103,8 +108,8 @@ export class CommentResolver {
 
   @Query(() => IsUserLikedObject, { nullable: true })
   async getIsUserLikedComment(
-    @Arg('cid') cid: string,
-    @Arg('uid') uid: string
+    @Arg("cid") cid: string,
+    @Arg("uid") uid: string
   ) {
     const commentStat = await CommentStats.findOne({
       where: { commentId: cid, userId: uid },
@@ -113,40 +118,40 @@ export class CommentResolver {
   }
 
   @Query(() => Users, { nullable: true })
-  async getCommentedUser(@Arg('cid') cid: string): Promise<Users | null> {
-    if (!cid) throw new Error('Comment id is empty');
+  async getCommentedUser(@Arg("cid") cid: string): Promise<Users | null> {
+    if (!cid) throw new Error("Comment id is empty");
     const user = await conn
       .getRepository(Users)
-      .createQueryBuilder('user')
+      .createQueryBuilder("user")
       .innerJoinAndSelect(
-        'user.comments',
-        'comment',
-        'comment.commentedUserId = user.id'
+        "user.comments",
+        "comment",
+        "comment.commentedUserId = user.id"
       )
-      .where('comment.id = :cid', { cid })
+      .where("comment.id = :cid", { cid })
       .getOne();
     return user;
   }
 
   @Query(() => CommentLikesObject)
   async getCommentLikes(
-    @Arg('cid') cid: string,
-    @Arg('limit', () => Int) limit: number,
-    @Arg('page', () => Int, { defaultValue: 1 }) page: number | 1
+    @Arg("cid") cid: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("page", () => Int, { defaultValue: 1 }) page: number | 1
   ): Promise<CommentLikesObject> {
     const likesCount = await CommentStats.count({
       where: { commentId: cid, like: true },
     });
     const users = await conn
       .getRepository(Users)
-      .createQueryBuilder('user')
+      .createQueryBuilder("user")
       .innerJoinAndSelect(
-        'user.commentStats',
-        'stats',
-        'stats.userId = user.id'
+        "user.commentStats",
+        "stats",
+        "stats.userId = user.id"
       )
-      .where('stats.like = :like', { like: true })
-      .andWhere('stats.commentId = :cid', { cid })
+      .where("stats.like = :like", { like: true })
+      .andWhere("stats.commentId = :cid", { cid })
       .offset((page - 1) * limit)
       .limit(limit)
       .getMany();
@@ -158,23 +163,23 @@ export class CommentResolver {
     };
   }
 
-  TOXIC_API_URL = 'https://toxic.moovychat.com/predict';
-  COMMENT_COUNT_UPDATE = 'COMMENT_COUNT_UPDATE';
+  TOXIC_API_URL = "https://toxic.moovychat.com/predict";
+  COMMENT_COUNT_UPDATE = "COMMENT_COUNT_UPDATE";
   @Mutation(() => Comment, { nullable: true })
   async insertComment(
-    @Arg('options') options: CommentInput,
+    @Arg("options") options: CommentInput,
     @PubSub() pubSub: PubSubEngine
   ) {
     // Validate input data
     if (!options.commentedUserId) {
-      throw new Error('User does not exist');
+      throw new Error("User does not exist");
     }
 
     // Predict toxicity score
     const response = await fetch(this.TOXIC_API_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ input_text: options.message }),
     });
@@ -199,7 +204,7 @@ export class CommentResolver {
       });
 
       await commentRepo.save(comment);
-      await movieRepo.increment({ id: options.movieId }, 'commentCount', 1);
+      await movieRepo.increment({ id: options.movieId }, "commentCount", 1);
       await pubSub.publish(COMMENT_COUNT_UPDATE, options.movieId);
 
       return comment;
@@ -209,23 +214,23 @@ export class CommentResolver {
 
   @Mutation(() => Comment, { nullable: true })
   async deleteComment(
-    @Arg('cid') cid: string,
-    @Arg('mid') mid: string
+    @Arg("cid") cid: string,
+    @Arg("mid") mid: string
   ): Promise<Comment | null> {
     let deletedComment: any;
     await conn.transaction(async (manager) => {
       const result = await conn
         .getRepository(Comment)
-        .createQueryBuilder('comment')
-        .where('comment.id = :cid', { cid })
+        .createQueryBuilder("comment")
+        .where("comment.id = :cid", { cid })
         .softDelete()
-        .returning('*')
+        .returning("*")
         .execute();
       deletedComment = result.raw[0];
       if (deletedComment) {
         // Update comment count.
         const movieRepo = manager.getRepository(Movie);
-        await movieRepo.decrement({ id: mid }, 'commentCount', 1);
+        await movieRepo.decrement({ id: mid }, "commentCount", 1);
       }
     });
     return deletedComment;
@@ -242,21 +247,21 @@ export class CommentResolver {
 
   @Subscription(() => CommentLikesObject, { topics: COMMENT_LIKES_SUB })
   async commentLikesUpdate(
-    @Arg('cid') cid: string
+    @Arg("cid") cid: string
   ): Promise<CommentLikesObject> {
     const likesCount = await CommentStats.count({
       where: { commentId: cid, like: true },
     });
     const users = await conn
       .getRepository(Users)
-      .createQueryBuilder('user')
+      .createQueryBuilder("user")
       .innerJoinAndSelect(
-        'user.commentStats',
-        'stats',
-        'stats.userId = user.id'
+        "user.commentStats",
+        "stats",
+        "stats.userId = user.id"
       )
-      .where('stats.like = :like', { like: true })
-      .andWhere('stats.commentId = :cid', { cid })
+      .where("stats.like = :like", { like: true })
+      .andWhere("stats.commentId = :cid", { cid })
       .getMany();
     return { likes: users, likesCount, page: 1, lastPage: 1 };
   }

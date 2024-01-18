@@ -5,32 +5,34 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+} from "typeorm";
+import { Field, Int, ObjectType } from "type-graphql";
 
-import { AdminUser } from './Admin';
-import { Comment } from './Comment';
-import { CommentReport } from './CommentReport';
-import { CommentStats } from './CommentStat';
-import { Follow } from './Follow';
-import { FollowNotifications } from './FollowNotifications';
-import { LikeNotifications } from './LikeNotifications';
-import { Movie } from './Movie';
-import { MovieStats } from './MovieStats';
-import { Profile } from './Profile';
-import { Reply } from './Reply';
-import { ReplyReport } from './ReplyReport';
-import { ReplyStats } from './ReplyStats';
-import { Visited } from './Visited';
+import { AdminUser } from "./Admin";
+import { Comment } from "./Comment";
+import { CommentReport } from "./CommentReport";
+import { CommentStats } from "./CommentStat";
+import { Follow } from "./Follow";
+import { FollowNotifications } from "./FollowNotifications";
+import { LikeNotifications } from "./LikeNotifications";
+import { Movie } from "./Movie";
+import { MovieStats } from "./MovieStats";
+import { Profile } from "./Profile";
+import { Reply } from "./Reply";
+import { ReplyReport } from "./ReplyReport";
+import { ReplyStats } from "./ReplyStats";
+import { Visited } from "./Visited";
+import { Room } from "./Room";
 
 @ObjectType()
 @Entity()
 export class Users extends BaseEntity {
-  @PrimaryColumn({ primaryKeyConstraintName: 'pk_users_id' })
+  @PrimaryColumn({ primaryKeyConstraintName: "pk_users_id" })
   @Field(() => String)
   id: string;
 
@@ -50,7 +52,7 @@ export class Users extends BaseEntity {
   @Column({
     nullable: true,
     default:
-      'https://firebasestorage.googleapis.com/v0/b/moovychat.appspot.com/o/moovy-text-logo-white%20(1).jpg?alt=media&token=42f9aaee-8ae3-4996-851c-090da4c10c77',
+      "https://firebasestorage.googleapis.com/v0/b/moovychat.appspot.com/o/moovy-text-logo-white%20(1).jpg?alt=media&token=42f9aaee-8ae3-4996-851c-090da4c10c77",
   })
   bg: string;
 
@@ -111,6 +113,10 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => Movie, (movie) => movie.viewedUsers)
   movies: Movie[];
+
+  @Field(() => Room, { nullable: true })
+  @ManyToOne(() => Room, (room) => room.users, { nullable: true })
+  currentRoom: Room;
 
   @Field(() => String, { nullable: true })
   @CreateDateColumn()

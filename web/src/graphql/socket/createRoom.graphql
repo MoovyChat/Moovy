@@ -1,0 +1,8 @@
+mutation CreateRoom($data: CreateRoomInput!) {
+  createRoom(data: $data) {
+    id
+    name
+    roomType
+    isPublic
+  }
+}

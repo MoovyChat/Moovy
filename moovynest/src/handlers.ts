@@ -739,34 +739,6 @@ export const handleRestoreSession = (socket: Socket, io: Server) => {
   };
 };
 
-export const handleInitiateBroadcast = (socket: CustomSocket, io: Server) => {
-  return (roomId: string) => {
-    // Signal to everyone in the room that the broadcast is about to start
-    socket.to(roomId).emit("broadcast-initiated");
-  };
-};
-
-export const handleWebRTCOffer = (socket: CustomSocket, io: Server) => {
-  return (offer: RTCSessionDescriptionInit, roomId: string) => {
-    // Forward the offer to everyone else in the room.
-    socket.to(roomId).emit("webRTC-offer", offer);
-  };
-};
-
-export const handleWebRTCAnswer = (socket: CustomSocket) => {
-  return (answer: RTCSessionDescriptionInit, targetSocketId: string) => {
-    // Send the answer back to the broadcaster
-    socket.to(targetSocketId).emit("webRTC-answer", answer);
-  };
-};
-
-export const handleWebRTCICECandidate = (socket: CustomSocket, io: Server) => {
-  return (iceCandidate: RTCIceCandidate, roomId: string) => {
-    // Forward the ICE candidate to everyone else in the room.
-    socket.to(roomId).emit("webRTC-ice-candidate", iceCandidate);
-  };
-};
-
 export {
   handleJoinRoom,
   handlePlay,
