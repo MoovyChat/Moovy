@@ -1,5 +1,5 @@
 <div align="center">
-<img src="public/mc-128.png" alt="logo"/>
+<img src="web-vite/public/mc-128.png" alt="logo"/>
 <h1> MoovyChat: Create Nests, Watch Together, Discuss Freely</h1>
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
