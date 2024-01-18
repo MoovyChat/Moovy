@@ -24,14 +24,14 @@ import { ERROR_LOGO, LOGO_128 } from "../../../../../helpers/constants";
 import { SocketProvider } from "../context/socketContextFile";
 import { shouldSkipPlatform } from "../../../../../helpers/utilities";
 
-const Loader = (chatElement: HTMLDivElement) => {
+const Loader = (chatElement: HTMLDivElement, userId: string) => {
   const playerElement = getPlayerViewElement();
   const existingChatWindow = document.getElementsByClassName("chat-interface");
   if (playerElement !== null && !existingChatWindow[0]) {
     playerElement.appendChild(chatElement);
     createRoot(chatElement).render(
       <ReduxProvider store={store}>
-        <SocketProvider>
+        <SocketProvider userId={userId}>
           <ChatWindow />
         </SocketProvider>
       </ReduxProvider>
@@ -39,7 +39,7 @@ const Loader = (chatElement: HTMLDivElement) => {
   }
 };
 
-const createChatWindow = () => {
+const createChatWindow = (userId: string) => {
   const chatElement = document.createElement("div");
   const chatElementId = "NComments";
   chatElement.id = chatElementId;
@@ -47,7 +47,7 @@ const createChatWindow = () => {
   chatElement.style.cssText = `
       background-color: transparent !important;
     `;
-  Loader(chatElement);
+  Loader(chatElement, userId);
 };
 
 type props = {
@@ -141,7 +141,7 @@ const CommentButton: React.FC<props> = ({ visible }) => {
           const nComments = document.getElementById("NComments");
           if (nComments === null) {
             dispatch(sliceSetIsOpenChatWindow(true));
-            createChatWindow();
+            user?.id && createChatWindow(user.id);
           } else dispatch(sliceSetIsOpenChatWindow(!openChatWindow));
         }, 100);
       }}

@@ -1,0 +1,14 @@
+mutation CreateRoom($data: CreateRoomInput!) {
+  createRoom(data: $data) {
+    id
+    name
+    roomType
+    show {
+      id
+      name
+      parentTitleName
+      thumbs
+      platform
+    }
+  }
+}

@@ -18,6 +18,10 @@ import {
 } from "../../../../../../redux/slices/socket/socketSlice";
 import { NestMovieType } from "../../../../../../../helpers/interfaces";
 import { getVideoTitleFromWatch } from "../../../contentScript.utils";
+import {
+  RoomMovieInput,
+  useCreateRoomMutation,
+} from "../../../../../../../generated/graphql";
 
 const CreateNest = () => {
   const user = useAppSelector((state) => state.user);
@@ -26,8 +30,8 @@ const CreateNest = () => {
   const dispatch = useAppDispatch();
   const [value, setValue] = useState<string>("");
   const isPublic = useAppSelector((state) => state.socket.isPublic);
-  const socket = useContext(SocketContext);
-  const roomID = nanoid(10);
+  const roomId = nanoid(10);
+  const [, createNest] = useCreateRoomMutation();
   const closeHandler = () => {
     dispatch(sliceSetNestVisibility(false));
     dispatch(sliceSetNestType(NEST_TYPE.EMPTY));
@@ -41,22 +45,40 @@ const CreateNest = () => {
   const createRoomHandler = () => {
     const url = window.location.href;
     const title = getVideoTitleFromWatch(movie.platform);
-    //Emit the createRoom event to the socket.io
-    socket.emit("createRoom", {
-      roomID,
-      roomName: value,
-      user,
-      url,
-      isPublic,
-      movie: {
-        id: movie.id,
-        name: movie?.name || title,
-        thumbs: movie?.thumbs,
-        platform: movie?.platform,
-        parentTitleName: movie?.parentTitleName,
-      } as NestMovieType,
+    createNest({
+      data: {
+        isPublic,
+        roomId,
+        roomName: value,
+        url,
+        userId: user.id,
+        movie: {
+          id: movie.id,
+          name: movie?.name || title,
+          thumbs: movie?.thumbs,
+          parentTitleName: movie?.parentTitleName,
+          platform: movie?.platform,
+        } as RoomMovieInput,
+      },
+    }).then(() => {
+      dispatch(sliceSetIsNestAdmin(true));
     });
-    dispatch(sliceSetIsNestAdmin(true));
+    // //Emit the createRoom event to the socket.io
+    // socket.emit("createRoom", {
+    //   roomID,
+    //   roomName: value,
+    //   user,
+    //   url,
+    //   isPublic,
+    //   movie: {
+    //     id: movie.id,
+    //     name: movie?.name || title,
+    //     thumbs: movie?.thumbs,
+    //     platform: movie?.platform,
+    //     parentTitleName: movie?.parentTitleName,
+    //   } as NestMovieType,
+    // });
+    // dispatch(sliceSetIsNestAdmin(true));
   };
 
   return (

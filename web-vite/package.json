@@ -100,7 +100,7 @@
     "sanitize-html": "^2.10.0",
     "simple-peer": "^9.11.1",
     "simplewebrtc": "^3.0.2",
-    "socket.io-client": "^4.6.1",
+    "socket.io-client": "^4.7.2",
     "styled-components": "^5.3.10",
     "terser-webpack-plugin": "^5.3.7",
     "ts-loader": "^9.4.2",

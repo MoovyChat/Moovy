@@ -58,7 +58,7 @@ export const SOCKET_MESSAGE_TYPES = {
 };
 export const SOCKET_URL = __prod__
   ? import.meta.env.VITE_SOCKET_URL
-  : "http://localhost:3001";
+  : "http://localhost:4000";
 
 export const isServerSide = () => typeof window === "undefined";
 

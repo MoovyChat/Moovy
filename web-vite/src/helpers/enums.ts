@@ -14,6 +14,11 @@ export enum TOOLTIP {
   MSG = "MSG",
 }
 
+export enum RoomType {
+  PUBLIC = "public",
+  PRIVATE = "private",
+}
+
 export enum NEST_TYPE {
   GIPHY = "GIPHY",
   LIST_USERS = "LIST_USERS",
