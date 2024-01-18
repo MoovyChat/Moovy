@@ -88,7 +88,7 @@ We are thankful to all the contributors who have helped shape MoovyChat into wha
 
 ## License
 
-MoovyChat is open-sourced software licensed under the [MIT license](LICENSE.md).
+MoovyChat is open-sourced software licensed under the [MIT license](LICENSE).
 
 ## Contact
 
