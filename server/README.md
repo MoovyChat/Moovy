@@ -1,37 +1,46 @@
 # MoovyChat Server
 
-The server is hosted on "server.moovychat.com", it is built upon Apollo Server for HTTP connections and "ws" for websocket connections.
+The MoovyChat server is an essential component of the MoovyChat application, handling HTTP connections via Apollo Server and WebSocket connections.
 
-The requests are sent to `graphql` server https://server.moovychat.com/graphql.
+GraphQL requests are processed through the server at: `https://server.moovychat.com/graphql`.
 
 ## Quick Debug and Deploy
 
-- To check the running process/containers `docker ps -a`
-- To stop the previous copy of container `docker stop <container-id>`
-- To remove the previous container `docker rm <container-id>`
-- It is important to stop the previous process of the server for the pushed server to work properly.
-
-### Quick Deploy (Update versions every time)
-
-Current deployed version: 0.2.5
-Next version: 0.2.6
+Here are some quick commands for Docker container management:
 
 ```
-docker login (kishore189/Chandra189)
-docker build -t kishore189/moovychat:0.2.6 .
-docker push kishore189/moovychat:0.2.6
+docker ps -a # Check running processes/containers
+docker stop <container-id> # Stop a container
+docker rm <container-id> # Remove a container
+```
 
-ssh root@137.184.201.17 (password: moovychat)
-docker pull kishore189/moovychat:0.2.6
-docker tag kishore189/moovychat:0.2.6 dokku/api:0.2.6
+It's crucial to stop any previous server processes to ensure the new deployment functions correctly.
+
+### Quick Deploy
+
+Ensure you update the versions accordingly for each deployment.
+
+Example for deploying version 0.2.6:
+
+```
+docker login # Login to Docker Hub
+docker build -t <docker-username>/moovychat:0.2.6 .
+docker push <docker-username>/moovychat:0.2.6
+
+ssh root@<host> # SSH into your server
+docker pull <docker-username>/moovychat:0.2.6
+docker tag <docker-username>/moovychat:0.2.6 dokku/api:0.2.6
 dokku deploy api 0.2.6
 ```
 
-## Access POSTGRES inside dokku
+## Accessing POSTGRES within Dokku
 
-- Check logs `dokku postgres:logs qchat -t`
-- Connect to the database `dokku postgres:connect qchat`
-- Delete all values from the all tables in database.
+- To view logs: `dokku postgres:logs <db-name> -t`
+- To connect to the database: `dokku postgres:connect <db-name>`
+
+## Database Maintenance Commands
+
+- Truncate all tables:
 
 ```
 DO $$ DECLARE
@@ -44,7 +53,7 @@ END $$;
 
 ```
 
-- Delete all values including the primary generated index values
+- Truncate and reset identity of all tables:
 
 ```
 DO $$ DECLARE
@@ -57,7 +66,7 @@ END $$;
 
 ```
 
-- Delete all the tables in the database
+- Drop all tables:
 
 ```
 DO $$
@@ -72,9 +81,9 @@ END $$;
 
 ```
 
-- List all tables `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
+- List all tables: `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
 
-- Make sure to insert initial platform and admin values. Refer help.md.
+- Ensure initial platform and admin values are inserted as required.
 
 ## Table of contents
 
@@ -88,60 +97,21 @@ npx typeorm -d dist/dataSource.js migration:generate  src/migrations
 
 ## Installation
 
-Install the following dependencies and devDependencies.
+Install the required dependencies as listed in your project's `package.json`.
 
-### Dependencies
+## Deployment Configuration
 
-- "apollo-server": "^3.10.2",
-- "apollo-server-express": "^3.10.2",
-- "axios": "^1.2.2",
-- "cheerio": "^1.0.0-rc.12",
-- "connect-redis": "^6.1.3",
-- "cors": "^2.8.5",
-- "dotenv-safe": "^8.2.0",
-- "express": "^4.18.1",
-- "express-session": "^1.17.3",
-- "gen-env-types": "^1.3.4",
-- "graphql": "^15.3.0",
-- "graphql-postgres-subscriptions": "^1.0.5",
-- "graphql-redis-subscriptions": "^2.5.0",
-- "graphql-subscriptions": "^2.0.0",
-- "graphql-tools": "^8.3.6",
-- "graphql-ws": "^5.11.1",
-- "ioredis": "^5.2.3",
-- "jsdom": "^21.0.0",
-- "lodash": "^4.17.21",
-- "node-fetch": "^3.3.0",
-- "pg": "^8.8.0",
-- "reflect-metadata": "^0.1.13",
-- "stripe": "^11.6.0",
-- "tsc": "^2.0.4",
-- "type-graphql": "^1.1.1",
-- "typeorm": "^0.3.9",
-- "ws": "^8.8.1"
+The MoovyChat server is deployed to a Dokku droplet on a VPS.
 
-### DevDependencies
+## Creating the Droplet
 
-- "@types/express": "^4.17.14",
-- "@types/ioredis": "^4.28.10",
-- "@types/node": "^18.7.18",
-- "nodemon": "^2.0.19",
-- "ts-node": "^10.9.1",
-- "typescript": "^4.8.3"
+- Create a new droplet in your VPS provider.
+- Follow the instructions from your VPS provider to generate and use an SSH key.
+- Once the droplet is ready, you can manage it through the remote console.
 
-# Deployment configuration
+## DockerFile Configuration
 
-We are deploying the server to the `Dokku` droplet inside the vps named `Digital Ocean`.
-
-Here are the steps to deploy the server
-
-### Creating the Droplet.
-
-- Create a droplet inside the `Digital Ocean`.
-- Create a SSH key, follow the instruction provided by the vps.
-- Once generated, open the remote console, and use the following instructions.
-
-### Create a DockerFile on the Local Machine with the below configuration.
+Below is a sample Dockerfile:
 
 ```
 FROM node:18
@@ -173,65 +143,17 @@ CMD [ "node", "dist/index.js" ]
 USER node
 ```
 
-### Pre-requisites inside the vps before using the docker.
+## Pre-requisites in VPS
 
-- SSH to the server. `ssh root@<IPv4_Address_of_the_droplet>`
-- Create an app inside dokku `dokku apps:create <$APP_NAME>`
-- Install the plugins for postgres and redis.
+Before using Docker, set up the environment:
 
-```
-dokku plugin:install https://github.com/dokku/dokku-postgres.git
-dokku plugin:install https://github.com/dokku/dokku-redis.git redis
-```
+- SSH into the server.
+- Initialize the app and install necessary plugins.
+- Create and link databases.
 
-- Create database and redis server.
+## Server and Domain Configuration
 
-```
-dokku postgres:create $DATABASE
-dokku redis:create $REDIS
-```
-
-- Link the plugins to the app.
-
-```
-dokku postgres:link $DATABASE $APP_NAME
-dokku redis:link $REDIS $APP_NAME
-```
-
-- To view the list of the containers, run `docker container list`
-
-To make life easier, we have `docker_init.sh` and `docker_link.sh`
-
-### Initiate the server and push the docker file to the docker hub.
-
-- We will run the docker file and push the generated docker image to the docker hub(hub.docker.com).
-- Build the docker image
-
-```
-
-docker login
-docker build -t kishore189/moovychat:$VERSION .
-docker push kishore189/moovychat:$VERSION
-
-```
-
-- Pull the docker image from the server.
-
-```
-
-ssh root@137.184.201.17 (Get the IPv4 from the digital ocean)
-docker pull kishore189/moovychat:$VERSION
-docker tag kishore189/moovychat:$VERSION dokku/api:$VERSION
-
-```
-
-- Deploy the image
-
-```
-
-dokku deploy $APP_NAME $VERSION
-
-```
+Configure the domain with your DNS provider to point to your server with an 'A' record. Monitor the propagation status using DNS checker tools.
 
 ### Domain Configuration.
 
@@ -260,6 +182,8 @@ dokku domains:remove-global <PREVIOUS_DEFAULT_DOMAINS>
 dokku domains:add-global moovychat.com
 ```
 
+## Encrypting the Server
+
 Once we are set with the registration of IPv4, now we need to encrypt of our server with[dokku-letsencrypt](https://github.com/dokku/dokku-letsencrypt).
 
 - Install the plugin on server.
@@ -279,5 +203,7 @@ dokku letsencrypt:set api email chatmoovy@gmail.com
 ```
 dokku letsencrypt:enable $APP_NAME
 ```
+
+## Final URL
 
 ### https://server.moovychat.com
