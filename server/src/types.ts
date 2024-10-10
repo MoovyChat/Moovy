@@ -1,14 +1,15 @@
-import { Request, Response } from 'express';
+import { IncomingMessage, ServerResponse } from "http";
+import { Redis } from "ioredis";
+import { Request, Response } from "express";
 
-import session from 'express-session';
-
-declare module 'express-session' {
-  export interface SessionData {
-    userId: string;
+declare module "express-session" {
+  interface SessionData {
+    userId: string; // or number, depending on your userId type
   }
 }
 
 export type MyContext = {
-  req: Request & { session: session.Session & Partial<session.SessionData> };
-  res: Response;
+  req: IncomingMessage & Request; // Extend to include Express's Request
+  res: ServerResponse & Response; // Extend to include Express's Response
+  redisClient: Redis;
 };
