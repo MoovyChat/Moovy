@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "dotenv-safe/config";
 import Redis from "ioredis";
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
 import { buildSchema } from "type-graphql";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { MyContext } from "./types";
@@ -17,6 +17,7 @@ import { createServer } from "http";
 import { __prod__, COOKIE_NAME } from "./constants";
 import { useServer } from "graphql-ws/lib/use/ws";
 import RedisStore from "connect-redis";
+import bodyParser from "body-parser";
 
 // Redis setup
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
@@ -52,7 +53,7 @@ const main = async () => {
         disableTouch: true,
       }),
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years.
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
         sameSite: "lax", // CSRF protection
         secure: __prod__,
@@ -91,16 +92,24 @@ const main = async () => {
       },
     ],
   });
-  // Start the Apollo Server and use Express for non-GraphQL routes
-  const { url } = await startStandaloneServer(apolloServer, {
-    context: async ({ req, res }) => {
-      const expressReq = req as any; // Convert IncomingMessage to Express Request
-      const expressRes = res as any; // Convert ServerResponse to Express Response
-      return { req: expressReq, res: expressRes, redisClient };
-    },
-    listen: { port: parseInt(process.env.PORT || "5000") },
-  });
-  console.log(`🚀 GraphQL server ready at ${url}`);
+
+  // Start Apollo Server and integrate it with Express
+  await apolloServer.start();
+  app.use(
+    "/graphql",
+    bodyParser.json(), // Body parsing middleware for handling GraphQL requests
+    expressMiddleware(apolloServer, {
+      context: async ({ req, res }) => {
+        return { req, res, redisClient };
+      },
+    })
+  );
+
+  console.log(
+    `🚀 GraphQL server ready at http://localhost:${
+      process.env.PORT || 5000
+    }/graphql`
+  );
 
   // Define scraping route
   app.post("/scrape", async (req, res) => {
@@ -137,7 +146,9 @@ const main = async () => {
 
   // Start the HTTP server for Express
   httpServer.listen(parseInt(process.env.PORT || "5000"), () => {
-    console.log(`Server started on localhost:${process.env.PORT || 5000}`);
+    console.log(
+      `Server started on http://localhost:${process.env.PORT || 5000}`
+    );
     // GraphQL WS Subscription handler
     useServer({ schema }, wsServer);
   });
