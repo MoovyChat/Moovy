@@ -11,12 +11,12 @@ import { resolvers } from "./resolvers";
 import compression from "compression";
 import express from "express";
 import session from "express-session";
-import connectRedis from "connect-redis";
 import ws from "ws";
 import scrapePage from "./scrape";
 import { createServer } from "http";
 import { __prod__, COOKIE_NAME } from "./constants";
 import { useServer } from "graphql-ws/lib/use/ws";
+import RedisStore from "connect-redis";
 
 // Redis setup
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
@@ -44,8 +44,6 @@ const main = async () => {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-  // Redis session setup with `ioredis`
-  const RedisStore = connectRedis(session);
   app.use(
     session({
       name: COOKIE_NAME,
