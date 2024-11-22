@@ -9,6 +9,9 @@ import { CustomSocket } from "./customSocket";
 import { createSession, restoreSession } from "./sessionManager";
 import { Movie, RoomInfo, RoomUser } from "./interfaces";
 
+declare var RTCIceCandidate: any;
+declare var RTCSessionDescriptionInit: any;
+
 /**
  * The function handles playing a video in a room and checks if the user is authorized to do so.
  * @param {CustomSocket} socket - CustomSocket object representing the socket connection of the current
