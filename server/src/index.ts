@@ -36,13 +36,18 @@ const main = async () => {
   // Express setup for non-GraphQL routes and additional middleware
   const app = express();
 
-  // Enable CORS to handle requests from https://moovychat.com
+  // Enable CORS middleware
   app.use(
     cors({
-      origin: ["https://moovychat.com"], // Allow requests from this domain
-      credentials: true, // Allow credentials (cookies, authorization headers)
+      origin: "https://moovychat.com", // Allow requests only from your frontend
+      credentials: true, // Allow cookies and credentials
+      methods: ["GET", "POST", "OPTIONS"], // Allowed HTTP methods
+      allowedHeaders: ["Content-Type", "Authorization"], // Allowed request headers
     })
   );
+
+  // Explicitly handle preflight requests
+  app.options("*", cors());
 
   // Enable gzip compression for all resources
   app.use(compression());
