@@ -43,6 +43,8 @@ const main = async () => {
         const allowedOrigins = [
           "https://moovychat.com",
           "https://www.moovychat.com",
+          "https://www.netflix.com",
+          "https://netflix.com",
         ];
         if (allowedOrigins.includes(origin ?? "") || !origin) {
           callback(null, true);
