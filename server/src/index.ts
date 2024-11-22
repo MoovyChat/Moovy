@@ -145,10 +145,8 @@ const main = async () => {
   });
 
   // Start the HTTP server for Express
-  httpServer.listen(parseInt(process.env.PORT || "5000"), () => {
-    console.log(
-      `Server started on http://localhost:${process.env.PORT || 5000}`
-    );
+  httpServer.listen(parseInt(process.env.PORT || "5000"), "0.0.0.0", () => {
+    console.log(`Server started on http://0.0.0.0:${process.env.PORT || 5000}`);
     // GraphQL WS Subscription handler
     useServer({ schema }, wsServer);
   });
