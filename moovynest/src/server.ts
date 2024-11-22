@@ -68,7 +68,10 @@ io.on("connection", (socket) => {
   socket.on("user started sharing", handelSharing(socket as CustomSocket, io));
   socket.on("sending signal", handleSendingSignal(socket as CustomSocket, io));
   socket.on("restoreSession", handleRestoreSession(socket, io));
-  socket.on("toggle-room-type", handleToggleRoomType(socket, io));
+  socket.on(
+    "toggle-room-type",
+    handleToggleRoomType(socket as CustomSocket, io)
+  );
   socket.on("kick-user", handleKickUser(socket as CustomSocket, io));
   socket.on("sync-with-admin", handleSyncWithAdmin(socket as CustomSocket, io));
   socket.on("sync-all-users", handleSyncAllUsers(socket as CustomSocket, io));
@@ -77,8 +80,8 @@ io.on("connection", (socket) => {
   socket.on("acknowledge", ({ signal, callerID }) => {
     socket.to(callerID).emit("acknowledge", signal);
   });
-  socket.on("current-time", handleSendCurrentTime(socket, io));
-  socket.on("message", handleMessage(socket, io));
+  socket.on("current-time", handleSendCurrentTime(socket as CustomSocket, io));
+  socket.on("message", handleMessage(socket as CustomSocket, io));
   socket.on("leaveRoom", handleLeaveRoom(socket as CustomSocket, io));
   socket.on("show-change", handleShowChange(socket as CustomSocket, io));
   socket.on(
