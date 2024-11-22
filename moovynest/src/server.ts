@@ -98,6 +98,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", handleDisconnect(socket as CustomSocket, io));
 });
 
-server.listen(3001, () => {
+server.listen(5000, () => {
   console.log("Server listening on port 3001");
 });
