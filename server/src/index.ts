@@ -11,6 +11,7 @@ import { resolvers } from "./resolvers";
 import compression from "compression";
 import express from "express";
 import session from "express-session";
+import cors from "cors";
 import ws from "ws";
 import scrapePage from "./scrape";
 import { createServer } from "http";
@@ -34,6 +35,14 @@ const main = async () => {
 
   // Express setup for non-GraphQL routes and additional middleware
   const app = express();
+
+  // Enable CORS to handle requests from https://moovychat.com
+  app.use(
+    cors({
+      origin: ["https://moovychat.com"], // Allow requests from this domain
+      credentials: true, // Allow credentials (cookies, authorization headers)
+    })
+  );
 
   // Enable gzip compression for all resources
   app.use(compression());
