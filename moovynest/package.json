@@ -23,6 +23,7 @@
     "typescript": "^5.0.4"
   },
   "devDependencies": {
+    "@types/webrtc": "^0.0.44",
     "nodemon": "^2.0.22"
   }
 }
