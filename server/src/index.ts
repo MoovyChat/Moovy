@@ -39,7 +39,17 @@ const main = async () => {
   // Enable CORS middleware
   app.use(
     cors({
-      origin: "https://moovychat.com", // Allow requests only from your frontend
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          "https://moovychat.com",
+          "https://www.moovychat.com",
+        ];
+        if (allowedOrigins.includes(origin ?? "") || !origin) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       credentials: true, // Allow cookies and credentials
       methods: ["GET", "POST", "OPTIONS"], // Allowed HTTP methods
       allowedHeaders: ["Content-Type", "Authorization"], // Allowed request headers
